@@ -1,0 +1,1 @@
+docker run --name=c_gbmu --rm -i -t gbmu
