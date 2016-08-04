@@ -1,1 +1,1 @@
-docker build -t gbmu .
+docker build -t img_gbmu .
