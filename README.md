@@ -27,15 +27,12 @@ http://192.
 
 <BR>
 > Tutorial on DB, NES, SNES emulation
-
-> http://www.codeslinger.co.uk/index.html
+> - http://www.codeslinger.co.uk/index.html
 
 <BR>
 > Gameboy CPU manual
-
-> http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf
+> - http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf
 
 <BR>
 > Gameboy programming manual
-
-> http://www.chrisantonellis.com/files/gameboy/gb-programming-manual.pdf
+> - http://www.chrisantonellis.com/files/gameboy/gb-programming-manual.pdf
