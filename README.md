@@ -1,11 +1,9 @@
 # Install
 
 <BR>
-docker build -t img_gbmu .
-<BR>
-docker run --rm --name=c_gbmu -t -i -p 80:80 img_gbmu
-<BR>
-http://192.
+- docker build -t img_gbmu .
+- docker run --rm --name=c_gbmu -t -i -p 80:80 img_gbmu
+- http://192.168.99.100:80/
 
 # Useful links:
 
