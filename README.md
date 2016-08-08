@@ -36,6 +36,14 @@ docker run --rm --name=c_gbmu -t -i -p 80:80 img_gbmu
 > - http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf
 
 <BR>
+> Pan Documents
+> - http://bgb.bircd.org/pandocs.htm
+
+<BR>
+> Memory Bank Controller
+> - http://gbdev.gg8.se/wiki/articles/Memory_Bank_Controllers
+
+<BR>
 > Gameboy programming manual
 > - http://www.chrisantonellis.com/files/gameboy/gb-programming-manual.pdf
 
