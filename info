@@ -1,0 +1,26 @@
+General Memory Map
+
+Interrupt Enable Register			1
+--------------------------- FFFF 	----
+Internal RAM						127
+--------------------------- FF80 	----
+Empty but unusable for I/O			52
+--------------------------- FF4C 	----
+I/O ports							76
+--------------------------- FF00 	----
+Empty but unusable for I/O			96
+--------------------------- FEA0 	----
+Sprite Attrib Memory (OAM)			160
+--------------------------- FE00 	----
+Echo of 8kB Internal RAM			7680
+--------------------------- E000 	----
+8kB Internal RAM					8192
+--------------------------- C000 	----
+8kB switchable RAM bank				8192
+--------------------------- A000 	----
+8kB Video RAM						8192
+--------------------------- 8000 	----
+16kB switchable ROM bank
+--------------------------- 4000	32768 Cartrigbe
+16kB ROM bank #0
+--------------------------- 0000	----
