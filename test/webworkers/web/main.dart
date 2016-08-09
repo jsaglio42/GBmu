@@ -10,7 +10,7 @@ main() {
   var st = StackTrace.current;
   print(st);
   var element = querySelector('#hellol');
-  element.text = "truc";
+  element.text = "Salut Jano";
   print(element);
   print('salut');
   // bootstrap(AppComponent);
