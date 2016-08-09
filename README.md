@@ -10,7 +10,7 @@ docker run --rm --name=c_gbmu -t -i -p 80:80 img_gbmu
 # Useful links:
 
 ### Ressources
-```
+```sh
 curl -O https://projects.intra.42.fr/uploads/document/document/323/ressources.tgz
 ```
 
