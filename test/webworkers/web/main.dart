@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/09 14:20:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/09 17:49:34 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/09 20:18:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,29 +27,36 @@ import 'dart:isolate' as Iso;
  * 5workers: 11.5e6 opsPerSecPerWorker
  */
 
-void dumpThreadInfo() {
+void dumpThreadInfo()
+{
   print('Isolate: cur.hash(${Iso.Isolate.current.hashCode}), ');
   return ;
 }
 
-void iso_routine(kwarg) {
-  // Iso.SendPort sp = kwarg['motDoux'] as Iso.SendPort;
-
+void iso_routine2(kwarg)
+{
   print("Hello World isolate $kwarg");
+  dumpThreadInfo();
+
+  final Iso.SendPort toMainSend = kwarg['toMainSend'];
+  assert(toMainSend != null);
+  final toWorkerReceive = new Iso.ReceivePort();
   double d = 70.0;
   int i = 0;
   final int startMS = (new DateTime.now()).millisecondsSinceEpoch;
   int elapsMS;
 
-  dumpThreadInfo();
-  while (true) {
-    if (i % (5 * 10e6) == 0) {
+  toMainSend.send(toWorkerReceive.sendPort);
+  while (true)
+  {
+    if (i % (5 * 10e6) == 0)
+    {
       elapsMS = (new DateTime.now()).millisecondsSinceEpoch - startMS;
-      kwarg['mainSendPort'].send('${Iso.Isolate.current.hashCode}: '
-          '${elapsMS}ms: '
-          '${i.toStringAsExponential(1)}ops '
-          'd=$d. '
-          '${(i * 1000 / elapsMS).toStringAsExponential(3)}opsPerSec');
+      toMainSend.send('${Iso.Isolate.current.hashCode}: '
+              '${elapsMS}ms: '
+              '${i.toStringAsExponential(1)}ops '
+              'd=$d. '
+              '${(i * 1000 / elapsMS).toStringAsExponential(3)}opsPerSec');
     }
     i++;
     d = Math.exp(Math.log(d));
@@ -57,29 +64,35 @@ void iso_routine(kwarg) {
   return ;
 }
 
-As.Future ft_truc() async {
-  print('Hello World async');
-
-  final receivePort = new Iso.ReceivePort();
-  final kwarg = {
-    'mainSendPort': receivePort.sendPort,
-    'motDoux': "chouchou"
+void iso_routine(kwarg)
+{
+  try {
+    iso_routine2(kwarg);
+  } catch (e) {
+    print("Error Worker: $e");
   };
-  final Iso.Isolate myiso = await Iso.Isolate.spawn(iso_routine, kwarg);
-
-  receivePort.forEach((msg) {
-        print("receivePort: $msg");
-      });
-  print('Bye World async');
   return ;
 }
 
-main () {
-  print('Hello World');
-  dumpThreadInfo();
-  // var element = Ht.querySelector('#hellol');
-  // element.text = "Salut Jano";
-  // element.text = 'web worker supported: ${Ht.Worker.supported}';
-  ft_truc();
-  print('Bye World');
+main() async
+{
+  try {
+    print('Hello World async');
+
+    final Iso.ReceivePort toMainReceive = new Iso.ReceivePort();
+    final Iso.Isolate myiso = await Iso.Isolate.spawn(iso_routine, {
+      'toMainSend': toMainReceive.sendPort,
+          'motDoux': "chouchou"
+          });
+    final Iso.SendPort toWorkerSend = await toMainReceive.first;
+
+    // TODO: Can't receive that way because of previous .first call
+    // toMainReceive.forEach((msg) {
+    //     print("receivePort: $msg");
+    //   });
+    print('Bye World async');
+    return ;
+  } catch (e) {
+    print("Error Main: $e");
+  };
 }
