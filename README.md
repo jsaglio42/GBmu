@@ -6,12 +6,13 @@ docker build -t img_gbmu .
 docker run --rm --name=c_gbmu -t -i -p 80:80 img_gbmu
 ```
 - http://192.168.99.100:80/
-- http://localhost/
 
 # Useful links:
 
 ### Ressources
-```curl -O https://projects.intra.42.fr/uploads/document/document/323/ressources.tgz```
+```
+curl -O https://projects.intra.42.fr/uploads/document/document/323/ressources.tgz
+```
 
 ### Gameboy / Emulation
 
