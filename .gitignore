@@ -35,3 +35,5 @@ pubspec.lock
 .DS_Store
 ._.DS_Store
 a.out
+
+**/packages
