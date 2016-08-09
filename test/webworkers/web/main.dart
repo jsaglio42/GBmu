@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/09 14:20:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/09 16:31:03 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/09 17:49:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,8 +15,8 @@ import 'dart:math' as Math;
 import 'dart:async' as As;
 import 'dart:isolate' as Iso;
 
-As.Future<Iso.Isolate> iso_fut;
-Iso.Isolate iso;
+// As.Future<Iso.Isolate> iso_fut;
+// Iso.Isolate iso;
 
 /*
  * Test at school 9aug2016, exp-log loop
@@ -32,17 +32,20 @@ void dumpThreadInfo() {
   return ;
 }
 
-void iso_routine(message) {
+void iso_routine(kwarg) {
+  // Iso.SendPort sp = kwarg['motDoux'] as Iso.SendPort;
+
+  print("Hello World isolate $kwarg");
   double d = 70.0;
   int i = 0;
   final int startMS = (new DateTime.now()).millisecondsSinceEpoch;
   int elapsMS;
-  print("Isolate BODY !!! $message");
+
   dumpThreadInfo();
   while (true) {
     if (i % (5 * 10e6) == 0) {
       elapsMS = (new DateTime.now()).millisecondsSinceEpoch - startMS;
-      print('${Iso.Isolate.current.hashCode}: '
+      kwarg['mainSendPort'].send('${Iso.Isolate.current.hashCode}: '
           '${elapsMS}ms: '
           '${i.toStringAsExponential(1)}ops '
           'd=$d. '
@@ -54,22 +57,21 @@ void iso_routine(message) {
   return ;
 }
 
-void onIsoCreated(Iso.Isolate i) {
-  print('Iso created !!! ${i.hashCode}');
-  dumpThreadInfo();
-  iso = i;
-  return ;
-}
-
 As.Future ft_truc() async {
   print('Hello World async');
-  Iso.Isolate myiso = await Iso.Isolate.spawn(iso_routine, 'hello mec1');
-  onIsoCreated(myiso);
-  // Iso.Isolate.spawn(iso_routine, 'hello mec5');
-  // iso_fut.then(onIsoCreated);
-  // iso_fut.then(onIsoCreated);
-  // iso_fut.then(onIsoCreated);
+
+  final receivePort = new Iso.ReceivePort();
+  final kwarg = {
+    'mainSendPort': receivePort.sendPort,
+    'motDoux': "chouchou"
+  };
+  final Iso.Isolate myiso = await Iso.Isolate.spawn(iso_routine, kwarg);
+
+  receivePort.forEach((msg) {
+        print("receivePort: $msg");
+      });
   print('Bye World async');
+  return ;
 }
 
 main () {

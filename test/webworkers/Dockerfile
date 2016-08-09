@@ -35,4 +35,3 @@ EXPOSE 80
 
 ## docker build -t img_testww .
 ## docker run --rm --name=c_testww -it -p 80:80 -v `pwd -P`:/app img_testww bash
-## docker run --rm --name=c_testww -t -i -p 80:80 img_testww
