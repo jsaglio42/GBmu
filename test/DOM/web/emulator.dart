@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/10 17:57:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/10 18:00:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,7 +43,7 @@ Async.Future<Emulator> create() async {
   final uri = new Uri.file('worker.dart');
   final workerInitPort = new Isolate.ReceivePort();
   final cpuPort = new Isolate.ReceivePort();
-  final worker = await Isolate.Isolate.spawnUri(uri, [], {
+  final worker = Isolate.Isolate.spawnUri(uri, [], {
     'workerinitport': workerInitPort.sendPort,
     'cpuport': cpuPort.sendPort,
   });
