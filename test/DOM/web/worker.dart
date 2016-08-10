@@ -10,9 +10,17 @@
 //                                                                            //
 // ************************************************************************** //
 
-import 'emulator.dart' as Emulator;
+import 'dart:isolate' as Isolate;
 
-main() async
+class Worker {
+
+	Worker()
+
+}
+
+main(_, Isolate.SendPort port)
 {
-	var	emu = new Emulator.Emulator(); 
+	// var worker = new Worker(message);
+	print('lulz');
+	return ;	
 }

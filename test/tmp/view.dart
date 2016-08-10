@@ -1,7 +1,7 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   main.dart                                          :+:      :+:    :+:   //
+//   view.dart                                          :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
@@ -10,9 +10,31 @@
 //                                                                            //
 // ************************************************************************** //
 
-import 'emulator.dart' as Emulator;
+import "view.html" as HTML;
 
-main() async
+var button_pouet = HTML.querySelector('#button-pouet');
+var registersDiv = HTML.querySelector('#registers');
+var button_pouet = HTML.querySelector('#button-pouet');
+var button_pouet = HTML.querySelector('#button-pouet');
+
+void prepareView(LCDreceivePort, debugReceivePort)
 {
-	var	emu = new Emulator.Emulator(); 
+	var pouetSubscription = button_pouet.onClick
+		.listen(printPouet);
+	debugReceivePort.listen()
+
+	return ;
+}
+
+void printPouet(event)
+{
+	print('Pouet');
+	return ;
+}
+
+void updateRegisters(Map<String, Int> message)
+{
+	registersDiv.
+	print('Pouet');
+	return ;
 }

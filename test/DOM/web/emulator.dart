@@ -10,9 +10,30 @@
 //                                                                            //
 // ************************************************************************** //
 
-import 'emulator.dart' as Emulator;
+import 'dart:async' as Async;
+import 'dart:isolate' as Isolate;
 
-main() async
-{
-	var	emu = new Emulator.Emulator(); 
+class Emulator {
+
+	Emulator()
+		// : _worker()
+		// , _CPUStream()
+		// , _CPUPort()
+	{
+		final uri = new Uri.file('worker.dart');
+
+		_CPUPort = new Isolate.ReceivePort();
+		Isolate.Isolate.spawnUri(uri, [], _CPUPort.sendPort)
+			.then((worker) => this._worker = worker);
+ 
+
+	}
+
+	Isolate.Isolate					_worker;
+
+	Isolate.ReceivePort						_CPUPort;
+	// Stream<Map<String, Int>>		_CPUStream;
+
+	// Stream<Map<String, Int>> get onCPUUpdate => _streamCPU;
+
 }
