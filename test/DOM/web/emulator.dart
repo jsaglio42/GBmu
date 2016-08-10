@@ -16,24 +16,37 @@ import 'dart:isolate' as Isolate;
 class Emulator {
 
 	Emulator()
-		// : _worker()
-		// , _CPUStream()
-		// , _CPUPort()
 	{
-		final uri = new Uri.file('worker.dart');
-
 		_CPUPort = new Isolate.ReceivePort();
-		Isolate.Isolate.spawnUri(uri, [], _CPUPort.sendPort)
+		_CPUStream = _CPUPort.asBroadcastStream();
+
+		final uri = new Uri.file('worker.dart');
+		final Isolate.ReceivePort workerInitPort = new Isolate.ReceivePort();
+
+		workerInitPort.listen((Map<String, Isolate.SendPort> map){
+			this._startEmulationPort = map['startemulationport'];
+		});
+
+
+		Isolate.Isolate.spawnUri(uri, [],
+			{'cpuport': _CPUPort.sendPort
+			, 'workerinitport': workerInitPort.sendPort}
+			)
 			.then((worker) => this._worker = worker);
  
-
 	}
 
 	Isolate.Isolate					_worker;
 
-	Isolate.ReceivePort						_CPUPort;
-	// Stream<Map<String, Int>>		_CPUStream;
+	Isolate.ReceivePort				_CPUPort;
+	Async.Stream<Map<String, int>>	_CPUStream;
+	Async.Stream<Map<String, int>> get onCPUUpdate => _CPUStream;
 
-	// Stream<Map<String, Int>> get onCPUUpdate => _streamCPU;
+	Isolate.SendPort				_startEmulationPort;
+
+	void							startEmulation(lolparam){
+		_startEmulationPort.send(lolparam);
+	}
+
 
 }

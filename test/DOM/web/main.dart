@@ -11,8 +11,18 @@
 // ************************************************************************** //
 
 import 'emulator.dart' as Emulator;
+import 'dart:html' as HTML;
 
 main() async
 {
 	var	emu = new Emulator.Emulator(); 
+	emu.onCPUUpdate
+		.listen((map) => print('Main: onCPUUpdate $map'));
+
+	var magbut = HTML.querySelector('#magbut');
+	magbut.onClick((_) {
+		print('Main: onClick');
+		emu.startEmulation('tamere');
+	});
 }
+

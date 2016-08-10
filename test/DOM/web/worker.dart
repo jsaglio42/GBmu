@@ -14,13 +14,32 @@ import 'dart:isolate' as Isolate;
 
 class Worker {
 
-	Worker()
+	Worker(Map<String, Isolate.SendPort>  initMap)
+		: CPUPort = initMap['cpuport']
+	{
+		initMap['workerinitport'].send({
+			'startemulationport': startEmulationPort.sendPort
+		});
+	}
 
+	Isolate.SendPort		CPUPort;
+
+	Isolate.ReceivePort		startEmulationPort;
 }
 
-main(_, Isolate.SendPort port)
+main(_, Map<String, Isolate.SendPort> initMap)
 {
-	// var worker = new Worker(message);
-	print('lulz');
+	var worker = new Worker(initMap);
+
+	worker.startEmulationPort.listen((msg){
+		print('Worker: startEmulationPort.listen $msg');
+		worker.CPUPort.send({
+			'eax': 42,
+			'rdx': 43
+		});
+	});
 	return ;	
 }
+
+
+// mainIsolateReceive.asBroadcastStream().where()
