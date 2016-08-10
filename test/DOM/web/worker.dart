@@ -17,9 +17,12 @@ class Worker {
 	Worker(Map<String, Isolate.SendPort>  initMap)
 		: CPUPort = initMap['cpuport']
 	{
+		this.startEmulationPort = new Isolate.ReceivePort();
+		print('tro $initMap');
 		initMap['workerinitport'].send({
 			'startemulationport': startEmulationPort.sendPort
 		});
+		print('lolo');
 	}
 
 	Isolate.SendPort		CPUPort;
@@ -31,6 +34,7 @@ main(_, Map<String, Isolate.SendPort> initMap)
 {
 	var worker = new Worker(initMap);
 
+	print('waka');
 	worker.startEmulationPort.listen((msg){
 		print('Worker: startEmulationPort.listen $msg');
 		worker.CPUPort.send({
@@ -38,6 +42,7 @@ main(_, Map<String, Isolate.SendPort> initMap)
 			'rdx': 43
 		});
 	});
+	print('hehe');
 	return ;	
 }
 

@@ -13,16 +13,20 @@
 import 'emulator.dart' as Emulator;
 import 'dart:html' as HTML;
 
-main() async
+main()
 {
 	var	emu = new Emulator.Emulator(); 
+
+	print('lulz');
 	emu.onCPUUpdate
 		.listen((map) => print('Main: onCPUUpdate $map'));
 
+	print('lolz');
 	var magbut = HTML.querySelector('#magbut');
-	magbut.onClick((_) {
+	magbut.onClick.listen((_) {
 		print('Main: onClick');
 		emu.startEmulation('tamere');
 	});
+	print('lilz');
 }
 

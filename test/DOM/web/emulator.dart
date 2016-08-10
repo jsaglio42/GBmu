@@ -27,13 +27,15 @@ class Emulator {
 			this._startEmulationPort = map['startemulationport'];
 		});
 
+		print('pute');
 
 		Isolate.Isolate.spawnUri(uri, [],
 			{'cpuport': _CPUPort.sendPort
 			, 'workerinitport': workerInitPort.sendPort}
 			)
 			.then((worker) => this._worker = worker);
- 
+
+		print('capote');		  
 	}
 
 	Isolate.Isolate					_worker;
@@ -45,7 +47,9 @@ class Emulator {
 	Isolate.SendPort				_startEmulationPort;
 
 	void							startEmulation(lolparam){
+		print('saloperie');
 		_startEmulationPort.send(lolparam);
+		print('carote');
 	}
 
 
