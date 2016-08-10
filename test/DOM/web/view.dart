@@ -14,6 +14,7 @@ import "dart:html" as HTML;
 
 void prepareView()
 {
-	var button_pouet = HTML.querySelector('#button-pouet');
-	button_pouet.onClick.listen((event) => print('POUET'));
+	var pouetSubscription = HTML.querySelector('#button-pouet').onClick
+		.listen((event) => print('POUET'));
+
 }
