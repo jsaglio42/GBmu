@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   main.dart                                          :+:      :+:    :+:   //
+//   emulator.dart                                      :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/09 14:20:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/09 20:18:55 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/10 17:57:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,42 +15,41 @@ import 'dart:isolate' as Isolate;
 
 class Emulator {
 
-	Emulator()
-	{
-		_CPUPort = new Isolate.ReceivePort();
-		_CPUStream = _CPUPort.asBroadcastStream();
+  Emulator(
+      Isolate.Isolate w
+      , Isolate.ReceivePort cpuPort
+      , Isolate.SendPort startEmulationPort)
+    : _worker = w
+    , _cpuPort = cpuPort
+    , onCpuUpdate = cpuPort.asBroadcastStream()
+    , _startEmulationPort = startEmulationPort
+  {
+  }
 
-		final uri = new Uri.file('worker.dart');
-		final Isolate.ReceivePort workerInitPort = new Isolate.ReceivePort();
+  final Isolate.Isolate					_worker;
 
-		workerInitPort.listen((Map<String, Isolate.SendPort> map){
-			this._startEmulationPort = map['startemulationport'];
-		});
+  final Isolate.ReceivePort				_cpuPort;
+  final Async.Stream<Map<String, int>>	onCpuUpdate;
 
-		print('pute');
+  final Isolate.SendPort				_startEmulationPort;
 
-		Isolate.Isolate.spawnUri(uri, [],
-			{'cpuport': _CPUPort.sendPort
-			, 'workerinitport': workerInitPort.sendPort}
-			)
-			.then((worker) => this._worker = worker);
+  void							startEmulation(lolparam){
+    _startEmulationPort.send(lolparam);
+  }
+}
 
-		print('capote');		  
-	}
+Async.Future<Emulator> create() async {
 
-	Isolate.Isolate					_worker;
+  final uri = new Uri.file('worker.dart');
+  final workerInitPort = new Isolate.ReceivePort();
+  final cpuPort = new Isolate.ReceivePort();
+  final worker = await Isolate.Isolate.spawnUri(uri, [], {
+    'workerinitport': workerInitPort.sendPort,
+    'cpuport': cpuPort.sendPort,
+  });
+  final Map<String, Isolate.SendPort> map = await workerInitPort.first;
+  final Isolate.SendPort startEmulationPort = map['startemulationport'];
+  assert(startEmulationPort != null);
 
-	Isolate.ReceivePort				_CPUPort;
-	Async.Stream<Map<String, int>>	_CPUStream;
-	Async.Stream<Map<String, int>> get onCPUUpdate => _CPUStream;
-
-	Isolate.SendPort				_startEmulationPort;
-
-	void							startEmulation(lolparam){
-		print('saloperie');
-		_startEmulationPort.send(lolparam);
-		print('carote');
-	}
-
-
+  return new Emulator(worker, cpuPort, startEmulationPort);
 }

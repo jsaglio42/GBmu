@@ -5,28 +5,25 @@
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/09 14:20:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/09 20:18:55 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/10 17:57:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'emulator.dart' as Emulator;
 import 'dart:html' as HTML;
+import 'dart:async' as Async;
 
-main()
+main() async
 {
-	var	emu = new Emulator.Emulator(); 
+	var	emu = await Emulator.create();
 
-	print('lulz');
-	emu.onCPUUpdate
-		.listen((map) => print('Main: onCPUUpdate $map'));
+	emu.onCpuUpdate
+      .listen((map) => print('Main: onCpuUpdate $map'));
 
-	print('lolz');
 	var magbut = HTML.querySelector('#magbut');
 	magbut.onClick.listen((_) {
 		print('Main: onClick');
-		emu.startEmulation('tamere');
+		emu.startEmulation('ft_param!');
 	});
-	print('lilz');
 }
-
