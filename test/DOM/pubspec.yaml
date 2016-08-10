@@ -1,0 +1,13 @@
+name: test_DOM
+description: My dart first app
+version: 0.0.1
+environment:
+  sdk: '>=1.13.0 <2.0.0'
+dependencies:
+  browser: ^0.10.0
+transformers:
+- $dart2js:
+    checked: true
+    commandLineOptions: [--enable-diagnostic-colors]
+    # analyze-all: true
+    # minify: true
