@@ -6,29 +6,12 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/15 10:47:48 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/15 15:17:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/15 16:25:50 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:async' as As;
 import 'dart:isolate' as Is;
-
-/*
- * ************************************************************************** **
- * Ports configuration ****************************************************** **
- * ************************************************************************** **
- */
-
-final mainReceivers = <String, Type>{
-  'RegInfo': <String, int>{}.runtimeType,
-  'Timings': <String, double>{}.runtimeType,
-};
-
-final workerReceivers = <String, Type>{
-  'EmulationStart': int,
-  'EmulationMode': String,
-};
-
 
 /*
  * ************************************************************************** **
@@ -45,9 +28,9 @@ class Ports {
   final Map<String, Is.SendPort> _notifiers;
   final Map<String, Type> _notifiersTypes;
 
-  bool _isValidListenerGetter(String n) {
+  bool _isValidListenerGet(String n) {
     if (_listeners[n] == null) {
-      print('wired_isolate.Ports.listener($n) $n not found');
+      print('wired_isolate:\tPorts.listener($n) $n not found');
       return false;
     }
     else
@@ -55,22 +38,25 @@ class Ports {
   }
 
   bool _isValidSendCall(String n, var p) {
-    if (_notifiersTypes[n] == null) {
-      print('wired_isolate.Ports.send($n, $p) $n not found');
+    final Type t = _notifiersTypes[n];
+    final Type pt = p.runtimeType;
+
+    if (t == null) {
+      print('wired_isolate:\tPorts.send($n, $p) $n not found');
       return false;
     }
-    else if (_notifiersTypes[n] != p.runtimeType) {
-      print('wired_isolate.Ports.send($n, $p)'
-          'parameter is (${p.runtimeType}) '
-          'instead of (${_notifiersTypes[p]})');
+    else if (t != pt) {
+      print('wired_isolate:\tPorts.send($n, $p)'
+          'parameter is ($pt) '
+          'instead of ($t)');
       return false;
     }
     else
       return true;
   }
 
-  dynamic listener(String n) {
-    assert(_isValidListenerGetter(n));
+  As.Stream listener(String n) {
+    assert(_isValidListenerGet(n));
     return _listeners[n];
   }
 
@@ -88,7 +74,6 @@ class Ports {
  * ************************************************************************** **
  * Is there any simpler way ?
 */
-
 Map<String, Is.ReceivePort> rPortsOfTypes(Map<String, Type> t)
 {
   var m = new Map<String, Is.ReceivePort>();
@@ -119,6 +104,7 @@ Map<String, As.Stream> streamsOfRPorts(Map<String, Is.ReceivePort> rp)
   return m;
 }
 
+
 /*
  * ************************************************************************** **
  * Isolate entry point and it's parameter of type `WorkerSpawnData` ********* **
@@ -126,20 +112,24 @@ Map<String, As.Stream> streamsOfRPorts(Map<String, Is.ReceivePort> rp)
  */
 typedef void entryPointType(Ports);
 class WorkerSpawnData {
-  WorkerSpawnData(this.sPortsMain, this.tmpSPort, this.entryPoint);
+  WorkerSpawnData(this.sPortsMain, this.tmpSPort, this.entryPoint,
+      this.mainRTypes, this.workerRTypes);
 
   final Map<String, Is.SendPort> sPortsMain;
   final Is.SendPort tmpSPort;
   final entryPointType entryPoint;
+  final Map<String, Type> mainRTypes;
+  final Map<String, Type> workerRTypes;
 }
 
 void workerSpawn(WorkerSpawnData d)
 {
-  print('wired_isolate:workerSpawn()');
+  print('wired_isolate:\tworkerSpawn()');
 
-  final Map<String, Is.ReceivePort> rPortsWorker =
-    rPortsOfTypes(workerReceivers);
-  final p = new Ports(streamsOfRPorts(rPortsWorker), d.sPortsMain, mainReceivers);
+  final Map<String, Is.ReceivePort> rPortsWorker = rPortsOfTypes(
+      d.workerRTypes);
+  final p = new Ports(
+      streamsOfRPorts(rPortsWorker), d.sPortsMain, d.mainRTypes);
   d.tmpSPort.send(sPortsOfRPorts(rPortsWorker));
   d.entryPoint(p);
   return ;
@@ -158,21 +148,21 @@ class Data {
   final Ports p;
 }
 
-As.Future<Data> spawn(void entryPoint(Ports)) async
+As.Future<Data> spawn(void entryPoint(Ports), Map<String, Type> mainRTypes,
+    Map<String, Type> workerRTypes) async
 {
-  print('wired_isolate:spawn()');
+  print('wired_isolate:\tspawn()');
 
-  final Map<String, Is.ReceivePort> rPortsMain = rPortsOfTypes(mainReceivers);
+  final Map<String, Is.ReceivePort> rPortsMain = rPortsOfTypes(mainRTypes);
 
   final Is.ReceivePort tmpRPort = new Is.ReceivePort();
   final spawnData = new WorkerSpawnData(
-      sPortsOfRPorts(rPortsMain),
-      tmpRPort.sendPort,
-      entryPoint);
+      sPortsOfRPorts(rPortsMain), tmpRPort.sendPort, entryPoint,
+      mainRTypes, workerRTypes);
   final Is.Isolate iso = await Is.Isolate.spawn(workerSpawn, spawnData);
   final Map<String, Is.SendPort> sPortsWorker = await tmpRPort.first;
   final p = new Ports(
-      streamsOfRPorts(rPortsMain), sPortsWorker, workerReceivers);
+      streamsOfRPorts(rPortsMain), sPortsWorker, workerRTypes);
 
   return new Data(iso, p);
 }
