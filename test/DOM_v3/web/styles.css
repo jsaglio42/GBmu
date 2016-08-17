@@ -10,7 +10,13 @@
 
 body {
     padding: 5px;
+    padding-top: 50px;
 }
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
 [class*="col-"], footer {
     border: 1px solid black;
     border-radius: 6px;

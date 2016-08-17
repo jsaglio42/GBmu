@@ -6,13 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/15 16:19:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/17 14:28:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'emulator.dart' as Emulator;
 import 'dart:html' as HTML;
 import 'dart:async' as Async;
+import 'dart:js' as Js;
 
 run() async
 {
@@ -38,6 +39,34 @@ run() async
   emu.listener('RegInfo').listen((map) {
         print('main:\tonRegInfo($map)');
       });
+
+
+
+  var debStatusOn = HTML.querySelector('#debStatusOn');
+  var debStatusOff = HTML.querySelector('#debStatusOff');
+  var debButtonToggle = HTML.querySelector('#debButtonToggle');
+  var debBody = Js.context.callMethod(r'$', ['#debBody']);
+
+  debButtonToggle.onClick.listen((_) {
+        print('main:\tdebButtonToggle.onClick()');
+        emu.send(
+            'DebStatusRequest', Emulator.DebStatusRequest.TOGGLE);
+      });
+
+  emu.listener('DebStatusUpdate').listen((Emulator.DebStatus p) {
+    print('main:\tonDebStatusUpdate($p)');
+    if (p.index == Emulator.DebStatus.ON.index) {
+      debStatusOn.style.display = '';
+      debStatusOff.style.display = 'none';
+      debBody.callMethod('slideDown', ['slow']);
+    }
+    else {
+      debStatusOn.style.display = 'none';
+      debStatusOff.style.display = '';
+      debBody.callMethod('slideUp', ['slow']);
+    }
+  });
+
   print('main:\tinit phase done');
 }
 

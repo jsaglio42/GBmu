@@ -12,9 +12,6 @@
     <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
-
     <link rel="stylesheet" href="styles.css">
   </head>
 
@@ -51,13 +48,13 @@
         <div class="col-lg-12">
           <div class="row">
 
-            <div class="col-sm-12">
+            <button class="col-sm-12 btn btn-primary" type="button" id="debButtonToggle">
               <h3>
                 Debugger
-                <span id="debugger-status-on" class="label label-success">On</span>
-                <!-- <span  id="debugger-status-off" class="label label-danger">Off</span> -->
+                <span id="debStatusOn" class="label label-success">On</span>
+                <span  id="debStatusOff" class="label label-danger" style="display: none;">Off</span>
               </h3>
-            </div>
+            </button>
 
             <div class="col-sm-12">
               <div class="row" id="debBody">
