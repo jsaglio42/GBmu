@@ -6,10 +6,11 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/17 17:26:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/17 17:55:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
+import 'dart:math' as Math;
 // import 'dart:isolate' as Is;
 // import 'dart:async' as As;
 import './wired_isolate.dart' as WI;
@@ -29,14 +30,16 @@ class Worker {
 
   void _onEmulationStart(int p)
   {
+    var rng = new Math.Random();
+
     print('worker:\tonEmulationStart($p)');
     _ports.send('RegInfo', <Register, int>{
-      Register.PC: 12,
-      Register.AF: 13,
-      Register.BC: 14,
-      Register.DE: 15,
-      Register.HL: 16,
-      Register.SP: 17,
+      Register.PC: rng.nextInt(256 * 256),
+      Register.AF: rng.nextInt(256 * 256),
+      Register.BC: rng.nextInt(256 * 256),
+      Register.DE: rng.nextInt(256 * 256),
+      Register.HL: rng.nextInt(256 * 256),
+      Register.SP: rng.nextInt(256 * 256),
     });
     return ;
   }

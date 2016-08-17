@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/17 17:26:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/17 17:51:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,7 +52,7 @@ run() async
     if (p.index == DebStatus.ON.index) {
       debStatusOn.style.display = '';
       debStatusOff.style.display = 'none';
-      debBody.callMethod('slideDown', ['fast']);
+      debBody.callMethod('slideDown', ['slow']);
     }
     else {
       debStatusOn.style.display = 'none';
