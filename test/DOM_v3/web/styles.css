@@ -17,28 +17,28 @@ body {
     line-height: 40px;
     text-align: center;
 }
-#debugger_container, footer {
+#debContainer, footer {
     background-color: rgba(0, 71, 171, 0.2);
 }
-#debugger_container {
+#debContainer {
     padding: 3px;
 }
-#debugger_body {
+#debBody {
     padding: 2px;
 }
 
-#debugger_body td {
+#debBody td {
     font-size: 12px;
 }
 
-#debugger_memory_explorer td {
+#debColMemoryExplorer td {
     font-size: 11px;
 }
-#debugger_memory_explorer th {
+#debColMemoryExplorer th {
     font-size: 12px;
 }
 
-#debugger_autobreak_span {
+#debSpanAutobreak {
     background-color: rgba(71, 71, 71, 0.2);
     padding: 5px;
 }

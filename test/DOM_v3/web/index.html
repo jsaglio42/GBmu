@@ -47,12 +47,10 @@
         <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
       </div>
 
-      <!-- Debugger container -->
-      <div class="row" id="debugger_container">
+      <div class="row" id="debContainer">
         <div class="col-lg-12">
           <div class="row">
 
-            <!-- Debugger > Title row -->
             <div class="col-sm-12">
               <h3>
                 Debugger
@@ -61,16 +59,13 @@
               </h3>
             </div>
 
-
-            <!-- Debugger > Body row -->
             <div class="col-sm-12">
-              <div id="debugger_body" class="row">
+              <div class="row" id="debBody">
 
-                <!-- Debugger > Body > Buttons -->
-                <div class="col-sm-6">
+                <div class="col-sm-6" id="debColButtons">
                   <button type="button" class="btn btn-success">Play</button>
                   <button type="button" class="btn btn-warning">Pause</button>
-                  <span id="debugger_autobreak_span">
+                  <span id="debSpanAutobreak">
                     <b>Auto-break:</b>
                     <label><input type="checkbox" id="todo" value="">None</label>
                     <label><input type="checkbox" id="todo" value="">Instruction</label>
@@ -79,8 +74,7 @@
                   </span>
                 </div>
 
-                <!-- Debugger > Body > Timings -->
-                <div class="col-sm-6">
+                <div class="col-sm-6" id="debColTimings">
                   <span>
                     <b>Emulation time:</b>
                     <span class="label label-primary">0:10:42.250</span>
@@ -95,252 +89,35 @@
                   </span>
                 </div>
 
-                <!-- Debugger > Body > Left body col -->
                 <div class="col-sm-7">
-
-                  <!-- Debugger > Body > Left body > Top row -->
                   <div class="row">
-                    <!-- Debugger > Body > Left body > Top row > Registers -->
-                    <div class="col-sm-4">
-                      <table class="table table-bordered table-striped table-condensed">
-                        <caption>
-                          <h4>Registers</h4>
-                        </caption>
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Value</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr><td id="reg0">reg0</td><td>FFFF</td></tr>
-                          <tr><td id="reg1">reg1</td><td>FFFF</td></tr>
-                          <tr><td id="reg2">reg2</td><td>FFFF</td></tr>
-                          <tr><td id="reg3">reg3</td><td>FFFF</td></tr>
-                          <tr><td id="reg4">reg4</td><td>FFFF</td></tr>
-                          <tr><td id="reg5">reg5</td><td>FFFF</td></tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-                    <!-- Debugger > Body > Left body > Top row > Instruction Flow -->
-                    <div class="col-sm-8">
-                      <table class="table table-bordered table-striped table-condensed">
-                        <caption>
-                          <h4>Instruction Flow</h4>
-                        </caption>
-                        <thead>
-                          <tr>
-                            <th>Address</th>
-                            <th>Instruction</th>
-                            <th>Data</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr><td id="instr0">FFFF</td><td>LD (0xFF00+n), A</td><td>E0 D1</td></tr>
-                          <tr><td id="instr1">FFFF</td><td>LD (0xFF00+n), A</td><td>E0 D1</td></tr>
-                          <tr><td id="instr2">FFFF</td><td>LD (0xFF00+n), A</td><td>E0 D1</td></tr>
-                          <tr><td id="instr3">FFFF</td><td>LD (0xFF00+n), A</td><td>E0 D1</td></tr>
-                          <tr><td id="instr4">FFFF</td><td>LD (0xFF00+n), A</td><td>E0 D1</td></tr>
-                          <tr><td id="instr5">FFFF</td><td>LD (0xFF00+n), A</td><td>E0 D1</td></tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-
+                    <div class="col-sm-4" id="debColRegisters"></div>
+                    <div class="col-sm-8" id="debColInstructionFlow"></div>
                   </div>
-
-                  <!-- Debugger > Body > Left body > Bottom row -->
                   <div class="row">
-
-                    <!-- Debugger > Body > Left body > Bottom row > Memory -->
-                    <div class="col-lg-12">
-
-                      <table id="debugger_memory_explorer" class="table table-bordered table-striped table-condensed">
-                        <caption>
-                          <h4>Memory explorer</h4>
-                        </caption>
-                        <thead>
-                          <tr>
-                            <th>Addr</th>
-                            <th>x0</th>
-                            <th>x1</th>
-                            <th>x2</th>
-                            <th>x3</th>
-                            <th>x4</th>
-                            <th>x5</th>
-                            <th>x6</th>
-                            <th>x7</th>
-                            <th>x8</th>
-                            <th>x9</th>
-                            <th>xA</th>
-                            <th>xB</th>
-                            <th>xC</th>
-                            <th>xD</th>
-                            <th>xE</th>
-                            <th>xF</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                          <tr>
-                            <td>FFFF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                            <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-                          </tr>
-                        </tbody>
-                      </table>
-
-                    </div>
+                    <div id="debColMemoryExplorer" class="col-lg-12"></div>
                   </div>
-
                 </div>
 
-                <!-- Debugger > Body > Right body col -->
                 <div class="col-sm-5">
                   <div class="row">
-
-                    <!-- Debugger > Body > Right body > Video Registers -->
-                    <div class="col-sm-6">
-                      <table class="table table-bordered table-striped table-condensed">
-                        <caption>
-                          <h4>Video Registers</h4>
-                        </caption>
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Addr</th>
-                            <th>Val</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr><td id="vreg0">vreg0</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg1">vreg1</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg2">vreg2</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg3">vreg3</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg4">vreg4</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg5">vreg5</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg6">vreg6</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg7">vreg7</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg8">vreg8</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg9">vreg9</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg10">vreg10</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg11">vreg11</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg12">vreg12</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg13">vreg13</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg14">vreg14</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="vreg15">vreg15</td><td>FFFF</td><td>FF</td></tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-                    <!-- Debugger > Body > Right body > Other Registers -->
-                    <div class="col-sm-6">
-                      <table class="table table-bordered table-striped table-condensed">
-                        <caption>
-                          <h4>Other Registers</h4>
-                        </caption>
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Addr</th>
-                            <th>Val</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr><td id="oreg0">oreg0</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg1">oreg1</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg2">oreg2</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg3">oreg3</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg4">oreg4</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg5">oreg5</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg6">oreg6</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg7">oreg7</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg8">oreg8</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg9">oreg9</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg10">oreg10</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg11">oreg11</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg12">oreg12</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg13">oreg13</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg14">oreg14</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg15">oreg15</td><td>FFFF</td><td>FF</td></tr>
-                          <tr><td id="oreg16">oreg16</td><td>FFFF</td><td>FF</td></tr>
-                        </tbody>
-                      </table>
-                    </div>
-
+                    <div id="debColVideoRegisters" class="col-sm-6"></div>
+                    <div id="debColOtherRegisters" class="col-sm-6"></div>
                   </div>
                 </div>
 
-                <!-- Debugger > Body > Cart Info -->
-                <div class="col-sm-6">
-                  <table class="table table-bordered table-striped table-condensed">
-                    <caption>
-                      <h4>Cart Info</h4>
-                    </caption>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr><td id="carti0">carti0</td><td>FFFF</td></tr>
-                      <tr><td id="carti1">carti1</td><td>FFFF</td></tr>
-                      <tr><td id="carti2">carti2</td><td>FFFF</td></tr>
-                      <tr><td id="carti3">carti3</td><td>FFFF</td></tr>
-                      <tr><td id="carti4">carti4</td><td>FFFF</td></tr>
-                      <tr><td id="carti5">carti5</td><td>FFFF</td></tr>
-                    </tbody>
-                  </table>
-
-
+                <div class="row">
+                  <div id="debColCartInfo" class="col-sm-6"></div>
                 </div>
+
               </div>
-            </div>
+            </div><!-- /#debBody -->
+
           </div>
         </div>
-      </div>
-    </div>
+      </div><!-- /#debContainer -->
+
+    </div><!-- /.container -->
     <br/>
 
     <footer class="row">
@@ -349,12 +126,22 @@
       </small>
     </footer>
 
-    </div><!-- /.container -->
-
 
     <!-- Js Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+     $(function(){
+       $("#debColOtherRegisters").load("debugger_columns/other_registers.html");
+       $("#debColVideoRegisters").load("debugger_columns/video_registers.html");
+       $("#debColCartInfo").load("debugger_columns/cart_info.html");
+       $("#debColMemoryExplorer").load("debugger_columns/memory_explorer.html");
+       $("#debColInstructionFlow").load("debugger_columns/instruction_flow.html");
+       $("#debColRegisters").load("debugger_columns/registers.html");
+     });
+    </script>
+
 
     <script defer src="main.dart.js" type="application/dart"></script>
     <script defer src="packages/browser/dart.js"></script>
