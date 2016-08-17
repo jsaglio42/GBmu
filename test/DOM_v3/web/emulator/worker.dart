@@ -6,14 +6,15 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/17 14:03:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/17 17:26:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:isolate' as Isolate;
-import 'dart:async' as Async;
-import 'wired_isolate.dart' as WI;
-import 'emulator.dart' as Em;
+// import 'dart:isolate' as Is;
+// import 'dart:async' as As;
+import './wired_isolate.dart' as WI;
+import './emulator.dart' as Em;
+import './conf.dart';
 
 class Worker {
 
@@ -24,14 +25,18 @@ class Worker {
     _ports.listener('DebStatusRequest').listen(_onDebuggerStanteChange);
   }
   final WI.Ports _ports;
-  Em.DebStatus _debuggerStatus = Em.DebStatus.ON;
+  DebStatus _debuggerStatus = DebStatus.ON;
 
   void _onEmulationStart(int p)
   {
     print('worker:\tonEmulationStart($p)');
-    _ports.send('RegInfo', <String, int>{
-      'rpb': 12,
-      'eax': 15,
+    _ports.send('RegInfo', <Register, int>{
+      Register.PC: 12,
+      Register.AF: 13,
+      Register.BC: 14,
+      Register.DE: 15,
+      Register.HL: 16,
+      Register.SP: 17,
     });
     return ;
   }
@@ -42,23 +47,23 @@ class Worker {
     return ;
   }
 
-  void _onDebuggerStanteChange(Em.DebStatusRequest p)
+  void _onDebuggerStanteChange(DebStatusRequest p)
   {
     print('worker:\tonDebuggerStateChange($p ${p.index})');
 
     // Enum equality fails after passing through a SendPort
-    if (p.index == Em.DebStatusRequest.TOGGLE.index) {
-        if (_debuggerStatus == Em.DebStatus.ON)
+    if (p.index == DebStatusRequest.TOGGLE.index) {
+        if (_debuggerStatus == DebStatus.ON)
           _disableDebugger();
         else
           _enableDebugger();
     }
-    else if (p.index == Em.DebStatusRequest.DISABLE.index) {
-      if (_debuggerStatus == Em.DebStatus.ON)
+    else if (p.index == DebStatusRequest.DISABLE.index) {
+      if (_debuggerStatus == DebStatus.ON)
         _disableDebugger();
     }
-    else if (p.index == Em.DebStatusRequest.ENABLE.index) {
-        if (_debuggerStatus == Em.DebStatus.OFF)
+    else if (p.index == DebStatusRequest.ENABLE.index) {
+        if (_debuggerStatus == DebStatus.OFF)
           _enableDebugger();
     }
     return ;
@@ -66,12 +71,12 @@ class Worker {
 
   void _disableDebugger()
   {
-    _debuggerStatus = Em.DebStatus.OFF;
+    _debuggerStatus = DebStatus.OFF;
     _ports.send('DebStatusUpdate', _debuggerStatus);
   }
   void _enableDebugger()
   {
-    _debuggerStatus = Em.DebStatus.ON;
+    _debuggerStatus = DebStatus.ON;
     _ports.send('DebStatusUpdate', _debuggerStatus);
   }
 }

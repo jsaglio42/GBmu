@@ -6,23 +6,15 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/17 14:09:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/17 17:25:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:async' as As;
 import 'dart:isolate' as Is;
-import 'wired_isolate.dart' as WI;
-import 'worker.dart' as W;
-
-// TODO?: make a emulator_enums.dart file that can be fully included everywhere
-enum DebStatus {
-  ON, OFF
-}
-
-enum DebStatusRequest {
-  TOGGLE, DISABLE, ENABLE
-}
+import './wired_isolate.dart' as WI;
+import './worker.dart' as W;
+import './conf.dart';
 
 /*
  * ************************************************************************** **
@@ -30,7 +22,7 @@ enum DebStatusRequest {
  * ************************************************************************** **
  */
 final mainReceivers = <String, Type>{
-  'RegInfo': <String, int>{}.runtimeType,
+  'RegInfo': <Register, int>{}.runtimeType,
   'Timings': <String, double>{}.runtimeType,
   'DebStatusUpdate': DebStatus,
 };

@@ -38,7 +38,7 @@
     </div>
 
     <div class="container-fluid">
-      <div id="magbut" class="row">Pouet</div>
+      <div id="magbut" class="row">Pouet Click me to refresh registers</div>
       <div class="starter-template">
         <h1>Bootstrap starter template</h1>
         <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
@@ -48,7 +48,7 @@
         <div class="col-lg-12">
           <div class="row">
 
-            <button class="col-sm-12 btn btn-primary" type="button" id="debButtonToggle">
+            <button class="btn btn-primary col-sm-12" type="button" id="debButtonToggle">
               <h3>
                 Debugger
                 <span id="debStatusOn" class="label label-success">On</span>
@@ -130,12 +130,12 @@
 
     <script>
      $(function(){
-       $("#debColOtherRegisters").load("debugger_columns/other_registers.html");
-       $("#debColVideoRegisters").load("debugger_columns/video_registers.html");
-       $("#debColCartInfo").load("debugger_columns/cart_info.html");
-       $("#debColMemoryExplorer").load("debugger_columns/memory_explorer.html");
-       $("#debColInstructionFlow").load("debugger_columns/instruction_flow.html");
-       $("#debColRegisters").load("debugger_columns/registers.html");
+       $("#debColOtherRegisters").load("debugger/other_registers.html");
+       $("#debColVideoRegisters").load("debugger/video_registers.html");
+       $("#debColCartInfo").load("debugger/cart_info.html");
+       $("#debColMemoryExplorer").load("debugger/memory_explorer.html");
+       $("#debColInstructionFlow").load("debugger/instruction_flow.html");
+       $("#debColRegisters").load("debugger/registers.html");
      });
     </script>
 
