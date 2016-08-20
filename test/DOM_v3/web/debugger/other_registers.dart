@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   registers.dart                                     :+:      :+:    :+:   //
+//   other_registers.dart                               :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 15:45:08 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/20 15:48:20 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/20 15:49:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,36 +17,37 @@ import 'package:ft/ft.dart' as ft;
 
 /*
  * Global Variable
+ * [Addr cell, Value cell]
  */
-final Map<Register, Html.TableCellElement> _cells = _initTable();
+final Map<ORegister, List<Html.TableCellElement>> _cells = _initTable();
 
 /*
  * Internal Methods
  */
-Map<Register, Html.TableCellElement> _initTable()
+Map<ORegister, List<Html.TableCellElement>> _initTable()
 {
-  final Html.Element body = Html.querySelector("#debColRegisters");
+  final Html.Element body = Html.querySelector("#debColOtherRegisters");
   assert(body != null, 'Could not find element in DOM');
   final Html.TableElement table = body.children?.first;
   assert(table != null, 'Could not table in element');
   final it = new ft.DoubleIterable(
-      ft.iterEnumData(Register, Register.values),
+      ft.iterEnumData(ORegister, ORegister.values),
       ft.iterTableRows(table, 1));
   var m = {};
 
   it.forEach((Map m2, List<Html.TableCellElement> cells){
-    assert(cells.length == 2, 'Unexpected list length');
+    assert(cells.length == 3, 'Unexpected list length');
     cells[0].text = m2['string'];
-    m[m2['value']] = cells[1];
+    m[m2['value']] = <Html.TableCellElement>[cells[1], cells[2]];
   });
-  return new Map<Register, Html.TableCellElement>.unmodifiable(m);
+  return new Map<ORegister, List<Html.TableCellElement>>.unmodifiable(m);
 }
 
-void _onRegInfo(Map<Register, int> map) {
-  print('debugger/registers:\_onRegInfo($map)');
-  map.forEach((reg, v) {
+void _onORegInfo(Map<ORegister, int> map) {
+  print('debugger/other_registers:\_onORegInfo($map)');
+  map.forEach((ORegister oreg, int v) {
     /* Enums need to be REinstanciated after a SendPort */
-    _cells[Register.values[reg.index]]
+    _cells[ORegister.values[oreg.index]][1]
       .text = v.toRadixString(16).toUpperCase();
   });
 }
@@ -56,7 +57,7 @@ void _onRegInfo(Map<Register, int> map) {
  */
 void init(Emu.Emulator emu) {
   _cells.toString(); /* Tips to instanciate _cells */
-  print('debugger/registers:\tinit()');
-  emu.listener('RegInfo').listen(_onRegInfo);
+  print('debugger/other_registers:\tinit()');
+  emu.listener('ORegInfo').listen(_onORegInfo);
   return ;
 }

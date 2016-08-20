@@ -12,6 +12,6 @@ dependencies:
 transformers:
 - $dart2js:
     checked: true
-    commandLineOptions: [--enable-diagnostic-colors, --show-package-warnings]
+    commandLineOptions: [--enable-diagnostic-colors, --show-package-warnings, --assert-message]
     # analyze-all: true
     # minify: true

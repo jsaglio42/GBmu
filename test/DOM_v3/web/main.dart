@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 13:54:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 15:50:03 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,6 +16,8 @@ import 'package:emulator/emulator.dart' as Emu;
 import 'package:emulator/emulator_conf.dart';
 import 'package:ft/ft.dart' as ft;
 import './debugger/registers.dart' as DebRegisters;
+import './debugger/video_registers.dart' as DebVRegisters;
+import './debugger/other_registers.dart' as DebORegisters;
 
 run() async
 {
@@ -63,6 +65,8 @@ run() async
   });
 
   DebRegisters.init(emu);
+  DebVRegisters.init(emu);
+  DebORegisters.init(emu);
   print('main:\tinit phase done');
 }
 

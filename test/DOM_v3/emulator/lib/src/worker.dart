@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/17 17:55:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 15:51:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -40,6 +40,43 @@ class Worker {
       Register.DE: rng.nextInt(256 * 256),
       Register.HL: rng.nextInt(256 * 256),
       Register.SP: rng.nextInt(256 * 256),
+    });
+    _ports.send('VRegInfo', <VRegister, int>{
+      VRegister.LCDC: rng.nextInt(256 * 256),
+      VRegister.STAT: rng.nextInt(256 * 256),
+      VRegister.SCY: rng.nextInt(256 * 256),
+      VRegister.SCX: rng.nextInt(256 * 256),
+      VRegister.LY: rng.nextInt(256 * 256),
+      VRegister.LYC: rng.nextInt(256 * 256),
+      VRegister.DMA: rng.nextInt(256 * 256),
+      VRegister.BGP: rng.nextInt(256 * 256),
+      VRegister.OBP0: rng.nextInt(256 * 256),
+      VRegister.OBP1: rng.nextInt(256 * 256),
+      VRegister.WY: rng.nextInt(256 * 256),
+      VRegister.WX: rng.nextInt(256 * 256),
+      VRegister.BCPS: rng.nextInt(256 * 256),
+      VRegister.BCPD: rng.nextInt(256 * 256),
+      VRegister.OCPS: rng.nextInt(256 * 256),
+      VRegister.OCPD: rng.nextInt(256 * 256),
+    });
+    _ports.send('ORegInfo', <ORegister, int>{
+      ORegister.P1: rng.nextInt(256 * 256),
+      ORegister.SB: rng.nextInt(256 * 256),
+      ORegister.SC: rng.nextInt(256 * 256),
+      ORegister.DIV: rng.nextInt(256 * 256),
+      ORegister.TIMA: rng.nextInt(256 * 256),
+      ORegister.TMA: rng.nextInt(256 * 256),
+      ORegister.TAC: rng.nextInt(256 * 256),
+      ORegister.KEY1: rng.nextInt(256 * 256),
+      ORegister.VBK: rng.nextInt(256 * 256),
+      ORegister.HDMA1: rng.nextInt(256 * 256),
+      ORegister.HDMA2: rng.nextInt(256 * 256),
+      ORegister.HDMA3: rng.nextInt(256 * 256),
+      ORegister.HDMA4: rng.nextInt(256 * 256),
+      ORegister.HDMA5: rng.nextInt(256 * 256),
+      ORegister.SVBK: rng.nextInt(256 * 256),
+      ORegister.IF: rng.nextInt(256 * 256),
+      ORegister.IE: rng.nextInt(256 * 256),
     });
     return ;
   }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 13:00:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 15:51:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,14 +23,16 @@ import './conf.dart';
  */
 final _mainReceivers = <String, Type>{
   'RegInfo': <Register, int>{}.runtimeType,
+  'VRegInfo': <VRegister, int>{}.runtimeType,
+  'ORegInfo': <ORegister, int>{}.runtimeType,
   'Timings': <String, double>{}.runtimeType,
   'DebStatusUpdate': DebStatus,
 };
 
 final _workerReceivers = <String, Type>{
   'DebStatusRequest': DebStatusRequest,
-  'EmulationStart': int,
-  'EmulationMode': String,
+  'EmulationStart': int, //debug
+  'EmulationMode': String, //debug
 };
 
 /*
