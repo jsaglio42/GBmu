@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 13:05:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 14:34:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,7 @@ import 'dart:html' as Html;
 import 'dart:async' as As;
 import 'package:emulator/emulator.dart' as Emu;
 import 'package:emulator/emulator_conf.dart';
+import 'package:ft/ft.dart' as ft;
 
 /*
  * Global Variable
@@ -23,49 +24,23 @@ final Map<Register, Html.Element> _cells = _initTable();
 /*
  * Internal Methods
  */
-class IterData {
-  IterData(this.r, this.name, this.lhs, this.rhs);
-  final Register r;
-  final String name;
-  final Html.TableCellElement lhs;
-  final Html.TableCellElement rhs;
-}
 
-Iterable<IterData> _iterTableRows() sync* {
-  const String prefix = "Register.";
+Map<Register, Html.Element> _initTable()
+{
   final Html.Element body = Html.querySelector("#debColRegisters");
   assert(body != null);
   final Html.TableElement table = body.children?.first;
   assert(table != null);
-  final List<Html.TableRowElement> rows = table.rows;
-  assert(rows != null);
-
-  Html.TableRowElement row = null;
-  List<Html.TableCellElement> cells = null;
-  String regName = null;
-  int i = 1;
-
-  for (Register r in Register.values) {
-    regName = r.toString().substring(prefix.length);
-    row = rows[i];
-    assert(row != null);
-    cells = row.cells;
-    assert(cells != null);
-    assert(cells.length == 2);
-    yield new IterData(r, regName, cells[0], cells[1]);
-    i++;
-  }
-  return ;
-}
-
-Map<Register, Html.Element> _initTable()
-{
+  final ft.DoubleIterable it = new ft.DoubleIterable(
+      ft.iterEnumData(Register, Register.values),
+      ft.iterTableRows(table, 1));
   var m = {};
 
-  for (IterData data in _iterTableRows()) {
-    data.lhs.text = data.name;
-    m[data.r] = data.rhs;
-  }
+  it.forEach((Map m2, List<Html.TableCellElement> cells){
+    assert(cells.length == 2);
+    cells[0].text = m2['string'];
+    m[m2['value']] = cells[1];
+  });
   return new Map<Register, Html.Element>.unmodifiable(m);
 }
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 13:07:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 13:54:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,6 @@ import './debugger/registers.dart' as DebRegisters;
 run() async
 {
   print('main:\tHello World');
-  ft.test();
 
   var magbut = Html.querySelector('#magbut');
 
