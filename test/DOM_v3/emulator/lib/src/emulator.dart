@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/17 17:25:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 13:00:20 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,13 +21,13 @@ import './conf.dart';
  * Ports configuration ****************************************************** **
  * ************************************************************************** **
  */
-final mainReceivers = <String, Type>{
+final _mainReceivers = <String, Type>{
   'RegInfo': <Register, int>{}.runtimeType,
   'Timings': <String, double>{}.runtimeType,
   'DebStatusUpdate': DebStatus,
 };
 
-final workerReceivers = <String, Type>{
+final _workerReceivers = <String, Type>{
   'DebStatusRequest': DebStatusRequest,
   'EmulationStart': int,
   'EmulationMode': String,
@@ -57,7 +57,7 @@ As.Future<Emulator> create() async {
   print('emulator:\tcreate()');
 
   //Todo: listen isolate errors
-  final fin = WI.spawn(W.entryPoint, mainReceivers, workerReceivers)
+  final fin = WI.spawn(W.entryPoint, _mainReceivers, _workerReceivers)
   ..catchError((e) {
         print('emulator:\tError while spawning wired_isolate:\n$e');
       });

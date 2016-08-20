@@ -1,0 +1,9 @@
+name: emulator
+description: GBmu emulator running on an Isolate
+version: 0.0.1
+environment:
+  sdk: '>=1.13.0 <2.0.0'
+transformers:
+- $dart2js:
+    checked: true
+    commandLineOptions: [--enable-diagnostic-colors]

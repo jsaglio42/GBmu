@@ -6,19 +6,21 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/17 17:51:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 13:07:11 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
 import 'dart:js' as Js;
-import './emulator/emulator.dart' as Emu;
+import 'package:emulator/emulator.dart' as Emu;
+import 'package:emulator/emulator_conf.dart';
+import 'package:ft/ft.dart' as ft;
 import './debugger/registers.dart' as DebRegisters;
-import './emulator/conf.dart';
 
 run() async
 {
   print('main:\tHello World');
+  ft.test();
 
   var magbut = Html.querySelector('#magbut');
 

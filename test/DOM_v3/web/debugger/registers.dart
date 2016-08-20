@@ -6,14 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/17 18:16:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 13:05:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
 import 'dart:async' as As;
-import '../emulator/emulator.dart' as Emu;
-import '../emulator/conf.dart';
+import 'package:emulator/emulator.dart' as Emu;
+import 'package:emulator/emulator_conf.dart';
 
 /*
  * Global Variable
