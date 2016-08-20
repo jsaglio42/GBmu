@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 15:48:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 15:49:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 16:20:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,11 +45,18 @@ Map<ORegister, List<Html.TableCellElement>> _initTable()
 
 void _onORegInfo(Map<ORegister, int> map) {
   print('debugger/other_registers:\_onORegInfo($map)');
+  _cells.forEach((ORegister oreg, List<Html.TableCellElement> lst){
+    if (!map.containsKey(oreg))
+      lst[1]
+        ..style.color = 'black';
+    });
   map.forEach((ORegister oreg, int v) {
     /* Enums need to be REinstanciated after a SendPort */
     _cells[ORegister.values[oreg.index]][1]
-      .text = v.toRadixString(16).toUpperCase();
+      ..text = v.toRadixString(16).toUpperCase()
+      ..style.color = 'blue';
   });
+  return ;
 }
 
 /*

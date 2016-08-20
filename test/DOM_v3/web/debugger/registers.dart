@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 15:45:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 16:21:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -44,10 +44,16 @@ Map<Register, Html.TableCellElement> _initTable()
 
 void _onRegInfo(Map<Register, int> map) {
   print('debugger/registers:\_onRegInfo($map)');
+  _cells.forEach((Register reg, Html.TableCellElement elt){
+    if (!map.containsKey(reg))
+      elt
+        ..style.color = 'black';
+    });
   map.forEach((reg, v) {
     /* Enums need to be REinstanciated after a SendPort */
     _cells[Register.values[reg.index]]
-      .text = v.toRadixString(16).toUpperCase();
+      ..text = v.toRadixString(16).toUpperCase()
+      ..style.color = 'blue';
   });
 }
 

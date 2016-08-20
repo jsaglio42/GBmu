@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 15:51:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 16:09:58 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,6 +16,21 @@ import 'dart:math' as Math;
 import './wired_isolate.dart' as WI;
 import './emulator.dart' as Em;
 import './conf.dart';
+
+var rng = new Math.Random();
+
+Map _generateRandomMapFromIterable(Iterable l, int value_range)
+{
+  final size = rng.nextInt(l.length);
+  final m = {};
+  var v;
+
+  for (int i = 0; i < size; i++) {
+    v = l.elementAt(rng.nextInt(l.length));
+    m[v] = rng.nextInt(value_range);
+  }
+  return m;
+}
 
 class Worker {
 
@@ -30,55 +45,16 @@ class Worker {
 
   void _onEmulationStart(int p)
   {
-    var rng = new Math.Random();
+    // var rng = new Math.Random();
 
     print('worker:\tonEmulationStart($p)');
-    _ports.send('RegInfo', <Register, int>{
-      Register.PC: rng.nextInt(256 * 256),
-      Register.AF: rng.nextInt(256 * 256),
-      Register.BC: rng.nextInt(256 * 256),
-      Register.DE: rng.nextInt(256 * 256),
-      Register.HL: rng.nextInt(256 * 256),
-      Register.SP: rng.nextInt(256 * 256),
-    });
-    _ports.send('VRegInfo', <VRegister, int>{
-      VRegister.LCDC: rng.nextInt(256 * 256),
-      VRegister.STAT: rng.nextInt(256 * 256),
-      VRegister.SCY: rng.nextInt(256 * 256),
-      VRegister.SCX: rng.nextInt(256 * 256),
-      VRegister.LY: rng.nextInt(256 * 256),
-      VRegister.LYC: rng.nextInt(256 * 256),
-      VRegister.DMA: rng.nextInt(256 * 256),
-      VRegister.BGP: rng.nextInt(256 * 256),
-      VRegister.OBP0: rng.nextInt(256 * 256),
-      VRegister.OBP1: rng.nextInt(256 * 256),
-      VRegister.WY: rng.nextInt(256 * 256),
-      VRegister.WX: rng.nextInt(256 * 256),
-      VRegister.BCPS: rng.nextInt(256 * 256),
-      VRegister.BCPD: rng.nextInt(256 * 256),
-      VRegister.OCPS: rng.nextInt(256 * 256),
-      VRegister.OCPD: rng.nextInt(256 * 256),
-    });
-    _ports.send('ORegInfo', <ORegister, int>{
-      ORegister.P1: rng.nextInt(256 * 256),
-      ORegister.SB: rng.nextInt(256 * 256),
-      ORegister.SC: rng.nextInt(256 * 256),
-      ORegister.DIV: rng.nextInt(256 * 256),
-      ORegister.TIMA: rng.nextInt(256 * 256),
-      ORegister.TMA: rng.nextInt(256 * 256),
-      ORegister.TAC: rng.nextInt(256 * 256),
-      ORegister.KEY1: rng.nextInt(256 * 256),
-      ORegister.VBK: rng.nextInt(256 * 256),
-      ORegister.HDMA1: rng.nextInt(256 * 256),
-      ORegister.HDMA2: rng.nextInt(256 * 256),
-      ORegister.HDMA3: rng.nextInt(256 * 256),
-      ORegister.HDMA4: rng.nextInt(256 * 256),
-      ORegister.HDMA5: rng.nextInt(256 * 256),
-      ORegister.SVBK: rng.nextInt(256 * 256),
-      ORegister.IF: rng.nextInt(256 * 256),
-      ORegister.IE: rng.nextInt(256 * 256),
-    });
-    return ;
+    _ports.send('RegInfo', new Map<Register, int>.from(
+            _generateRandomMapFromIterable(Register.values, 256 * 256)));
+    _ports.send('VRegInfo', new Map<VRegister, int>.from(
+            _generateRandomMapFromIterable(VRegister.values, 256)));
+    _ports.send('ORegInfo', new Map<ORegister, int>.from(
+            _generateRandomMapFromIterable(ORegister.values, 256)));
+      return ;
   }
 
   void _onEmulationMode(String p)

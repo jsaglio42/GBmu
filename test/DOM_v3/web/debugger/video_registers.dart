@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 15:06:36 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 15:45:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/20 16:20:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,11 +45,18 @@ Map<VRegister, List<Html.TableCellElement>> _initTable()
 
 void _onVRegInfo(Map<VRegister, int> map) {
   print('debugger/video_registers:\_onVRegInfo($map)');
+  _cells.forEach((VRegister vreg, List<Html.TableCellElement> lst){
+    if (!map.containsKey(vreg))
+      lst[1]
+        ..style.color = 'black';
+    });
   map.forEach((VRegister vreg, int v) {
     /* Enums need to be REinstanciated after a SendPort */
     _cells[VRegister.values[vreg.index]][1]
-      .text = v.toRadixString(16).toUpperCase();
+      ..text = v.toRadixString(16).toUpperCase()
+      ..style.color = 'blue';
   });
+  return ;
 }
 
 /*
