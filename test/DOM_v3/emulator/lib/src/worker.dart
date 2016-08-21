@@ -6,14 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 16:09:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/21 15:39:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:math' as Math;
 // import 'dart:isolate' as Is;
 // import 'dart:async' as As;
-import './wired_isolate.dart' as WI;
+import 'package:ft/wired_isolate.dart' as WI;
 import './emulator.dart' as Em;
 import './conf.dart';
 

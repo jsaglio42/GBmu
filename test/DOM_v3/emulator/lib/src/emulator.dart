@@ -6,13 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 15:51:47 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/21 16:00:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:async' as As;
 import 'dart:isolate' as Is;
-import './wired_isolate.dart' as WI;
+import 'package:ft/wired_isolate.dart' as WI;
 import './worker.dart' as W;
 import './conf.dart';
 
@@ -64,6 +64,7 @@ As.Future<Emulator> create() async {
         print('emulator:\tError while spawning wired_isolate:\n$e');
       });
   final data = await fin;
+  data.i.resume(data.resumeCapability);
 
   return new Emulator(data.i, data.p);
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/15 10:47:48 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/15 16:25:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/21 16:00:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -74,7 +74,7 @@ class Ports {
  * ************************************************************************** **
  * Is there any simpler way ?
 */
-Map<String, Is.ReceivePort> rPortsOfTypes(Map<String, Type> t)
+Map<String, Is.ReceivePort> _rPortsOfTypes(Map<String, Type> t)
 {
   var m = new Map<String, Is.ReceivePort>();
 
@@ -84,7 +84,7 @@ Map<String, Is.ReceivePort> rPortsOfTypes(Map<String, Type> t)
   return m;
 }
 
-Map<String, Is.SendPort> sPortsOfRPorts(Map<String, Is.ReceivePort> rp)
+Map<String, Is.SendPort> _sPortsOfRPorts(Map<String, Is.ReceivePort> rp)
 {
   var m = new Map<String, Is.SendPort>();
 
@@ -94,7 +94,7 @@ Map<String, Is.SendPort> sPortsOfRPorts(Map<String, Is.ReceivePort> rp)
   return m;
 }
 
-Map<String, As.Stream> streamsOfRPorts(Map<String, Is.ReceivePort> rp)
+Map<String, As.Stream> _streamsOfRPorts(Map<String, Is.ReceivePort> rp)
 {
   var m = new Map<String, As.Stream>();
 
@@ -107,30 +107,32 @@ Map<String, As.Stream> streamsOfRPorts(Map<String, Is.ReceivePort> rp)
 
 /*
  * ************************************************************************** **
- * Isolate entry point and it's parameter of type `WorkerSpawnData` ********* **
+ * Isolate entry point and it's parameter of type `_WorkerSpawnData` ********* **
  * ************************************************************************** **
  */
 typedef void entryPointType(Ports);
-class WorkerSpawnData {
-  WorkerSpawnData(this.sPortsMain, this.tmpSPort, this.entryPoint,
-      this.mainRTypes, this.workerRTypes);
+class _WorkerSpawnData {
+  _WorkerSpawnData(this.sPortsMain, this.tmpSPort, this.entryPoint,
+      this.mainRTypes, this.workerRTypes, this.resumeCapability);
 
   final Map<String, Is.SendPort> sPortsMain;
   final Is.SendPort tmpSPort;
   final entryPointType entryPoint;
   final Map<String, Type> mainRTypes;
   final Map<String, Type> workerRTypes;
+  final Is.Capability resumeCapability;
 }
 
-void workerSpawn(WorkerSpawnData d)
+void _workerSpawn(_WorkerSpawnData d)
 {
-  print('wired_isolate:\tworkerSpawn()');
+  print('wired_isolate:\t_workerSpawn()');
 
-  final Map<String, Is.ReceivePort> rPortsWorker = rPortsOfTypes(
+  final Map<String, Is.ReceivePort> rPortsWorker = _rPortsOfTypes(
       d.workerRTypes);
   final p = new Ports(
-      streamsOfRPorts(rPortsWorker), d.sPortsMain, d.mainRTypes);
-  d.tmpSPort.send(sPortsOfRPorts(rPortsWorker));
+      _streamsOfRPorts(rPortsWorker), d.sPortsMain, d.mainRTypes);
+  d.tmpSPort.send(_sPortsOfRPorts(rPortsWorker));
+  Is.Isolate.current.pause(d.resumeCapability);
   d.entryPoint(p);
   return ;
 }
@@ -142,9 +144,10 @@ void workerSpawn(WorkerSpawnData d)
  * ************************************************************************** **
  */
 class Data {
-  Data(this.i, this.p);
+  Data(this.i, this.resumeCapability, this.p);
 
   final Is.Isolate i;
+  final Is.Capability resumeCapability;
   final Ports p;
 }
 
@@ -153,16 +156,17 @@ As.Future<Data> spawn(void entryPoint(Ports), Map<String, Type> mainRTypes,
 {
   print('wired_isolate:\tspawn()');
 
-  final Map<String, Is.ReceivePort> rPortsMain = rPortsOfTypes(mainRTypes);
+  final Map<String, Is.ReceivePort> rPortsMain = _rPortsOfTypes(mainRTypes);
 
   final Is.ReceivePort tmpRPort = new Is.ReceivePort();
-  final spawnData = new WorkerSpawnData(
-      sPortsOfRPorts(rPortsMain), tmpRPort.sendPort, entryPoint,
-      mainRTypes, workerRTypes);
-  final Is.Isolate iso = await Is.Isolate.spawn(workerSpawn, spawnData);
+  final Is.Capability resumeCapability = new Is.Capability();
+  final spawnData = new _WorkerSpawnData(
+      _sPortsOfRPorts(rPortsMain), tmpRPort.sendPort, entryPoint,
+      mainRTypes, workerRTypes, resumeCapability);
+  final Is.Isolate iso = await Is.Isolate.spawn(_workerSpawn, spawnData);
   final Map<String, Is.SendPort> sPortsWorker = await tmpRPort.first;
   final p = new Ports(
-      streamsOfRPorts(rPortsMain), sPortsWorker, workerRTypes);
+      _streamsOfRPorts(rPortsMain), sPortsWorker, workerRTypes);
 
-  return new Data(iso, p);
+  return new Data(iso, resumeCapability, p);
 }

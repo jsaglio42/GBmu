@@ -1,15 +1,13 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   ft.dart                                            :+:      :+:    :+:   //
+//   wired_isolate.dart                                 :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/20 12:35:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/21 15:42:28 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/21 15:34:48 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/21 15:42:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-export 'src/enum.dart';
-export 'src/html.dart';
-export 'src/iter.dart';
+export 'src/wired_isolate.dart';
