@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 11:38:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 11:47:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -46,11 +46,7 @@ class Worker {
 
   void _onEmulationStart(int p)
   {
-    // var rng = new math.Random();
-
     print('worker:\tonEmulationStart($p)');
-    // _ports.send('RegInfo', new Map<Register, int>.from(
-    //         _generateRandomMapFromIterable(Register.values, 256 * 256)));
 
     _generateRandomMapFromIterable(Reg16.values, 256 * 256)
       .forEach((Reg16 k, int v){

@@ -1,4 +1,4 @@
-// ************************************************************************** //
+// ******************************************************************** 1****** //
 //                                                                            //
 //                                                        :::      ::::::::   //
 //   video_registers.dart                               :+:      :+:    :+:   //
@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 15:06:36 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 11:30:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 13:40:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -34,7 +34,7 @@ Map<VRegister, List<Html.TableCellElement>> _initTable()
   assert(table != null, 'Could not table in element');
   final it = new ft.DoubleIterable(
       ft.iterEnumData(VRegister, VRegister.values),
-      ft.iterTableRows(table, 1));
+      ft.iterTableRows(table).skip(1));
   var m = {};
 
   it.forEach((Map m2, List<Html.TableCellElement> cells){

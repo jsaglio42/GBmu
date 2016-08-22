@@ -8,6 +8,6 @@ environment:
 transformers:
 - $dart2js:
     checked: true
-    commandLineOptions: [--enable-diagnostic-colors]
+    commandLineOptions: [--enable-diagnostic-colors, --show-package-warnings, --assert-message]
     # analyze-all: true
     # minify: true

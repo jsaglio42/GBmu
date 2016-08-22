@@ -6,13 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 14:10:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 14:32:38 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 13:55:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 class DoubleIterable<T, U> {
   DoubleIterable(this._ita, this._itb) {
-    assert(_ita.length == _itb.length);
+    assert(_ita.length == _itb.length,
+        "ft.iter.DoubleIterable different lengths");
   }
   final Iterable<T> _ita;
   final Iterable<U> _itb;
