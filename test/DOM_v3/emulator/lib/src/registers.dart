@@ -16,7 +16,8 @@ enum Reg16 {
   AF, BC, DE, HL, SP, PC
 }
 enum Reg8 {
-  A, C, B, E, D, L, H,
+  F, A, C, B, E, D, L, H,
+  // A, C, B, E, D, L, H,
 }
 enum Reg1 {
   cy, n, h, zf
@@ -53,14 +54,16 @@ class RegisterBank {
   int value16(Reg16 r) =>
     this._view16[r.index];
   int value8(Reg8 r) =>
-    this._data[r.index + 1];
+    // this._data[r.index + 1];
+    this._data[r.index];
   bool value1(Reg1 r) =>
     (this._data[0] >> (r.index + 4) & 1) == 1;
   void update16(Reg16 r, int value) {
     this._view16[r.index] = value;
   }
   void update8(Reg8 r, int value) {
-    this._data[r.index + 1] = value;
+    // this._data[r.index + 1] = value;
+    this._data[r.index] = value;
   }
   void update1(Reg1 r, bool value) {
     final mask = 1 << (4 + r.index);

@@ -26,10 +26,8 @@ run() async
 
   var magbut = Html.querySelector('#magbut');
 
-  var emuFut = Emu.create()
-  ..catchError((e) {
-        print('main:\tError while creating emulator:\n$e');
-      });
+  var emuFut = Emu.spawn()
+    .catchError((e) => print('main:\tError while creating emulator:\n$e'));
 
   var emu = await emuFut;
 
@@ -41,7 +39,7 @@ run() async
       });
 
   var debStatusOn = Html.querySelector('#debStatusOn');
-  var debStatusOff = Html.querySelector('#debStatusOff');
+  var debStatusOff = Html.querySelector('#debStatusOff'); 
   var debButtonToggle = Html.querySelector('#debButtonToggle');
   var debBody = Js.context.callMethod(r'$', ['#debBody']);
 
@@ -79,8 +77,5 @@ run() async
 
 main()
 {
-  run()
-    ..catchError((e) {
-          print('main:\tError:\n$e');
-        });
+  run().catchError((e) => print('main:\tError:\n$e'));
 }

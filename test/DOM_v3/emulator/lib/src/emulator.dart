@@ -26,6 +26,10 @@ import './public_classes.dart';
  *   it's callback function.
  */
 
+// final Type VRegisterMap = <VRegister, int>{}.runtimeType;
+// final Type ORegisterMap = <ORegister, int>{}.runtimeType;
+// final Type TimingMap    = <String, double>{}.runtimeType;
+
 final _mainReceivers = <String, Type>{
   'RegInfo': RegisterBank,
   'MemRegInfo': <int>[].runtimeType,
@@ -34,9 +38,9 @@ final _mainReceivers = <String, Type>{
 };
 
 final _workerReceivers = <String, Type>{
-  'DebStatusRequest': DebStatusRequest,
-  'EmulationStart': int, //debug
-  'EmulationMode': String, //debug
+  'DebStatusRequest'  : DebStatusRequest,
+  'EmulationStart'    : int,    //debug
+  'EmulationMode'     : String, //debug
 };
 
 /*
@@ -47,29 +51,21 @@ final _workerReceivers = <String, Type>{
 
 class Emulator {
 
-  Emulator(Is.Isolate iso, WI.Ports p)
-    : _iso = iso
-    , _ports = p
-  {
-  }
+  final WI.WiredIsolate    _wi;
 
-  final Is.Isolate _iso;
-  final WI.Ports _ports;
+  Emulator(WI.WiredIsolate wi) : _wi = wi;
+  
+  void      send(String msgType, var data)  => _wi.p.send(msgType, data);
+  As.Stream listener(String msgType)        => _wi.p.listener(msgType);
 
-  void send(String n, var p) => _ports.send(n, p);
-  As.Stream listener(String n) => _ports.listener(n);
 }
 
-As.Future<Emulator> create() async {
-  print('emulator:\tcreate()');
+As.Future<Emulator> spawn()
+async {
+  print('emulator:\tspawn()');
 
   //Todo: listen isolate errors
-  final future = WI.spawn(W.entryPoint, _mainReceivers, _workerReceivers)
-    ..catchError((e) {
-        print('emulator:\tError while spawning wired_isolate:\n$e');
-      });
-  final wi = await future;
+  final wi = await WI.spawn(W.entryPoint, _mainReceivers, _workerReceivers);
   wi.i.resume(wi.resumeCapability);
-
-  return new Emulator(wi.i, wi.p);
+  return new Emulator(wi);
 }

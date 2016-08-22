@@ -24,13 +24,14 @@ import 'dart:isolate' as Is;
 class Ports
 {
 
-  final Map<String, As.Stream> _listeners;
-  final Map<String, Is.SendPort> _notifiers;
-  final Map<String, Type> _notifiersTypes;
+  final Map<String, As.Stream>    _listeners;
+  final Map<String, Is.SendPort>  _notifiers;
+  final Map<String, Type>         _notifiersTypes;
 
   Ports(this._listeners, this._notifiers, this._notifiersTypes);
 
-  bool _isValidListenerGet(String n) {
+  bool _isValidListenerGet(String n)
+  {
     if (_listeners[n] == null) {
       print('wired_isolate:\tPorts.listener($n) $n not found');
       return false;
@@ -57,14 +58,14 @@ class Ports
       return true;
   }
 
-  As.Stream listener(String n) {
-    assert(_isValidListenerGet(n));
-    return _listeners[n];
+  As.Stream listener(String typeid) {
+    assert(_isValidListenerGet(typeid));
+    return _listeners[typeid];
   }
 
-  void send(String n, var p) {
-    assert(_isValidSendCall(n, p));
-    _notifiers[n].send(p);
+  void send(String typeid, var data) {
+    assert(_isValidSendCall(typeid, data));
+    _notifiers[typeid].send(data);
     return ;
   }
 }
@@ -152,6 +153,7 @@ class WiredIsolate {
   final Is.Isolate i;
   final Is.Capability resumeCapability;
   final Ports p;
+
 }
 
 As.Future<WiredIsolate> spawn(void entryPoint(Ports),

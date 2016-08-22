@@ -32,18 +32,42 @@ Map _generateRandomMapFromIterable(Iterable l, int value_range)
   return m;
 }
 
+/*
+ * ************************************************************************** **
+ * Worker Class
+ * ************************************************************************** **
+ */
+
 class Worker {
 
+  final WI.Ports      _ports;
+  final RegisterBank  _rb = new RegisterBank();
+  final List<int>     _tmpMemRegisters =
+    new List<int>.filled(MemReg.values.length, 0, growable:false);
+
+  DebStatus         _debuggerStatus = DebStatus.ON;
+  
   Worker(this._ports)
   {
     _ports.listener('EmulationStart').listen(_onEmulationStart);
     _ports.listener('EmulationMode').listen(_onEmulationMode);
     _ports.listener('DebStatusRequest').listen(_onDebuggerStanteChange);
   }
-  final WI.Ports _ports;
-  DebStatus _debuggerStatus = DebStatus.ON;
-  RegisterBank rb = new RegisterBank();
-  List<int> tmpMemRegisters = new List<int>.filled(MemReg.values.length, 0, growable:false);
+
+  void _disableDebugger()
+  {
+    _debuggerStatus = DebStatus.OFF;
+    _ports.send('DebStatusUpdate', _debuggerStatus);
+  }
+  void _enableDebugger()
+  {
+    _debuggerStatus = DebStatus.ON;
+    _ports.send('DebStatusUpdate', _debuggerStatus);
+  }
+
+ // *********************************************** **
+ // Callback functions
+ // *********************************************** **
 
   void _onEmulationStart(int p)
   {
@@ -51,15 +75,15 @@ class Worker {
 
     _generateRandomMapFromIterable(Reg16.values, 256 * 256)
       .forEach((Reg16 k, int v){
-        rb.update16(k, v);
+        _rb.update16(k, v);
       });
-    _ports.send('RegInfo', rb);
+    _ports.send('RegInfo', _rb);
 
     _generateRandomMapFromIterable(MemReg.values, 256)
       .forEach((MemReg k, int v){
-        tmpMemRegisters[k.index] = v;
+        _tmpMemRegisters[k.index] = v;
       });
-    _ports.send('MemRegInfo', tmpMemRegisters);
+    _ports.send('MemRegInfo', _tmpMemRegisters);
     return ;
   }
 
@@ -91,17 +115,13 @@ class Worker {
     return ;
   }
 
-  void _disableDebugger()
-  {
-    _debuggerStatus = DebStatus.OFF;
-    _ports.send('DebStatusUpdate', _debuggerStatus);
-  }
-  void _enableDebugger()
-  {
-    _debuggerStatus = DebStatus.ON;
-    _ports.send('DebStatusUpdate', _debuggerStatus);
-  }
 }
+
+/*
+ * ************************************************************************** **
+ * Entry Point
+ * ************************************************************************** **
+ */
 
 Worker _globalWorker;
 
