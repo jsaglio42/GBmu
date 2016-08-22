@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 11:27:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 11:27:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 17:34:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,16 +15,7 @@
  */
 
 export 'registers.dart';
-
-enum VRegister {
-  LCDC, STAT, SCY, SCX, LY, LYC, DMA, BGP,
-  OBP0, OBP1, WY, WX, BCPS, BCPD, OCPS, OCPD,
-}
-
-enum ORegister {
-  P1, SB, SC, DIV, TIMA, TMA, TAC, KEY1, VBK,
-  HDMA1, HDMA2, HDMA3, HDMA4, HDMA5, SVBK, IF, IE,
-}
+export 'mem_registers.dart';
 
 enum DebStatus {
   ON, OFF

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 11:47:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 17:53:58 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,6 +43,7 @@ class Worker {
   final WI.Ports _ports;
   DebStatus _debuggerStatus = DebStatus.ON;
   RegisterBank rb = new RegisterBank();
+  List<int> tmpMemRegisters = new List<int>.filled(MemReg.values.length, 0, growable:false);
 
   void _onEmulationStart(int p)
   {
@@ -54,11 +55,12 @@ class Worker {
       });
     _ports.send('RegInfo', rb);
 
-    _ports.send('VRegInfo', new Map<VRegister, int>.from(
-            _generateRandomMapFromIterable(VRegister.values, 256)));
-    _ports.send('ORegInfo', new Map<ORegister, int>.from(
-            _generateRandomMapFromIterable(ORegister.values, 256)));
-      return ;
+    _generateRandomMapFromIterable(MemReg.values, 256)
+      .forEach((MemReg k, int v){
+        tmpMemRegisters[k.index] = v;
+      });
+    _ports.send('MemRegInfo', tmpMemRegisters);
+    return ;
   }
 
   void _onEmulationMode(String p)

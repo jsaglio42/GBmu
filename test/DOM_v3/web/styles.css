@@ -49,6 +49,13 @@ body {
     padding: 5px;
 }
 
+.debLabelCgb {
+    margin-left: 2px;
+}
+.tooltip-inner {
+    white-space:pre;
+    max-width:none;
+}
 #magbut {
     /* padding: 15px; */
     background-color: #FF5A5F;

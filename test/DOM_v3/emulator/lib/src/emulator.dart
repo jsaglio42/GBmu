@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 11:38:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 17:42:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,10 +27,8 @@ import './public_classes.dart';
  */
 
 final _mainReceivers = <String, Type>{
-  // 'RegInfo': (new RegisterBank()).runtimeType,
-    'RegInfo': RegisterBank,
-  'VRegInfo': <VRegister, int>{}.runtimeType,
-  'ORegInfo': <ORegister, int>{}.runtimeType,
+  'RegInfo': RegisterBank,
+  'MemRegInfo': <int>[].runtimeType,
   'Timings': <String, double>{}.runtimeType,
   'DebStatusUpdate': DebStatus,
 };

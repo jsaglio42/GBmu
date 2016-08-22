@@ -10,7 +10,7 @@
     <title>Starter Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -86,7 +86,7 @@
                   </span>
                 </div>
 
-                <div class="col-sm-7">
+                <div class="col-sm-8">
                   <div class="row">
                     <div class="col-sm-4" id="debColRegisters"></div>
                     <div class="col-sm-8" id="debColInstructionFlow"></div>
@@ -96,12 +96,7 @@
                   </div>
                 </div>
 
-                <div class="col-sm-5">
-                  <div class="row">
-                    <div id="debColVideoRegisters" class="col-sm-6"></div>
-                    <div id="debColOtherRegisters" class="col-sm-6"></div>
-                  </div>
-                </div>
+                <div class="col-sm-4" id="debColMemRegisters"></div>
 
                 <div class="row">
                   <div id="debColCartInfo" class="col-sm-6"></div>
@@ -126,12 +121,13 @@
 
     <!-- Js Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script>
      $(function(){
-       $("#debColOtherRegisters").load("debugger/other_registers.html");
-       $("#debColVideoRegisters").load("debugger/video_registers.html");
+       /* $("#debColOtherRegisters").load("debugger/other_registers.html");*/
+       /* $("#debColVideoRegisters").load("debugger/video_registers.html");*/
+       $("#debColMemRegisters").load("debugger/mem_registers.html");
        $("#debColCartInfo").load("debugger/cart_info.html");
        $("#debColMemoryExplorer").load("debugger/memory_explorer.html");
        $("#debColInstructionFlow").load("debugger/instruction_flow.html");

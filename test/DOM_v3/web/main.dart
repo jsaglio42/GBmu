@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 11:30:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 17:14:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,8 +16,9 @@ import 'package:emulator/emulator.dart' as Emu;
 import 'package:emulator/emulator_classes.dart';
 import 'package:ft/ft.dart' as ft;
 import './debugger/registers.dart' as DebRegisters;
-import './debugger/video_registers.dart' as DebVRegisters;
-import './debugger/other_registers.dart' as DebORegisters;
+// import './debugger/video_registers.dart' as DebVRegisters;
+// import './debugger/other_registers.dart' as DebORegisters;
+import './debugger/mem_registers.dart' as DebMRegisters;
 
 run() async
 {
@@ -64,9 +65,15 @@ run() async
     }
   });
 
+  print('main:\tinit debugger elements');
   DebRegisters.init(emu);
-  DebVRegisters.init(emu);
-  DebORegisters.init(emu);
+  DebMRegisters.init(emu);
+
+  print('main:\tinit jquery tooltips');
+  var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);
+  assert(req != null, "Jquery request failed");
+  req.callMethod('tooltip', []);
+
   print('main:\tinit phase done');
 }
 

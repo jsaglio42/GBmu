@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 14:31:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 17:00:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -136,8 +136,8 @@ void _onRegInfo(RegisterBank rb) {
  * Exposed Methods
  */
 void init(Emu.Emulator emu) {
-  _data.toString(); /* Tips to instanciate _data */
   print('debugger/registers:\tinit()');
+  _data.toString(); /* Tips to instanciate _data */
   emu.listener('RegInfo').listen(_onRegInfo);
   return ;
 }
