@@ -6,14 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 15:50:03 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 11:30:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
 import 'dart:js' as Js;
 import 'package:emulator/emulator.dart' as Emu;
-import 'package:emulator/emulator_conf.dart';
+import 'package:emulator/emulator_classes.dart';
 import 'package:ft/ft.dart' as ft;
 import './debugger/registers.dart' as DebRegisters;
 import './debugger/video_registers.dart' as DebVRegisters;

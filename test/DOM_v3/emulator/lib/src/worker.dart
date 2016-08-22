@@ -6,22 +6,22 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/21 15:39:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 11:38:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:math' as Math;
+import 'dart:math' as math;
 // import 'dart:isolate' as Is;
 // import 'dart:async' as As;
 import 'package:ft/wired_isolate.dart' as WI;
 import './emulator.dart' as Em;
-import './conf.dart';
+import './public_classes.dart';
 
-var rng = new Math.Random();
+var rng = new math.Random();
 
 Map _generateRandomMapFromIterable(Iterable l, int value_range)
 {
-  final size = rng.nextInt(l.length);
+  final size = math.max(1, rng.nextInt(l.length));
   final m = {};
   var v;
 
@@ -42,14 +42,22 @@ class Worker {
   }
   final WI.Ports _ports;
   DebStatus _debuggerStatus = DebStatus.ON;
+  RegisterBank rb = new RegisterBank();
 
   void _onEmulationStart(int p)
   {
-    // var rng = new Math.Random();
+    // var rng = new math.Random();
 
     print('worker:\tonEmulationStart($p)');
-    _ports.send('RegInfo', new Map<Register, int>.from(
-            _generateRandomMapFromIterable(Register.values, 256 * 256)));
+    // _ports.send('RegInfo', new Map<Register, int>.from(
+    //         _generateRandomMapFromIterable(Register.values, 256 * 256)));
+
+    _generateRandomMapFromIterable(Reg16.values, 256 * 256)
+      .forEach((Reg16 k, int v){
+        rb.update16(k, v);
+      });
+    _ports.send('RegInfo', rb);
+
     _ports.send('VRegInfo', new Map<VRegister, int>.from(
             _generateRandomMapFromIterable(VRegister.values, 256)));
     _ports.send('ORegInfo', new Map<ORegister, int>.from(

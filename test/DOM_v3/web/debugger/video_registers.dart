@@ -6,13 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 15:06:36 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 16:20:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 11:30:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
 import 'package:emulator/emulator.dart' as Emu;
-import 'package:emulator/emulator_conf.dart';
+import 'package:emulator/emulator_classes.dart';
 import 'package:ft/ft.dart' as ft;
 
 /*

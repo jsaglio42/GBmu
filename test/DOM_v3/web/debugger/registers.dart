@@ -6,31 +6,31 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/20 16:21:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 11:43:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
 import 'package:emulator/emulator.dart' as Emu;
-import 'package:emulator/emulator_conf.dart';
+import 'package:emulator/emulator_classes.dart';
 import 'package:ft/ft.dart' as ft;
 
 /*
  * Global Variable
  */
-final Map<Register, Html.TableCellElement> _cells = _initTable();
+final Map<Reg16, Html.TableCellElement> _cells = _initTable();
 
 /*
  * Internal Methods
  */
-Map<Register, Html.TableCellElement> _initTable()
+Map<Reg16, Html.TableCellElement> _initTable()
 {
   final Html.Element body = Html.querySelector("#debColRegisters");
   assert(body != null, 'Could not find element in DOM');
   final Html.TableElement table = body.children?.first;
   assert(table != null, 'Could not table in element');
   final it = new ft.DoubleIterable(
-      ft.iterEnumData(Register, Register.values),
+      ft.iterEnumData(Reg16, Reg16.values),
       ft.iterTableRows(table, 1));
   var m = {};
 
@@ -39,21 +39,24 @@ Map<Register, Html.TableCellElement> _initTable()
     cells[0].text = m2['string'];
     m[m2['value']] = cells[1];
   });
-  return new Map<Register, Html.TableCellElement>.unmodifiable(m);
+  return new Map<Reg16, Html.TableCellElement>.unmodifiable(m);
 }
 
-void _onRegInfo(Map<Register, int> map) {
-  print('debugger/registers:\_onRegInfo($map)');
-  _cells.forEach((Register reg, Html.TableCellElement elt){
-    if (!map.containsKey(reg))
+void _onRegInfo(RegisterBank rb) {
+  print('debugger/registers:\_onRegInfo($rb)');
+  _cells.forEach((Reg16 reg, Html.TableCellElement elt){
+    final cur = rb.value16(reg)
+      .toUnsigned(16)
+      .toRadixString(16)
+      .toUpperCase();
+
+    if (elt.text == cur)
       elt
         ..style.color = 'black';
-    });
-  map.forEach((reg, v) {
-    /* Enums need to be REinstanciated after a SendPort */
-    _cells[Register.values[reg.index]]
-      ..text = v.toRadixString(16).toUpperCase()
-      ..style.color = 'blue';
+    else
+      elt
+        ..text = cur
+        ..style.color = 'blue';
   });
 }
 

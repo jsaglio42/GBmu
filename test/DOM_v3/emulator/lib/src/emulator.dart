@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/21 16:00:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/22 11:38:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,15 +14,20 @@ import 'dart:async' as As;
 import 'dart:isolate' as Is;
 import 'package:ft/wired_isolate.dart' as WI;
 import './worker.dart' as W;
-import './conf.dart';
+import './public_classes.dart';
 
 /*
  * ************************************************************************** **
  * Ports configuration ****************************************************** **
  * ************************************************************************** **
+ * Defines two Map<String, Type>.
+ * `Type` must match EXACTLY the sent type.
+ * Receiver may use `a subtype` or `dynamic` parameter in
+ *   it's callback function.
  */
 final _mainReceivers = <String, Type>{
-  'RegInfo': <Register, int>{}.runtimeType,
+  // 'RegInfo': (new RegisterBank()).runtimeType,
+    'RegInfo': RegisterBank,
   'VRegInfo': <VRegister, int>{}.runtimeType,
   'ORegInfo': <ORegister, int>{}.runtimeType,
   'Timings': <String, double>{}.runtimeType,
