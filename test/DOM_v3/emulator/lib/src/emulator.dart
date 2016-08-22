@@ -25,6 +25,7 @@ import './public_classes.dart';
  * Receiver may use `a subtype` or `dynamic` parameter in
  *   it's callback function.
  */
+
 final _mainReceivers = <String, Type>{
   // 'RegInfo': (new RegisterBank()).runtimeType,
     'RegInfo': RegisterBank,
@@ -45,6 +46,7 @@ final _workerReceivers = <String, Type>{
  * Emulator class ...
  * ************************************************************************** **
  */
+
 class Emulator {
 
   Emulator(Is.Isolate iso, WI.Ports p)
@@ -64,12 +66,12 @@ As.Future<Emulator> create() async {
   print('emulator:\tcreate()');
 
   //Todo: listen isolate errors
-  final fin = WI.spawn(W.entryPoint, _mainReceivers, _workerReceivers)
-  ..catchError((e) {
+  final future = WI.spawn(W.entryPoint, _mainReceivers, _workerReceivers)
+    ..catchError((e) {
         print('emulator:\tError while spawning wired_isolate:\n$e');
       });
-  final data = await fin;
-  data.i.resume(data.resumeCapability);
+  final wi = await future;
+  wi.i.resume(wi.resumeCapability);
 
-  return new Emulator(data.i, data.p);
+  return new Emulator(wi.i, wi.p);
 }

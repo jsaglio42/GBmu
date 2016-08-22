@@ -20,13 +20,15 @@ import 'dart:isolate' as Is;
  * In Main: Ports is retreived from Emulator's call to wired_isolate.spawn()
  * In Worker: Pors is retrieved from `entryPoint` arguments
  */
-class Ports {
 
-  Ports(this._listeners, this._notifiers, this._notifiersTypes);
+class Ports
+{
 
   final Map<String, As.Stream> _listeners;
   final Map<String, Is.SendPort> _notifiers;
   final Map<String, Type> _notifiersTypes;
+
+  Ports(this._listeners, this._notifiers, this._notifiersTypes);
 
   bool _isValidListenerGet(String n) {
     if (_listeners[n] == null) {
@@ -67,13 +69,13 @@ class Ports {
   }
 }
 
-
 /*
  * ************************************************************************** **
  * Map conversion functions ************************************************* **
  * ************************************************************************** **
  * Is there any simpler way ?
 */
+
 Map<String, Is.ReceivePort> _rPortsOfTypes(Map<String, Type> t)
 {
   var m = new Map<String, Is.ReceivePort>();
@@ -104,12 +106,12 @@ Map<String, As.Stream> _streamsOfRPorts(Map<String, Is.ReceivePort> rp)
   return m;
 }
 
-
 /*
  * ************************************************************************** **
  * Isolate entry point and it's parameter of type `_WorkerSpawnData` ********* **
  * ************************************************************************** **
  */
+
 typedef void entryPointType(Ports);
 class _WorkerSpawnData {
   _WorkerSpawnData(this.sPortsMain, this.tmpSPort, this.entryPoint,
@@ -137,27 +139,28 @@ void _workerSpawn(_WorkerSpawnData d)
   return ;
 }
 
-
 /*
  * ************************************************************************** **
- * `spawn()` method and it's return value of type `Data` ******************** **
+ * `spawn()` method and it's return value of type `WiredIsolate` *****-****** **
  * ************************************************************************** **
  */
-class Data {
-  Data(this.i, this.resumeCapability, this.p);
+
+class WiredIsolate {
+  
+  WiredIsolate(this.i, this.resumeCapability, this.p);
 
   final Is.Isolate i;
   final Is.Capability resumeCapability;
   final Ports p;
 }
 
-As.Future<Data> spawn(void entryPoint(Ports), Map<String, Type> mainRTypes,
-    Map<String, Type> workerRTypes) async
-{
+As.Future<WiredIsolate> spawn(void entryPoint(Ports),
+  Map<String, Type> mainRTypes,
+  Map<String, Type> workerRTypes)
+async {
   print('wired_isolate:\tspawn()');
 
   final Map<String, Is.ReceivePort> rPortsMain = _rPortsOfTypes(mainRTypes);
-
   final Is.ReceivePort tmpRPort = new Is.ReceivePort();
   final Is.Capability resumeCapability = new Is.Capability();
   final spawnData = new _WorkerSpawnData(
@@ -167,6 +170,5 @@ As.Future<Data> spawn(void entryPoint(Ports), Map<String, Type> mainRTypes,
   final Map<String, Is.SendPort> sPortsWorker = await tmpRPort.first;
   final p = new Ports(
       _streamsOfRPorts(rPortsMain), sPortsWorker, workerRTypes);
-
-  return new Data(iso, resumeCapability, p);
+  return new WiredIsolate(iso, resumeCapability, p);
 }

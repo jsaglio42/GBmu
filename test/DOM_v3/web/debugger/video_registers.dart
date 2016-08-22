@@ -19,11 +19,13 @@ import 'package:ft/ft.dart' as ft;
  * Global Variable
  * [Addr cell, Value cell]
  */
+
 final Map<VRegister, List<Html.TableCellElement>> _cells = _initTable();
 
 /*
  * Internal Methods
  */
+
 Map<VRegister, List<Html.TableCellElement>> _initTable()
 {
   final Html.Element body = Html.querySelector("#debColVideoRegisters");
@@ -62,6 +64,7 @@ void _onVRegInfo(Map<VRegister, int> map) {
 /*
  * Exposed Methods
  */
+
 void init(Emu.Emulator emu) {
   _cells.toString(); /* Tips to instanciate _cells */
   print('debugger/video_registers:\tinit()');

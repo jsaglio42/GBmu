@@ -10,7 +10,8 @@
 //                                                                            //
 // ************************************************************************** //
 
-Iterable<Map<String, dynamic>> iterEnumData(type, Iterable values) sync* {
+Iterable<Map<String, dynamic>> iterEnumData(type, Iterable values)
+sync* {
   final int prefixLength = type.toString().length + 1;
   int i = 0;
 
