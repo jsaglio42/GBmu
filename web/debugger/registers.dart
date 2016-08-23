@@ -18,6 +18,7 @@ import 'package:ft/ft.dart' as ft;
 /*
  * Global Variable
  */
+
 class _HtmlLabel {
   final Html.Element elt;
   bool value = false;
@@ -75,7 +76,7 @@ class _DomData {
     assert(labels != null, "Could not find labels");
     final it = new ft.DoubleIterable(
         ft.iterEnumData(Reg1, Reg1.values),
-        labels);
+        labels.reversed);
     var m = {};
 
     it.forEach((Map m2, Html.Element label){
@@ -112,7 +113,8 @@ void _onRegInfo(RegisterBank rb) {
       cell.elt.text = cur
         .toUnsigned(16)
         .toRadixString(16)
-        .toUpperCase();
+        .toUpperCase()
+        .padLeft(4, "0");
       _data.reg16Cells[reg].value = cur;
     }
     return ;
@@ -135,6 +137,7 @@ void _onRegInfo(RegisterBank rb) {
 /*
  * Exposed Methods
  */
+
 void init(Emu.Emulator emu) {
   print('debugger/registers:\tinit()');
   _data.toString(); /* Tips to instanciate _data */

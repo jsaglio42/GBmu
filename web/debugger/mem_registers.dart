@@ -56,7 +56,8 @@ class _DomData {
           ..write(reginfo.address
               .toUnsigned(16)
               .toRadixString(16)
-              .toUpperCase())
+              .toUpperCase()
+              .padLeft(4, "0"))
           ..write('\ncategory: ')
           ..write(reginfo.category)
           ..write('\n')
@@ -128,7 +129,8 @@ void _onMemRegInfo(List<int> values) {
       cell.elt.text = cur
         .toUnsigned(16)
         .toRadixString(16)
-        .toUpperCase();
+        .toUpperCase()
+        .padLeft(2, "0");
       _data.valueCells[reg].value = cur;
     }
   });

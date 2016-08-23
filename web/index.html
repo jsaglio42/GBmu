@@ -5,17 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- <link rel="icon" href="../../favicon.ico"> -->
-
-    <title>Starter Template for Bootstrap</title>
+    <link rel="icon" href="./favicon.ico">
+    <title>GBmu</title>
 
     <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="styles.css">
   </head>
 
   <body>
+    <!-- NAVIGATION BAR -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -33,17 +32,17 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
-        </div><!--/.nav-collapse -->
+        </div>
       </div>
     </div>
 
-    <div class="container-fluid">
-      <div id="magbut" class="row">Pouet Click me to refresh registers</div>
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-      </div>
+    <!-- MAIN CONTAINER -->
+    <div class="container-fluid">      
+      <!-- MAGBUT -->
+      <div id="magbut" class="row">Add some random
+      </div><!-- /#magbut -->
 
+      <!-- DEBUGGER CONTAINER-->
       <div class="row" id="debContainer">
         <div class="col-lg-12">
           <div class="row">
@@ -57,8 +56,8 @@
             </button>
 
             <div class="col-sm-12">
+              <!-- DEBUGGER BODY -->
               <div class="row" id="debBody">
-
                 <div class="col-sm-6" id="debColButtons">
                   <button type="button" class="btn btn-success">Play</button>
                   <button type="button" class="btn btn-warning">Pause</button>
@@ -70,7 +69,6 @@
                     <label><input type="checkbox" id="todo" value="">Second</label>
                   </span>
                 </div>
-
                 <div class="col-sm-6" id="debColTimings">
                   <span>
                     <b>Emulation time:</b>
@@ -85,7 +83,6 @@
                     <span class="label label-primary">17000.54</span>
                   </span>
                 </div>
-
                 <div class="col-sm-8">
                   <div class="row">
                     <div class="col-sm-4" id="debColRegisters"></div>
@@ -95,29 +92,23 @@
                     <div id="debColMemoryExplorer" class="col-lg-12"></div>
                   </div>
                 </div>
-
                 <div class="col-sm-4" id="debColMemRegisters"></div>
-
                 <div class="row">
                   <div id="debColCartInfo" class="col-sm-6"></div>
                 </div>
-
-              </div>
-            </div><!-- /#debBody -->
-
+              </div><!-- /#debBody -->
+            </div>
           </div>
         </div>
       </div><!-- /#debContainer -->
-
-    </div><!-- /.container -->
+    </div><!-- /MAIN CONTAINER -->
     <br/>
-
+    <!-- FOOTER -->
     <footer class="row">
       <small class="pull-right col-sm-2">
         <a href="https://github.com/jsaglio42">jsaglio</a>, <a href="https://github.com/Ngoguey42">ngoguey</a>
       </small>
-    </footer>
-
+    </footer><!-- /FOOTER -->
 
     <!-- Js Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -125,8 +116,6 @@
 
     <script>
      $(function(){
-       /* $("#debColOtherRegisters").load("debugger/other_registers.html");*/
-       /* $("#debColVideoRegisters").load("debugger/video_registers.html");*/
        $("#debColMemRegisters").load("debugger/mem_registers.html");
        $("#debColCartInfo").load("debugger/cart_info.html");
        $("#debColMemoryExplorer").load("debugger/memory_explorer.html");
@@ -134,7 +123,6 @@
        $("#debColRegisters").load("debugger/registers.html");
      });
     </script>
-
 
     <script defer src="main.dart.js" type="application/dart"></script>
     <script defer src="packages/browser/dart.js"></script>
