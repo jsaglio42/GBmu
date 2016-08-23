@@ -1,0 +1,65 @@
+/* body {
+    background-color: #F8F8F8;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.2em;
+    margin: 15px;
+}
+*/
+
+body {
+    padding: 5px;
+    padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+[class*="col-"], footer {
+    border: 1px solid black;
+    border-radius: 6px;
+    line-height: 40px;
+    text-align: center;
+}
+#debContainer, footer {
+    background-color: rgba(0, 71, 171, 0.2);
+}
+#debContainer {
+    padding: 3px;
+}
+#debBody {
+    padding: 2px;
+}
+
+#debBody td {
+    font-size: 12px;
+}
+
+#debColMemoryExplorer td {
+    font-size: 11px;
+}
+#debColMemoryExplorer th {
+    font-size: 12px;
+}
+
+#debSpanAutobreak {
+    background-color: rgba(71, 71, 71, 0.2);
+    padding: 5px;
+}
+
+.debLabelCgb {
+    margin-left: 2px;
+}
+.tooltip-inner {
+    white-space:pre;
+    max-width:none;
+}
+#magbut {
+    /* padding: 15px; */
+    background-color: #FF5A5F;
+    font-family: 'Open Sans', sans-serif;
+    color: #FFFFFF;
+    /* text-align: center */
+}
