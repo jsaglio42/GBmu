@@ -6,11 +6,12 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 17:53:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/23 15:45:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:math' as math;
+import 'dart:typed_data';
 // import 'dart:isolate' as Is;
 // import 'dart:async' as As;
 import 'package:ft/wired_isolate.dart' as WI;
@@ -46,7 +47,7 @@ class Worker {
     new List<int>.filled(MemReg.values.length, 0, growable:false);
 
   DebStatus         _debuggerStatus = DebStatus.ON;
-  
+
   Worker(this._ports)
   {
     _ports.listener('EmulationStart').listen(_onEmulationStart);
@@ -69,9 +70,9 @@ class Worker {
  // Callback functions
  // *********************************************** **
 
-  void _onEmulationStart(int p)
+  void _onEmulationStart(Uint8List l)
   {
-    print('worker:\tonEmulationStart($p)');
+    print('worker:\tonEmulationStart(l len:${l.length})');
 
     _generateRandomMapFromIterable(Reg16.values, 256 * 256)
       .forEach((Reg16 k, int v){

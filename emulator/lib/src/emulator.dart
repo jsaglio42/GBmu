@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 17:42:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/23 15:45:12 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,7 @@ import 'dart:async' as As;
 import 'dart:isolate' as Is;
 import 'package:ft/wired_isolate.dart' as WI;
 import './worker.dart' as W;
+import 'dart:typed_data';
 import './public_classes.dart';
 
 /*
@@ -39,7 +40,7 @@ final _mainReceivers = <String, Type>{
 
 final _workerReceivers = <String, Type>{
   'DebStatusRequest'  : DebStatusRequest,
-  'EmulationStart'    : int,    //debug
+  'EmulationStart'    : Uint8List,    //debug
   'EmulationMode'     : String, //debug
 };
 
@@ -54,7 +55,7 @@ class Emulator {
   final WI.WiredIsolate    _wi;
 
   Emulator(WI.WiredIsolate wi) : _wi = wi;
-  
+
   void      send(String msgType, var data)  => _wi.p.send(msgType, data);
   As.Stream listener(String msgType)        => _wi.p.listener(msgType);
 

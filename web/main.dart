@@ -6,23 +6,35 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 17:14:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/23 16:11:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:html'                                as Html;
-import 'dart:js'                                  as Js;
-import 'package:emulator/emulator.dart'           as Emu;
+import 'dart:html' as Html;
+import 'dart:js' as Js;
+import 'dart:convert' as Con;
+import 'dart:typed_data';
+import 'package:emulator/emulator.dart' as Emu;
 import 'package:emulator/emulator_classes.dart';
-import 'package:ft/ft.dart'                       as ft;
-import './debugger/registers.dart'                as DebRegisters;
-// import './debugger/video_registers.dart' as DebVRegisters;
-// import './debugger/other_registers.dart' as DebORegisters;
-import './debugger/mem_registers.dart'            as DebMRegisters;
+import 'package:ft/ft.dart' as ft;
+import './debugger/registers.dart' as DebRegisters;
+import './debugger/mem_registers.dart' as DebMRegisters;
 
 run() async
 {
   print('main:\tHello World');
+
+  final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
+  assert(inBut != null);
+  final reader = new Html.FileReader();
+  Uint8List lst;
+
+  inBut.onChange.forEach((_){
+        reader.readAsArrayBuffer(inBut.files[0]);
+      });
+  reader.onLoad.forEach((_){
+        lst = reader.result;
+      });
 
   var magbut = Html.querySelector('#magbut');
 
@@ -34,12 +46,12 @@ run() async
   print('main:\tEmulator created');
   magbut.onClick.listen((_) {
 		print('main:\tonClick');
-        emu.send('EmulationStart', 42);
+        emu.send('EmulationStart', lst);
         emu.send('EmulationMode', 'vitesse x10!!');
       });
 
   var debStatusOn = Html.querySelector('#debStatusOn');
-  var debStatusOff = Html.querySelector('#debStatusOff'); 
+  var debStatusOff = Html.querySelector('#debStatusOff');
   var debButtonToggle = Html.querySelector('#debButtonToggle');
   var debBody = Js.context.callMethod(r'$', ['#debBody']);
 
