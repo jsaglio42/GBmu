@@ -1,5 +1,5 @@
-name: test_DOM
-description: My dart first app
+name: GBmu
+description: Game Boy for browser
 version: 0.0.1
 environment:
   sdk: '>=1.13.0 <2.0.0'
