@@ -15,8 +15,11 @@ import 'dart:typed_data';
 // import 'dart:isolate' as Is;
 // import 'dart:async' as As;
 import 'package:ft/wired_isolate.dart' as WI;
-import './emulator.dart' as Em;
+
+// import './emulator.dart' as Em;
 import './public_classes.dart';
+import './memory/mmu.dart' as MMU;
+import 'cpu_registers.dart' as CPUR;
 
 var rng = new math.Random();
 
@@ -41,12 +44,11 @@ Map _generateRandomMapFromIterable(Iterable l, int value_range)
 
 class Worker {
 
-  final WI.Ports      _ports;
-  final RegisterBank  _rb = new RegisterBank();
-  final List<int>     _tmpMemRegisters =
-    new List<int>.filled(MemReg.values.length, 0, growable:false);
-
-  DebStatus         _debuggerStatus = DebStatus.ON;
+  final WI.Ports        _ports;
+ 
+  DebStatus           _debuggerStatus = DebStatus.ON;
+  MMU.MMU             _mmu = new MMU.MMU();
+  CPUR.RegisterBank   _cpuRegs = new CPUR.RegisterBank();
 
   Worker(this._ports)
   {
@@ -60,6 +62,7 @@ class Worker {
     _debuggerStatus = DebStatus.OFF;
     _ports.send('DebStatusUpdate', _debuggerStatus);
   }
+
   void _enableDebugger()
   {
     _debuggerStatus = DebStatus.ON;
@@ -70,22 +73,11 @@ class Worker {
  // Callback functions
  // *********************************************** **
 
-  void _onEmulationStart(Uint8List l)
+  void _onEmulationStart(Uint8List data)
   {
-    print('worker:\tonEmulationStart(l len:${l.length})');
-
-    _generateRandomMapFromIterable(Reg16.values, 256 * 256)
-      .forEach((Reg16 k, int v){
-        _rb.update16(k, v);
-      });
-    _ports.send('RegInfo', _rb);
-
-    _generateRandomMapFromIterable(MemReg.values, 256)
-      .forEach((MemReg k, int v){
-        _tmpMemRegisters[k.index] = v;
-      });
-    _ports.send('MemRegInfo', _tmpMemRegisters);
-    return ;
+    print('worker:\tonEmulationStart(l len:${data.length})');
+    _mmu.loadRom(data);
+    _cpuRegs.init();
   }
 
   void _onEmulationMode(String p)

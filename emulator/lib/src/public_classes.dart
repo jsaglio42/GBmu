@@ -14,8 +14,8 @@
  * This file should be fully imported for convenience
  */
 
-export 'registers.dart';
-export 'mem_registers.dart';
+export 'cpu_registers.dart';
+export 'memory/mem_registers.dart';
 
 enum DebStatus {
   ON, OFF

@@ -12,9 +12,11 @@
 
 import 'dart:async' as As;
 import 'dart:isolate' as Is;
-import 'package:ft/wired_isolate.dart' as WI;
-import './worker.dart' as W;
 import 'dart:typed_data';
+
+import 'package:ft/wired_isolate.dart' as WI;
+
+import './worker.dart' as W;
 import './public_classes.dart';
 
 /*

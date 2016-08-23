@@ -54,22 +54,19 @@ enum MemReg {
 }
 
 class MemRegInfo {
-  int address;
-  bool cgb;
-  String name;
-  String category;
-  String description;
+
+  int     address;
+  bool    cgb;
+  String  name;
+  String  category;
+  String  description;
 
   MemRegInfo(
       this.address, this.cgb, this.name, this.category, this.description);
 }
 
 final memRegInfos =
-  new List<MemRegInfo>.unmodifiable(_makeMemRegInfos());
-
-_makeMemRegInfos()
-{
-  return [
+  new List<MemRegInfo>.unmodifiable([
     new MemRegInfo(0xFF00, false, 'P1', 'Port/Mode', 'Unknown'),
     new MemRegInfo(0xFF01, false, 'SB', 'Port/Mode', 'Serial Transfer Data Register'),
     new MemRegInfo(0xFF02, false, 'SC', 'Port/Mode', 'Serial Transfer - Control Register'),
@@ -104,23 +101,4 @@ _makeMemRegInfos()
     new MemRegInfo(0xFF6B, true, 'OCPD', 'LCD Display', ''),
     new MemRegInfo(0xFF70, true, 'SVBK', 'Bank Control', ''),
     new MemRegInfo(0xFFFF, false, 'IE', 'Interrupt', 'Interrupt Enable Register'),
-  ];
-}
-
-// class MemoryBank {
-//   final _data = Uint8List()...;
-//   int regValue(MRegister reg) {
-//     return _data[
-//       mappedRegisters[reg.index].address
-//     ];
-//   }
-//   void regUpdate(MRegister reg, int value) {
-//     _data[
-//       mappedRegisters[reg.index].address
-//     ] = value;
-//   }
-//   List<int> copyRegisters() {
-//     return mappedRegisters.map((data){
-//         });
-//   }
-// }
+  ]);
