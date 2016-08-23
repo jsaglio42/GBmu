@@ -10,15 +10,15 @@
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:html' as Html;
-import 'dart:js' as Js;
-import 'package:emulator/emulator.dart' as Emu;
+import 'dart:html'                                as Html;
+import 'dart:js'                                  as Js;
+import 'package:emulator/emulator.dart'           as Emu;
 import 'package:emulator/emulator_classes.dart';
-import 'package:ft/ft.dart' as ft;
-import './debugger/registers.dart' as DebRegisters;
+import 'package:ft/ft.dart'                       as ft;
+import './debugger/registers.dart'                as DebRegisters;
 // import './debugger/video_registers.dart' as DebVRegisters;
 // import './debugger/other_registers.dart' as DebORegisters;
-import './debugger/mem_registers.dart' as DebMRegisters;
+import './debugger/mem_registers.dart'            as DebMRegisters;
 
 run() async
 {
