@@ -20,7 +20,7 @@ body {
 [class*="col-"], footer {
     border: 1px solid black;
     border-radius: 6px;
-    line-height: 40px;
+    /* line-height: 40px; */
     text-align: center;
 }
 #debContainer, footer {
@@ -44,10 +44,12 @@ body {
     font-size: 12px;
 }
 
-#debSpanAutobreak {
-    background-color: rgba(71, 71, 71, 0.2);
-    padding: 5px;
-}
+/* #debStatusButton { */
+    /* background-color: rgba(71, 71, 71, 0.2); */
+/* margin-right: 200px; */
+/* margin-right: 20px; */
+/* padding: 10px; */
+/* } */
 
 .debLabelCgb {
     margin-left: 2px;

@@ -37,7 +37,7 @@
     </div>
 
     <!-- MAIN CONTAINER -->
-    <div class="container-fluid">      
+    <div class="container-fluid">
       <!-- MAGBUT -->
       <div id="magbut" class="row">Add some random
       </div><!-- /#magbut -->
@@ -58,18 +58,8 @@
             <div class="col-sm-12">
               <!-- DEBUGGER BODY -->
               <div class="row" id="debBody">
-                <div class="col-sm-6" id="debColButtons">
-                  <button type="button" class="btn btn-success">Play</button>
-                  <button type="button" class="btn btn-warning">Pause</button>
-                  <span id="debSpanAutobreak">
-                    <b>Auto-break:</b>
-                    <label><input type="checkbox" id="todo" value="">None</label>
-                    <label><input type="checkbox" id="todo" value="">Instruction</label>
-                    <label><input type="checkbox" id="todo" value="">Frame</label>
-                    <label><input type="checkbox" id="todo" value="">Second</label>
-                  </span>
-                </div>
-                <div class="col-sm-6" id="debColTimings">
+
+                <div class="col-lg-12" id="debColTimings">
                   <span>
                     <b>Emulation time:</b>
                     <span class="label label-primary">0:10:42.250</span>
@@ -83,6 +73,16 @@
                     <span class="label label-primary">17000.54</span>
                   </span>
                 </div>
+                <div class="col-sm-12" id="debColButtons">
+                  <button type="button" class="btn btn-success" style="margin-right: 20px;">Resume</button>
+                  <button type="button" class="btn btn-warning" style="display: none; margin-right: 20px;">Pause</button>
+                  <b>Auto-break:</b>
+                  <label class="radio-inline"><input type="radio" name="optradio">Instruction</label>
+                  <label class="radio-inline"><input type="radio" name="optradio">Frame</label>
+                  <label class="radio-inline"><input type="radio" name="optradio">Second</label>
+                  <label class="radio-inline"><input type="radio" name="optradio">None</label>
+                </div>
+
                 <div class="col-sm-8">
                   <div class="row">
                     <div class="col-sm-4" id="debColRegisters"></div>
