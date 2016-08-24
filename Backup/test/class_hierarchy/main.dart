@@ -112,34 +112,37 @@ class Mbc0Cart extends Cartridge implements IMbc {
 
    }
 }
-final int GB_CPU_FREQ_INT = 4194304; // instr / second
-final double GB_CPU_FREQ_DOUBLE = GB_CPU_FREQ_INT.toDouble();
+final int       GB_CPU_FREQ_INT = 4194304; // instr / second
+final double    GB_CPU_FREQ_DOUBLE = GB_CPU_FREQ_INT.toDouble();
 
-final int ROUTINE_PER_SEC_INT = 30; // routine /second
-final double ROUTINE_PER_SEC_DOUBLE = ROUTINE_PER_SEC_INT.toDouble();
+final int       ROUTINE_PER_SEC_INT = 30; // routine /second
+final double    ROUTINE_PER_SEC_DOUBLE = ROUTINE_PER_SEC_INT.toDouble();
 
-final double MICROSEC_PER_SECOND = 1000000.0;
 
-final double ROUTINE_PERIOD_DOUBLE = 1.0 / (ROUTINE_PER_SEC_DOUBLE); // second
-final Duration ROUTINE_PERIOD_DURATION =
+
+final double    MICROSEC_PER_SECOND = 1000000.0;
+final Duration  ROUTINE_PERIOD_DURATION_MS =
   new Duration(
-      microseconds: (ROUTINE_PERIOD_DOUBLE * MICROSEC_PER_SECOND).round());
+      microseconds: (MICROSEC_PER_SECOND / ROUTINE_PER_SEC_DOUBLE).round());
 
-// Pick a number close to (GB_CPU_FREQ_INT / ROUTINE_PER_SEC_INT = 139810)
+// Number close to (GB_CPU_FREQ_INT / ROUTINE_PER_SEC_INT = 139810)
 final int MAXIMUM_INSTR_PER_EXEC_INT = 100000;
 
 DateTime now() => new DateTime.now();
 
 class Worker {
-  DateTime _emulationStartTime = now();
-  DateTime _rescheduleTime = now();
-  bool _pause = false;
-  double _emulationSpeed = 1000.0;
-  double _instrDeficit;
-  double _instrPerRoutineGoal;
-  GameBoy _gb;
 
-  As.Timer _tm;
+  As.Timer  _tm;
+  DateTime  _rescheduleTime = now();
+  bool      _pause = false;
+  double    _emulationSpeed = 0.3 / GB_CPU_FREQ_DOUBLE;
+  double    _instrDeficit;
+  double    _instrPerRoutineGoal;
+  GameBoy   _gb;
+
+  // For Debug
+  DateTime _emulationStartTime = now();
+
   _reschedule(var f, Duration d) {
     _tm = new As.Timer(d, f);
   }
@@ -149,14 +152,14 @@ class Worker {
     assert(!(speed < 0));
     _emulationSpeed = speed;
     _instrPerRoutineGoal =
-      GB_CPU_FREQ_INT * ROUTINE_PERIOD_DOUBLE * _emulationSpeed;
+      GB_CPU_FREQ_DOUBLE / ROUTINE_PER_SEC_DOUBLE * _emulationSpeed;
     _instrDeficit = 0.0;
   }
 
   void _debug() {
     final Duration emulationElapsedTime = _rescheduleTime.difference(_emulationStartTime);
     final double elapsed = emulationElapsedTime.inMicroseconds.toDouble() / MICROSEC_PER_SECOND;
-    final double routineId = elapsed / ROUTINE_PERIOD_DOUBLE;
+    final double routineId = elapsed * ROUTINE_PER_SEC_DOUBLE;
 
     print('Worker.onRoutine('
         'elapsed:$emulationElapsedTime, '
@@ -170,7 +173,7 @@ class Worker {
     _debug();
     int instrSum = 0;
     int instrExec;
-    final DateTime timeLimit = _rescheduleTime.add(ROUTINE_PERIOD_DURATION);
+    final DateTime timeLimit = _rescheduleTime.add(ROUTINE_PERIOD_DURATION_MS);
     final double instrDebt = _instrPerRoutineGoal + _instrDeficit;
     final int instrLimit = instrDebt.floor();
 
