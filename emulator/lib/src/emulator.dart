@@ -34,7 +34,7 @@ import './public_classes.dart';
 // final Type TimingMap    = <String, double>{}.runtimeType;
 
 final _mainReceivers = <String, Type>{
-  'RegInfo': RegisterBank,
+  'RegInfo': CpuRegs,
   'MemRegInfo': <int>[].runtimeType,
   'Timings': <String, double>{}.runtimeType,
   'DebStatusUpdate': DebStatus,

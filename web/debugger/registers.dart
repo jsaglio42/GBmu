@@ -94,10 +94,10 @@ final _DomData _data = new _DomData();
  * Internal Methods
  */
 
-void _onRegInfo(RegisterBank rb) {
-  print('debugger/registers:\_onRegInfo($rb)');
+void _onRegInfo(CpuRegs cpur) {
+  print('debugger/registers:\_onRegInfo($cpur)');
   toggleReg16Element(Reg16 reg, _HtmlElement cell){
-    final int cur = rb.value16(reg);
+    final int cur = cpur.value16(reg);
 
     if (cell.value == cur) {
       if (cell.highlighted) {
@@ -120,7 +120,7 @@ void _onRegInfo(RegisterBank rb) {
     return ;
   };
   toggleFlagLabels(Reg1 reg, _HtmlLabel cell){
-    final bool cur = rb.value1(reg);
+    final bool cur = cpur.value1(reg);
 
     if (cell.value != cur) {
       _data.flagLabels[reg].value = cur;

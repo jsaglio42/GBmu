@@ -41,7 +41,7 @@ enum Reg1 {
   cy, n, h, zf
 }
 
-class RegisterBank {
+class CpuRegs {
 
   final Uint8List _data;
   final           _view16;
@@ -50,12 +50,12 @@ class RegisterBank {
   ** Constructors **************************************************************
   */
  
-  RegisterBank.buffer(Uint8List d)
+  CpuRegs.buffer(Uint8List d)
     : _data = d
     , _view16 = d.buffer.asInt16List();
 
   
-  RegisterBank() : this.buffer(new Uint8List(6 * 2));
+  CpuRegs() : this.buffer(new Uint8List(6 * 2));
 
   /*
   ** API ***********************************************************************
@@ -148,6 +148,6 @@ class RegisterBank {
     assert(_data[10] == 0xF);
     assert(_data[11] == 0xE);
     assert(_view16[5] == _data[10] | (_data[11] << 8));
-    print('RegisterBank.assertCorrectness passed!');
+    print('CpuRegs.assertCorrectness passed!');
   }
 }

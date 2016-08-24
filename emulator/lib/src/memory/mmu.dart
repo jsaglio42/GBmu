@@ -11,111 +11,66 @@
 // ************************************************************************** //
 
 import 'dart:typed_data';
-import './mem_registers.dart';
-import './mbc.dart' as MBC;
+import "imbc.dart";
+import 'mem_registers.dart';
 
-class MMU 
-{
+class Mmu {
 
-  MBC.Mbc    _mbc;
+  final IMbc      _mbc;
+  final Uint8List _wRam;
+  final Uint8List _vRam;
+  final Uint8List _tailRam;
 
-  Uint8List _vram;
-  Uint8List _wram;
-  Uint8List _oam;
-  Uint8List _ioports;
-  Uint8List _hram;
+  Mmu(this._mbc);
 
-  MemoryManagementUnit() {
-    return ;
-  }
-
-  void loadRom(Uint8List data) {
-    return ;
-  }
-
-  /*
-  ** Memory Register Interface *************************************************
-  */
-
-  int     regValue(MemReg reg) {
+  int     pullMemReg(MemReg reg) {
     final addr = memRegInfos[reg.index].address;
     return readByte(addr);
   }
 
-  void    regUpdate(MemReg reg, int value) {
+  void    pushMemReg(MemReg reg, int value) {
     final addr = memRegInfos[reg.index].address;
     writeByte(addr, value);
   }
 
-  /*
-  ** Memory Read Write Functions************************************************
-  */
-
-  void doNothing() {}
-
-  void writeByte(int addr, int value)
-  {
-    if (0x0000 <= addr && addr < 0x4000)
-      doNothing();
-    if (0x4000 <= addr && addr < 0x8000)
-      doNothing();
-    if (0x8000 <= addr && addr < 0xA000)
-      doNothing();
-    if (0xA000 <= addr && addr < 0xC000)
-      doNothing();
-    if (0xC000 <= addr && addr < 0xD000)
-      doNothing();
-    if (0xD000 <= addr && addr < 0xE000)
-      doNothing();
-    if (0xE000 <= addr && addr < 0xFE00)
-      doNothing();
-    if (0xFE00 <= addr && addr < 0xFEA0)
-      doNothing();
-    if (0xFEA0 <= addr && addr < 0xFF00)
-      doNothing();
-    if (0xFF00 <= addr && addr < 0xFF80)
-      doNothing();
-    if (0xFF80 <= addr && addr < 0xFFFF)
-      doNothing();
-      else if (addr == 0xFFFF)
-        doNothing();
-    else
-      print ("MMU: writeByte: address not valid");
+  int pullMem(int memAddr) {
+    if (true)
+      return _mbc.pullMem(memAddr);
+    // else if (...)
+    //   ...;
+    // else
+    //   ...;
   }
-
-  /*
-  ** Memory Register Interface *************************************************
-  */
-
-  void readByte(int addr)
-  {
-    if (0x0000 <= addr && addr < 0x4000)
-      doNothing();
-    if (0x4000 <= addr && addr < 0x8000)
-      doNothing();
-    if (0x8000 <= addr && addr < 0xA000)
-      doNothing();
-    if (0xA000 <= addr && addr < 0xC000)
-      doNothing();
-    if (0xC000 <= addr && addr < 0xD000)
-      doNothing();
-    if (0xD000 <= addr && addr < 0xE000)
-      doNothing();
-    if (0xE000 <= addr && addr < 0xFE00)
-      doNothing();
-    if (0xFE00 <= addr && addr < 0xFEA0)
-      doNothing();
-    if (0xFEA0 <= addr && addr < 0xFF00)
-      doNothing();
-    if (0xFF00 <= addr && addr < 0xFF80)
-      doNothing();
-    if (0xFF80 <= addr && addr < 0xFFFF)
-      doNothing();
-      else if (addr == 0xFFFF)
-        doNothing();
-    else
-      print ("MMU: readByte: address not valid");
-    return 0x42;
-  }
+  void pushMem(int memAddr, int v) {}
 
 }
+
+// void writeByte(int addr, int value)
+// {
+//   if (0x0000 <= addr && addr < 0x4000)
+//     doNothing();
+//   if (0x4000 <= addr && addr < 0x8000)
+//     doNothing();
+//   if (0x8000 <= addr && addr < 0xA000)
+//     doNothing();
+//   if (0xA000 <= addr && addr < 0xC000)
+//     doNothing();
+//   if (0xC000 <= addr && addr < 0xD000)
+//     doNothing();
+//   if (0xD000 <= addr && addr < 0xE000)
+//     doNothing();
+//   if (0xE000 <= addr && addr < 0xFE00)
+//     doNothing();
+//   if (0xFE00 <= addr && addr < 0xFEA0)
+//     doNothing();
+//   if (0xFEA0 <= addr && addr < 0xFF00)
+//     doNothing();
+//   if (0xFF00 <= addr && addr < 0xFF80)
+//     doNothing();
+//   if (0xFF80 <= addr && addr < 0xFFFF)
+//     doNothing();
+//     else if (addr == 0xFFFF)
+//       doNothing();
+//   else
+//     print ("MMU: writeByte: address not valid");
+// }

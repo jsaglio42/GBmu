@@ -1,25 +1,25 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   rom.dart                                           :+:      :+:    :+:   //
+//   mem_registers.dart                                 :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/23 14:56:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/23 14:59:52 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/22 15:32:25 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/22 17:00:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:async' as As;
+import "ram.dart";
+import "rom.dart";
+import "cartridge.dart";
+import "imbc.dart";
 
-class Rom {
+abstract class Cartridge implements IMbc {
 
-	ListUInt8 	_data;
-	
-	Rom(this._data) {
-	}
+  final Rom rom;
+  final Ram ram;
 
-	int get mbcType => _data[0x0147]
-	String get title => "Swag";
+  Cartridge(this.rom, this.ram);
 
 }

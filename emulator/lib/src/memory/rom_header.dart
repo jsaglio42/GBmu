@@ -1,7 +1,7 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   cart_header.dart                                   :+:      :+:    :+:   //
+//   rom_header.dart                                    :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
@@ -17,7 +17,7 @@ import 'dart:typed_data';
  * Page3 : https://docs.google.com/spreadsheets/d/1ffcl5dd_Q12Eqf9Zlrho_ghUZO5lT-gIpRi392XHU10
  */
 
-enum HeaderField {
+enum RomHeaderField {
   Entry_Point,
   Nintendo_Logo,
   Title,
@@ -71,19 +71,19 @@ enum CartridgeType {
 
 typedef String _converter(List<int> source);
 
-class HeaderFieldInfo {
+class RomHeaderFieldInfo {
   final int address;
   final int size;
   final String name;
   final String description;
   final bool displayed;
   final _converter valueConverter;
-  HeaderFieldInfo(this.address, this.size, this.name,
+  RomHeaderFieldInfo(this.address, this.size, this.name,
       this.description, this.displayed, this.valueConverter);
 }
 
 final headerFieldInfos =
-  new List<HeaderFieldInfo>.unmodifiable(_makeMemRegInfos());
+  new List<RomHeaderFieldInfo>.unmodifiable(_makeMemRegInfos());
 
 _cartridgeTypeOfMem(Uint8List l)
 {
@@ -195,21 +195,21 @@ _nintendoLogoValid(Uint8List l)
 _makeMemRegInfos()
 {
   return [
-    new HeaderFieldInfo(0x0100, 0x4, 'Entry Point', '', false, (l) => l),
-    new HeaderFieldInfo(0x0104, 0x30, 'Nintendo Logo', '', false, (l) => _nintendoLogoValid(l)),
-    new HeaderFieldInfo(0x0134, 0x10, 'Title', '', true, (l) => Conv.ASCII.decode(l)),
-    new HeaderFieldInfo(0x013F, 0x4, 'Manufacturer Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new HeaderFieldInfo(0x0143, 0x1, 'CGB Flag', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new HeaderFieldInfo(0x0144, 0x2, 'New Licensee Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new HeaderFieldInfo(0x0146, 0x1, 'SGB Flag', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new HeaderFieldInfo(0x0147, 0x1, 'Cartridge Type', '', true, (l) => _cartridgeTypeOfMem(l)),
-    new HeaderFieldInfo(0x0148, 0x1, 'ROM Size', '', true, (l) => _romSizeOfMem(l)),
-    new HeaderFieldInfo(0x0149, 0x1, 'RAM Size', '', true, (l) => _ramSizeOfMem(l)),
-    new HeaderFieldInfo(0x014A, 0x1, 'Destination Code', '', true, (l) => _destinationCodeToString(l)),
-    new HeaderFieldInfo(0x014B, 0x1, 'Old Licensee Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new HeaderFieldInfo(0x014C, 0x1, 'Mask ROM Version number', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new HeaderFieldInfo(0x014D, 0x1, 'Header Checksum', '', false, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new HeaderFieldInfo(0x014E, 0x2, 'Global Checksum', '', false, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0100, 0x4, 'Entry Point', '', false, (l) => l),
+    new RomHeaderFieldInfo(0x0104, 0x30, 'Nintendo Logo', '', false, (l) => _nintendoLogoValid(l)),
+    new RomHeaderFieldInfo(0x0134, 0x10, 'Title', '', true, (l) => Conv.ASCII.decode(l)),
+    new RomHeaderFieldInfo(0x013F, 0x4, 'Manufacturer Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0143, 0x1, 'CGB Flag', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0144, 0x2, 'New Licensee Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0146, 0x1, 'SGB Flag', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0147, 0x1, 'Cartridge Type', '', true, (l) => _cartridgeTypeOfMem(l)),
+    new RomHeaderFieldInfo(0x0148, 0x1, 'ROM Size', '', true, (l) => _romSizeOfMem(l)),
+    new RomHeaderFieldInfo(0x0149, 0x1, 'RAM Size', '', true, (l) => _ramSizeOfMem(l)),
+    new RomHeaderFieldInfo(0x014A, 0x1, 'Destination Code', '', true, (l) => _destinationCodeToString(l)),
+    new RomHeaderFieldInfo(0x014B, 0x1, 'Old Licensee Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x014C, 0x1, 'Mask ROM Version number', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x014D, 0x1, 'Header Checksum', '', false, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x014E, 0x2, 'Global Checksum', '', false, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
   ];
 }
 
