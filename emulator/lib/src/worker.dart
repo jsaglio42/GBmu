@@ -35,41 +35,53 @@ import 'package:emulator/src/gameboy.dart' as Gameboy;
 //   return m;
 // }
 
-final int       GB_CPU_FREQ_INT = 4194304; // instr / second
-final double    GB_CPU_FREQ_DOUBLE = GB_CPU_FREQ_INT.toDouble();
-final int       ROUTINE_PER_SEC_INT = 30; // routine /second
-final double    ROUTINE_PER_SEC_DOUBLE = ROUTINE_PER_SEC_INT.toDouble();
-final double    MICROSEC_PER_SECOND = 1000000.0;
-final Duration  ROUTINE_PERIOD_DURATION_MS = new Duration(
-    microseconds: (MICROSEC_PER_SECOND / ROUTINE_PER_SEC_DOUBLE).round());
+// Number should be close to (GB_CPU_FREQ_INT / EMULATION_PER_SEC_INT = 139810)
+const int MAXIMUM_INSTR_PER_EXEC_INT = 100000;
+const double MICROSEC_PER_SECOND = 1000000.0;
 
- // Number should be close to (GB_CPU_FREQ_INT / ROUTINE_PER_SEC_INT = 139810)
-final int MAXIMUM_INSTR_PER_EXEC_INT = 100000;
+const int GB_CPU_FREQ_INT = 4194304; // instr / second
+const int EMULATION_PER_SEC_INT = 120; // emulation /second
+const int DEBUG_PER_SEC_INT = 3; // debug / second
+const int FRAME_PER_SEC_INT = 60; // frame / second
+
+final double GB_CPU_FREQ_DOUBLE = GB_CPU_FREQ_INT.toDouble();
+final double EMULATION_PER_SEC_DOUBLE = EMULATION_PER_SEC_INT.toDouble();
+final double DEBUG_PER_SEC_DOUBLE = DEBUG_PER_SEC_INT.toDouble();
+final double FRAME_PER_SEC_DOUBLE = FRAME_PER_SEC_INT.toDouble();
+
+final Duration EMULATION_PERIOD_DURATION = new Duration(
+    microseconds: (MICROSEC_PER_SECOND / EMULATION_PER_SEC_DOUBLE).round());
+final Duration DEBUG_PERIOD_DURATION = new Duration(
+    microseconds: (MICROSEC_PER_SECOND / DEBUG_PER_SEC_DOUBLE).round());
+final Duration FRAME_PERIOD_DURATION = new Duration(
+    microseconds: (MICROSEC_PER_SECOND / FRAME_PER_SEC_DOUBLE).round());
 
 DateTime now() => new DateTime.now();
-
 
 class Worker {
 
   final Wiso.Ports _ports;
-  DebStatus      _debuggerStatus = DebStatus.ON;
+  Gameboy.GameBoy _gb;
 
-  Async.Timer  _tm;
-  DateTime  _rescheduleTime = now();
-  bool      _pause = false;
-  double    _emulationSpeed = 0.3 / GB_CPU_FREQ_DOUBLE;
-  double    _instrDeficit;
-  double    _instrPerRoutineGoal;
-  Gameboy.GameBoy   _gb;
+  // Emulation variables
+  bool _pause = false;
+  Async.Timer _emulationTimer;
+  DateTime _rescheduleTime = now();
+  double _emulationSpeed = 1.0;
+  double _instrDeficit;
+  double _instrPerRoutineGoal;
 
-  // For Debug
+  // Debugger variables
+  DebStatus _debuggerStatus = DebStatus.ON;
   DateTime _emulationStartTime = now();
+  Async.Timer _debuggerTimer;
 
   Worker(this._ports)
   {
     _ports.listener('EmulationStart').listen(_onEmulationStart);
     _ports.listener('EmulationMode').listen(_onEmulationMode);
     _ports.listener('DebStatusRequest').listen(_onDebuggerStateChange);
+    _debuggerTimer = new Async.Timer.periodic(DEBUG_PERIOD_DURATION, onDebug);
   }
 
   void _disableDebugger()
@@ -113,37 +125,33 @@ class Worker {
     return ;
   }
 
-  _reschedule(var f, Duration d) {
-    _tm = new Async.Timer(d, f);
-  }
-
-  onEmulationSpeedChange(double speed)
+  void onEmulationSpeedChange(double speed)
   {
     assert(!(speed < 0));
     _emulationSpeed = speed;
     _instrPerRoutineGoal =
-      GB_CPU_FREQ_DOUBLE / ROUTINE_PER_SEC_DOUBLE * _emulationSpeed;
+      GB_CPU_FREQ_DOUBLE / EMULATION_PER_SEC_DOUBLE * _emulationSpeed;
     _instrDeficit = 0.0;
   }
 
   void _debug() {
     final Duration emulationElapsedTime = _rescheduleTime.difference(_emulationStartTime);
     final double elapsed = emulationElapsedTime.inMicroseconds.toDouble() / MICROSEC_PER_SECOND;
-    final double routineId = elapsed * ROUTINE_PER_SEC_DOUBLE;
+    final double emulationId = elapsed * EMULATION_PER_SEC_DOUBLE;
 
-    print('Worker.onRoutine('
+    print('Worker.onEmulation('
         'elapsed:$emulationElapsedTime, '
-        'routineId:$routineId, '
+        'emulationId:$emulationId, '
         'clocks:${_gb.instrCount} (deficit:$_instrDeficit)'
         ')');
   }
 
-  onRoutine()
+  void onEmulation()
   {
-    _debug();
+    // _debug();
     int instrSum = 0;
     int instrExec;
-    final DateTime timeLimit = _rescheduleTime.add(ROUTINE_PERIOD_DURATION_MS);
+    final DateTime timeLimit = _rescheduleTime.add(EMULATION_PERIOD_DURATION);
     final double instrDebt = _instrPerRoutineGoal + _instrDeficit;
     final int instrLimit = instrDebt.floor();
 
@@ -162,7 +170,13 @@ class Worker {
       _instrDeficit = instrDebt - instrSum.toDouble();
     }
     _rescheduleTime = timeLimit;
-    _reschedule(onRoutine, _rescheduleTime.difference(now()));
+    _emulationTimer = new Async.Timer(_rescheduleTime.difference(now()), onEmulation);
+    return ;
+  }
+
+  void onDebug(_)
+  {
+    print('A LA BOUFFE!');
     return ;
   }
 
@@ -177,9 +191,8 @@ class Worker {
     // and try catch to detect errors;
     final c = new Cartmbc0.CartMbc0(irom, iram);
     _gb = new Gameboy.GameBoy(c);
-
     this.onEmulationSpeedChange(_emulationSpeed);
-    _reschedule(onRoutine, new Duration(seconds:0));
+    this.onEmulation();
     return ;
   }
 
