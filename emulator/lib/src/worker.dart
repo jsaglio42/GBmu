@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 20:18:03 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 20:55:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,12 +43,14 @@ class Worker {
   DebStatus _debuggerStatus = DebStatus.ON;
   DateTime _emulationStartTime = now();
   Async.Timer _debuggerTimer;
+  int _debuggerMemoryAddr = 0;
 
   Worker(this._ports)
   {
     _ports.listener('EmulationStart').listen(_onEmulationStart);
     _ports.listener('EmulationSpeed').listen(onEmulationSpeedChange);
     _ports.listener('DebStatusRequest').listen(_onDebuggerStateChange);
+    _ports.listener('DebMemAddrChange').listen(_onMemoryAddrChange);
     _debuggerTimer = new Async.Timer.periodic(DEBUG_PERIOD_DURATION, onDebug);
   }
 
@@ -107,6 +109,8 @@ class Worker {
     final double clockDebt = _clockPerRoutineGoal + _clockDeficit;
     final int clockLimit = clockDebt.floor();
 
+    if (clockDebt >= 1.0)
+      print('debt: $clockDebt');
     if (_pause)
       _clockDeficit = 0.0;
     else {
@@ -129,6 +133,7 @@ class Worker {
 
   void onDebug(_)
   {
+    print(now());
     if (_gb.isSome && _debuggerStatus == DebStatus.ON) {
       final l = new Uint8List(MemReg.values.length);
       final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
@@ -162,7 +167,17 @@ class Worker {
     return ;
   }
 
+  void _onMemoryAddrChange(int addr)
+  {
+    print('worker:\tonMemoryAddrChange($addr)');
+    assert (addr >= 0x0000);
+    assert (addr <= 0xFFFF);
+    _debuggerMemoryAddr = addr;
+    return ;
+  }
+
 }
+
 
 Worker _globalWorker;
 
@@ -173,15 +188,3 @@ void entryPoint(Wiso.Ports p)
   _globalWorker = new Worker(p);
   return ;
 }
-
-  // void _debug() {
-  //   final Duration emulationElapsedTime = _rescheduleTime.difference(_emulationStartTime);
-  //   final double elapsed = emulationElapsedTime.inMicroseconds.toDouble() / MICROSEC_PER_SECOND;
-  //   final double emulationId = elapsed * EMULATION_PER_SEC_DOUBLE;
-
-  //   print('Worker.onEmulation('
-  //       'elapsed:$emulationElapsedTime, '
-  //       'emulationId:$emulationId, '
-  //       'clocks:${_gb.clockCount} (deficit:$_clockDeficit)'
-  //       ')');
-  // }

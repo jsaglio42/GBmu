@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 16:10:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 20:50:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -37,8 +37,8 @@ class GameBoy {
   final Cpuregs.CpuRegs cpuRegs = new Cpuregs.CpuRegs();
   final Mmu.Mmu mmu;
   final Cartridge.Cartridge cartridge;
-  // final LCDScreen _lcd;
-  // final Headset _sound;
+  // final LCDScreen lcd;
+  // final Headset sound;
 
   int         _clockCount = 0;
 
@@ -49,6 +49,7 @@ class GameBoy {
   int get clockCount => _clockCount;
 
   void exec(int numIntr) {
+    print('exec($numIntr)');
     _clockCount += numIntr;
 
     _generateRandomMapFromIterable(Reg16.values, 256 * 256).forEach((r, v) {

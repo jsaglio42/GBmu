@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 20:25:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 20:36:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -102,7 +102,7 @@ class _SpeedSlider {
       'formatter': _formatter,
       'min': 0.0,
       'max': 1.0,
-      'step': 0.001,
+      'step': 0.0001,
       'id': 'mainSpeedSlider',
       'value': _valueLog.percent,
     });

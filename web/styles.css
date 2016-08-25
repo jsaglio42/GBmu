@@ -45,6 +45,7 @@ body {
 #debColMemoryExplorer td {
     font-size: 11px;
 }
+
 #debColMemoryExplorer th {
     font-size: 12px;
 }
@@ -62,6 +63,6 @@ body {
 }
 
 #mainSpeedSlider {
-    width: 500px;
+    width: 1000px;
     background: #BABABA;
 }

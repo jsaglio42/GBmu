@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:03:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 15:32:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 20:34:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,7 @@ void _onClockInfo(int clock) {
   final double f = clock.toDouble() / GB_FRAME_PER_CLOCK_DOUBLE;
 
   print('debugger/clock_info:\t_onClockInfo($clock)');
-  _clock.text = clock.toStringAsPrecision(6);
+  _clock.text = clock.toStringAsPrecision(9);
   _time.text = new Duration(microseconds: tMs.round()).toString();
   _frames.text = f.toStringAsPrecision(6);
   return ;
