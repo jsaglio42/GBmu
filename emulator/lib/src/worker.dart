@@ -134,21 +134,8 @@ class Worker {
     _instrDeficit = 0.0;
   }
 
-  void _debug() {
-    final Duration emulationElapsedTime = _rescheduleTime.difference(_emulationStartTime);
-    final double elapsed = emulationElapsedTime.inMicroseconds.toDouble() / MICROSEC_PER_SECOND;
-    final double emulationId = elapsed * EMULATION_PER_SEC_DOUBLE;
-
-    print('Worker.onEmulation('
-        'elapsed:$emulationElapsedTime, '
-        'emulationId:$emulationId, '
-        'clocks:${_gb.instrCount} (deficit:$_instrDeficit)'
-        ')');
-  }
-
   void onEmulation()
   {
-    // _debug();
     int instrSum = 0;
     int instrExec;
     final DateTime timeLimit = _rescheduleTime.add(EMULATION_PERIOD_DURATION);
@@ -207,3 +194,15 @@ void entryPoint(Wiso.Ports p)
   _globalWorker = new Worker(p);
   return ;
 }
+
+  // void _debug() {
+  //   final Duration emulationElapsedTime = _rescheduleTime.difference(_emulationStartTime);
+  //   final double elapsed = emulationElapsedTime.inMicroseconds.toDouble() / MICROSEC_PER_SECOND;
+  //   final double emulationId = elapsed * EMULATION_PER_SEC_DOUBLE;
+
+  //   print('Worker.onEmulation('
+  //       'elapsed:$emulationElapsedTime, '
+  //       'emulationId:$emulationId, '
+  //       'clocks:${_gb.instrCount} (deficit:$_instrDeficit)'
+  //       ')');
+  // }

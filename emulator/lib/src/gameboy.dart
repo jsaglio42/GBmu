@@ -16,15 +16,15 @@ import "package:emulator/src/memory/cartridge.dart" as Cartridge;
 
 class GameBoy {
 
-  final Cpuregs.CpuRegs _cpuRegs = new Cpuregs.CpuRegs();
-  final Mmu.Mmu _mmu;
-  final Cartridge.Cartridge _cartridge;
+  final Cpuregs.CpuRegs cpuRegs = new CpureHgs.CpuRegs();
+  final Mmu.Mmu mmu;
+  final Cartridge.Cartridge cartridge;
   // final LCDScreen _lcd;
   // final Headset _sound;
 
-  int 				_instrCount = 0;
+  int         _instrCount = 0;
 
-  GameBoy(Cartridge.Cartridge c) //TODO: pass LCDScreen and Headset
+  GameBoy(Cartridge.Cartridge c) //TODO: pass LCDScreen and eadset
     : _cartridge = c
     , _mmu = new Mmu.Mmu(c);
 
