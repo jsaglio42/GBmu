@@ -19,8 +19,8 @@ class GameBoy {
   final Cpuregs.CpuRegs cpuRegs = new Cpuregs.CpuRegs();
   final Mmu.Mmu mmu;
   final Cartridge.Cartridge cartridge;
-  // final LCDScreen _lcd;
-  // final Headset _sound;
+  // final LCDScreen lcd;
+  // final Headset sound;
 
   int         _instrCount = 0;
 

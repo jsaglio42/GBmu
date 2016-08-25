@@ -18,6 +18,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 
 import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
+import './debugger/mem_explorer.dart' as Debmexplorer;
 
 run() async
 {
@@ -47,12 +48,14 @@ run() async
 		print('main:\tonClick');
         emu.send('EmulationStart', lst);
         emu.send('EmulationMode', 'vitesse x10!!');
-      });
+      }); 
 
   var debStatusOn = Html.querySelector('#debStatusOn');
   var debStatusOff = Html.querySelector('#debStatusOff');
   var debButtonToggle = Html.querySelector('#debButtonToggle');
   var debBody = Js.context.callMethod(r'$', ['#debBody']);
+
+
 
   debButtonToggle.onClick.listen((_) {
         print('main:\tdebButtonToggle.onClick()');
@@ -77,6 +80,7 @@ run() async
   print('main:\tinit debugger elements');
   Debregisters.init(emu);
   Debmregisters.init(emu);
+  Debmexplorer.init(emu);
 
   print('main:\tinit jquery tooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);

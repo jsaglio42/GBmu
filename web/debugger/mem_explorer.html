@@ -1,6 +1,7 @@
 <table id="debugger_memory_explorer" class="table table-bordered table-striped table-condensed">
   <caption>
     <h4>Memory explorer</h4>
+    <input type="text" placeholder="Memory Address: 0000 ... FFFF" class="form-control" id="memory-addr-input">
   </caption>
   <thead>
     <tr>
@@ -23,7 +24,7 @@
       <th>xF</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody id="debTbodyMemExplorer">
     <tr>
       <td>FFFF</td>
       <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>

@@ -18,6 +18,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 /*
  * Global Variable
  */
+
 class _ValueCell {
   final Html.TableCellElement elt;
   int value = 0;

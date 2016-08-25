@@ -75,12 +75,14 @@ class Worker {
   DebStatus _debuggerStatus = DebStatus.ON;
   DateTime _emulationStartTime = now();
   Async.Timer _debuggerTimer;
+  int _debuggerMemoryAddr = 0;
 
   Worker(this._ports)
   {
     _ports.listener('EmulationStart').listen(_onEmulationStart);
     _ports.listener('EmulationMode').listen(_onEmulationMode);
     _ports.listener('DebStatusRequest').listen(_onDebuggerStateChange);
+    _ports.listener('DebMemAddrChange').listen(_onMemoryAddrChange);
     _debuggerTimer = new Async.Timer.periodic(DEBUG_PERIOD_DURATION, onDebug);
   }
 
@@ -183,7 +185,17 @@ class Worker {
     return ;
   }
 
+  void _onMemoryAddrChange(int addr)
+  {
+    print('worker:\tonMemoryAddrChange($addr)');
+    assert (addr >= 0x0000);
+    assert (addr <= 0xFFFF);
+    _debuggerMemoryAddr = addr;
+    return ;
+  }
+
 }
+
 
 Worker _globalWorker;
 

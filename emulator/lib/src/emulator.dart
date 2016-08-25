@@ -33,12 +33,14 @@ final _mainReceivers = <String, Type>{
   'MemRegInfo': <int>[].runtimeType,
   'Timings': <String, double>{}.runtimeType,
   'DebStatusUpdate': DebStatus,
+  'MemInfo': <String, dynamic>{}.runtimeType
 };
 
 final _workerReceivers = <String, Type>{
   'DebStatusRequest'  : DebStatusRequest,
   'EmulationStart'    : Uint8List,
   'EmulationMode'     : String,
+  'DebMemAddrChange'  : int
 };
 
 /*
