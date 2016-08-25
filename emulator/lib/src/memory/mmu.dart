@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 11:44:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 14:45:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,7 @@ import 'dart:typed_data';
 
 import "package:emulator/enums.dart";
 import "package:emulator/src/memory/imbc.dart" as Imbc;
+import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 
 class Mmu {
 
@@ -25,13 +26,13 @@ class Mmu {
   Mmu(this._mbc);
 
   int     pullMemReg(MemReg reg) {
-    final addr = memRegInfos[reg.index].address;
-    return readByte(addr);
+    final addr = Memregisters.memRegInfos[reg.index].address;
+    return this.pullMem(addr);
   }
 
   void    pushMemReg(MemReg reg, int value) {
-    final addr = memRegInfos[reg.index].address;
-    writeByte(addr, value);
+    final addr = Memregisters.memRegInfos[reg.index].address;
+    this.pushMem(addr, value);
   }
 
   int pullMem(int memAddr) {

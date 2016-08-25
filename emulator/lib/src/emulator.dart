@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 11:46:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 14:08:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,8 +30,9 @@ import "package:emulator/src/cpu_registers.dart" as Cpuregs;
 
 final _mainReceivers = <String, Type>{
   'RegInfo': Cpuregs.CpuRegs,
-  'MemRegInfo': <int>[].runtimeType,
-  'Timings': <String, double>{}.runtimeType,
+  'MemRegInfo': Uint8List,
+  'InstrInfo': double,
+  'ClockInfo': int,
   'DebStatusUpdate': DebStatus,
 };
 

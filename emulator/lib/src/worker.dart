@@ -6,18 +6,20 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 11:46:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 14:49:50 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:math' as Math;
 import 'dart:async' as Async;
 import 'dart:typed_data';
+import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/src/memory/rom.dart' as Rom;
 import 'package:emulator/src/memory/ram.dart' as Ram;
+import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 
@@ -61,7 +63,7 @@ DateTime now() => new DateTime.now();
 class Worker {
 
   final Wiso.Ports _ports;
-  Gameboy.GameBoy _gb;
+  Ft.Option<Gameboy.GameBoy> _gb = new Ft.Option.none();
 
   // Emulation variables
   bool _pause = false;
@@ -151,18 +153,30 @@ class Worker {
         if (instrSum >= instrLimit)
           break ;
         instrExec = Math.min(MAXIMUM_INSTR_PER_EXEC_INT, instrLimit - instrSum);
-        _gb.exec(instrExec);
+        _gb.data.exec(instrExec);
         instrSum += instrExec;
       }
       _instrDeficit = instrDebt - instrSum.toDouble();
     }
     _rescheduleTime = timeLimit;
-    _emulationTimer = new Async.Timer(_rescheduleTime.difference(now()), onEmulation);
+    _emulationTimer =
+      new Async.Timer(_rescheduleTime.difference(now()), onEmulation);
     return ;
   }
 
   void onDebug(_)
   {
+    if (_gb.isSome && _debuggerStatus == DebStatus.ON) {
+      final l = new Uint8List(MemReg.values.length);
+      final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
+
+      _ports.send('RegInfo', _gb.data.cpuRegs);
+      it.forEach((r, i) {
+        l[r.index] = _gb.data.mmu.pullMemReg(r);
+      });
+      _ports.send('MemRegInfo', l);
+    }
+
     print('A LA BOUFFE!');
     return ;
   }
@@ -177,7 +191,7 @@ class Worker {
     //TODO: Select right constructon giving r.pullHeader(RomHeaderField.Cartridge_Type)
     // and try catch to detect errors;
     final c = new Cartmbc0.CartMbc0(irom, iram);
-    _gb = new Gameboy.GameBoy(c);
+    _gb = new Ft.Option<Gameboy.GameBoy>.some(new Gameboy.GameBoy(c));
     this.onEmulationSpeedChange(_emulationSpeed);
     this.onEmulation();
     return ;
