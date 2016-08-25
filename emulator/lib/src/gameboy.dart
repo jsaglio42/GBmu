@@ -16,7 +16,7 @@ import "package:emulator/src/memory/cartridge.dart" as Cartridge;
 
 class GameBoy {
 
-  final Cpuregs.CpuRegs cpuRegs = new CpureHgs.CpuRegs();
+  final Cpuregs.CpuRegs cpuRegs = new Cpuregs.CpuRegs();
   final Mmu.Mmu mmu;
   final Cartridge.Cartridge cartridge;
   // final LCDScreen _lcd;
@@ -25,8 +25,8 @@ class GameBoy {
   int         _instrCount = 0;
 
   GameBoy(Cartridge.Cartridge c) //TODO: pass LCDScreen and eadset
-    : _cartridge = c
-    , _mmu = new Mmu.Mmu(c);
+    : this.cartridge = c
+    , this.mmu = new Mmu.Mmu(c);
 
   int get instrCount => _instrCount;
 
