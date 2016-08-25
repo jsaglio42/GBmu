@@ -6,44 +6,63 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 14:45:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 17:04:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:typed_data';
 
 import "package:emulator/enums.dart";
+import 'package:emulator/constants.dart';
 import "package:emulator/src/memory/imbc.dart" as Imbc;
 import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 
 class Mmu {
 
   final Imbc.IMbc _mbc;
-  final Uint8List _wRam;
-  final Uint8List _vRam;
-  final Uint8List _tailRam;
+  final Uint8List _wRam = new Uint8List(WORKING_RAM_SIZE);
+  final Uint8List _vRam = new Uint8List(VIDEO_RAM_SIZE);
+  final Uint8List _tailRam = new Uint8List(TAIL_RAM_SIZE);
 
   Mmu(this._mbc);
 
-  int     pullMemReg(MemReg reg) {
+  int pullMemReg(MemReg reg) {
     final addr = Memregisters.memRegInfos[reg.index].address;
-    return this.pullMem(addr);
+    return this.pullMem8(addr);
   }
 
-  void    pushMemReg(MemReg reg, int value) {
+  /** memAddr [0, 0xff], byte [0, 0xff] */
+  void pushMemReg(MemReg reg, int byte) {
     final addr = Memregisters.memRegInfos[reg.index].address;
-    this.pushMem(addr, value);
+    this.pushMem8(addr, byte);
   }
 
-  int pullMem(int memAddr) {
-    if (true)
-      return _mbc.pullMem(memAddr);
-    // else if (...)
-    //   ...;
-    // else
-    //   ...;
+  /** memAddr [0, 0xff] */
+  int pullMem8(int memAddr) {
+    assert(memAddr <= 0xFFFF && memAddr >= 0
+        , "Mmu.pullMem($memAddr)\tout of range");
+    if (memAddr > TAIL_RAM_LAST)
+      throw new Exception();
+    else if (memAddr >= TAIL_RAM_BEGIN)
+      return _tailRam[memAddr - TAIL_RAM_BEGIN];
+    else // TODO: pullMem
+      return 0x42;
   }
-  void pushMem(int memAddr, int v) {}
+
+  /** memAddr [0, 0xff], byte [0, 0xff] */
+  void pushMem8(int memAddr, int byte) {
+    if (memAddr > TAIL_RAM_LAST)
+      throw new Exception("Mmu.pushMem($memAddr, $byte)\tout of range");
+    else if (memAddr >= TAIL_RAM_BEGIN)
+      _tailRam[memAddr - TAIL_RAM_BEGIN] = byte;
+    // TODO: pullMem
+    return ;
+  }
+
+  int pullMem16(int memAddr)  //TODO: are word addresses aligned ?
+  {return 12;}
+  void pushMem16(int memAddr, int word)
+  {}
 
 }
 

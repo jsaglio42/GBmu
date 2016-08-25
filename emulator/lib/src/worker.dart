@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 14:49:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 17:10:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,46 +17,12 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 
 import 'package:emulator/enums.dart';
+import 'package:emulator/constants.dart';
 import 'package:emulator/src/memory/rom.dart' as Rom;
 import 'package:emulator/src/memory/ram.dart' as Ram;
 import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
-
-// var rng = new Math.Random();
-// Map _generateRandomMapFromIterable(Iterable l, int value_range)
-// {
-//   final size = Math.max(1, rng.nextInt(l.length));
-//   final m = {};
-//   var v;
-
-//   for (int i = 0; i < size; i++) {
-//     v = l.elementAt(rng.nextInt(l.length));
-//     m[v] = rng.nextInt(value_range);
-//   }
-//   return m;
-// }
-
-// Number should be close to (GB_CPU_FREQ_INT / EMULATION_PER_SEC_INT = 139810)
-const int MAXIMUM_INSTR_PER_EXEC_INT = 100000;
-const double MICROSEC_PER_SECOND = 1000000.0;
-
-const int GB_CPU_FREQ_INT = 4194304; // instr / second
-const int EMULATION_PER_SEC_INT = 120; // emulation /second
-const int DEBUG_PER_SEC_INT = 3; // debug / second
-const int FRAME_PER_SEC_INT = 60; // frame / second
-
-final double GB_CPU_FREQ_DOUBLE = GB_CPU_FREQ_INT.toDouble();
-final double EMULATION_PER_SEC_DOUBLE = EMULATION_PER_SEC_INT.toDouble();
-final double DEBUG_PER_SEC_DOUBLE = DEBUG_PER_SEC_INT.toDouble();
-final double FRAME_PER_SEC_DOUBLE = FRAME_PER_SEC_INT.toDouble();
-
-final Duration EMULATION_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSEC_PER_SECOND / EMULATION_PER_SEC_DOUBLE).round());
-final Duration DEBUG_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSEC_PER_SECOND / DEBUG_PER_SEC_DOUBLE).round());
-final Duration FRAME_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSEC_PER_SECOND / FRAME_PER_SEC_DOUBLE).round());
 
 DateTime now() => new DateTime.now();
 
@@ -68,10 +34,10 @@ class Worker {
   // Emulation variables
   bool _pause = false;
   Async.Timer _emulationTimer;
-  DateTime _rescheduleTime = now();
-  double _emulationSpeed = 1.0;
-  double _instrDeficit;
-  double _instrPerRoutineGoal;
+  DateTime _rescheduleTime;
+  double _emulationSpeed = 1.0 / GB_CPU_FREQ_DOUBLE * 2.0;
+  double _clockDeficit;
+  double _clockPerRoutineGoal;
 
   // Debugger variables
   DebStatus _debuggerStatus = DebStatus.ON;
@@ -131,32 +97,32 @@ class Worker {
   {
     assert(!(speed < 0));
     _emulationSpeed = speed;
-    _instrPerRoutineGoal =
+    _clockPerRoutineGoal =
       GB_CPU_FREQ_DOUBLE / EMULATION_PER_SEC_DOUBLE * _emulationSpeed;
-    _instrDeficit = 0.0;
+    _clockDeficit = 0.0;
   }
 
   void onEmulation()
   {
-    int instrSum = 0;
-    int instrExec;
+    int clockSum = 0;
+    int clockExec;
     final DateTime timeLimit = _rescheduleTime.add(EMULATION_PERIOD_DURATION);
-    final double instrDebt = _instrPerRoutineGoal + _instrDeficit;
-    final int instrLimit = instrDebt.floor();
+    final double clockDebt = _clockPerRoutineGoal + _clockDeficit;
+    final int clockLimit = clockDebt.floor();
 
     if (_pause)
-      _instrDeficit = 0.0;
+      _clockDeficit = 0.0;
     else {
       while (true) {
         if (now().compareTo(timeLimit) >= 0)
           break ;
-        if (instrSum >= instrLimit)
+        if (clockSum >= clockLimit)
           break ;
-        instrExec = Math.min(MAXIMUM_INSTR_PER_EXEC_INT, instrLimit - instrSum);
-        _gb.data.exec(instrExec);
-        instrSum += instrExec;
+        clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
+        _gb.data.exec(clockExec);
+        clockSum += clockExec;
       }
-      _instrDeficit = instrDebt - instrSum.toDouble();
+      _clockDeficit = clockDebt - clockSum.toDouble();
     }
     _rescheduleTime = timeLimit;
     _emulationTimer =
@@ -175,9 +141,8 @@ class Worker {
         l[r.index] = _gb.data.mmu.pullMemReg(r);
       });
       _ports.send('MemRegInfo', l);
+      _ports.send('ClockInfo', _gb.data.clockCount);
     }
-
-    print('A LA BOUFFE!');
     return ;
   }
 
@@ -193,7 +158,10 @@ class Worker {
     final c = new Cartmbc0.CartMbc0(irom, iram);
     _gb = new Ft.Option<Gameboy.GameBoy>.some(new Gameboy.GameBoy(c));
     this.onEmulationSpeedChange(_emulationSpeed);
-    this.onEmulation();
+    _emulationStartTime = now();
+    _rescheduleTime = _emulationStartTime.add(FIRST_EMULATION_SCHEDULE_LAG);
+    _emulationTimer =
+      new Async.Timer(_rescheduleTime.difference(now()), onEmulation);
     return ;
   }
 
@@ -217,6 +185,6 @@ void entryPoint(Wiso.Ports p)
   //   print('Worker.onEmulation('
   //       'elapsed:$emulationElapsedTime, '
   //       'emulationId:$emulationId, '
-  //       'clocks:${_gb.instrCount} (deficit:$_instrDeficit)'
+  //       'clocks:${_gb.clockCount} (deficit:$_clockDeficit)'
   //       ')');
   // }

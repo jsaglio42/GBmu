@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 11:47:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 16:23:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,15 +20,12 @@ class CartMbc0 extends Cartridge.Cartridge  {
   CartMbc0(Rom.Rom rom, Ram.Ram ram)
     : super(rom, ram);
 
-  @override int pullMem(int memAddr)
-  {
-    if (true)
-      this.rom.pull(memAddr + 0x42);
-    return 0;
-  }
-
-  @override void pushMem(int memAddr, int v)
-  {
-
-   }
+  @override int pullMem8(int memAddr)
+  { return 0x42;}
+  @override void pushMem8(int memAddr, int byte)
+  {}
+  @override int pullMem16(int memAddr)
+  { return 0x42;}
+  @override void pushMem16(int memAddr, int word)
+  {}
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 11:10:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 17:09:12 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -44,7 +44,7 @@ enum Reg1 {
 class CpuRegs {
 
   final Uint8List _data;
-  final           _view16;
+  final Uint16List _view16;
 
   /*
   ** Constructors **************************************************************
@@ -52,7 +52,7 @@ class CpuRegs {
 
   CpuRegs.buffer(Uint8List d)
     : _data = d
-    , _view16 = d.buffer.asInt16List();
+    , _view16 = d.buffer.asUint16List();
 
 
   CpuRegs() : this.buffer(new Uint8List(6 * 2));
