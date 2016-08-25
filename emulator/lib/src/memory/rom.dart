@@ -6,14 +6,12 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:56:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/23 14:59:52 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 11:40:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import "dart:typed_data";
-import "rom_header.dart";
-
-
+import "package:emulator/enums.dart";
 
 class Rom {
 
@@ -26,4 +24,3 @@ class Rom {
   int		get size => _data.length;
 
 }
-

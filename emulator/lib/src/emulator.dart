@@ -6,18 +6,17 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/23 15:45:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 11:46:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:async' as As;
-import 'dart:isolate' as Is;
+import 'dart:async' as Async;
 import 'dart:typed_data';
+import 'package:ft/wired_isolate.dart' as Wiso;
 
-import 'package:ft/wired_isolate.dart' as WI;
-
-import './worker.dart' as W;
-import './public_classes.dart';
+import 'package:emulator/enums.dart';
+import 'package:emulator/src/worker.dart' as Worker;
+import "package:emulator/src/cpu_registers.dart" as Cpuregs;
 
 /*
  * ************************************************************************** **
@@ -29,12 +28,8 @@ import './public_classes.dart';
  *   it's callback function.
  */
 
-// final Type VRegisterMap = <VRegister, int>{}.runtimeType;
-// final Type ORegisterMap = <ORegister, int>{}.runtimeType;
-// final Type TimingMap    = <String, double>{}.runtimeType;
-
 final _mainReceivers = <String, Type>{
-  'RegInfo': CpuRegs,
+  'RegInfo': Cpuregs.CpuRegs,
   'MemRegInfo': <int>[].runtimeType,
   'Timings': <String, double>{}.runtimeType,
   'DebStatusUpdate': DebStatus,
@@ -42,8 +37,8 @@ final _mainReceivers = <String, Type>{
 
 final _workerReceivers = <String, Type>{
   'DebStatusRequest'  : DebStatusRequest,
-  'EmulationStart'    : Uint8List,    //debug
-  'EmulationMode'     : String, //debug
+  'EmulationStart'    : Uint8List,
+  'EmulationMode'     : String,
 };
 
 /*
@@ -54,21 +49,22 @@ final _workerReceivers = <String, Type>{
 
 class Emulator {
 
-  final WI.WiredIsolate    _wi;
+  final Wiso.WiredIsolate    _wiso;
 
-  Emulator(WI.WiredIsolate wi) : _wi = wi;
+  Emulator(this._wiso);
 
-  void      send(String msgType, var data)  => _wi.p.send(msgType, data);
-  As.Stream listener(String msgType)        => _wi.p.listener(msgType);
+  void      send(String msgType, var data)  => _wiso.p.send(msgType, data);
+  Async.Stream listener(String msgType)        => _wiso.p.listener(msgType);
 
 }
 
-As.Future<Emulator> spawn()
+Async.Future<Emulator> spawn()
 async {
   print('emulator:\tspawn()');
 
   //Todo: listen isolate errors
-  final wi = await WI.spawn(W.entryPoint, _mainReceivers, _workerReceivers);
-  wi.i.resume(wi.resumeCapability);
-  return new Emulator(wi);
+  final w = await Wiso.spawn(
+      Worker.entryPoint, _mainReceivers, _workerReceivers);
+  w.i.resume(w.resumeCapability);
+  return new Emulator(w);
 }

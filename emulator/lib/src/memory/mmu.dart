@@ -6,17 +6,18 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/23 14:53:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 11:44:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:typed_data';
-import "imbc.dart";
-import 'mem_registers.dart';
+
+import "package:emulator/enums.dart";
+import "package:emulator/src/memory/imbc.dart" as Imbc;
 
 class Mmu {
 
-  final IMbc      _mbc;
+  final Imbc.IMbc _mbc;
   final Uint8List _wRam;
   final Uint8List _vRam;
   final Uint8List _tailRam;

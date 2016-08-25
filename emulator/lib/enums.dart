@@ -1,26 +1,13 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   public_classes.dart                                :+:      :+:    :+:   //
+//   enums.dart                                         :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/22 11:27:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 17:34:39 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/25 11:10:16 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/25 11:13:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-/*
- * This file should be fully imported for convenience
- */
-
-export 'cpu_registers.dart';
-export 'memory/mem_registers.dart';
-
-enum DebStatus {
-  ON, OFF
-}
-
-enum DebStatusRequest {
-  TOGGLE, DISABLE, ENABLE
-}
+export 'package:emulator/src/enums.dart';

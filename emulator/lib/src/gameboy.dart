@@ -1,32 +1,32 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   public_classes.dart                                :+:      :+:    :+:   //
+//   gameboy.dart                                       :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/22 11:27:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 17:34:39 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/25 11:43:20 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import "cpu_registers.dart";
-import "memory/mmu.dart";
-import "memory/cartridge.dart";
+import "package:emulator/src/cpu_registers.dart" as Cpuregs;
+import "package:emulator/src/memory/mmu.dart" as Mmu;
+import "package:emulator/src/memory/cartridge.dart" as Cartridge;
 
 class GameBoy {
 
-  final CpuRegs 	_cpuRegs = new CpuRegs();
-  final Mmu     	_mmu;
-  final Cartridge	_cartridge;
+  final Cpuregs.CpuRegs _cpuRegs = new Cpuregs.CpuRegs();
+  final Mmu.Mmu _mmu;
+  final Cartridge.Cartridge _cartridge;
   // final LCDScreen _lcd;
   // final Headset _sound;
 
   int 				_instrCount = 0;
 
-  GameBoy(Cartridge c) //TODO: pass LCDScreen and Headset
+  GameBoy(Cartridge.Cartridge c) //TODO: pass LCDScreen and Headset
     : _cartridge = c
-    , _mmu = new Mmu(c);
+    , _mmu = new Mmu.Mmu(c);
 
   int get instrCount => _instrCount;
 

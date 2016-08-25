@@ -6,14 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 17:00:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 11:53:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
-import 'package:emulator/emulator.dart' as Emu;
-import 'package:emulator/emulator_classes.dart';
-import 'package:ft/ft.dart' as ft;
+import 'package:ft/ft.dart' as Ft;
+import 'package:emulator/enums.dart';
+import 'package:emulator/emulator.dart' as Emulator;
 
 /*
  * Global Variable
@@ -54,9 +54,9 @@ class _DomData {
   static _reg16ElementsOfTable(Html.TableElement table)
   {
     var m = {};
-    final it = new ft.DoubleIterable(
-        ft.iterEnumData(Reg16, Reg16.values),
-        ft.iterTableRows(table).skip(2).take(6));
+    final it = new Ft.DoubleIterable(
+        Ft.iterEnumData(Reg16, Reg16.values),
+        Ft.iterTableRows(table).skip(2).take(6));
 
     it.forEach((Map m2, List<Html.TableCellElement> cells){
       assert(cells.length == 2, 'Unexpected list length');
@@ -74,8 +74,8 @@ class _DomData {
     assert(cell != null, "Could not find labels cell");
     final List<Html.Element> labels = cell.children;
     assert(labels != null, "Could not find labels");
-    final it = new ft.DoubleIterable(
-        ft.iterEnumData(Reg1, Reg1.values),
+    final it = new Ft.DoubleIterable(
+        Ft.iterEnumData(Reg1, Reg1.values),
         labels.reversed);
     var m = {};
 
@@ -94,7 +94,7 @@ final _DomData _data = new _DomData();
  * Internal Methods
  */
 
-void _onRegInfo(CpuRegs cpur) {
+void _onRegInfo(Emulator.CpuRegs cpur) {
   print('debugger/registers:\_onRegInfo($cpur)');
   toggleReg16Element(Reg16 reg, _HtmlElement cell){
     final int cur = cpur.value16(reg);
@@ -138,7 +138,7 @@ void _onRegInfo(CpuRegs cpur) {
  * Exposed Methods
  */
 
-void init(Emu.Emulator emu) {
+void init(Emulator.Emulator emu) {
   print('debugger/registers:\tinit()');
   _data.toString(); /* Tips to instanciate _data */
   emu.listener('RegInfo').listen(_onRegInfo);

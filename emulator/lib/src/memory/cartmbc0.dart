@@ -1,23 +1,23 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   main.dart                                          :+:      :+:    :+:   //
+//   cartmbc0.dart                                      :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/24 11:01:36 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/24 17:02:00 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/25 11:47:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import "ram.dart";
-import "rom.dart";
-import "cartridge.dart";
-import "imbc.dart";
+import "package:emulator/src/memory/ram.dart" as Ram;
+import "package:emulator/src/memory/rom.dart" as Rom;
+import "package:emulator/src/memory/cartridge.dart" as Cartridge;
+import "package:emulator/src/memory/imbc.dart" as Imbc;
 
-class CartMbc0 extends Cartridge  {
+class CartMbc0 extends Cartridge.Cartridge  {
 
-  CartMbc0(Rom rom, Ram ram)
+  CartMbc0(Rom.Rom rom, Ram.Ram ram)
     : super(rom, ram);
 
   @override int pullMem(int memAddr)

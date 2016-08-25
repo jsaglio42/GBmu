@@ -6,31 +6,25 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/23 15:45:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 11:46:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:math' as math;
+import 'dart:math' as Math;
+import 'dart:async' as Async;
 import 'dart:typed_data';
-// import 'dart:isolate' as Is;
-// import 'dart:async' as As;
-import 'package:ft/wired_isolate.dart' as WI;
+import 'package:ft/wired_isolate.dart' as Wiso;
 
-// import './emulator.dart' as Em;
-import './public_classes.dart';
-import './memory/rom.dart';
-import './memory/ram.dart';
-import './memory/cartmbc0.dart';
+import 'package:emulator/enums.dart';
+import 'package:emulator/src/memory/rom.dart' as Rom;
+import 'package:emulator/src/memory/ram.dart' as Ram;
+import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
+import 'package:emulator/src/gameboy.dart' as Gameboy;
 
-
-
-import 'cpu_registers.dart' as CPUR;
-import 'gameboy.dart';
-
-// var rng = new math.Random();
+// var rng = new Math.Random();
 // Map _generateRandomMapFromIterable(Iterable l, int value_range)
 // {
-//   final size = math.max(1, rng.nextInt(l.length));
+//   final size = Math.max(1, rng.nextInt(l.length));
 //   final m = {};
 //   var v;
 
@@ -41,37 +35,32 @@ import 'gameboy.dart';
 //   return m;
 // }
 
-import 'dart:typed_data';
-import 'dart:async' as As;
-import 'dart:math' as math;
-
- // Number close to (GB_CPU_FREQ_INT / ROUTINE_PER_SEC_INT = 139810)
-final int MAXIMUM_INSTR_PER_EXEC_INT = 100000;
-
 final int       GB_CPU_FREQ_INT = 4194304; // instr / second
 final double    GB_CPU_FREQ_DOUBLE = GB_CPU_FREQ_INT.toDouble();
 final int       ROUTINE_PER_SEC_INT = 30; // routine /second
 final double    ROUTINE_PER_SEC_DOUBLE = ROUTINE_PER_SEC_INT.toDouble();
 final double    MICROSEC_PER_SECOND = 1000000.0;
-final Duration  ROUTINE_PERIOD_DURATION_MS =
-  new Duration(
-      microseconds: (MICROSEC_PER_SECOND / ROUTINE_PER_SEC_DOUBLE).round());
+final Duration  ROUTINE_PERIOD_DURATION_MS = new Duration(
+    microseconds: (MICROSEC_PER_SECOND / ROUTINE_PER_SEC_DOUBLE).round());
+
+ // Number should be close to (GB_CPU_FREQ_INT / ROUTINE_PER_SEC_INT = 139810)
+final int MAXIMUM_INSTR_PER_EXEC_INT = 100000;
 
 DateTime now() => new DateTime.now();
 
 
 class Worker {
 
-  final WI.Ports _ports;
-  DebStatus      _debuggerStatus = DebStatus.ON;  
+  final Wiso.Ports _ports;
+  DebStatus      _debuggerStatus = DebStatus.ON;
 
-  As.Timer  _tm;
+  Async.Timer  _tm;
   DateTime  _rescheduleTime = now();
   bool      _pause = false;
   double    _emulationSpeed = 0.3 / GB_CPU_FREQ_DOUBLE;
   double    _instrDeficit;
   double    _instrPerRoutineGoal;
-  GameBoy   _gb;
+  Gameboy.GameBoy   _gb;
 
   // For Debug
   DateTime _emulationStartTime = now();
@@ -125,7 +114,7 @@ class Worker {
   }
 
   _reschedule(var f, Duration d) {
-    _tm = new As.Timer(d, f);
+    _tm = new Async.Timer(d, f);
   }
 
   onEmulationSpeedChange(double speed)
@@ -166,7 +155,7 @@ class Worker {
           break ;
         if (instrSum >= instrLimit)
           break ;
-        instrExec = math.min(MAXIMUM_INSTR_PER_EXEC_INT, instrLimit - instrSum);
+        instrExec = Math.min(MAXIMUM_INSTR_PER_EXEC_INT, instrLimit - instrSum);
         _gb.exec(instrExec);
         instrSum += instrExec;
       }
@@ -181,13 +170,13 @@ class Worker {
   {
     final drom = l; //TODO: Retrieve from indexedDB
     final dram = new Uint8List.fromList([42, 43]); //TODO: Retrieve from indexedDB
-    final rom = new Rom(drom);
-    final ram = new Ram(dram);
+    final irom = new Rom.Rom(drom);
+    final iram = new Ram.Ram(dram);
 
     //TODO: Select right constructon giving r.pullHeader(RomHeaderField.Cartridge_Type)
     // and try catch to detect errors;
-    final c = new CartMbc0(rom, ram);
-    _gb = new GameBoy(c);
+    final c = new Cartmbc0.CartMbc0(irom, iram);
+    _gb = new Gameboy.GameBoy(c);
 
     this.onEmulationSpeedChange(_emulationSpeed);
     _reschedule(onRoutine, new Duration(seconds:0));
@@ -198,15 +187,10 @@ class Worker {
 
 Worker _globalWorker;
 
-void entryPoint(WI.Ports p)
+void entryPoint(Wiso.Ports p)
 {
   print('worker:\tentryPoint($p)');
   assert(_globalWorker == null);
   _globalWorker = new Worker(p);
   return ;
 }
-
-
-
-
-

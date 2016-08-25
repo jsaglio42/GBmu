@@ -6,14 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 16:57:32 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 17:49:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 11:53:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
-import 'package:emulator/emulator.dart' as Emu;
-import 'package:emulator/emulator_classes.dart';
-import 'package:ft/ft.dart' as ft;
+import 'package:ft/ft.dart' as Ft;
+import 'package:emulator/enums.dart';
+import 'package:emulator/emulator.dart' as Emulator;
 
 /*
  * Global Variable
@@ -36,7 +36,8 @@ class _DomData {
     return tbody.rows;
   }
 
-  static _initTr(MemReg reg, MemRegInfo reginfo, Html.TableRowElement tr)
+  static _initTr(
+      MemReg reg, Emulator.MemRegInfo reginfo, Html.TableRowElement tr)
   {
     final Html.TableCellElement td1 = tr.cells?.elementAt(0);
     assert(td1 != null, "Could not retrieve td");
@@ -88,11 +89,12 @@ class _DomData {
     final rowList = <Html.TableRowElement>[]
       ..addAll(trListOfTbodyId('#debTbody0MemRegisters'))
       ..addAll(trListOfTbodyId('#debTbody1MemRegisters'));
-    final it = new ft.TripleIterable(
-        MemReg.values, memRegInfos, rowList);
+    final it = new Ft.TripleIterable(
+        MemReg.values, Emulator.memRegInfos, rowList);
     Html.TableCellElement cell;
 
-    it.forEach((MemReg reg, MemRegInfo reginfo, Html.TableRowElement tr){
+    it.forEach((MemReg reg, Emulator.MemRegInfo reginfo
+            , Html.TableRowElement tr){
       _initTr(reg, reginfo, tr);
       cell = tr.cells?.elementAt(1);
       assert(cell != null, "Could not retrieve value cell");
@@ -141,7 +143,7 @@ void _onMemRegInfo(List<int> values) {
  * Exposed Methods
  */
 
-void init(Emu.Emulator emu) {
+void init(Emulator.Emulator emu) {
   print('debugger/memory_registers:\tinit()');
   _data.toString(); /* Tips to instanciate _cells */
   emu.listener('MemRegInfo').listen(_onMemRegInfo);

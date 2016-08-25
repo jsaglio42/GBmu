@@ -6,19 +6,18 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/23 16:11:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 11:55:53 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
 import 'dart:js' as Js;
-import 'dart:convert' as Con;
 import 'dart:typed_data';
-import 'package:emulator/emulator.dart' as Emu;
-import 'package:emulator/emulator_classes.dart';
-import 'package:ft/ft.dart' as ft;
-import './debugger/registers.dart' as DebRegisters;
-import './debugger/mem_registers.dart' as DebMRegisters;
+import 'package:emulator/enums.dart';
+import 'package:emulator/emulator.dart' as Emulator;
+
+import './debugger/registers.dart' as Debregisters;
+import './debugger/mem_registers.dart' as Debmregisters;
 
 run() async
 {
@@ -38,7 +37,7 @@ run() async
 
   var magbut = Html.querySelector('#magbut');
 
-  var emuFut = Emu.spawn()
+  var emuFut = Emulator.spawn()
     .catchError((e) => print('main:\tError while creating emulator:\n$e'));
 
   var emu = await emuFut;
@@ -76,8 +75,8 @@ run() async
   });
 
   print('main:\tinit debugger elements');
-  DebRegisters.init(emu);
-  DebMRegisters.init(emu);
+  Debregisters.init(emu);
+  Debmregisters.init(emu);
 
   print('main:\tinit jquery tooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);
