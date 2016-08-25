@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 17:10:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 20:18:03 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -47,7 +47,7 @@ class Worker {
   Worker(this._ports)
   {
     _ports.listener('EmulationStart').listen(_onEmulationStart);
-    _ports.listener('EmulationMode').listen(_onEmulationMode);
+    _ports.listener('EmulationSpeed').listen(onEmulationSpeedChange);
     _ports.listener('DebStatusRequest').listen(_onDebuggerStateChange);
     _debuggerTimer = new Async.Timer.periodic(DEBUG_PERIOD_DURATION, onDebug);
   }
@@ -64,12 +64,6 @@ class Worker {
     _ports.send('DebStatusUpdate', _debuggerStatus);
   }
 
-
-  void _onEmulationMode(String p)
-  {
-    print('worker:\tonEmulationMode($p)');
-    return ;
-  }
 
   void _onDebuggerStateChange(DebStatusRequest p)
   {
@@ -95,6 +89,9 @@ class Worker {
 
   void onEmulationSpeedChange(double speed)
   {
+    print('worker:\tonEmulationSpeedChange($speed)');
+    // if (!(speed < 100.0))
+      // speed = 1000000000000.0;
     assert(!(speed < 0));
     _emulationSpeed = speed;
     _clockPerRoutineGoal =

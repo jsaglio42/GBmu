@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 17:10:22 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 20:22:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,7 @@ final double GB_FRAME_PER_CLOCK_DOUBLE = GB_FRAME_PER_CLOCK_INT.toDouble();
 
 const int GB_CPU_FREQ_INT = 4194304; // clock / second
 const int EMULATION_PER_SEC_INT = 120; // emulation /second
-const int DEBUG_PER_SEC_INT = 3; // debug / second
+const int DEBUG_PER_SEC_INT = 1; // debug / second
 const int FRAME_PER_SEC_INT = 60; // frame / second
 
 final double GB_CPU_FREQ_DOUBLE = GB_CPU_FREQ_INT.toDouble();

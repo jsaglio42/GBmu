@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 14:08:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 19:56:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,7 @@ final _mainReceivers = <String, Type>{
 final _workerReceivers = <String, Type>{
   'DebStatusRequest'  : DebStatusRequest,
   'EmulationStart'    : Uint8List,
-  'EmulationMode'     : String,
+  'EmulationSpeed'     : double,
 };
 
 /*

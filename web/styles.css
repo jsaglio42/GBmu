@@ -49,8 +49,8 @@ body {
     font-size: 12px;
 }
 
-.debStatusButton { 
-  margin-right: 20px; 
+.debStatusButton {
+  margin-right: 20px;
 }
 
 .debLabelCgb {
@@ -59,4 +59,9 @@ body {
 .tooltip-inner {
     white-space:pre;
     max-width:none;
+}
+
+#mainSpeedSlider {
+    width: 500px;
+    background: #BABABA;
 }

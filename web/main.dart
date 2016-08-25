@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 15:10:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 19:59:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,7 +18,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 
 import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
-
+import './main_space/bottom_panel.dart' as Mainbottompanel;
 
 import './debugger/clock_info.dart' as Debclocks;
 
@@ -49,7 +49,7 @@ run() async
   magbut.onClick.listen((_) {
 		print('main:\tonClick');
         emu.send('EmulationStart', lst);
-        emu.send('EmulationMode', 'vitesse x10!!');
+        // emu.send('EmulationMode', 'vitesse x10!!');
       });
 
   var debStatusOn = Html.querySelector('#debStatusOn');
@@ -81,8 +81,8 @@ run() async
   Debregisters.init(emu);
   Debmregisters.init(emu);
 
-
   Debclocks.init(emu);
+  Mainbottompanel.init(emu);
 
   print('main:\tinit jquery tooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);

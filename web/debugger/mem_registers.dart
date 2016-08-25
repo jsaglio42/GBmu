@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 16:57:32 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 11:53:38 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/25 20:17:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -111,7 +111,7 @@ final _data = new _DomData();
  */
 
 void _onMemRegInfo(List<int> values) {
-  print('debugger/mem_registers:\_onMemRegInfo($values)');
+  // print('debugger/mem_registers:\_onMemRegInfo($values)');
   int i = 0;
 
   _data.valueCells.forEach((MemReg reg, _ValueCell cell){
