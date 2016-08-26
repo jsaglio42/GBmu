@@ -29,10 +29,11 @@ DateTime now() => new DateTime.now();
 
 abstract class Debug implements Worker.AWorker {
 
+  static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
   DebStatus _debuggerStatus = DebStatus.ON;
   // DateTime _emulationStartTime = now();
   Async.Timer _debuggerTimer;
-  final int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
+
   int _debuggerMemoryAddr = 0;
 
   void _disableDebugger()
@@ -79,6 +80,10 @@ abstract class Debug implements Worker.AWorker {
       it.forEach((r, i) {
         l[r.index] = this.gb.data.mmu.pullMemReg(r);
       });
+      // this.ports.send('MemInfo', {
+      //   'addr' : _debuggerMemoryAddr,
+      //   'data' : _buildMemoryList(_debuggerMemoryAddr)
+      // });
       this.ports.send('MemRegInfo', l);
       this.ports.send('ClockInfo', this.gb.data.clockCount);
     }
@@ -92,6 +97,17 @@ abstract class Debug implements Worker.AWorker {
         , '_onMemoryAddrChange: addr not valid');
     _debuggerMemoryAddr = addr;
     return ;
+  }
+
+  Uint8List   _buildMemoryList(int addr)
+  {
+    print('worker:\_buildMemoryList($addr)');
+    assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
+        , '_buildMemExplorerMap: addr not valid');
+    final memList = new List.generate(_debuggerMemoryLen, (i) {
+      return this.gb.data.mmu.pullMem8(addr + i);
+    });
+    return new Uint8List.fromList(memList);
   }
 
   void init_debug()
