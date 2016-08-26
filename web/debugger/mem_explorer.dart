@@ -11,6 +11,7 @@
 // ************************************************************************** //
 
 import 'dart:typed_data';
+import 'dart:math' as Math;
 import 'dart:html' as Html;
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
@@ -18,36 +19,45 @@ import 'package:emulator/emulator.dart' as Emulator;
 
 /*
 ** Classes
- */
+*/
 
 const MEMORY_ROWS = 9;
 const MEMORY_COLS = 16;
+final MEMORY_CELLS_COUNT = MEMORY_COLS * MEMORY_ROWS;
 
 class _Cell {
-  int value = 0;
-  
+
   final Html.TableCellElement elt;
+  int value = 0;
+
   _Cell(this.elt);
 }
 
 class _Data {
 
-  int addr;
+  final List<_Cell> addrCells = _createAddressCells();
+  final List<_Cell> memCells = _createMemoryCells();
 
-  final List<_Cell> valueCells = _createValueCells();
-
-  static _createValueCells() {
+  static _createAddressCells() {
     final Html.TableSectionElement tbody = Html.querySelector('#debTbodyMemExplorer');
-    final cellList = tbody.rows.map((tr) {
-        assert(tr.cells != null, "Could not retrieve row cells");
-        return tr.cells;
-      })
+    final addrList = tbody.rows
+      .map((tr) => new _Cell(tr.cells.first))
+      .toList();
+    assert(addrList != null, "_createAddressCells: addrList is null");
+    assert(addrList.length == MEMORY_ROWS, "_createAddressCells: Invalid number of rows");
+    return addrList;
+  }
+
+  static _createMemoryCells() {
+    final Html.TableSectionElement tbody = Html.querySelector('#debTbodyMemExplorer');
+    final memList = tbody.rows
+      .map((tr) => tr.cells.skip(1))
       .expand((i) => i)
       .map((td) => new _Cell(td))
       .toList();
-    assert(cellList != null, "Could not retrieve cell list from #debTbodyMemExplorer");
-    assert(cellList.length == ((MEMORY_COLS + 1) * MEMORY_ROWS), "Invalid number of cells");
-    return cellList;
+    assert(memList != null, "_createAddressCells");
+    assert(memList.length == MEMORY_CELLS_COUNT, "Invalid number of cells");
+    return memList;
   }
 
 }
@@ -57,45 +67,23 @@ class _Data {
 */
 
 void _onMemInfo(Map<String, dynamic> map) {
+  print('debugger/mem_explorer:\_onMemInfo($map)');
   assert(map['address'] != null && map['address'] is int);
   final addr = map['address'];
   assert(addr >= 0x0000 && addr <= 0xFFFF);
   assert(map['data'] != null && map['data'] is Uint8List);
   final data = map['data'];
-  assert(data.length == MEMORY_ROWS * MEMORY_COLS);
-
-
-
-
-
-  // final addrList = _data.valueCells.where((e) => (cellList.IndexOf(e) % 17 == 0)).toList();
-  // final valueList = _data.valueCells.where((e) => (cellList.IndexOf(e) % 17 != 0)).toList();
-
-  // print('debugger/mem_explorer:\_onMemInfo($values)');
-  // int i = 0;
-
-  // _data.valueCells.forEach((MemReg reg, _Cell cell){
-  //   final int cur = values[i++];
-
-  //   if (cell.value == cur) {
-  //     if (cell.highlighted) {
-  //       cell.elt.style.color = 'black';
-  //       _data.valueCells[reg].highlighted = false;
-  //     }
-  //   }
-  //   else {
-  //     if (!cell.highlighted) {
-  //       cell.elt.style.color = 'blue';
-  //       _data.valueCells[reg].highlighted = true;
-  //     }
-  //     cell.elt.text = cur
-  //       .toUnsigned(16)
-  //       .toRadixString(16)
-  //       .toUpperCase()
-  //       .padLeft(2, "0");
-  //     _data.valueCells[reg].value = cur;
-  //   }
-  // });
+  assert(data.length == _data.memCells.length);
+  for (var i = 0; i < _data.addrCells.length; ++i)
+    _data.addrCells[i].elt.text = (addr + i * 0x10)
+      .toRadixString(16)
+      .toUpperCase()
+      .padLeft(4, "0");
+  for (var i = 0; i < _data.memCells.length; ++i)
+    _data.memCells[i].elt.text = data[i]
+      .toRadixString(16)
+      .toUpperCase()
+      .padLeft(2, "0");
   return ;
 }
 
@@ -104,13 +92,18 @@ void _onMemInfo(Map<String, dynamic> map) {
  */
 
 void _onMemAddrUpdate(_) {  
-  final int parsedValue = int.parse(_memAddrInput.value, radix:16, onError: (s) => -1);
+  final int parsedValue = int.parse(_memAddrInput.value,
+    radix:16,
+    onError: (s) => -1);
   if (parsedValue >= 0x0000 && parsedValue <= 0xFFFF) {
-    // _data.addr = parsedValue;
-    _emu.send('DebMemAddrChange', parsedValue);
+    final maxRange = 0x10000 - MEMORY_CELLS_COUNT;
+    final adjustedAddr = Math.min(maxRange, parsedValue & 0xFFF0);
+    _emu.send('DebMemAddrChange', adjustedAddr);
   }
+  // Side - effect
   _memAddrInput.value = '';
   _memAddrInput.blur();
+  return ;
 }
 
 /*
@@ -131,7 +124,7 @@ void init(Emulator.Emulator emu) {
   _data.toString(); /* Tips to instanciate _cells */
   _onMemInfo({
       'address' : 0x0000,
-      'data' : new Uint8List(MEMORY_ROWS * MEMORY_COLS)
+      'data' : new Uint8List(MEMORY_CELLS_COUNT)
   });
   _emu.listener('MemInfo').forEach(_onMemInfo);
   _memAddrInput.onChange.forEach(_onMemAddrUpdate);
