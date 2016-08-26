@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 12:55:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 13:53:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,9 @@ import 'package:emulator/emulator.dart' as Emulator;
 /*
  * Global Variable
  */
+
+var _speed = new _SpeedSlider();
+Emulator.Emulator _emu;
 
 /*
  * Internal Methods
@@ -35,10 +38,6 @@ import 'package:emulator/emulator.dart' as Emulator;
 //   _frames.text = f.toStringAsPrecision(6);
 //   return ;
 // }
-
-/*
- * Exposed Methods
- */
 
 // TODO: Tout delete et refaire
 class _LogScale {
@@ -109,9 +108,13 @@ class _SpeedSlider {
       'formatter': _formatter,
       'min': 0.0,
       'max': 1.0,
-      'step': 0.0001,
+      'step': 0.001,
       'id': 'mainSpeedSlider',
       'value': 0.5,
+      'ticks': [0.0, 0.5, 1.0],
+      'ticks_labels': ['0%', '100%', 'infinity'],
+      'ticks_snap_bounds': 0.001 * 5.0,
+      'tooltip': 'always',
     });
     _slider = Html.querySelector('#mainSpeedSlider');
     assert(param != null, "Could not build `Slider` parameter");
@@ -138,8 +141,10 @@ class _SpeedSlider {
 
 
 }
-var _speed = new _SpeedSlider();
-Emulator.Emulator _emu;
+
+/*
+ * Exposed Methods
+ */
 
 void init(Emulator.Emulator emu) {
   print('debugger/bottom_panel:\tinit()');

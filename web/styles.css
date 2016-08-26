@@ -63,6 +63,7 @@ body {
 }
 
 #mainSpeedSlider {
-    width: 1000px;
+    margin-top: 20px;
+    width: 90%;
     background: #BABABA;
 }
