@@ -2,10 +2,10 @@
 
 <BR>
 ```sh
-docker build -t img_gbmu .
-docker run --rm --name=c_gbmu -t -i -p 80:80 img_gbmu
+pub get
+pub serve
 ```
-- http://192.168.99.100:80/
+- http://localhost:8080/
 
 # Useful links:
 
