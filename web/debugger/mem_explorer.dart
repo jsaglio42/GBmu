@@ -63,7 +63,7 @@ class _Data {
 }
 
 /*
-** Update Cells according to memory
+** Update Cells according to Event
 */
 
 void _onMemInfo(Map<String, dynamic> map) {

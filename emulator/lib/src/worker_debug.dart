@@ -103,6 +103,10 @@ abstract class Debug implements Worker.AWorker {
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_onMemoryAddrChange: addr not valid');
     _debuggerMemoryAddr = addr;
+    this.ports.send('MemInfo',  <String, dynamic> {
+        'addr' : _debuggerMemoryAddr,
+        'data' : _buildMemoryList(_debuggerMemoryAddr)
+      });
     return ;
   }
 
