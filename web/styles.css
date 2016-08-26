@@ -20,26 +20,68 @@ body {
   text-align: center;
 }
 
-[class*="col-"], footer {
+[class*="col-"] {
     border: 1px solid black;
     border-radius: 6px;
     text-align: center;
 }
 
-#debContainer, footer {
-    background-color: rgba(0, 71, 171, 0.2);
+.tooltip-inner {
+    white-space:pre;
+    max-width:none;
 }
 
+#mainSpeedText {
+    text-align: right;
+}
+
+#mainSpeedSlider {
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 80%;
+    background: #BABABA;
+}
+
+/* DEB ********************************************************************** */
 #debContainer {
+    background-color: rgba(0, 71, 171, 0.2);
     /*padding: 3px;*/
 }
 
+/* DEB - TOGGLE ************************************************************* */
+#debButtonToggle {
+    width: 100%;
+}
+
+/* DEB - BODY *************************************************************** */
 #debBody {
     /*padding: 2px;*/
 }
 
 #debBody td {
     font-size: 12px;
+}
+
+/* DEB - BODY - TIMINGS ***************************************************** */
+#debColClock .label {
+    display: inline-block;
+    min-width: 95px;
+}
+
+.debColClockSpan {
+    white-space: nowrap;
+}
+
+/* DEB - BODY - BUTTONS ***************************************************** */
+.debStatusButton {
+    margin-right: 20px;
+}
+
+/* DEB - BODY - REGISTER **************************************************** */
+/* DEB - BODY - INSTRUCTION FLOW ******************************************** */
+/* DEB - BODY - MEMORY EXPLORER ********************************************* */
+#debColMemoryExplorer table {
+    table-layout: fixed;
 }
 
 #debColMemoryExplorer td {
@@ -50,21 +92,26 @@ body {
     font-size: 12px;
 }
 
-.debStatusButton {
-  margin-right: 20px;
+/* DEB - BODY - MEMORY REGISTERS ******************************************** */
+.debMemRegTd {
+    white-space: nowrap;
 }
-
-.debLabelCgb {
+.debMemRegLabelCgb {
     margin-left: 2px;
 }
-.tooltip-inner {
-    white-space:pre;
-    max-width:none;
-}
 
-#mainSpeedSlider {
-    margin-top: 20px;
-    margin-left: 20px;
-    width: 80%;
-    background: #BABABA;
+/* FOOTER ******************************************************************* */
+/* footer {
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+   height: 60px;
+   background-color: #f5f5f5;
+   }
+ */
+footer {
+    border: 1px solid black;
+    border-radius: 6px;
+    text-align: center;
+    background-color: rgba(0, 71, 171, 0.2);
 }
