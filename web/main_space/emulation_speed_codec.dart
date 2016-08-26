@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 15:35:27 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 15:40:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 16:06:12 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -80,8 +80,8 @@ class _FiniteEmulationSpeedCodec {
 
   double decode(double percent)
   {
-    // assert(!(percent < 0.0) && !(percent > 1.0),
-    //     '_FiniteEmulationSpeedCodec.decode($percent) out of range');
+    assert(!(percent < 0.0) && !(percent > 1.0),
+        '_FiniteEmulationSpeedCodec.decode($percent) out of range');
     if (percent > 0.5)
       return _SECOND_HALF_CODEC.decode(percent);
     else
@@ -90,8 +90,8 @@ class _FiniteEmulationSpeedCodec {
 
   double encode(double speed)
   {
-    // assert(!(speed < 0.0) && !(speed > 100.0),
-    //     '_FiniteEmulationSpeedCodec.encode($speed) out of range');
+    assert(!(speed < 0.0) && !(speed > 100.0),
+        '_FiniteEmulationSpeedCodec.encode($speed) out of range');
     if (speed > 1.0)
       return _SECOND_HALF_CODEC.encode(speed);
     else
@@ -106,8 +106,8 @@ class _InfiniteEmulationSpeedCodec {
 
   double decode(double percent)
   {
-    // assert(!(percent < 0.0) && !(percent > 1.0),
-        // '_InfiniteEmulationSpeedCodec.decode($percent) out of range');
+    assert(!(percent < 0.0) && !(percent > 1.0),
+        '_InfiniteEmulationSpeedCodec.decode($percent) out of range');
     if (percent < 1.0)
       return _FINITE_CODEC.decode(percent);
     else
@@ -117,8 +117,8 @@ class _InfiniteEmulationSpeedCodec {
   double encode(double speed)
   {
     if (speed.isFinite) {
-      // assert(!(speed < 0.0) && speed < 100.0,
-      //     '_InfiniteEmulationSpeedCodec.encode($speed) out of range');
+      assert(!(speed < 0.0) && speed < 100.0,
+          '_InfiniteEmulationSpeedCodec.encode($speed) out of range');
       return _FINITE_CODEC.encode(speed);
     }
     else
