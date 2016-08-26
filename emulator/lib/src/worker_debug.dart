@@ -80,10 +80,10 @@ abstract class Debug implements Worker.AWorker {
       it.forEach((r, i) {
         l[r.index] = this.gb.data.mmu.pullMemReg(r);
       });
-      // this.ports.send('MemInfo', {
-      //   'addr' : _debuggerMemoryAddr,
-      //   'data' : _buildMemoryList(_debuggerMemoryAddr)
-      // });
+      this.ports.send('MemInfo',  <String, dynamic> {
+        'addr' : _debuggerMemoryAddr,
+        'data' : _buildMemoryList(_debuggerMemoryAddr)
+      });
       this.ports.send('MemRegInfo', l);
       this.ports.send('ClockInfo', this.gb.data.clockCount);
     }
