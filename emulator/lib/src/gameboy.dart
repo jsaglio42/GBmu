@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 20:50:10 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 13:06:31 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -49,7 +49,7 @@ class GameBoy {
   int get clockCount => _clockCount;
 
   void exec(int numIntr) {
-    print('exec($numIntr)');
+    // print('exec($numIntr)');
     _clockCount += numIntr;
 
     _generateRandomMapFromIterable(Reg16.values, 256 * 256).forEach((r, v) {

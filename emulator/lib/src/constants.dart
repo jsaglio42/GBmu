@@ -6,11 +6,12 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 20:59:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 12:16:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-const double MICROSEC_PER_SECOND = 1000000.0;
+final double MICROSECONDS_PER_SECOND_DOUBLE =
+  Duration.MICROSECONDS_PER_SECOND.toDouble();
 
 // Number should be close to (GB_CPU_FREQ_INT / EMULATION_PER_SEC_INT = 139810)
 const int MAXIMUM_CLOCK_PER_EXEC_INT = 100000;
@@ -28,14 +29,16 @@ final double EMULATION_PER_SEC_DOUBLE = EMULATION_PER_SEC_INT.toDouble();
 final double DEBUG_PER_SEC_DOUBLE = DEBUG_PER_SEC_INT.toDouble();
 final double FRAME_PER_SEC_DOUBLE = FRAME_PER_SEC_INT.toDouble();
 
+// With 60 EMU_PER_SEC, 0.002% Error on reschedule due to `.round()`
 final Duration EMULATION_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSEC_PER_SECOND / EMULATION_PER_SEC_DOUBLE).round());
+    microseconds: (MICROSECONDS_PER_SECOND_DOUBLE / EMULATION_PER_SEC_DOUBLE).round());
 final Duration DEBUG_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSEC_PER_SECOND / DEBUG_PER_SEC_DOUBLE).round());
+    microseconds: (MICROSECONDS_PER_SECOND_DOUBLE / DEBUG_PER_SEC_DOUBLE).round());
 final Duration FRAME_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSEC_PER_SECOND / FRAME_PER_SEC_DOUBLE).round());
+    microseconds: (MICROSECONDS_PER_SECOND_DOUBLE / FRAME_PER_SEC_DOUBLE).round());
 
-final Duration FIRST_EMULATION_SCHEDULE_LAG = new Duration(milliseconds: 500);
+
+final Duration EMULATION_START_DELAY = new Duration(milliseconds: 500);
 
 const int WORKING_RAM_BEGIN = 0;
 const int WORKING_RAM_LAST = 10;

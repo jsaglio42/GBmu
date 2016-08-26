@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 19:56:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 12:46:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,6 +24,7 @@ import "package:emulator/src/cpu_registers.dart" as Cpuregs;
  * ************************************************************************** **
  * Defines two Map<String, Type>.
  * `Type` must match EXACTLY the sent type.
+ * Don't send any `double` here, a double rounded is always a type int.
  * Receiver may use `a subtype` or `dynamic` parameter in
  *   it's callback function.
  */
@@ -33,14 +34,14 @@ final _mainReceivers = <String, Type>{
   'MemRegInfo' : Uint8List,
   'ClockInfo' : int,
   'DebStatusUpdate' : DebStatus,
-  'MemInfo' : <String, dynamic>{}.runtimeType
+  'MemInfo' : <String, dynamic>{}.runtimeType,
 };
 
 final _workerReceivers = <String, Type>{
   'DebStatusRequest' : DebStatusRequest,
   'EmulationStart' : Uint8List,
-  'EmulationSpeed' : double,
-  'DebMemAddrChange' : int
+  'EmulationSpeed' : <String, dynamic>{}.runtimeType,
+  'DebMemAddrChange' : int,
 };
 
 /*

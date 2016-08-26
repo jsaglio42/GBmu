@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:03:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 20:34:24 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 12:04:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,7 @@ final Html.HtmlElement _frames = Html.querySelector('#debClockFrames');
  */
 
 void _onClockInfo(int clock) {
-  final double tMs = clock.toDouble() / GB_CPU_FREQ_DOUBLE * MICROSEC_PER_SECOND;
+  final double tMs = clock.toDouble() / GB_CPU_FREQ_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE;
   final double f = clock.toDouble() / GB_FRAME_PER_CLOCK_DOUBLE;
 
   print('debugger/clock_info:\t_onClockInfo($clock)');

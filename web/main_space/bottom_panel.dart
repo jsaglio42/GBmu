@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 20:36:01 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 12:55:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,13 +82,20 @@ class _LogScale {
 class _SpeedSlider {
 
   Html.Element _slider = Html.querySelector('#mainSpeedSlider');
-  _LogScale _valueLog = new _LogScale(0.5);
 
-  String _formatter(num perc) {
+  bool _isInf(double number) {
+    if (number < 1.0)
+      return false;
+    else
+      return true;
+  }
+
+  String _formatter(num perc_num) {
+    final double perc = perc_num as double;
     final double val = new _LogScale(perc).value;
     final double speed = val / GB_CPU_FREQ_DOUBLE * 100.0;
 
-    if (perc < 100.0)
+    if (!_isInf(perc))
       return '${val.toStringAsFixed(2)} clocks/sec\n'
         '${speed.toStringAsFixed(6)}% speed';
     else
@@ -104,7 +111,7 @@ class _SpeedSlider {
       'max': 1.0,
       'step': 0.0001,
       'id': 'mainSpeedSlider',
-      'value': _valueLog.percent,
+      'value': 0.5,
     });
     _slider = Html.querySelector('#mainSpeedSlider');
     assert(param != null, "Could not build `Slider` parameter");
@@ -112,12 +119,20 @@ class _SpeedSlider {
     assert(slider != null, "Could not build `Slider`");
 
     slider.callMethod('on', ['slide', _onSlide]);
+    _emu.send('EmulationSpeed', <String, dynamic>{
+      'speed': 100.0,
+      'isInf': true,
+    });
     return ;
   }
 
-  _onSlide(num v) {
-    this._valueLog = new _LogScale(v);
-    _emu.send('EmulationSpeed', _valueLog.value / GB_CPU_FREQ_DOUBLE);
+  _onSlide(num perc_num) {
+    final double perc = perc_num as double;
+    final s = new _LogScale(perc);
+    _emu.send('EmulationSpeed', <String, dynamic>{
+      'speed': s.value / GB_CPU_FREQ_DOUBLE,
+      'isInf': _isInf(perc)
+    });
     return ;
   }
 
