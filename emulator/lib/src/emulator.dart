@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 12:46:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 16:47:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,6 +33,7 @@ final _mainReceivers = <String, Type>{
   'RegInfo' : Cpuregs.CpuRegs,
   'MemRegInfo' : Uint8List,
   'ClockInfo' : int,
+  'EmulationSpeed' : <String, dynamic>{}.runtimeType,
   'DebStatusUpdate' : DebStatus,
   'MemInfo' : <String, dynamic>{}.runtimeType,
 };

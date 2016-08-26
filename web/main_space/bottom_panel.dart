@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 16:03:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 17:20:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,6 +32,7 @@ Emulator.Emulator _emu;
 class _SpeedSlider {
 
   Html.Element _slider = Html.querySelector('#mainSpeedSlider');
+  Html.Element _text = Html.querySelector('#mainSpeedText');
 
   String _formatter(num perc_num) {
     final double perc = perc_num.toDouble();
@@ -41,8 +42,8 @@ class _SpeedSlider {
     if (speed.isInfinite)
       return 'inf';
     else
-      return '${clockPerSec.toStringAsFixed(2)} clocks/sec\n'
-        '${(speed * 100.0).toStringAsFixed(6)}% speed';
+      return '${clockPerSec.toStringAsFixed(2)} c/s\n'
+        '${(speed * 100.0).toStringAsFixed(3)}%';
   }
 
   _SpeedSlider() {
@@ -69,7 +70,7 @@ class _SpeedSlider {
         ESCodec.codec.encode(10.0),
         1.0
       ],
-      'ticks_labels': ['', '1cps', '100%', '2x', '10x', 'infinity'],
+      'ticks_labels': ['', '1cps', '1x', '2x', '10x', 'infinity'],
       'ticks_positions': [
         (0.0 * 100.0),
         (ESCodec.codec.encode(1.0 / GB_CPU_FREQ_DOUBLE) * 100.0),
@@ -80,6 +81,8 @@ class _SpeedSlider {
       ],
     });
     _slider = Html.querySelector('#mainSpeedSlider');
+
+    assert(_text != null, "Could not find `text` in DOM");
     assert(param != null, "Could not build `Slider` parameter");
     var slider = new Js.JsObject(constr, ['#mainSpeedSlider', param]);
     assert(slider != null, "Could not build `Slider`");
@@ -89,6 +92,15 @@ class _SpeedSlider {
       'speed': 100.0,
       'isInf': true,
     });
+    _emu.listener('EmulationSpeed').forEach(_onSpeedUpdate);
+    return ;
+  }
+
+  _onSpeedUpdate(map) {
+    print(map);
+    final double speed = map['speed'];
+
+    _text.text = '${speed.toStringAsFixed(2)}x';
     return ;
   }
 
