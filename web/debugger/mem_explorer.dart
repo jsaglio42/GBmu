@@ -67,7 +67,6 @@ class _Data {
 */
 
 void _onMemInfo(Map<String, dynamic> map) {
-  print('debugger/mem_explorer:\_onMemInfo($map)');
   assert(map['addr'] != null && map['addr'] is int);
   final addr = map['addr'];
   assert(addr >= 0x0000 && addr <= 0xFFFF);
