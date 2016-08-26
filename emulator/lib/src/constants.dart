@@ -6,14 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 12:16:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 17:28:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 final double MICROSECONDS_PER_SECOND_DOUBLE =
   Duration.MICROSECONDS_PER_SECOND.toDouble();
 
-// Number should be close to (GB_CPU_FREQ_INT / EMULATION_PER_SEC_INT = 139810)
+// Number should be close to (GB_CPU_FREQ_INT / EMULATION_PER_SEC_INT)
 const int MAXIMUM_CLOCK_PER_EXEC_INT = 100000;
 
 const int GB_FRAME_PER_CLOCK_INT = 70000; // clock
@@ -29,14 +29,17 @@ final double EMULATION_PER_SEC_DOUBLE = EMULATION_PER_SEC_INT.toDouble();
 final double DEBUG_PER_SEC_DOUBLE = DEBUG_PER_SEC_INT.toDouble();
 final double FRAME_PER_SEC_DOUBLE = FRAME_PER_SEC_INT.toDouble();
 
-// With 60 EMU_PER_SEC, 0.002% Error on reschedule due to `.round()`
-final Duration EMULATION_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSECONDS_PER_SECOND_DOUBLE / EMULATION_PER_SEC_DOUBLE).round());
-final Duration DEBUG_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSECONDS_PER_SECOND_DOUBLE / DEBUG_PER_SEC_DOUBLE).round());
-final Duration FRAME_PERIOD_DURATION = new Duration(
-    microseconds: (MICROSECONDS_PER_SECOND_DOUBLE / FRAME_PER_SEC_DOUBLE).round());
+final double EMULATION_PERIOD_DOUBLE = 1.0 / EMULATION_PER_SEC_DOUBLE;
+final double DEBUG_PERIOD_DOUBLE = 1.0 / DEBUG_PER_SEC_DOUBLE;
+final double FRAME_PERIOD_DOUBLE = 1.0 / FRAME_PER_SEC_DOUBLE;
 
+// With 60 EMU_PER_SEC, 0.002% Error on reschedule due to `.round()`
+final Duration EMULATION_PERIOD_DURATION = new Duration(microseconds:
+    (EMULATION_PERIOD_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE).round());
+final Duration DEBUG_PERIOD_DURATION = new Duration(microseconds:
+    (DEBUG_PERIOD_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE).round());
+final Duration FRAME_PERIOD_DURATION = new Duration(microseconds:
+    (FRAME_PERIOD_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE).round());
 
 final Duration EMULATION_START_DELAY = new Duration(milliseconds: 500);
 

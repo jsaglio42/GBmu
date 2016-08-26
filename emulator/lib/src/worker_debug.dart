@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 12:02:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 17:03:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,9 +31,8 @@ abstract class Debug implements Worker.AWorker {
 
   static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
   DebStatus _debuggerStatus = DebStatus.ON;
-  // DateTime _emulationStartTime = now();
   Async.Timer _debuggerTimer;
-
+  int _gbClockPoll = 0;
   int _debuggerMemoryAddr = 0;
 
   void _disableDebugger()
@@ -75,7 +74,15 @@ abstract class Debug implements Worker.AWorker {
     if (this.gb.isSome && _debuggerStatus == DebStatus.ON) {
       final l = new Uint8List(MemReg.values.length);
       final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
+      final clock = this.gb.data.clockCount;
+      final cps =
+        (clock - _gbClockPoll).toDouble() / DEBUG_PERIOD_DOUBLE;
+      final observedSpeed = cps / GB_CPU_FREQ_DOUBLE;
 
+      this.ports.send('EmulationSpeed', <String, dynamic>{
+        'speed': observedSpeed,
+      });
+      _gbClockPoll = clock;
       this.ports.send('RegInfo', this.gb.data.cpuRegs);
       it.forEach((r, i) {
         l[r.index] = this.gb.data.mmu.pullMemReg(r);
@@ -85,7 +92,7 @@ abstract class Debug implements Worker.AWorker {
       //   'data' : _buildMemoryList(_debuggerMemoryAddr)
       // });
       this.ports.send('MemRegInfo', l);
-      this.ports.send('ClockInfo', this.gb.data.clockCount);
+      this.ports.send('ClockInfo', clock);
     }
     return ;
   }
