@@ -43,6 +43,7 @@ class Worker {
   DebStatus _debuggerStatus = DebStatus.ON;
   DateTime _emulationStartTime = now();
   Async.Timer _debuggerTimer;
+  final int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
   int _debuggerMemoryAddr = 0;
 
   Worker(this._ports)
@@ -170,14 +171,13 @@ class Worker {
   void _onMemoryAddrChange(int addr)
   {
     print('worker:\tonMemoryAddrChange($addr)');
-    assert (addr >= 0x0000);
-    assert (addr <= 0xFFFF);
+    assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
+      , '_onMemoryAddrChange: addr not valid');
     _debuggerMemoryAddr = addr;
     return ;
   }
 
 }
-
 
 Worker _globalWorker;
 

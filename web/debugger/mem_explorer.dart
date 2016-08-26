@@ -67,9 +67,9 @@ class _Data {
 */
 
 void _onMemInfo(Map<String, dynamic> map) {
-  print('debugger/mem_explorer:\_onMemInfo($map)');
-  assert(map['address'] != null && map['address'] is int);
-  final addr = map['address'];
+  // print('debugger/mem_explorer:\_onMemInfo($map)');
+  assert(map['addr'] != null && map['addr'] is int);
+  final addr = map['addr'];
   assert(addr >= 0x0000 && addr <= 0xFFFF);
   assert(map['data'] != null && map['data'] is Uint8List);
   final data = map['data'];
@@ -123,7 +123,7 @@ void init(Emulator.Emulator emu) {
   _emu = emu;
   _data.toString(); /* Tips to instanciate _cells */
   _onMemInfo({
-      'address' : 0x0000,
+      'addr' : 0x0000,
       'data' : new Uint8List(MEMORY_CELLS_COUNT)
   });
   _emu.listener('MemInfo').forEach(_onMemInfo);

@@ -29,18 +29,18 @@ import "package:emulator/src/cpu_registers.dart" as Cpuregs;
  */
 
 final _mainReceivers = <String, Type>{
-  'RegInfo': Cpuregs.CpuRegs,
-  'MemRegInfo': Uint8List,
-  'ClockInfo': int,
-  'DebStatusUpdate': DebStatus,
-  'MemInfo': <String, dynamic>{}.runtimeType
+  'RegInfo' : Cpuregs.CpuRegs,
+  'MemRegInfo' : Uint8List,
+  'ClockInfo' : int,
+  'DebStatusUpdate' : DebStatus,
+  'MemInfo' : <String, dynamic>{}.runtimeType
 };
 
 final _workerReceivers = <String, Type>{
-  'DebStatusRequest'  : DebStatusRequest,
-  'EmulationStart'    : Uint8List,
-  'EmulationSpeed'     : double,
-  'DebMemAddrChange'  : int
+  'DebStatusRequest' : DebStatusRequest,
+  'EmulationStart' : Uint8List,
+  'EmulationSpeed' : double,
+  'DebMemAddrChange' : int
 };
 
 /*
