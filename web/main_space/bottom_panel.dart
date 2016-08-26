@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 13:53:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/26 16:03:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,6 +16,7 @@ import 'dart:html' as Html;
 
 import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
+import './emulation_speed_codec.dart' as ESCodec;
 
 /*
  * Global Variable
@@ -28,77 +29,20 @@ Emulator.Emulator _emu;
  * Internal Methods
  */
 
-// void _onClockInfo(int clock) {
-//   final double tMs = clock.toDouble() / GB_CPU_FREQ_DOUBLE * MICROSEC_PER_SECOND;
-//   final double f = clock.toDouble() / GB_FRAME_PER_CLOCK_DOUBLE;
-
-//   print('debugger/clock_info:\t_onClockInfo($clock)');
-//   _clock.text = clock.toStringAsPrecision(6);
-//   _time.text = new Duration(microseconds: tMs.round()).toString();
-//   _frames.text = f.toStringAsPrecision(6);
-//   return ;
-// }
-
-// TODO: Tout delete et refaire
-class _LogScale {
-
-  static final double LOWER_HALF_BASE = 10.0;
-  static final double LOWER_HALF_EXP_MULTIPLE =
-    (Math.log(GB_CPU_FREQ_DOUBLE) / Math.log(LOWER_HALF_BASE)) / 0.5;
-  static final double LOWER_HALF_EXP_ADD = 0.0;
-  static final double LOWER_HALF_EXPR_MULT =
-    GB_CPU_FREQ_DOUBLE / (GB_CPU_FREQ_DOUBLE - 1.0);
-  static final double LOWER_HALF_EXPR_ADD = -1.0;
-
-  static final double UPPER_HALF_BASE = 10000.0;
-  static final double UPPER_HALF_EXP_MULTIPLE = 1.0;
-  static final double UPPER_HALF_EXP_ADD = 0.5;
-  static final double UPPER_HALF_EXPR_MULT =
-    GB_CPU_FREQ_DOUBLE / UPPER_HALF_BASE;
-  static final double UPPER_HALF_EXPR_ADD = 0.0;
-
-  final double percent;
-
-  _LogScale(this.percent);
-
-  double get value {
-    double v;
-
-    if (this.percent <= 0.5) {
-      v = this.percent * LOWER_HALF_EXP_MULTIPLE + LOWER_HALF_EXP_ADD;
-      v = Math.pow(LOWER_HALF_BASE, v);
-      v = v * LOWER_HALF_EXPR_MULT + LOWER_HALF_EXPR_ADD;
-    }
-    else {
-      v = this.percent * UPPER_HALF_EXP_MULTIPLE + UPPER_HALF_EXP_ADD;
-      v = Math.pow(UPPER_HALF_BASE, v);
-      v = v * UPPER_HALF_EXPR_MULT + UPPER_HALF_EXPR_ADD;
-    }
-    return v;
-  }
-}
-
 class _SpeedSlider {
 
   Html.Element _slider = Html.querySelector('#mainSpeedSlider');
 
-  bool _isInf(double number) {
-    if (number < 1.0)
-      return false;
-    else
-      return true;
-  }
-
   String _formatter(num perc_num) {
-    final double perc = perc_num as double;
-    final double val = new _LogScale(perc).value;
-    final double speed = val / GB_CPU_FREQ_DOUBLE * 100.0;
+    final double perc = perc_num.toDouble();
+    final double speed = ESCodec.codec.decode(perc);
+    final double clockPerSec = speed * GB_CPU_FREQ_DOUBLE;
 
-    if (!_isInf(perc))
-      return '${val.toStringAsFixed(2)} clocks/sec\n'
-        '${speed.toStringAsFixed(6)}% speed';
-    else
+    if (speed.isInfinite)
       return 'inf';
+    else
+      return '${clockPerSec.toStringAsFixed(2)} clocks/sec\n'
+        '${(speed * 100.0).toStringAsFixed(6)}% speed';
   }
 
   _SpeedSlider() {
@@ -106,15 +50,34 @@ class _SpeedSlider {
     assert(constr != null, "Could not find `Slider` constructor");
     var param = new Js.JsObject.jsify({
       'formatter': _formatter,
+      'tooltip': 'always',
+      'id': 'mainSpeedSlider',
+
       'min': 0.0,
       'max': 1.0,
-      'step': 0.001,
-      'id': 'mainSpeedSlider',
       'value': 0.5,
-      'ticks': [0.0, 0.5, 1.0],
-      'ticks_labels': ['0%', '100%', 'infinity'],
-      'ticks_snap_bounds': 0.001 * 5.0,
-      'tooltip': 'always',
+
+      'step': 1.0 / 1000.0,
+      'ticks_snap_bounds': 1.0 / 1000.0 * 10.0,
+      'precision': 16, //17 digits gives a no-loss conversion to string
+
+      'ticks': [
+        0.0,
+        ESCodec.codec.encode(1.0 / GB_CPU_FREQ_DOUBLE),
+        ESCodec.codec.encode(1.0),
+        ESCodec.codec.encode(2.0),
+        ESCodec.codec.encode(10.0),
+        1.0
+      ],
+      'ticks_labels': ['', '1cps', '100%', '2x', '10x', 'infinity'],
+      'ticks_positions': [
+        (0.0 * 100.0),
+        (ESCodec.codec.encode(1.0 / GB_CPU_FREQ_DOUBLE) * 100.0),
+        (ESCodec.codec.encode(1.0) * 100.0),
+        (ESCodec.codec.encode(2.0) * 100.0),
+        (ESCodec.codec.encode(10.0) * 100.0),
+        100
+      ],
     });
     _slider = Html.querySelector('#mainSpeedSlider');
     assert(param != null, "Could not build `Slider` parameter");
@@ -130,15 +93,14 @@ class _SpeedSlider {
   }
 
   _onSlide(num perc_num) {
-    final double perc = perc_num as double;
-    final s = new _LogScale(perc);
+    final double perc = perc_num.toDouble();
+    final speed = ESCodec.codec.decode(perc);
     _emu.send('EmulationSpeed', <String, dynamic>{
-      'speed': s.value / GB_CPU_FREQ_DOUBLE,
-      'isInf': _isInf(perc)
+      'speed': speed,
+      'isInf': speed.isInfinite
     });
     return ;
   }
-
 
 }
 
