@@ -6,16 +6,17 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 21:52:54 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 12:27:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:js' as Js;
 import 'dart:math' as Math;
 import 'dart:html' as Html;
-
+import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
+
 import './emulation_speed_codec.dart' as ESCodec;
 
 /*
@@ -51,7 +52,7 @@ class _SpeedSlider {
     assert(constr != null, "Could not find `Slider` constructor");
     var param = new Js.JsObject.jsify({
       'formatter': _formatter,
-      'tooltip': 'always',
+      // 'tooltip': 'always',
       'id': 'mainSpeedSlider',
 
       'min': 0.0,
@@ -90,15 +91,15 @@ class _SpeedSlider {
 
     slider.callMethod('on', ['slide', _onSlide]);
     _emu.send('EmulationSpeed', <String, dynamic>{
-      'speed': 100.0,
-      'isInf': true,
+      'speed': 1.0,
+      'isInf': false,
     });
     _emu.listener('EmulationSpeed').forEach(_onSpeedUpdate);
     return ;
   }
 
   _onSpeedUpdate(map) {
-    print(map);
+    Ft.log('main_space', '_onSpeedUpdate', map);
     final double speed = map['speed'];
 
     _text.text = '${speed.toStringAsFixed(2)}x';
@@ -122,9 +123,8 @@ class _SpeedSlider {
  */
 
 void init(Emulator.Emulator emu) {
-  print('debugger/bottom_panel:\tinit()');
+  Ft.log('main_space', 'init');
   _emu = emu;
   _speed.toString();
-  // emu.listener('ClockInfo').listen(_onClockInfo);
   return ;
 }

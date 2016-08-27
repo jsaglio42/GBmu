@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:56:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 17:08:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 11:55:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,9 @@ class Rom {
 
   int		pull16(int romAddr)
   {
-    final int addrView16 = romAddr / 2;
+    // Implementation with `Uint16List _view16` makes the assertion that
+    //   words are memory aligned. TODO: verify it
+    final int addrView16 = romAddr ~/ 2;
 
     assert(romAddr >= 0 && romAddr < _data.length,
         "Rom.pull16($romAddr)\tout of range");

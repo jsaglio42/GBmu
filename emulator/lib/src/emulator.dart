@@ -6,12 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 16:47:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 12:10:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:async' as Async;
 import 'dart:typed_data';
+import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 
 import 'package:emulator/enums.dart';
@@ -64,7 +65,7 @@ class Emulator {
 
 Async.Future<Emulator> spawn()
 async {
-  print('emulator:\tspawn()');
+  Ft.log('emulator', 'spawn');
 
   //Todo: listen isolate errors
   final w = await Wiso.spawn(

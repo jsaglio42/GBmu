@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 13:02:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 11:32:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,7 +14,7 @@ import 'dart:math' as Math;
 import 'dart:async' as Async;
 import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
-import 'package:ft/wired_isolate.dart' as Wiso;
+// import 'package:ft/wired_isolate.dart' as Wiso;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
@@ -25,12 +25,10 @@ import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
 
-DateTime now() => new DateTime.now();
-
 abstract class Emulation implements Worker.AWorker {
 
   bool _pause = false; // TODO: init elsewhere
-  double _emulationSpeed = 1.0 / GB_CPU_FREQ_DOUBLE * 2.0; // TODO: init elsewhere
+  double _emulationSpeed = 1.0;
   double _clockDeficit;
   double _clockPerRoutineGoal;
 
@@ -39,9 +37,9 @@ abstract class Emulation implements Worker.AWorker {
   Async.Timer _emulationTimer;
   DateTime _rescheduleTime;
 
-  void onEmulationSpeedChange(map)
+  void _onEmulationSpeedChange(map)
   {
-    print('worker:\tonEmulationSpeedChange($map)');
+    Ft.log('worker_emu', '_onEmulationSpeedChange', map);
     assert(!(map['speed'] < 0));
     if (map['isInf']) {
       _emulationSpeed = double.INFINITY;
@@ -52,7 +50,6 @@ abstract class Emulation implements Worker.AWorker {
       _clockPerRoutineGoal =
         GB_CPU_FREQ_DOUBLE / EMULATION_PER_SEC_DOUBLE * _emulationSpeed;
     }
-    print('goal: $_clockPerRoutineGoal,  speed: $_emulationSpeed');
     _clockDeficit = 0.0;
   }
 
@@ -65,12 +62,11 @@ abstract class Emulation implements Worker.AWorker {
     final int clockLimit =
       clockDebt.isFinite ? clockDebt.floor() : double.INFINITY;
 
-    // print('emu#$_emulationCount ');
     if (_pause)
       _clockDeficit = 0.0;
     else {
       while (true) {
-        if (now().compareTo(timeLimit) >= 0)
+        if (Ft.now().compareTo(timeLimit) >= 0)
           break ;
         if (clockSum >= clockLimit)
           break ;
@@ -84,7 +80,7 @@ abstract class Emulation implements Worker.AWorker {
     _rescheduleTime = _emulationStartTime.add(
         EMULATION_PERIOD_DURATION * _emulationCount);
     _emulationTimer =
-      new Async.Timer(_rescheduleTime.difference(now()), onEmulation);
+      new Async.Timer(_rescheduleTime.difference(Ft.now()), onEmulation);
     return ;
   }
 
@@ -100,7 +96,7 @@ abstract class Emulation implements Worker.AWorker {
     final c = new Cartmbc0.CartMbc0(irom, iram);
     this.gb = new Ft.Option<Gameboy.GameBoy>.some(new Gameboy.GameBoy(c));
     _clockDeficit = 0.0;
-    _emulationStartTime = now().add(EMULATION_START_DELAY);
+    _emulationStartTime = Ft.now().add(EMULATION_START_DELAY);
     _rescheduleTime = _emulationStartTime;;
     _emulationCount = 0;
     _emulationTimer =
@@ -110,9 +106,9 @@ abstract class Emulation implements Worker.AWorker {
 
   void init_emulation()
   {
+    Ft.log('worker_emu', 'init');
     this.ports.listener('EmulationStart').listen(_onEmulationStart);
-    this.ports.listener('EmulationSpeed').listen(onEmulationSpeedChange);
+    this.ports.listener('EmulationSpeed').listen(_onEmulationSpeedChange);
   }
-
 
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 16:57:32 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 20:17:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 12:02:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -112,9 +112,9 @@ final _data = new _DomData();
  */
 
 void _onMemRegInfo(List<int> values) {
-  // print('debugger/mem_registers:\_onMemRegInfo($values)');
   int i = 0;
 
+  // Ft.log('deb_mem_reg', '_onMemRegInfo', values);
   _data.valueCells.forEach((MemReg reg, _ValueCell cell){
     final int cur = values[i++];
 
@@ -145,7 +145,7 @@ void _onMemRegInfo(List<int> values) {
  */
 
 void init(Emulator.Emulator emu) {
-  print('debugger/memory_registers:\tinit()');
+  Ft.log('deb_mem_reg', 'init');
   _data.toString(); /* Tips to instanciate _cells */
   emu.listener('MemRegInfo').listen(_onMemRegInfo);
   return ;

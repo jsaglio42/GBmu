@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   mem_registers.dart                                 :+:      :+:    :+:   //
+//   mem_explorer.dart                                  :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/22 16:57:32 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 11:53:38 by ngoguey          ###   ########.fr       //
+//   Created: 2016/08/27 11:58:59 by ngoguey           #+#    #+#             //
+//   Updated: 2016/08/27 12:08:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -90,7 +90,7 @@ void _onMemInfo(Map<String, dynamic> map) {
  * Sending Addr to worker
  */
 
-void _onMemAddrUpdate(_) {  
+void _onMemAddrUpdate(_) {
   final int parsedValue = int.parse(_memAddrInput.value,
     radix:16,
     onError: (s) => -1);
@@ -118,7 +118,7 @@ Emulator.Emulator _emu;
  */
 
 void init(Emulator.Emulator emu) {
-  print('debugger/mem_explorer:\tinit()');
+  Ft.log('deb_mem_expl', 'init');
   _emu = emu;
   _data.toString(); /* Tips to instanciate _cells */
   _onMemInfo({

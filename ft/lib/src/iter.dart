@@ -6,9 +6,37 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 14:10:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/22 16:47:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 11:06:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
+
+import 'dart:html' as Html;
+
+Iterable<List<Html.TableCellElement>> iterTableRows(Html.TableElement tab) sync*
+{
+  final List<Html.TableRowElement> rows = tab.rows;
+  assert(rows != null);
+  final Iterator<Html.TableRowElement> it = rows.iterator;
+
+  while (it.moveNext())
+    yield it.current.cells;
+  return ;
+}
+
+Iterable<Map<String, dynamic>> iterEnumData(type, Iterable values)
+sync* {
+  final int prefixLength = type.toString().length + 1;
+  int i = 0;
+
+  for (var v in values) {
+    yield {
+      'value': v,
+      'string': v.toString().substring(prefixLength),
+      'index': i++,
+    };
+  }
+  return ;
+}
 
 class DoubleIterable<T, U> {
   DoubleIterable(this._ita, this._itb) {

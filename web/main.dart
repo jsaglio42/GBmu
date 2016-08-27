@@ -6,13 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 20:32:01 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 12:05:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
 import 'dart:js' as Js;
 import 'dart:typed_data';
+import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
@@ -24,7 +25,7 @@ import './main_space/bottom_panel.dart' as Mainbottompanel;
 
 run() async
 {
-  print('main:\tHello World');
+  Ft.log('main', 'run');
 
   final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
   assert(inBut != null);
@@ -44,10 +45,10 @@ run() async
     .catchError((e) => print('main:\tError while creating emulator:\n$e'));
 
   var emu = await emuFut;
+  Ft.log('main', 'Emulator created');
 
-  print('main:\tEmulator created');
   magbut.onClick.listen((_) {
-		print('main:\tonClick');
+        Ft.log('main_magbut', 'onClick');
         emu.send('EmulationStart', lst);
       });
 
@@ -59,13 +60,12 @@ run() async
 
 
   debButtonToggle.onClick.listen((_) {
-        print('main:\tdebButtonToggle.onClick()');
-        emu.send(
-            'DebStatusRequest', DebStatusRequest.TOGGLE);
+        Ft.log('main', 'emu toggle');
+        emu.send('DebStatusRequest', DebStatusRequest.TOGGLE);
       });
 
   emu.listener('DebStatusUpdate').listen((DebStatus p) {
-    print('main:\tonDebStatusUpdate($p)');
+    Ft.log('main', 'onDebStatusUpdate', p);
     if (p.index == DebStatus.ON.index) {
       debStatusOn.style.display = '';
       debStatusOff.style.display = 'none';
@@ -78,19 +78,18 @@ run() async
     }
   });
 
-  print('main:\tinit debugger elements');
   Debregisters.init(emu);
   Debmregisters.init(emu);
   Debmexplorer.init(emu);
   Debclocks.init(emu);
   Mainbottompanel.init(emu);
 
-  print('main:\tinit jquery tooltips');
+  Ft.log('main', 'init jquery tooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);
   assert(req != null, "Jquery request failed");
   req.callMethod('tooltip', []);
 
-  print('main:\tinit phase done');
+  Ft.log('main', 'init DONE');
 }
 
 main()

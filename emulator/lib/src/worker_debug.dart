@@ -6,33 +6,30 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/26 17:03:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 12:22:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:math' as Math;
+// import 'dart:math' as Math;
 import 'dart:async' as Async;
 import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
-import 'package:ft/wired_isolate.dart' as Wiso;
+// import 'package:ft/wired_isolate.dart' as Wiso;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
-import 'package:emulator/src/memory/rom.dart' as Rom;
-import 'package:emulator/src/memory/ram.dart' as Ram;
+// import 'package:emulator/src/memory/rom.dart' as Rom;
+// import 'package:emulator/src/memory/ram.dart' as Ram;
 import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
-import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
-import 'package:emulator/src/gameboy.dart' as Gameboy;
+// import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
+// import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
-
-DateTime now() => new DateTime.now();
 
 abstract class Debug implements Worker.AWorker {
 
   static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
   DebStatus _debuggerStatus = DebStatus.ON;
   Async.Timer _debuggerTimer;
-  int _gbClockPoll = 0;
   int _debuggerMemoryAddr = 0;
 
   void _disableDebugger()
@@ -49,7 +46,7 @@ abstract class Debug implements Worker.AWorker {
 
   void _onDebuggerStateChange(DebStatusRequest p)
   {
-    print('worker:\tonDebuggerStateChange($p ${p.index})');
+    Ft.log('worker_debug', '_onDebuggerStateChange', p);
 
     // Enum equality fails after passing through a SendPort
     if (p.index == DebStatusRequest.TOGGLE.index) {
@@ -74,15 +71,7 @@ abstract class Debug implements Worker.AWorker {
     if (this.gb.isSome && _debuggerStatus == DebStatus.ON) {
       final l = new Uint8List(MemReg.values.length);
       final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
-      final clock = this.gb.data.clockCount;
-      final cps =
-        (clock - _gbClockPoll).toDouble() / DEBUG_PERIOD_DOUBLE;
-      final observedSpeed = cps / GB_CPU_FREQ_DOUBLE;
 
-      this.ports.send('EmulationSpeed', <String, dynamic>{
-        'speed': observedSpeed,
-      });
-      _gbClockPoll = clock;
       this.ports.send('RegInfo', this.gb.data.cpuRegs);
       it.forEach((r, i) {
         l[r.index] = this.gb.data.mmu.pullMemReg(r);
@@ -92,14 +81,14 @@ abstract class Debug implements Worker.AWorker {
         'data' : _buildMemoryList(_debuggerMemoryAddr)
       });
       this.ports.send('MemRegInfo', l);
-      this.ports.send('ClockInfo', clock);
+      this.ports.send('ClockInfo', this.gb.data.clockCount);
     }
     return ;
   }
 
   void _onMemoryAddrChange(int addr)
   {
-    print('worker:\tonMemoryAddrChange($addr)');
+    Ft.log('worker_debug', '_onMemoryAddrChange', addr);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_onMemoryAddrChange: addr not valid');
     _debuggerMemoryAddr = addr;
@@ -112,7 +101,7 @@ abstract class Debug implements Worker.AWorker {
 
   Uint8List   _buildMemoryList(int addr)
   {
-    print('worker:\_buildMemoryList($addr)');
+    Ft.log('worker_debug', '_buildMemoryList', addr);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_buildMemExplorerMap: addr not valid');
     final memList = new List.generate(_debuggerMemoryLen, (i) {

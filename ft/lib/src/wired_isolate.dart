@@ -6,12 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/15 10:47:48 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/21 16:00:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 12:10:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:async' as As;
-import 'dart:isolate' as Is;
+import 'dart:async' as Async;
+import 'dart:isolate' as Iso;
+import 'package:ft/ft.dart' as Ft;
 
 /*
  * ************************************************************************** **
@@ -24,8 +25,8 @@ import 'dart:isolate' as Is;
 class Ports
 {
 
-  final Map<String, As.Stream>    _listeners;
-  final Map<String, Is.SendPort>  _notifiers;
+  final Map<String, Async.Stream>    _listeners;
+  final Map<String, Iso.SendPort>  _notifiers;
   final Map<String, Type>         _notifiersTypes;
 
   Ports(this._listeners, this._notifiers, this._notifiersTypes);
@@ -58,7 +59,7 @@ class Ports
       return true;
   }
 
-  As.Stream listener(String typeid) {
+  Async.Stream listener(String typeid) {
     assert(_isValidListenerGet(typeid));
     return _listeners[typeid];
   }
@@ -77,19 +78,19 @@ class Ports
  * Is there any simpler way ?
 */
 
-Map<String, Is.ReceivePort> _rPortsOfTypes(Map<String, Type> t)
+Map<String, Iso.ReceivePort> _rPortsOfTypes(Map<String, Type> t)
 {
-  var m = new Map<String, Is.ReceivePort>();
+  var m = new Map<String, Iso.ReceivePort>();
 
   t.forEach((k, _) {
-    m.putIfAbsent(k, () => new Is.ReceivePort());
+    m.putIfAbsent(k, () => new Iso.ReceivePort());
   });
   return m;
 }
 
-Map<String, Is.SendPort> _sPortsOfRPorts(Map<String, Is.ReceivePort> rp)
+Map<String, Iso.SendPort> _sPortsOfRPorts(Map<String, Iso.ReceivePort> rp)
 {
-  var m = new Map<String, Is.SendPort>();
+  var m = new Map<String, Iso.SendPort>();
 
   rp.forEach((k, v) {
     m.putIfAbsent(k, () => v.sendPort);
@@ -97,9 +98,9 @@ Map<String, Is.SendPort> _sPortsOfRPorts(Map<String, Is.ReceivePort> rp)
   return m;
 }
 
-Map<String, As.Stream> _streamsOfRPorts(Map<String, Is.ReceivePort> rp)
+Map<String, Async.Stream> _streamsOfRPorts(Map<String, Iso.ReceivePort> rp)
 {
-  var m = new Map<String, As.Stream>();
+  var m = new Map<String, Async.Stream>();
 
   rp.forEach((k, v) {
     m.putIfAbsent(k, () => v.asBroadcastStream());
@@ -118,24 +119,24 @@ class _WorkerSpawnData {
   _WorkerSpawnData(this.sPortsMain, this.tmpSPort, this.entryPoint,
       this.mainRTypes, this.workerRTypes, this.resumeCapability);
 
-  final Map<String, Is.SendPort> sPortsMain;
-  final Is.SendPort tmpSPort;
+  final Map<String, Iso.SendPort> sPortsMain;
+  final Iso.SendPort tmpSPort;
   final entryPointType entryPoint;
   final Map<String, Type> mainRTypes;
   final Map<String, Type> workerRTypes;
-  final Is.Capability resumeCapability;
+  final Iso.Capability resumeCapability;
 }
 
 void _workerSpawn(_WorkerSpawnData d)
 {
-  print('wired_isolate:\t_workerSpawn()');
-
-  final Map<String, Is.ReceivePort> rPortsWorker = _rPortsOfTypes(
+  Ft.log('wiso', '_workerSpawn', d);
+  final Map<String, Iso.ReceivePort> rPortsWorker = _rPortsOfTypes(
       d.workerRTypes);
   final p = new Ports(
       _streamsOfRPorts(rPortsWorker), d.sPortsMain, d.mainRTypes);
+
   d.tmpSPort.send(_sPortsOfRPorts(rPortsWorker));
-  Is.Isolate.current.pause(d.resumeCapability);
+  Iso.Isolate.current.pause(d.resumeCapability);
   d.entryPoint(p);
   return ;
 }
@@ -147,29 +148,29 @@ void _workerSpawn(_WorkerSpawnData d)
  */
 
 class WiredIsolate {
-  
+
   WiredIsolate(this.i, this.resumeCapability, this.p);
 
-  final Is.Isolate i;
-  final Is.Capability resumeCapability;
+  final Iso.Isolate i;
+  final Iso.Capability resumeCapability;
   final Ports p;
 
 }
 
-As.Future<WiredIsolate> spawn(void entryPoint(Ports),
+Async.Future<WiredIsolate> spawn(void entryPoint(Ports),
   Map<String, Type> mainRTypes,
   Map<String, Type> workerRTypes)
 async {
-  print('wired_isolate:\tspawn()');
+  Ft.log('wiso', 'spawn');
 
-  final Map<String, Is.ReceivePort> rPortsMain = _rPortsOfTypes(mainRTypes);
-  final Is.ReceivePort tmpRPort = new Is.ReceivePort();
-  final Is.Capability resumeCapability = new Is.Capability();
+  final Map<String, Iso.ReceivePort> rPortsMain = _rPortsOfTypes(mainRTypes);
+  final Iso.ReceivePort tmpRPort = new Iso.ReceivePort();
+  final Iso.Capability resumeCapability = new Iso.Capability();
   final spawnData = new _WorkerSpawnData(
       _sPortsOfRPorts(rPortsMain), tmpRPort.sendPort, entryPoint,
       mainRTypes, workerRTypes, resumeCapability);
-  final Is.Isolate iso = await Is.Isolate.spawn(_workerSpawn, spawnData);
-  final Map<String, Is.SendPort> sPortsWorker = await tmpRPort.first;
+  final Iso.Isolate iso = await Iso.Isolate.spawn(_workerSpawn, spawnData);
+  final Map<String, Iso.SendPort> sPortsWorker = await tmpRPort.first;
   final p = new Ports(
       _streamsOfRPorts(rPortsMain), sPortsWorker, workerRTypes);
   return new WiredIsolate(iso, resumeCapability, p);

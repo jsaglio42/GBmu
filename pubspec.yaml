@@ -12,6 +12,8 @@ dependencies:
 transformers:
 - $dart2js:
     checked: true
+    environment:
+      FTLOG: 'true'
     commandLineOptions: [--enable-diagnostic-colors, --show-package-warnings, --assert-message]
     # analyze-all: true
     # minify: true
