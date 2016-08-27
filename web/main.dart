@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 14:46:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 17:21:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -76,11 +76,11 @@ run() async
 
 
   debButtonToggle.onClick.listen((_) {
-        Ft.log('main', 'emu toggle');
+        Ft.log('main', 'debugger toggle');
         emu.send('DebStatusRequest', DebStatusRequest.TOGGLE);
       });
 
-  emu.listener('DebStatusUpdate').listen((DebStatus p) {
+  emu.listener('DebStatusUpdate').forEach((DebStatus p) {
     Ft.log('main', 'onDebStatusUpdate', p);
     if (p.index == DebStatus.ON.index) {
       debStatusOn.style.display = '';

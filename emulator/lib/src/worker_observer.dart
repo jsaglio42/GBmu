@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 16:47:22 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 19:28:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,7 +82,10 @@ abstract class Observer implements Worker.AWorker {
       ..where((Map map) => map['type'] == Event.FatalError)
       .forEach(_onStop)
       ..where((Map map) => map['type'] == Event.Eject)
-      .forEach(_onStop)
+      .forEach((_){
+            if (_timer_or_null != null)
+              _onStop();
+          })
       ..where((Map map) => map['type'] == Event.Start)
       .forEach(_onStart)
       ;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 17:01:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 19:27:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -55,7 +55,9 @@ abstract class Emulation implements Worker.AWorker {
 
   void _onEmulation()
   {
-    // Ft.log('worker_emu', '_onEmulation($_emulationCount)');
+    // if (_timer_or_null == null)
+      // return ;
+    Ft.log('worker_emu', '_onEmulation($_emulationCount)');
     assert(this.status == Status.Emulating,
         "_onEmulation() while not emulating");
 
@@ -81,6 +83,7 @@ abstract class Emulation implements Worker.AWorker {
         EMULATION_PERIOD_DURATION * _emulationCount);
     _timer_or_null = new Async.Timer(
         _rescheduleTime.difference(Ft.now()), _onEmulation);
+    Ft.log('worker_emu', '_onEmulationDONE');
     return ;
   }
 
@@ -143,7 +146,10 @@ abstract class Emulation implements Worker.AWorker {
       ..where((Map map) => map['type'] == Event.FatalError)
       .forEach(_onStop)
       ..where((Map map) => map['type'] == Event.Eject)
-      .forEach(_onStop)
+      .forEach((_){
+            if (_timer_or_null != null)
+              _onStop();
+          })
       ..where((Map map) => map['type'] == Event.Start)
       .forEach(_onStart)
       ;

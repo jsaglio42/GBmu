@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 17:03:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 19:23:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -34,7 +34,7 @@ abstract class Debug implements Worker.AWorker {
   static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
   int _debuggerMemoryAddr = 0;
 
-  void _onDebug(_)
+  void _onDebug([_])
   {
     assert(this.status != Status.Empty, "_onDebug() while empty");
     assert(_debuggerStatus == DebStatus.ON, "_onDebug() while off");
@@ -80,30 +80,132 @@ abstract class Debug implements Worker.AWorker {
 
   /* CONTROL **************************************************************** */
 
-  void _disable([_]) {
-    Ft.log('worker_debug', '_disable');
-    if (this.status == Status.Crashed)
-      _onDebug(null);
-    _end();
+  final static Map<List<dynamic>, bool>_combinations = {
+      // Subscription `false` but shouldn't
+    [Status.Emulating, DebStatus.ON, false, 'deb+']: false,
+    [Status.Emulating, DebStatus.ON, false, 'deb-']: false,
+    [Status.Emulating, DebStatus.ON, false, 'emu+']: false,
+    [Status.Emulating, DebStatus.ON, false, 'emu-']: false,
+
+    // Subscription `true` but shouldn't
+    [Status.Emulating, DebStatus.OFF, true, 'deb+']: false,
+    [Status.Emulating, DebStatus.OFF, true, 'deb-']: false,
+    [Status.Crashed, DebStatus.OFF, true, 'deb+']: false,
+    [Status.Crashed, DebStatus.OFF, true, 'deb-']: false,
+    [Status.Crashed, DebStatus.ON, true, 'deb+']: false,
+    [Status.Crashed, DebStatus.ON, true, 'deb-']: false,
+    [Status.Empty, DebStatus.OFF, true, 'deb+']: false,
+    [Status.Empty, DebStatus.OFF, true, 'deb-']: false,
+    [Status.Empty, DebStatus.ON, true, 'deb+']: false,
+    [Status.Empty, DebStatus.ON, true, 'deb-']: false,
+    [Status.Emulating, DebStatus.OFF, true, 'emu+']: false,
+    [Status.Emulating, DebStatus.OFF, true, 'emu-']: false,
+    [Status.Crashed, DebStatus.OFF, true, 'emu+']: false,
+    [Status.Crashed, DebStatus.OFF, true, 'emu-']: false,
+    [Status.Empty, DebStatus.OFF, true, 'emu+']: false,
+    [Status.Empty, DebStatus.OFF, true, 'emu-']: false,
+    [Status.Crashed, DebStatus.ON, true, 'emu+']: false,
+    [Status.Crashed, DebStatus.ON, true, 'emu-']: false,
+    [Status.Empty, DebStatus.ON, true, 'emu+']: false,
+    [Status.Empty, DebStatus.ON, true, 'emu-']: false,
+
+    // Bad event `deb+`
+    [Status.Empty, DebStatus.ON, false, 'deb+']: false,
+    [Status.Crashed, DebStatus.ON, false, 'deb+']: false,
+    [Status.Emulating, DebStatus.ON, true, 'deb+']: false,
+
+    // Bad event `deb-`
+    [Status.Emulating, DebStatus.OFF, false, 'deb-']: false,
+    [Status.Crashed, DebStatus.OFF, false, 'deb-']: false,
+    [Status.Empty, DebStatus.OFF, false, 'deb-']: false,
+
+    // Bad event `emu+`
+    [Status.Emulating, DebStatus.OFF, false, 'emu+']: false,
+    [Status.Emulating, DebStatus.ON, true, 'emu+']: false,
+
+    // Bad event `emu-`
+    [Status.Empty, DebStatus.OFF, false, 'emu-']: false,
+    [Status.Empty, DebStatus.ON, false, 'emu-']: false,
+
+    // Valid `emu` action without effect
+    [Status.Crashed, DebStatus.OFF, false, 'emu-']: true,
+    [Status.Crashed, DebStatus.ON, false, 'emu-']: true,
+    [Status.Emulating, DebStatus.OFF, false, 'emu-']: true,
+    [Status.Crashed, DebStatus.OFF, false, 'emu+']: true,
+    [Status.Empty, DebStatus.OFF, false, 'emu+']: true,
+
+    //  Valid `deb` action without effect on sub
+    [Status.Crashed, DebStatus.OFF, false, 'deb+']: true,
+    [Status.Empty, DebStatus.OFF, false, 'deb+']: true,
+    [Status.Crashed, DebStatus.ON, false, 'deb-']: true,
+    [Status.Empty, DebStatus.ON, false, 'deb-']: true,
+
+    // Enable sub
+    [Status.Emulating, DebStatus.OFF, false, 'deb+']: true,
+    [Status.Empty, DebStatus.ON, false, 'emu+']: true,
+    [Status.Crashed, DebStatus.ON, false, 'emu+']: true,
+
+    // Disable sub
+    [Status.Emulating, DebStatus.ON, true, 'deb-']: true,
+    [Status.Emulating, DebStatus.ON, true, 'emu-']: true,
+  };
+
+  bool _isCorrect(String action) {
+    var k = [this.status, _debuggerStatus, !_sub.isPaused, action];
+    var b;
+
+    _combinations.forEach((l, v) {
+      if (
+          // this.status == l[0] &&
+          _debuggerStatus == l[1] &&
+          !_sub.isPaused == l[2] &&
+          action == l[3])
+        b = v;
+    });
+    if (!b)
+      print('Invalid: $k');
+    return b;
+  }
+
+  void _onDebStart(_) {
+    Ft.log('worker_debug', '_onDebStart');
+    assert(_isCorrect('deb+'), 'Invalid call to _onDebStart');
+
+    final es = this.status;
+
+    _debuggerStatus = DebStatus.ON;
+    this.ports.send('DebStatusUpdate', _debuggerStatus);
+    if (es == Status.Emulating)
+      _sub.resume();
+  }
+  void _onDebStop(_) {
+    Ft.log('worker_debug', '_onDebStop');
+    assert(_isCorrect('deb-'), 'Invalid call to _onDebStop');
+
+    final es = this.status;
+
     _debuggerStatus = DebStatus.OFF;
     this.ports.send('DebStatusUpdate', _debuggerStatus);
+    if (es == Status.Emulating)
+      _sub.pause();
   }
+  void _onEmuStart(_) {
+    Ft.log('worker_debug', '_onEmuStart');
+    assert(_isCorrect('emu+'), 'Invalid call to _onEmuStart');
 
-  void _enable([_]) {
-    Ft.log('worker_debug', '_enable');
-    _begin();
-    _sub.resume();
-    this.ports.send('DebStatusUpdate', _debuggerStatus);
+    final ds = _debuggerStatus;
+
+    if (ds == DebStatus.ON)
+      _sub.resume();
   }
+  void _onEmuStop(_) {
+    Ft.log('worker_debug', '_onEmuStop');
+    assert(_isCorrect('emu-'), 'Invalid call to _onEmuStop');
 
-  void _begin([_]) {
-    assert(_sub.isPaused, "resume debug while not stopped");
-    _sub.resume();
-  }
+    final ds = _debuggerStatus;
 
-  void _end([_]) {
-    assert(!_sub.isPaused, "stop debug while stopped");
-    _sub.pause();
+    if (ds == DebStatus.ON)
+      _sub.pause();
   }
 
   void init_debug([_])
@@ -114,23 +216,24 @@ abstract class Debug implements Worker.AWorker {
     _sub.pause();
     this.events
       ..where((Map map) => map['type'] == Event.FatalError)
-      .forEach(_end)
+      .forEach(_onEmuStop)
       ..where((Map map) => map['type'] == Event.Eject)
-      .forEach(_end)
+      .forEach(_onEmuStop)
       ..where((Map map) => map['type'] == Event.Start)
-      .forEach(_begin)
+      .forEach(_onEmuStart)
       ;
     this.ports.listener('DebStatusRequest')
       ..where((v) => v.index == DebStatusRequest.ENABLE.index)
-      .forEach(_enable)
+      .forEach(_onDebStart)
       ..where((v) => v.index == DebStatusRequest.DISABLE.index)
-      .forEach(_disable)
-      ..where((v) => v.index == DebStatusRequest.TOGGLE.index
-          && _debuggerStatus == DebStatus.ON)
-      .forEach(_disable)
-      ..where((v) => v.index == DebStatusRequest.TOGGLE.index
-          && _debuggerStatus == DebStatus.OFF)
-      .forEach(_enable)
+      .forEach(_onDebStop)
+      ..where((v) => v.index == DebStatusRequest.TOGGLE.index)
+      .forEach((v) {
+            if (_debuggerStatus == DebStatus.ON)
+              _onDebStop(null);
+            else
+              _onDebStart(null);
+          })
       ;
     this.ports.listener('DebMemAddrChange').forEach(_onMemoryAddrChange);
   }
