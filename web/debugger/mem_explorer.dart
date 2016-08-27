@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 11:58:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 12:08:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 14:53:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -67,12 +67,12 @@ class _Data {
 */
 
 void _onMemInfo(Map<String, dynamic> map) {
-  assert(map['addr'] != null && map['addr'] is int);
+  assert(map['addr'] != null && map['addr'] is int, "_onMemInfo($map)");
   final addr = map['addr'];
-  assert(addr >= 0x0000 && addr <= 0xFFFF);
+  assert(addr >= 0x0000 && addr <= 0xFFFF, "_onMemInfo($map)");
   assert(map['data'] != null && map['data'] is Uint8List);
   final data = map['data'];
-  assert(data.length == _data.memCells.length);
+  assert(data.length == _data.memCells.length, "_onMemInfo($map)");
   for (var i = 0; i < _data.addrCells.length; ++i)
     _data.addrCells[i].elt.text = (addr + i * 0x10)
       .toRadixString(16)

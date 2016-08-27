@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 11:32:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 17:01:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,20 +27,20 @@ import 'package:emulator/src/worker.dart' as Worker;
 
 abstract class Emulation implements Worker.AWorker {
 
-  bool _pause = false; // TODO: init elsewhere
+  Async.Timer _timer_or_null;
+
   double _emulationSpeed = 1.0;
   double _clockDeficit;
   double _clockPerRoutineGoal;
 
   int _emulationCount;
   DateTime _emulationStartTime;
-  Async.Timer _emulationTimer;
   DateTime _rescheduleTime;
 
   void _onEmulationSpeedChange(map)
   {
     Ft.log('worker_emu', '_onEmulationSpeedChange', map);
-    assert(!(map['speed'] < 0));
+    assert(!(map['speed'] < 0), "_onEmulationSpeedChange($map)");
     if (map['isInf']) {
       _emulationSpeed = double.INFINITY;
       _clockPerRoutineGoal = double.INFINITY;
@@ -53,8 +53,12 @@ abstract class Emulation implements Worker.AWorker {
     _clockDeficit = 0.0;
   }
 
-  void onEmulation()
+  void _onEmulation()
   {
+    // Ft.log('worker_emu', '_onEmulation($_emulationCount)');
+    assert(this.status == Status.Emulating,
+        "_onEmulation() while not emulating");
+
     int clockSum = 0;
     int clockExec;
     final DateTime timeLimit = _rescheduleTime.add(EMULATION_PERIOD_DURATION);
@@ -62,53 +66,91 @@ abstract class Emulation implements Worker.AWorker {
     final int clockLimit =
       clockDebt.isFinite ? clockDebt.floor() : double.INFINITY;
 
-    if (_pause)
-      _clockDeficit = 0.0;
-    else {
-      while (true) {
-        if (Ft.now().compareTo(timeLimit) >= 0)
-          break ;
-        if (clockSum >= clockLimit)
-          break ;
-        clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
-        this.gb.data.exec(clockExec);
-        clockSum += clockExec;
-      }
-      _clockDeficit = clockDebt - clockSum.toDouble();
+    while (true) {
+      if (Ft.now().compareTo(timeLimit) >= 0)
+        break ;
+      if (clockSum >= clockLimit)
+        break ;
+      clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
+      this.gb.exec(clockExec);
+      clockSum += clockExec;
     }
+    _clockDeficit = clockDebt - clockSum.toDouble();
     _emulationCount++;
     _rescheduleTime = _emulationStartTime.add(
         EMULATION_PERIOD_DURATION * _emulationCount);
-    _emulationTimer =
-      new Async.Timer(_rescheduleTime.difference(Ft.now()), onEmulation);
+    _timer_or_null = new Async.Timer(
+        _rescheduleTime.difference(Ft.now()), _onEmulation);
     return ;
   }
 
-  void _onEmulationStart(Uint8List l)
+  void _onEmulationStart(Uint8List l) //TODO: Retrieve string to indexDB
   {
+    var gb;
+
+    assert(this.status != Status.Emulating,
+        "_onEmulationStart() while emulating");
+    try {
+      gb = _assembleGameBoy(l);
+    }
+    catch (e) {
+      this.notifyError(Event.StartError, e);
+      return ;
+    }
+    this.registerGameBoy(gb);
+    // _onStart();
+    return ;
+  }
+
+  Gameboy.GameBoy _assembleGameBoy(Uint8List l) {
     final drom = l; //TODO: Retrieve from indexedDB
     final dram = new Uint8List.fromList([42, 43]); //TODO: Retrieve from indexedDB
     final irom = new Rom.Rom(drom);
     final iram = new Ram.Ram(dram);
-
     //TODO: Select right constructon giving r.pullHeader(RomHeaderField.Cartridge_Type)
-    // and try catch to detect errors;
     final c = new Cartmbc0.CartMbc0(irom, iram);
-    this.gb = new Ft.Option<Gameboy.GameBoy>.some(new Gameboy.GameBoy(c));
+    return new Gameboy.GameBoy(c);
+  }
+
+  /* CONTROL **************************************************************** */
+
+  void _onStart([_])
+  {
+    Ft.log('worker_emu', '_onStart');
+    assert(_timer_or_null == null,
+        "worker_emu: _onStart while active");
     _clockDeficit = 0.0;
     _emulationStartTime = Ft.now().add(EMULATION_START_DELAY);
-    _rescheduleTime = _emulationStartTime;;
+    _rescheduleTime = _emulationStartTime;
     _emulationCount = 0;
-    _emulationTimer =
-      new Async.Timer(EMULATION_START_DELAY, onEmulation);
-    return ;
+    _timer_or_null = new Async.Timer(EMULATION_START_DELAY, _onEmulation);
+  }
+
+  void _onStop([_])
+  {
+    Ft.log('worker_emu', '_onStop');
+    assert(_timer_or_null != null && _timer_or_null.isActive,
+        "worker_emu: _onStop while paused");
+    assert(_timer_or_null.isActive, "worker_emu: _onStop while paused");
+    _timer_or_null.cancel();
+    _timer_or_null = null;
   }
 
   void init_emulation()
   {
-    Ft.log('worker_emu', 'init');
-    this.ports.listener('EmulationStart').listen(_onEmulationStart);
-    this.ports.listener('EmulationSpeed').listen(_onEmulationSpeedChange);
+    Ft.log('worker_emu', 'init_emulation');
+    this.events
+      ..where((Map map) => map['type'] == Event.FatalError)
+      .forEach(_onStop)
+      ..where((Map map) => map['type'] == Event.Eject)
+      .forEach(_onStop)
+      ..where((Map map) => map['type'] == Event.Start)
+      .forEach(_onStart)
+      ;
+    this.ports.listener('EmulationStart')
+      .forEach(_onEmulationStart);
+    this.ports.listener('EmulationSpeed')
+      .listen(_onEmulationSpeedChange);
   }
 
 }

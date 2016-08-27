@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 12:10:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 14:43:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -44,6 +44,7 @@ final _workerReceivers = <String, Type>{
   'EmulationStart' : Uint8List,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
   'DebMemAddrChange' : int,
+  'Debug' : <String, dynamic>{}.runtimeType,
 };
 
 /*

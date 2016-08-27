@@ -13,7 +13,7 @@ body {
     padding-top: 50px;
 }
 
-#magbut {
+#magbut, #ejectbut, #crashbut {
   background-color: #FF5A5F;
   font-family: 'Open Sans', sans-serif;
   color: #FFFFFF;

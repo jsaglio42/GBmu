@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 12:05:59 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 14:46:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,6 @@ run() async
         lst = reader.result;
       });
 
-  var magbut = Html.querySelector('#magbut');
 
   var emuFut = Emulator.spawn()
     .catchError((e) => print('main:\tError while creating emulator:\n$e'));
@@ -47,9 +46,26 @@ run() async
   var emu = await emuFut;
   Ft.log('main', 'Emulator created');
 
-  magbut.onClick.listen((_) {
-        Ft.log('main_magbut', 'onClick');
+  Html.querySelector('#magbut')
+  .onClick.listen((_) {
+        Ft.log('main', 'on magbut');
         emu.send('EmulationStart', lst);
+      });
+
+  Html.querySelector('#ejectbut')
+  .onClick.listen((_) {
+        Ft.log('maint', 'on ejectbut');
+        emu.send('Debug', <String, dynamic>{
+          'action': 'eject',
+        });
+      });
+
+  Html.querySelector('#crashbut')
+  .onClick.listen((_) {
+        Ft.log('maint', 'on crashbut');
+        emu.send('Debug', <String, dynamic>{
+          'action': 'crash',
+        });
       });
 
   var debStatusOn = Html.querySelector('#debStatusOn');

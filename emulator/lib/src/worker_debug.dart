@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 12:22:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 17:03:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,62 +27,30 @@ import 'package:emulator/src/worker.dart' as Worker;
 
 abstract class Debug implements Worker.AWorker {
 
-  static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
+  Async.Stream _periodic;
+  Async.StreamSubscription _sub;
   DebStatus _debuggerStatus = DebStatus.ON;
-  Async.Timer _debuggerTimer;
+
+  static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
   int _debuggerMemoryAddr = 0;
-
-  void _disableDebugger()
-  {
-    _debuggerStatus = DebStatus.OFF;
-    this.ports.send('DebStatusUpdate', _debuggerStatus);
-  }
-
-  void _enableDebugger()
-  {
-    _debuggerStatus = DebStatus.ON;
-    this.ports.send('DebStatusUpdate', _debuggerStatus);
-  }
-
-  void _onDebuggerStateChange(DebStatusRequest p)
-  {
-    Ft.log('worker_debug', '_onDebuggerStateChange', p);
-
-    // Enum equality fails after passing through a SendPort
-    if (p.index == DebStatusRequest.TOGGLE.index) {
-      if (_debuggerStatus == DebStatus.ON)
-        _disableDebugger();
-      else
-        _enableDebugger();
-    }
-    else if (p.index == DebStatusRequest.DISABLE.index) {
-      if (_debuggerStatus == DebStatus.ON)
-        _disableDebugger();
-    }
-    else if (p.index == DebStatusRequest.ENABLE.index) {
-      if (_debuggerStatus == DebStatus.OFF)
-        _enableDebugger();
-    }
-    return ;
-  }
 
   void _onDebug(_)
   {
-    if (this.gb.isSome && _debuggerStatus == DebStatus.ON) {
-      final l = new Uint8List(MemReg.values.length);
-      final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
+    assert(this.status != Status.Empty, "_onDebug() while empty");
+    assert(_debuggerStatus == DebStatus.ON, "_onDebug() while off");
+    final l = new Uint8List(MemReg.values.length);
+    final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
 
-      this.ports.send('RegInfo', this.gb.data.cpuRegs);
-      it.forEach((r, i) {
-        l[r.index] = this.gb.data.mmu.pullMemReg(r);
-      });
-      this.ports.send('MemInfo',  <String, dynamic> {
-        'addr' : _debuggerMemoryAddr,
-        'data' : _buildMemoryList(_debuggerMemoryAddr)
-      });
-      this.ports.send('MemRegInfo', l);
-      this.ports.send('ClockInfo', this.gb.data.clockCount);
-    }
+    this.ports.send('RegInfo', this.gb.cpuRegs);
+    it.forEach((r, i) {
+      l[r.index] = this.gb.mmu.pullMemReg(r);
+    });
+    this.ports.send('MemInfo',  <String, dynamic> {
+      'addr' : _debuggerMemoryAddr,
+      'data' : _buildMemoryList(_debuggerMemoryAddr)
+    });
+    this.ports.send('MemRegInfo', l);
+    this.ports.send('ClockInfo', this.gb.clockCount);
     return ;
   }
 
@@ -105,16 +73,66 @@ abstract class Debug implements Worker.AWorker {
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_buildMemExplorerMap: addr not valid');
     final memList = new List.generate(_debuggerMemoryLen, (i) {
-      return this.gb.data.mmu.pullMem8(addr + i);
+      return this.gb.mmu.pullMem8(addr + i);
     });
     return new Uint8List.fromList(memList);
   }
 
-  void init_debug()
+  /* CONTROL **************************************************************** */
+
+  void _disable([_]) {
+    Ft.log('worker_debug', '_disable');
+    if (this.status == Status.Crashed)
+      _onDebug(null);
+    _end();
+    _debuggerStatus = DebStatus.OFF;
+    this.ports.send('DebStatusUpdate', _debuggerStatus);
+  }
+
+  void _enable([_]) {
+    Ft.log('worker_debug', '_enable');
+    _begin();
+    _sub.resume();
+    this.ports.send('DebStatusUpdate', _debuggerStatus);
+  }
+
+  void _begin([_]) {
+    assert(_sub.isPaused, "resume debug while not stopped");
+    _sub.resume();
+  }
+
+  void _end([_]) {
+    assert(!_sub.isPaused, "stop debug while stopped");
+    _sub.pause();
+  }
+
+  void init_debug([_])
   {
-    this.ports.listener('DebStatusRequest').listen(_onDebuggerStateChange);
-    this.ports.listener('DebMemAddrChange').listen(_onMemoryAddrChange);
-    _debuggerTimer = new Async.Timer.periodic(DEBUG_PERIOD_DURATION, _onDebug);
+    Ft.log('worker_debug', 'init_debug');
+    _periodic = new Async.Stream.periodic(DEBUG_PERIOD_DURATION);
+    _sub = _periodic.listen(_onDebug);
+    _sub.pause();
+    this.events
+      ..where((Map map) => map['type'] == Event.FatalError)
+      .forEach(_end)
+      ..where((Map map) => map['type'] == Event.Eject)
+      .forEach(_end)
+      ..where((Map map) => map['type'] == Event.Start)
+      .forEach(_begin)
+      ;
+    this.ports.listener('DebStatusRequest')
+      ..where((v) => v.index == DebStatusRequest.ENABLE.index)
+      .forEach(_enable)
+      ..where((v) => v.index == DebStatusRequest.DISABLE.index)
+      .forEach(_disable)
+      ..where((v) => v.index == DebStatusRequest.TOGGLE.index
+          && _debuggerStatus == DebStatus.ON)
+      .forEach(_disable)
+      ..where((v) => v.index == DebStatusRequest.TOGGLE.index
+          && _debuggerStatus == DebStatus.OFF)
+      .forEach(_enable)
+      ;
+    this.ports.listener('DebMemAddrChange').forEach(_onMemoryAddrChange);
   }
 
 }

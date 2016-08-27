@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 12:26:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/27 16:47:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,27 +27,66 @@ import 'package:emulator/src/worker.dart' as Worker;
 
 abstract class Observer implements Worker.AWorker {
 
-  Async.Timer _speedPollTimer;
-  int _gbClockPoll = 0;
+  Async.Stream _periodic;
+  Async.StreamSubscription _sub;
+
+  int _gbClockPoll;
+  DateTime _pollTime;
 
   void _onSpeedPoll(_){
-    if (this.gb.isSome) {
-      final clock = this.gb.data.clockCount;
-      final cps =
-        (clock - _gbClockPoll).toDouble() / SPEEDPOLL_PERIOD_DOUBLE;
-      final observedSpeed = cps / GB_CPU_FREQ_DOUBLE;
+    assert(this.status == Status.Emulating,
+        '_onSpeedPoll while ${this.status}');
+    final now = Ft.now();
+    final elapsed =
+      now.difference(_pollTime).inMicroseconds.toDouble() /
+      MICROSECONDS_PER_SECOND_DOUBLE;
+    final clock = this.gb.clockCount;
+    final cps =
+      (clock - _gbClockPoll).toDouble() / elapsed;
+    final observedSpeed = cps / GB_CPU_FREQ_DOUBLE;
 
-      this.ports.send('EmulationSpeed', <String, dynamic>{
-        'speed': observedSpeed,
-      });
-      _gbClockPoll = clock;
-    }
+    _pollTime = now;
+    this.ports.send('EmulationSpeed', <String, dynamic>{
+      'speed': observedSpeed,
+    });
+    _gbClockPoll = clock;
+    return ;
+  }
+
+  /* CONTROL **************************************************************** */
+
+  void _onStop(_) {
+    Ft.log('worker_obs', '_onStop');
+    assert(!_sub.isPaused, "worker_obs: _onStop while paused");
+    _sub.pause();
+    this.ports.send('EmulationSpeed', <String, dynamic>{
+      'speed': 0.0,
+    });
+  }
+
+  void _onStart(_) {
+    Ft.log('worker_obs', '_onStart');
+    assert(_sub.isPaused, "worker_obs: _onStop while not paused");
+    _gbClockPoll = 0;
+    _pollTime = Ft.now();
+    _sub.resume();
   }
 
   void init_observer()
   {
-    _speedPollTimer =
-      new Async.Timer.periodic(SPEEDPOLL_PERIOD_DURATION, _onSpeedPoll);
+    Ft.log('worker_obs', 'init_observer');
+    _periodic = new Async.Stream.periodic(SPEEDPOLL_PERIOD_DURATION);
+    _sub = _periodic.listen(_onSpeedPoll);
+    _sub.pause();
+    this.events
+      ..where((Map map) => map['type'] == Event.FatalError)
+      .forEach(_onStop)
+      ..where((Map map) => map['type'] == Event.Eject)
+      .forEach(_onStop)
+      ..where((Map map) => map['type'] == Event.Start)
+      .forEach(_onStart)
+      ;
+    return ;
   }
 
 }
