@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 19:27:47 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 15:27:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,10 @@ import 'package:emulator/src/worker.dart' as Worker;
 
 abstract class Emulation implements Worker.AWorker {
 
-  Async.Timer _timer_or_null;
+  Ft.Routine<GameBoyExternalMode> _rout;
+  Async.Timer _timerOrNull = null;
+
+  bool _simulateCrash = false;
 
   double _emulationSpeed = 1.0;
   double _clockDeficit;
@@ -37,75 +40,59 @@ abstract class Emulation implements Worker.AWorker {
   DateTime _emulationStartTime;
   DateTime _rescheduleTime;
 
-  void _onEmulationSpeedChange(map)
+  // EXTERNAL CONTROL ******************************************************* **
+
+  void _onEmulationSpeedChangeReq(map)
   {
-    Ft.log('worker_emu', '_onEmulationSpeedChange', map);
-    assert(!(map['speed'] < 0), "_onEmulationSpeedChange($map)");
-    if (map['isInf']) {
-      _emulationSpeed = double.INFINITY;
-      _clockPerRoutineGoal = double.INFINITY;
-    }
-    else {
-      _emulationSpeed = map['speed'];
-      _clockPerRoutineGoal =
-        GB_CPU_FREQ_DOUBLE / EMULATION_PER_SEC_DOUBLE * _emulationSpeed;
-    }
-    _clockDeficit = 0.0;
+    Ft.log('worker_emu', '_onEmulationSpeedChangeReq', map);
+    assert(map['speed'] != null && map['speed'] is double,
+        "_onEmulationSpeedChangeReq($map)");
+    _updateEmulationSpeed(map['speed']);
   }
 
-  void _onEmulation()
-  {
-    // if (_timer_or_null == null)
-      // return ;
-    Ft.log('worker_emu', '_onEmulation($_emulationCount)');
-    assert(this.status == Status.Emulating,
-        "_onEmulation() while not emulating");
-
-    int clockSum = 0;
-    int clockExec;
-    final DateTime timeLimit = _rescheduleTime.add(EMULATION_PERIOD_DURATION);
-    final double clockDebt = _clockPerRoutineGoal + _clockDeficit;
-    final int clockLimit =
-      clockDebt.isFinite ? clockDebt.floor() : double.INFINITY;
-
-    while (true) {
-      if (Ft.now().compareTo(timeLimit) >= 0)
-        break ;
-      if (clockSum >= clockLimit)
-        break ;
-      clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
-      this.gb.exec(clockExec);
-      clockSum += clockExec;
-    }
-    _clockDeficit = clockDebt - clockSum.toDouble();
-    _emulationCount++;
-    _rescheduleTime = _emulationStartTime.add(
-        EMULATION_PERIOD_DURATION * _emulationCount);
-    _timer_or_null = new Async.Timer(
-        _rescheduleTime.difference(Ft.now()), _onEmulation);
-    Ft.log('worker_emu', '_onEmulationDONE');
-    return ;
-  }
-
-  void _onEmulationStart(Uint8List l) //TODO: Retrieve string to indexDB
+  void _onEmulationStartReq(Uint8List l) //TODO: Retrieve string to indexDB
   {
     var gb;
 
-    assert(this.status != Status.Emulating,
-        "_onEmulationStart() while emulating");
     try {
       gb = _assembleGameBoy(l);
     }
     catch (e) {
-      this.notifyError(Event.StartError, e);
+      // TODO: broadcast error
       return ;
     }
-    this.registerGameBoy(gb);
-    // _onStart();
+    _updateEmulationSpeed(_emulationSpeed);
+    this.gbOpt = new Ft.Option.some(gb);
+    _rout.changeExternalMode(GameBoyExternalMode.Emulating);
     return ;
   }
 
-  Gameboy.GameBoy _assembleGameBoy(Uint8List l) {
+  void _onEjectReq(_)
+  {
+    assert(_rout.externalMode != GameBoyExternalMode.Absent,
+        "_onEjectReq with no gameboy");
+    _rout.changeExternalMode(GameBoyExternalMode.Absent);
+  }
+
+  // INTERNAL CONTROL ******************************************************* **
+
+  void _updateEmulationSpeed(double speed)
+  {
+    assert(!(speed < 0.0), "_updateEmulationSpeed($speed)");
+    if (speed.isFinite) {
+      _emulationSpeed = speed;
+      _clockPerRoutineGoal =
+        GB_CPU_FREQ_DOUBLE / EMULATION_PER_SEC_DOUBLE * _emulationSpeed;
+    }
+    else {
+      _emulationSpeed = double.INFINITY;
+      _clockPerRoutineGoal = double.INFINITY;
+    }
+    _clockDeficit = 0.0;
+  }
+
+  Gameboy.GameBoy _assembleGameBoy(Uint8List l)
+  {
     final drom = l; //TODO: Retrieve from indexedDB
     final dram = new Uint8List.fromList([42, 43]); //TODO: Retrieve from indexedDB
     final irom = new Rom.Rom(drom);
@@ -115,48 +102,104 @@ abstract class Emulation implements Worker.AWorker {
     return new Gameboy.GameBoy(c);
   }
 
-  /* CONTROL **************************************************************** */
-
-  void _onStart([_])
+  int _emulate(final DateTime timeLimit, final int clockLimit)
   {
-    Ft.log('worker_emu', '_onStart');
-    assert(_timer_or_null == null,
-        "worker_emu: _onStart while active");
+    int clockSum = 0;
+    int clockExec;
+
+    if (_simulateCrash) {
+      _simulateCrash = false;
+      throw new Exception('Simulated crash');
+    }
+    while (true) {
+      if (Ft.now().compareTo(timeLimit) >= 0)
+        break ;
+      if (clockSum >= clockLimit)
+        break ;
+      clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
+      this.gbOpt.v.exec(clockExec);
+      clockSum += clockExec;
+    }
+    return clockSum;
+  }
+
+  // ROUTINE CONTROL ******************************************************** **
+
+  void _onEmulation()
+  {
+    Ft.log('worker_emu', '_onEmulation', _emulationCount);
+
+    int clockSum;
+    var error = null;
+    final DateTime timeLimit = _rescheduleTime.add(EMULATION_PERIOD_DURATION);
+    final double clockDebt = _clockPerRoutineGoal + _clockDeficit;
+    final int clockLimit =
+      clockDebt.isFinite ? clockDebt.floor() : double.INFINITY;
+
+    try {
+      clockSum = _emulate(timeLimit, clockLimit);
+    }
+    catch (e) {
+      clockSum = 0;
+      error = e;
+    }
+    _clockDeficit = clockDebt - clockSum.toDouble();
+    _emulationCount++;
+    _rescheduleTime = _emulationStartTime.add(
+        EMULATION_PERIOD_DURATION * _emulationCount);
+    _timerOrNull = null;
+    _timerOrNull = new Async.Timer(
+        _rescheduleTime.difference(Ft.now()), _onEmulation);
+    if (error != null) {
+      _rout.changeExternalMode(GameBoyExternalMode.Crashed);
+      // TODO: broadcast error
+    }
+    return ;
+  }
+
+  void _makeLooping()
+  {
+    Ft.log('worker_emu', '_makeLooping');
+    assert(_timerOrNull == null, "_makeLooping() with some timer");
     _clockDeficit = 0.0;
     _emulationStartTime = Ft.now().add(EMULATION_START_DELAY);
     _rescheduleTime = _emulationStartTime;
     _emulationCount = 0;
-    _timer_or_null = new Async.Timer(EMULATION_START_DELAY, _onEmulation);
+    _timerOrNull = new Async.Timer(EMULATION_START_DELAY, _onEmulation);
   }
 
-  void _onStop([_])
+  void _makeDormant()
   {
-    Ft.log('worker_emu', '_onStop');
-    assert(_timer_or_null != null && _timer_or_null.isActive,
-        "worker_emu: _onStop while paused");
-    assert(_timer_or_null.isActive, "worker_emu: _onStop while paused");
-    _timer_or_null.cancel();
-    _timer_or_null = null;
+    Ft.log('worker_emu', '_makeDormant');
+    assert(_timerOrNull != null && _timerOrNull.isActive,
+        "_makeDormant with no timer");
+    _timerOrNull.cancel();
+    _timerOrNull = null;
   }
+
+  // CONSTRUCTION *********************************************************** **
 
   void init_emulation()
   {
     Ft.log('worker_emu', 'init_emulation');
-    this.events
-      ..where((Map map) => map['type'] == Event.FatalError)
-      .forEach(_onStop)
-      ..where((Map map) => map['type'] == Event.Eject)
-      .forEach((_){
-            if (_timer_or_null != null)
-              _onStop();
-          })
-      ..where((Map map) => map['type'] == Event.Start)
-      .forEach(_onStart)
-      ;
+    _rout = new Ft.Routine<GameBoyExternalMode>(
+        this.rc, [GameBoyExternalMode.Emulating], _makeLooping, _makeDormant,
+        GameBoyExternalMode.Absent);
+
     this.ports.listener('EmulationStart')
-      .forEach(_onEmulationStart);
+      .forEach(_onEmulationStartReq);
+    this.ports.listener('Debug')
+      .forEach((Map map){
+        if (map['action'] == 'crash') {
+          _simulateCrash = true;
+          Ft.log('worker_emu', 'faking_crash');
+        }
+      });
+    this.ports.listener('Debug')
+      .where((map) => map['action'] == 'eject')
+      .forEach(_onEjectReq);
     this.ports.listener('EmulationSpeed')
-      .listen(_onEmulationSpeedChange);
+      .listen(_onEmulationSpeedChangeReq);
   }
 
 }
