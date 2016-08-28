@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 12:27:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 20:22:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -99,7 +99,7 @@ class _SpeedSlider {
   }
 
   _onSpeedUpdate(map) {
-    Ft.log('main_space', '_onSpeedUpdate', map);
+    // Ft.log('main_space', '_onSpeedUpdate', map);
     final double speed = map['speed'];
 
     _text.text = '${speed.toStringAsFixed(2)}x';

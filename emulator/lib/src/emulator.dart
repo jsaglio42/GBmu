@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 18:07:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 19:55:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,6 +36,8 @@ final _mainReceivers = <String, Type>{
   'ClockInfo' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
   'EmulationStatus' : GameBoyExternalMode,
+  'EmulationPause' : int,
+  'EmulationResume' : int,
   'DebStatusUpdate' : bool,
   'MemInfo' : <String, dynamic>{}.runtimeType,
 };
@@ -44,6 +46,9 @@ final _workerReceivers = <String, Type>{
   'DebStatusRequest' : DebuggerModeRequest,
   'EmulationStart' : Uint8List,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
+  'EmulationAutoBreak' : AutoBreakMode,
+  'EmulationPause' : int,
+  'EmulationResume' : int,
   'DebMemAddrChange' : int,
   'Debug' : <String, dynamic>{}.runtimeType,
 };

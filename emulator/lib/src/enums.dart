@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 15:51:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 18:32:03 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,4 +25,11 @@ export 'package:emulator/src/memory/rom_header.dart'
 
 enum DebuggerModeRequest {
   Toggle, Disable, Enable
+}
+
+enum AutoBreakMode {
+  Instruction,
+  Frame,
+  Second,
+  None
 }

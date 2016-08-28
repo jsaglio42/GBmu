@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 18:09:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 18:59:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,6 +21,7 @@ import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
 import './debugger/mem_explorer.dart' as Debmexplorer;
 import './debugger/clock_info.dart' as Debclocks;
+import './debugger/buttons.dart' as Debbuttons;
 import './main_space/bottom_panel.dart' as Mainbottompanel;
 
 run() async
@@ -97,6 +98,7 @@ run() async
   Debmregisters.init(emu);
   Debmexplorer.init(emu);
   Debclocks.init(emu);
+  Debbuttons.init(emu);
   Mainbottompanel.init(emu);
 
 
