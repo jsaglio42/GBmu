@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 15:27:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 16:00:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,7 +14,6 @@ import 'dart:math' as Math;
 import 'dart:async' as Async;
 import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
-// import 'package:ft/wired_isolate.dart' as Wiso;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';

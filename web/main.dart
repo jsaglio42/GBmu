@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 17:21:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 16:00:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -41,7 +41,7 @@ run() async
 
 
   var emuFut = Emulator.spawn()
-    .catchError((e) => print('main:\tError while creating emulator:\n$e'));
+  .catchError((e) => print('main:\tError while creating emulator:\n$e'));
 
   var emu = await emuFut;
   Ft.log('main', 'Emulator created');
@@ -74,15 +74,14 @@ run() async
   var debBody = Js.context.callMethod(r'$', ['#debBody']);
 
 
-
-  debButtonToggle.onClick.listen((_) {
+  debButtonToggle.onClick.listen((_){
         Ft.log('main', 'debugger toggle');
-        emu.send('DebStatusRequest', DebStatusRequest.TOGGLE);
+        emu.send('DebStatusRequest', DebuggerModeRequest.Toggle);
       });
 
-  emu.listener('DebStatusUpdate').forEach((DebStatus p) {
-    Ft.log('main', 'onDebStatusUpdate', p);
-    if (p.index == DebStatus.ON.index) {
+  emu.listener('DebStatusUpdate').forEach((bool enabled) {
+    Ft.log('main', 'onDebStatusUpdate', enabled);
+    if (enabled) {
       debStatusOn.style.display = '';
       debStatusOff.style.display = 'none';
       debBody.callMethod('slideDown', ['slow']);

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 14:29:10 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 15:51:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,10 +23,6 @@ export 'package:emulator/src/memory/mem_registers.dart'
 export 'package:emulator/src/memory/rom_header.dart'
   show RomHeaderField, CartridgeType;
 
-enum DebStatus {
-  ON, OFF
-}
-
-enum DebStatusRequest {
-  TOGGLE, DISABLE, ENABLE
+enum DebuggerModeRequest {
+  Toggle, Disable, Enable
 }

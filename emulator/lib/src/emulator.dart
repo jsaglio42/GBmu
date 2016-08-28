@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 14:43:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 15:59:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,12 +35,12 @@ final _mainReceivers = <String, Type>{
   'MemRegInfo' : Uint8List,
   'ClockInfo' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
-  'DebStatusUpdate' : DebStatus,
+  'DebStatusUpdate' : bool,
   'MemInfo' : <String, dynamic>{}.runtimeType,
 };
 
 final _workerReceivers = <String, Type>{
-  'DebStatusRequest' : DebStatusRequest,
+  'DebStatusRequest' : DebuggerModeRequest,
   'EmulationStart' : Uint8List,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
   'DebMemAddrChange' : int,

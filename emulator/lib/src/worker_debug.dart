@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 19:23:24 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 16:07:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,191 +22,124 @@ import 'package:emulator/constants.dart';
 // import 'package:emulator/src/memory/ram.dart' as Ram;
 import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 // import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
-// import 'package:emulator/src/gameboy.dart' as Gameboy;
+import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
 
 abstract class Debug implements Worker.AWorker {
 
+  Ft.Routine<DebuggerExternalMode> _rout;
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
-  DebStatus _debuggerStatus = DebStatus.ON;
 
   static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
   int _debuggerMemoryAddr = 0;
 
-  void _onDebug([_])
-  {
-    assert(this.status != Status.Empty, "_onDebug() while empty");
-    assert(_debuggerStatus == DebStatus.ON, "_onDebug() while off");
-    final l = new Uint8List(MemReg.values.length);
-    final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
+  // EXTERNAL CONTROL ******************************************************* **
 
-    this.ports.send('RegInfo', this.gb.cpuRegs);
-    it.forEach((r, i) {
-      l[r.index] = this.gb.mmu.pullMemReg(r);
-    });
-    this.ports.send('MemInfo',  <String, dynamic> {
-      'addr' : _debuggerMemoryAddr,
-      'data' : _buildMemoryList(_debuggerMemoryAddr)
-    });
-    this.ports.send('MemRegInfo', l);
-    this.ports.send('ClockInfo', this.gb.clockCount);
-    return ;
-  }
-
-  void _onMemoryAddrChange(int addr)
+  void _onMemoryAddrChangeReq(int addr)
   {
-    Ft.log('worker_debug', '_onMemoryAddrChange', addr);
+    Ft.log('worker_debug', '_onMemoryAddrChangeReq', addr);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
-        , '_onMemoryAddrChange: addr not valid');
+        , '_onMemoryAddrChangeReq: addr not valid');
     _debuggerMemoryAddr = addr;
-    this.ports.send('MemInfo',  <String, dynamic> {
-        'addr' : _debuggerMemoryAddr,
-        'data' : _buildMemoryList(_debuggerMemoryAddr)
-      });
+
+    // TODO: removed cause not sure that GameBoy is present
+    // this.ports.send('MemInfo',  <String, dynamic> {
+    //     'addr' : _debuggerMemoryAddr,
+    //     'data' : _buildMemoryList(_debuggerMemoryAddr, ???)
+    //   });
     return ;
   }
 
-  Uint8List   _buildMemoryList(int addr)
+  void _onDebModeChangeReq(DebuggerModeRequest req)
+  {
+    switch (req) {
+      case (DebuggerModeRequest.Toggle):
+        if (_rout.externalMode == DebuggerExternalMode.Dismissed)
+          _enable();
+        else
+          _disable();
+        break;
+      case (DebuggerModeRequest.Disable):
+        _disable();
+        break;
+      case (DebuggerModeRequest.Enable):
+        _enable();
+        break;
+    }
+  }
+
+  // INTERNAL CONTROL ******************************************************* **
+
+  void _enable()
+  {
+    assert(_rout.externalMode == DebuggerExternalMode.Dismissed,
+        "worker_deb: _disable() while enabled");
+    _rout.changeExternalMode(DebuggerExternalMode.Operating);
+    this.ports.send('DebStatusUpdate', true);
+  }
+
+  void _disable()
+  {
+    assert(_rout.externalMode == DebuggerExternalMode.Operating,
+        "worker_deb: _disable() while disabled");
+    _rout.changeExternalMode(DebuggerExternalMode.Dismissed);
+    this.ports.send('DebStatusUpdate', false);
+  }
+
+  Uint8List   _buildMemoryList(int addr, Gameboy.GameBoy gb)
   {
     Ft.log('worker_debug', '_buildMemoryList', addr);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_buildMemExplorerMap: addr not valid');
     final memList = new List.generate(_debuggerMemoryLen, (i) {
-      return this.gb.mmu.pullMem8(addr + i);
+      return gb.mmu.pullMem8(addr + i);
     });
     return new Uint8List.fromList(memList);
   }
 
-  /* CONTROL **************************************************************** */
+  // ROUTINE CONTROL ******************************************************** **
 
-  final static Map<List<dynamic>, bool>_combinations = {
-      // Subscription `false` but shouldn't
-    [Status.Emulating, DebStatus.ON, false, 'deb+']: false,
-    [Status.Emulating, DebStatus.ON, false, 'deb-']: false,
-    [Status.Emulating, DebStatus.ON, false, 'emu+']: false,
-    [Status.Emulating, DebStatus.ON, false, 'emu-']: false,
+  void _onDebug([_])
+  {
+    assert(this.rc.getExtMode(GameBoyExternalMode)
+        != GameBoyExternalMode.Absent, "_onDebug with no gameboy");
 
-    // Subscription `true` but shouldn't
-    [Status.Emulating, DebStatus.OFF, true, 'deb+']: false,
-    [Status.Emulating, DebStatus.OFF, true, 'deb-']: false,
-    [Status.Crashed, DebStatus.OFF, true, 'deb+']: false,
-    [Status.Crashed, DebStatus.OFF, true, 'deb-']: false,
-    [Status.Crashed, DebStatus.ON, true, 'deb+']: false,
-    [Status.Crashed, DebStatus.ON, true, 'deb-']: false,
-    [Status.Empty, DebStatus.OFF, true, 'deb+']: false,
-    [Status.Empty, DebStatus.OFF, true, 'deb-']: false,
-    [Status.Empty, DebStatus.ON, true, 'deb+']: false,
-    [Status.Empty, DebStatus.ON, true, 'deb-']: false,
-    [Status.Emulating, DebStatus.OFF, true, 'emu+']: false,
-    [Status.Emulating, DebStatus.OFF, true, 'emu-']: false,
-    [Status.Crashed, DebStatus.OFF, true, 'emu+']: false,
-    [Status.Crashed, DebStatus.OFF, true, 'emu-']: false,
-    [Status.Empty, DebStatus.OFF, true, 'emu+']: false,
-    [Status.Empty, DebStatus.OFF, true, 'emu-']: false,
-    [Status.Crashed, DebStatus.ON, true, 'emu+']: false,
-    [Status.Crashed, DebStatus.ON, true, 'emu-']: false,
-    [Status.Empty, DebStatus.ON, true, 'emu+']: false,
-    [Status.Empty, DebStatus.ON, true, 'emu-']: false,
+    final l = new Uint8List(MemReg.values.length);
+    final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
+    final Gameboy.GameBoy gb = this.gbOpt.v;
 
-    // Bad event `deb+`
-    [Status.Empty, DebStatus.ON, false, 'deb+']: false,
-    [Status.Crashed, DebStatus.ON, false, 'deb+']: false,
-    [Status.Emulating, DebStatus.ON, true, 'deb+']: false,
-
-    // Bad event `deb-`
-    [Status.Emulating, DebStatus.OFF, false, 'deb-']: false,
-    [Status.Crashed, DebStatus.OFF, false, 'deb-']: false,
-    [Status.Empty, DebStatus.OFF, false, 'deb-']: false,
-
-    // Bad event `emu+`
-    [Status.Emulating, DebStatus.OFF, false, 'emu+']: false,
-    [Status.Emulating, DebStatus.ON, true, 'emu+']: false,
-
-    // Bad event `emu-`
-    [Status.Empty, DebStatus.OFF, false, 'emu-']: false,
-    [Status.Empty, DebStatus.ON, false, 'emu-']: false,
-
-    // Valid `emu` action without effect
-    [Status.Crashed, DebStatus.OFF, false, 'emu-']: true,
-    [Status.Crashed, DebStatus.ON, false, 'emu-']: true,
-    [Status.Emulating, DebStatus.OFF, false, 'emu-']: true,
-    [Status.Crashed, DebStatus.OFF, false, 'emu+']: true,
-    [Status.Empty, DebStatus.OFF, false, 'emu+']: true,
-
-    //  Valid `deb` action without effect on sub
-    [Status.Crashed, DebStatus.OFF, false, 'deb+']: true,
-    [Status.Empty, DebStatus.OFF, false, 'deb+']: true,
-    [Status.Crashed, DebStatus.ON, false, 'deb-']: true,
-    [Status.Empty, DebStatus.ON, false, 'deb-']: true,
-
-    // Enable sub
-    [Status.Emulating, DebStatus.OFF, false, 'deb+']: true,
-    [Status.Empty, DebStatus.ON, false, 'emu+']: true,
-    [Status.Crashed, DebStatus.ON, false, 'emu+']: true,
-
-    // Disable sub
-    [Status.Emulating, DebStatus.ON, true, 'deb-']: true,
-    [Status.Emulating, DebStatus.ON, true, 'emu-']: true,
-  };
-
-  bool _isCorrect(String action) {
-    var k = [this.status, _debuggerStatus, !_sub.isPaused, action];
-    var b;
-
-    _combinations.forEach((l, v) {
-      if (
-          // this.status == l[0] &&
-          _debuggerStatus == l[1] &&
-          !_sub.isPaused == l[2] &&
-          action == l[3])
-        b = v;
+    this.ports.send('RegInfo', gb.cpuRegs);
+    it.forEach((r, i) {
+      l[r.index] = gb.mmu.pullMemReg(r);
     });
-    if (!b)
-      print('Invalid: $k');
-    return b;
+    this.ports.send('MemInfo',  <String, dynamic> {
+      'addr' : _debuggerMemoryAddr,
+      'data' : _buildMemoryList(_debuggerMemoryAddr, gb)
+    });
+    this.ports.send('MemRegInfo', l);
+    this.ports.send('ClockInfo', gb.clockCount);
+    return ;
   }
 
-  void _onDebStart(_) {
-    Ft.log('worker_debug', '_onDebStart');
-    assert(_isCorrect('deb+'), 'Invalid call to _onDebStart');
-
-    final es = this.status;
-
-    _debuggerStatus = DebStatus.ON;
-    this.ports.send('DebStatusUpdate', _debuggerStatus);
-    if (es == Status.Emulating)
-      _sub.resume();
+  void _makeLooping()
+  {
+    Ft.log('worker_deb', '_makeLooping');
+    assert(_sub.isPaused, "worker_deb: _makeLooping while not paused");
+    _sub.resume();
   }
-  void _onDebStop(_) {
-    Ft.log('worker_debug', '_onDebStop');
-    assert(_isCorrect('deb-'), 'Invalid call to _onDebStop');
 
-    final es = this.status;
-
-    _debuggerStatus = DebStatus.OFF;
-    this.ports.send('DebStatusUpdate', _debuggerStatus);
-    if (es == Status.Emulating)
-      _sub.pause();
+  void _makeDormant()
+  {
+    Ft.log('worker_deb', '_makeDormant');
+    assert(!_sub.isPaused, "worker_deb: _makeDormant while paused");
+    _sub.pause();
+    if (this.rc.getExtMode(GameBoyExternalMode) !=
+        GameBoyExternalMode.Absent)
+      _onDebug();
   }
-  void _onEmuStart(_) {
-    Ft.log('worker_debug', '_onEmuStart');
-    assert(_isCorrect('emu+'), 'Invalid call to _onEmuStart');
 
-    final ds = _debuggerStatus;
-
-    if (ds == DebStatus.ON)
-      _sub.resume();
-  }
-  void _onEmuStop(_) {
-    Ft.log('worker_debug', '_onEmuStop');
-    assert(_isCorrect('emu-'), 'Invalid call to _onEmuStop');
-
-    final ds = _debuggerStatus;
-
-    if (ds == DebStatus.ON)
-      _sub.pause();
-  }
+  // CONSTRUCTION *********************************************************** **
 
   void init_debug([_])
   {
@@ -214,28 +147,12 @@ abstract class Debug implements Worker.AWorker {
     _periodic = new Async.Stream.periodic(DEBUG_PERIOD_DURATION);
     _sub = _periodic.listen(_onDebug);
     _sub.pause();
-    this.events
-      ..where((Map map) => map['type'] == Event.FatalError)
-      .forEach(_onEmuStop)
-      ..where((Map map) => map['type'] == Event.Eject)
-      .forEach(_onEmuStop)
-      ..where((Map map) => map['type'] == Event.Start)
-      .forEach(_onEmuStart)
-      ;
-    this.ports.listener('DebStatusRequest')
-      ..where((v) => v.index == DebStatusRequest.ENABLE.index)
-      .forEach(_onDebStart)
-      ..where((v) => v.index == DebStatusRequest.DISABLE.index)
-      .forEach(_onDebStop)
-      ..where((v) => v.index == DebStatusRequest.TOGGLE.index)
-      .forEach((v) {
-            if (_debuggerStatus == DebStatus.ON)
-              _onDebStop(null);
-            else
-              _onDebStart(null);
-          })
-      ;
-    this.ports.listener('DebMemAddrChange').forEach(_onMemoryAddrChange);
+    _rout = new Ft.Routine<DebuggerExternalMode>(
+        this.rc,
+        [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating],
+        _makeLooping, _makeDormant, DebuggerExternalMode.Operating);
+    this.ports.listener('DebStatusRequest').forEach(_onDebModeChangeReq);
+    this.ports.listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
   }
 
 }
