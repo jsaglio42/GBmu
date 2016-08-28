@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 16:00:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 18:09:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -98,6 +98,14 @@ run() async
   Debmexplorer.init(emu);
   Debclocks.init(emu);
   Mainbottompanel.init(emu);
+
+
+  var mainGameBoyState = Html.querySelector('#mainGameBoyState');
+  emu.listener('EmulationStatus').forEach((mode){
+        mainGameBoyState.text = mode.toString().substring(20);
+      });
+
+
 
   Ft.log('main', 'init jquery tooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);

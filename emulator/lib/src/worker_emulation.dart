@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 16:25:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 18:12:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -62,7 +62,7 @@ abstract class Emulation implements Worker.AWorker {
     }
     _updateEmulationSpeed(_emulationSpeed);
     this.gbOpt = new Ft.Option.some(gb);
-    _rout.changeExternalMode(GameBoyExternalMode.Emulating);
+    _updateMode(GameBoyExternalMode.Emulating);
     return ;
   }
 
@@ -70,7 +70,7 @@ abstract class Emulation implements Worker.AWorker {
   {
     assert(_rout.externalMode != GameBoyExternalMode.Absent,
         "_onEjectReq with no gameboy");
-    _rout.changeExternalMode(GameBoyExternalMode.Absent);
+    _updateMode(GameBoyExternalMode.Absent);
   }
 
   // INTERNAL CONTROL ******************************************************* **
@@ -88,6 +88,12 @@ abstract class Emulation implements Worker.AWorker {
       _clockPerRoutineGoal = double.INFINITY;
     }
     _clockDeficit = 0.0;
+  }
+
+  void _updateMode(GameBoyExternalMode m)
+  {
+    _rout.changeExternalMode(m);
+    this.ports.send('EmulationStatus', m);
   }
 
   Gameboy.GameBoy _assembleGameBoy(Uint8List l)
@@ -150,7 +156,7 @@ abstract class Emulation implements Worker.AWorker {
     _timerOrNull = new Async.Timer(
         _rescheduleTime.difference(Ft.now()), _onEmulation);
     if (error != null) {
-      _rout.changeExternalMode(GameBoyExternalMode.Crashed);
+      _updateMode(GameBoyExternalMode.Crashed);
       // TODO: broadcast error
     }
     return ;

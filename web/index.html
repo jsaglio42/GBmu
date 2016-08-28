@@ -16,37 +16,42 @@
 
   <body>
     <!-- NAVIGATION BAR -->
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
+    <!-- <div class="navbar navbar-inverse navbar-fixed-top">
+         <div class="container">
+         <div class="navbar-header">
+         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+         <span class="sr-only">Toggle navigation</span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         </button>
+         <a class="navbar-brand" href="#">Project name</a>
+         </div>
+         <div id="navbar" class="collapse navbar-collapse">
+         <ul class="nav navbar-nav">
+         <li class="active"><a href="#">Home</a></li>
+         <li><a href="#about">About</a></li>
+         <li><a href="#contact">Contact</a></li>
+         </ul>
+         </div>
+         </div>
+         </div>
+       -->
     <!-- MAIN CONTAINER -->
     <div class="container-fluid">
 
       <!-- MAIN SPACE -->
       <div class="row">
 
+        <div class="col-sm-12">
+          <span id="mainGameBoyState">Absent</span>
+          <span id="mainRomName">(...)</span>
+        </div>
+
         <input id="inBut" type="file" class="col-sm-3"/>
-        <div id="magbut" class="col-sm-2">Emu (re)start</div>
-        <div id="ejectbut" class="col-sm-2">Eject</div>
-        <div id="crashbut" class="col-sm-2">Crash</div>
+        <div id="magbut" class="col-sm-2 btn">Emu (re)start</div>
+        <div id="ejectbut" class="col-sm-2 btn">Eject</div>
+        <div id="crashbut" class="col-sm-2 btn">Crash</div>
 
 
         <div class="col-sm-12" id="mainBottomPanel"></div>

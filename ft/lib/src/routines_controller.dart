@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 14:24:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 14:46:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 18:17:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -65,9 +65,10 @@ class Routine<T> {
   void changeExternalMode(T newMode)
   {
     Ft.log('Routine', '<$T>.changeExternalMode', newMode);
-    assert(newMode != _externalMode, "changeExternalMode($newMode)");
-    _externalMode = newMode;
-    _controller.routineExternalModeChanged(T);
+    if (newMode != _externalMode) {
+      _externalMode = newMode;
+      _controller.routineExternalModeChanged(T);
+    }
   }
 
   bool conditionsMetForLoop(Map<Type, Routine> routines)

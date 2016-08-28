@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 16:11:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 18:09:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -85,6 +85,7 @@ class Worker extends AWorker
     this.init_debug();
     this.rc.fireRoutines();
   }
+
 }
 
 Worker _globalWorker;

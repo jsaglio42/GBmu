@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 15:59:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 18:07:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,6 +35,7 @@ final _mainReceivers = <String, Type>{
   'MemRegInfo' : Uint8List,
   'ClockInfo' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
+  'EmulationStatus' : GameBoyExternalMode,
   'DebStatusUpdate' : bool,
   'MemInfo' : <String, dynamic>{}.runtimeType,
 };
