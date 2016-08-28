@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 16:00:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 16:25:08 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -126,7 +126,7 @@ abstract class Emulation implements Worker.AWorker {
 
   void _onEmulation()
   {
-    Ft.log('worker_emu', '_onEmulation', _emulationCount);
+    // Ft.log('worker_emu', '_onEmulation', _emulationCount);
 
     int clockSum;
     var error = null;

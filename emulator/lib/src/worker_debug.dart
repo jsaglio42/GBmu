@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 16:07:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/28 16:29:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -51,8 +51,10 @@ abstract class Debug implements Worker.AWorker {
     return ;
   }
 
-  void _onDebModeChangeReq(DebuggerModeRequest req)
+  void _onDebModeChangeReq(DebuggerModeRequest reqRaw)
   {
+    final req = DebuggerModeRequest.values[reqRaw.index];
+
     switch (req) {
       case (DebuggerModeRequest.Toggle):
         if (_rout.externalMode == DebuggerExternalMode.Dismissed)
