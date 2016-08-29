@@ -10,14 +10,7 @@
 
 body {
     padding: 5px;
-    padding-top: 50px;
-}
-
-#magbut, #ejectbut, #crashbut {
-  background-color: #FF5A5F;
-  font-family: 'Open Sans', sans-serif;
-  color: #FFFFFF;
-  text-align: center;
+    /* padding-top: 50px; */
 }
 
 [class*="col-"] {
@@ -29,6 +22,10 @@ body {
 .tooltip-inner {
     white-space:pre;
     max-width:none;
+}
+
+.alert span {
+    font-size: 12px;
 }
 
 #mainSpeedText {

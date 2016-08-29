@@ -43,18 +43,58 @@
       <!-- MAIN SPACE -->
       <div class="row">
 
+
         <div class="col-sm-12">
-          <span id="mainGameBoyState">Absent</span>
-          <span id="mainRomName">(...)</span>
+          <div class="row">
+            <label class="btn btn-info btn-file">
+              Pick ROM[tmp]<input id="inBut" type="file" style="display: none;">
+            </label>
+            <label class="btn btn-info">
+              (re)start[tmp]<input id="magbut" style="display: none;">
+            </label>
+            <label class="btn btn-danger">
+              eject[tmp]<input id="ejectbut" style="display: none;">
+            </label>
+            <label class="btn btn-danger">
+              crash[tmp]<input id="crashbut" style="display: none;">
+            </label>
+            <span id="mainGameBoyState" class="lead">Absent</span>
+            <span id="mainRomName" class="lead">(...)</span>
+          </div>
         </div>
 
-        <input id="inBut" type="file" class="col-sm-3"/>
-        <div id="magbut" class="col-sm-2 btn">Emu (re)start</div>
-        <div id="ejectbut" class="col-sm-2 btn">Eject</div>
-        <div id="crashbut" class="col-sm-2 btn">Crash</div>
+
+        <div class="col-sm-12">
+          <div class="row">
+            <div class="col-sm-3" >
+              left
+            </div>
+            <div class="col-sm-6" >
+              <div style="width: 500px; height: 500px;">
+                canvas
+              </div>
+            </div>
+            <div class="col-sm-3" id="mainAlertBox">
+              <div class="alert alert-danger">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Crash:</strong> <span>_AssertionError {_message: "_onEjectReq with no gameboy", $thrownJsError: Error: Assertion failed: "_onEjectReq with no gameboy"</span>
+              </div>
+              <div class="alert alert-warning">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Error:</strong> <span>Ram 'yomama.save' is not compatible with rom 'pokemon.gb'</span>
+              </div>
+              <div class="alert alert-danger">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>type</strong> <span>text</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
 
-        <div class="col-sm-12" id="mainBottomPanel"></div>
+        <div class="col-sm-12" id="mainBottomPanel">
+        </div>
+
 
       </div><!-- /MAIN SPACE -->
 
@@ -87,7 +127,7 @@
                     <label class="radio-inline"><input type="radio" name="optradio" value='1'>Frame</label>
                     <label class="radio-inline"><input type="radio" name="optradio" value='2'>Second</label>
                     <label class="radio-inline"><input type="radio" name="optradio" value='3' checked>None</label>
-                    </form>
+                  </form>
                 </div>
 
                 <div class="col-sm-8">

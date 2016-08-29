@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 18:59:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 16:10:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,7 +29,8 @@ run() async
   Ft.log('main', 'run');
 
   final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
-  assert(inBut != null);
+  assert(inBut != null, "no inbut");
+
   final reader = new Html.FileReader();
   Uint8List lst;
 
