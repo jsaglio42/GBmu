@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:32:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 11:58:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,10 +24,25 @@ import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
 
-final Map<AutoBreakMode, int> _autoBreakClocks = {
-  AutoBreakMode.Instruction: 1,
-  AutoBreakMode.Frame: GB_FRAME_PER_CLOCK_INT,
-  AutoBreakMode.Second: GB_CPU_FREQ_INT,
+final List<List> _loopingGBCombos = [
+  [GameBoyExternalMode.Emulating, DebuggerExternalMode.Dismissed],
+  [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+    PauseExternalMode.Ineffective]
+];
+
+final List<List> _activeAutoBreakCombos = [
+  [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+    PauseExternalMode.Ineffective, AutoBreakExternalMode.Instruction],
+  [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+    PauseExternalMode.Ineffective, AutoBreakExternalMode.Frame],
+  [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+    PauseExternalMode.Ineffective, AutoBreakExternalMode.Second],
+];
+
+final Map<AutoBreakExternalMode, int> _autoBreakClocks = {
+  AutoBreakExternalMode.Instruction: 1,
+  AutoBreakExternalMode.Frame: GB_FRAME_PER_CLOCK_INT,
+  AutoBreakExternalMode.Second: GB_CPU_FREQ_INT,
 };
 
 abstract class Emulation implements Worker.AWorker {
@@ -44,43 +59,32 @@ abstract class Emulation implements Worker.AWorker {
   DateTime _emulationStartTime;
   DateTime _rescheduleTime;
 
-  AutoBreakMode _autoBreak = AutoBreakMode.None;
+  bool _autoBreak = false;
   int _autoBreakIn;
 
-  // EXTERNAL CONTROL ******************************************************* **
+  // EXTERNAL INTERFACE ***************************************************** **
 
-  void _onAutoBreakReq(AutoBreakMode abRaw)
+  void _onAutoBreakReq(AutoBreakExternalMode abRaw)
   {
-    final AutoBreakMode ab = AutoBreakMode.values[abRaw.index];
+    final AutoBreakExternalMode ab = AutoBreakExternalMode.values[abRaw.index];
 
-    Ft.log('worker_emu', '_onAutoBreakReq', abRaw);
-    assert(ab != _autoBreak, '_onAutoBreakReq($ab)');
-    // _autoBreak = ab;
-    // if (ab != AutoBreakMode.None)
-    //   _autoBreakIn = _autoBreakClocks[ab];
+    Ft.log('worker_emu', '_onAutoBreakReq', ab);
+    assert(this.abMode != ab, '_onAutoBreakReq($ab) twice');
+    this.sc.setState(ab);
   }
 
-  // Allowing extMode == Pause because of auto-breaks
-  // Not allowing pause if gb absent
-  // Not allowing pause if gb crashed
   void _onPauseReq(_)
   {
-    // Ft.log('worker_emu', '_onPauseReq');
-    // if (_rout.externalMode == GameBoyExternalMode.Emulating) {
-    //   _updateMode(GameBoyExternalMode.Paused);
-    //   this.ports.send('EmulationPause', 42);
-    // }
+    Ft.log('worker_emu', '_onPauseReq');
+    if (this.pauseMode != PauseExternalMode.Effective)
+      _updatePauseMode(PauseExternalMode.Effective);
   }
 
   void _onResumeReq(_)
   {
-    // Ft.log('worker_emu', '_onResumeReq');
-    // assert(_rout.externalMode == GameBoyExternalMode.Paused,
-    //        "_onResumeReq() while not paused");
-    // if (_autoBreak != AutoBreakMode.None)
-    //   _autoBreakIn = _autoBreakClocks[_autoBreak];
-    // _updateMode(GameBoyExternalMode.Emulating);
-    // this.ports.send('EmulationResume', 42);
+    Ft.log('worker_emu', '_onResumeReq');
+    if (this.pauseMode != PauseExternalMode.Ineffective)
+      _updatePauseMode(PauseExternalMode.Ineffective);
   }
 
   void _onEmulationSpeedChangeReq(map)
@@ -105,7 +109,7 @@ abstract class Emulation implements Worker.AWorker {
     }
     _updateEmulationSpeed(_emulationSpeed);
     this.gbOpt = new Ft.Option.some(gb);
-    _updateMode(GameBoyExternalMode.Emulating);
+    _updateGBMode(GameBoyExternalMode.Emulating);
     return ;
   }
 
@@ -114,10 +118,10 @@ abstract class Emulation implements Worker.AWorker {
     Ft.log('worker_emu', '_onEjectReq');
     assert(this.gbMode != GameBoyExternalMode.Absent,
         "_onEjectReq with no gameboy");
-    _updateMode(GameBoyExternalMode.Absent);
+    _updateGBMode(GameBoyExternalMode.Absent);
   }
 
-  // INTERNAL CONTROL ******************************************************* **
+  // SECONDARY ROUTINES ***************************************************** **
 
   void _updateEmulationSpeed(double speed)
   {
@@ -135,11 +139,21 @@ abstract class Emulation implements Worker.AWorker {
     _clockDeficit = 0.0;
   }
 
-  void _updateMode(GameBoyExternalMode m)
+  void _updateGBMode(GameBoyExternalMode m)
   {
-    Ft.log('worker_emu', '_updateMode', m);
+    Ft.log('worker_emu', '_updateGBMode', m);
     this.sc.setState(m);
     this.ports.send('EmulationStatus', m);
+  }
+
+  void _updatePauseMode(PauseExternalMode m)
+  {
+    Ft.log('worker_emu', '_updatePauseMode', m);
+    this.sc.setState(m);
+    if (m == PauseExternalMode.Effective)
+      this.ports.send('EmulationPause', 42);
+    else
+      this.ports.send('EmulationResume', 42);
   }
 
   Gameboy.GameBoy _assembleGameBoy(Uint8List l)
@@ -153,40 +167,7 @@ abstract class Emulation implements Worker.AWorker {
     return new Gameboy.GameBoy(c);
   }
 
-  int _emulate(final DateTime timeLimit, final int clockLimit)
-  {
-    int clockSum = 0;
-    int clockExec;
-
-    if (_simulateCrash) {
-      _simulateCrash = false;
-      throw new Exception('Simulated crash');
-    }
-    while (true) {
-      if (Ft.now().compareTo(timeLimit) >= 0)
-        break ;
-      if (clockSum >= clockLimit)
-        break ;
-      clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
-      this.gbOpt.v.exec(clockExec);
-      clockSum += clockExec;
-    }
-    return clockSum;
-  }
-
-  int _clockLimitOfClockDebt(double clockDebt)
-  {
-    // if (_autoBreak != AutoBreakMode.None)
-    //   return Math.min(clockDebt.floor(), _autoBreakIn);
-    // else
-      if (clockDebt.isInfinite)
-        return MAX_INT_LOLDART;
-    else
-      return clockDebt.floor();
-  }
-
-
-  // ROUTINE CONTROL ******************************************************** **
+  // LOOPING ROUTINE ******************************************************** **
 
   void _onEmulation()
   {
@@ -213,20 +194,54 @@ abstract class Emulation implements Worker.AWorker {
     _timerOrNull = new Async.Timer(
         _rescheduleTime.difference(Ft.now()), _onEmulation);
     if (error != null) {
-      _updateMode(GameBoyExternalMode.Crashed);
+      _updateGBMode(GameBoyExternalMode.Crashed);
       // TODO: broadcast error
     }
-    // else if (_autoBreak != AutoBreakMode.None) {
-    //   _autoBreakIn -= clockSum;
-    //   if (_autoBreakIn <= 0) {
-    //     _updateMode(GameBoyExternalMode.Paused);
-    //     this.ports.send('EmulationPause', 42);
-    //   }
-    // }
+    else if (_autoBreak) {
+      _autoBreakIn -= clockSum;
+      assert(_autoBreakIn >= 0, "_autoBreakIn == $_autoBreakIn");
+      if (_autoBreakIn <= 0)
+        _updatePauseMode(PauseExternalMode.Effective);
+    }
 
     // Ft.log('worker_emu', '_onEmulationDONE', _emulationCount);
     return ;
   }
+
+  int _clockLimitOfClockDebt(double clockDebt)
+  {
+    if (this._autoBreak && clockDebt.isFinite)
+      return Math.min(clockDebt.floor(), _autoBreakIn);
+    else if (this._autoBreak && !clockDebt.isFinite)
+      return _autoBreakIn;
+    else if (clockDebt.isInfinite)
+      return MAX_INT_LOLDART;
+    else
+      return clockDebt.floor();
+  }
+
+  int _emulate(final DateTime timeLimit, final int clockLimit)
+  {
+    int clockSum = 0;
+    int clockExec;
+
+    if (_simulateCrash) {
+      _simulateCrash = false;
+      throw new Exception('Simulated crash');
+    }
+    while (true) {
+      if (Ft.now().compareTo(timeLimit) >= 0)
+        break ;
+      if (clockSum >= clockLimit)
+        break ;
+      clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
+      this.gbOpt.v.exec(clockExec);
+      clockSum += clockExec;
+    }
+    return clockSum;
+  }
+
+  // SIDE EFFECTS CONTROLS ************************************************** **
 
   void _makeLooping()
   {
@@ -248,15 +263,31 @@ abstract class Emulation implements Worker.AWorker {
     _timerOrNull = null;
   }
 
+  void _enableAutoBreak()
+  {
+    Ft.log('worker_emu', '_enableAutoBreak');
+    assert(this.abMode != AutoBreakExternalMode.None, "_enableAutoBreak");
+    _autoBreakIn = _autoBreakClocks[this.abMode];
+    _autoBreak = true;
+  }
+
+  void _disableAutoBreak()
+  {
+    Ft.log('worker_emu', '_disableAutoBreak');
+    _autoBreak = false;
+  }
+
   // CONSTRUCTION *********************************************************** **
 
   void init_emulation()
   {
     Ft.log('worker_emu', 'init_emulation');
     this.sc.setState(GameBoyExternalMode.Absent);
-    this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [GameBoyExternalMode.Emulating],
-    ]);
+    this.sc.setState(PauseExternalMode.Ineffective);
+    this.sc.setState(AutoBreakExternalMode.None);
+    this.sc.addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos);
+    this.sc.addSideEffect(
+        _enableAutoBreak, _disableAutoBreak, _activeAutoBreakCombos);
     this.ports.listener('EmulationStart')
       .forEach(_onEmulationStartReq);
     this.ports.listener('Debug')
@@ -273,10 +304,10 @@ abstract class Emulation implements Worker.AWorker {
       .listen(_onEmulationSpeedChangeReq);
     this.ports.listener('EmulationAutoBreak')
       .listen(_onAutoBreakReq);
-    // this.ports.listener('EmulationPause')
-    //   .listen(_onPauseReq);
-    // this.ports.listener('EmulationResume')
-    //   .listen(_onResumeReq);
+    this.ports.listener('EmulationPause')
+      .listen(_onPauseReq);
+    this.ports.listener('EmulationResume')
+      .listen(_onResumeReq);
   }
 
 }

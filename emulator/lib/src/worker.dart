@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:13:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:54:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -38,9 +38,16 @@ enum GameBoyExternalMode {
   Emulating, Crashed, Absent
 }
 
-// enum ObserverExternalMode {
-//   Operating
-// }
+enum PauseExternalMode {
+  Effective, Ineffective
+}
+
+enum AutoBreakExternalMode {
+  Instruction,
+  Frame,
+  Second,
+  None
+}
 
 enum EmulatorEvent {
   GameBoyStart,
@@ -63,7 +70,8 @@ abstract class AWorker {
 
   GameBoyExternalMode get gbMode => this.sc.getState(GameBoyExternalMode);
   DebuggerExternalMode get debMode => this.sc.getState(DebuggerExternalMode);
-  // ObserverExternalMode get obsMode => this.sc.getState(ObserverExternalMode);
+  PauseExternalMode get pauseMode => this.sc.getState(PauseExternalMode);
+  AutoBreakExternalMode get abMode => this.sc.getState(AutoBreakExternalMode);
 
   AWorker(this.ports);
 

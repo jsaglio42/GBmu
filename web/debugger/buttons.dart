@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 18:57:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 20:06:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:52:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,7 +50,7 @@ class _Data {
             if (input.checked)
               i = int.parse(input.value);
           });
-    _emu.send('EmulationAutoBreak', AutoBreakMode.values[i]);
+    _emu.send('EmulationAutoBreak', AutoBreakExternalMode.values[i]);
   }
 
   void _onPauseClick(_)
@@ -81,5 +81,4 @@ void init(Emulator.Emulator emu)
   Ft.log('deb_but', 'init');
   _emu = emu;
   _data.toString(); /* Tips to instanciate _data */
-  // emu.listener('RegInfo').listen(_onRegInfo);
 }

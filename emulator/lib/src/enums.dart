@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:14:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:52:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,7 +15,8 @@
  */
 
 export 'package:emulator/src/worker.dart'
-  show DebuggerExternalMode, GameBoyExternalMode;
+  show DebuggerExternalMode, GameBoyExternalMode, PauseExternalMode,
+  AutoBreakExternalMode;
 export 'package:emulator/src/cpu_registers.dart'
   show Reg16, Reg8, Reg1;
 export 'package:emulator/src/memory/mem_registers.dart'
@@ -25,11 +26,4 @@ export 'package:emulator/src/memory/rom_header.dart'
 
 enum DebuggerModeRequest {
   Toggle, Disable, Enable
-}
-
-enum AutoBreakMode {
-  Instruction,
-  Frame,
-  Second,
-  None
 }

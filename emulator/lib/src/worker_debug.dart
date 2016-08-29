@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:12:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 11:57:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,7 +33,7 @@ abstract class Debug implements Worker.AWorker {
   static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
   int _debuggerMemoryAddr = 0;
 
-  // EXTERNAL CONTROL ******************************************************* **
+  // EXTERNAL INTERFACE ***************************************************** **
 
   void _onMemoryAddrChangeReq(int addr)
   {
@@ -70,7 +70,7 @@ abstract class Debug implements Worker.AWorker {
     }
   }
 
-  // INTERNAL CONTROL ******************************************************* **
+  // SECONDARY ROUTINES ***************************************************** **
 
   void _enable()
   {
@@ -99,7 +99,7 @@ abstract class Debug implements Worker.AWorker {
     return new Uint8List.fromList(memList);
   }
 
-  // ROUTINE CONTROL ******************************************************** **
+  // LOOPING ROUTINE ******************************************************** **
 
   void _onDebug([_])
   {
@@ -122,6 +122,8 @@ abstract class Debug implements Worker.AWorker {
     this.ports.send('ClockInfo', gb.clockCount);
     return ;
   }
+
+  // SIDE EFFECTS CONTROLS ************************************************** **
 
   void _makeLooping()
   {
@@ -149,7 +151,8 @@ abstract class Debug implements Worker.AWorker {
     _sub.pause();
     this.sc.setState(DebuggerExternalMode.Operating);
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating],
+      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+        PauseExternalMode.Ineffective],
     ]);
     this.ports.listener('DebStatusRequest').forEach(_onDebModeChangeReq);
     this.ports.listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);

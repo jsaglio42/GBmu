@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 19:55:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:53:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -46,7 +46,7 @@ final _workerReceivers = <String, Type>{
   'DebStatusRequest' : DebuggerModeRequest,
   'EmulationStart' : Uint8List,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
-  'EmulationAutoBreak' : AutoBreakMode,
+  'EmulationAutoBreak' : AutoBreakExternalMode,
   'EmulationPause' : int,
   'EmulationResume' : int,
   'DebMemAddrChange' : int,

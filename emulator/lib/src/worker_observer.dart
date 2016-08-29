@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:13:47 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 11:59:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -34,7 +34,13 @@ abstract class Observer implements Worker.AWorker {
   int _gbClockPoll;
   DateTime _pollTime;
 
-  // EXTERNAL CONTROL ******************************************************* **
+  // EXTERNAL INTERFACE ***************************************************** **
+  // none
+
+  // SECONDARY ROUTINES ***************************************************** **
+  // none
+
+  // LOOPING ROUTINE ******************************************************** **
 
   void _onSpeedPoll([_]){
     assert(this.gbMode == GameBoyExternalMode.Emulating,
@@ -57,9 +63,7 @@ abstract class Observer implements Worker.AWorker {
     return ;
   }
 
-  // INTERNAL CONTROL ******************************************************* **
-
-  // ROUTINE CONTROL ******************************************************** **
+  // SIDE EFFECTS CONTROLS ************************************************** **
 
   void _makeLooping()
   {
@@ -89,7 +93,9 @@ abstract class Observer implements Worker.AWorker {
     _sub = _periodic.listen(_onSpeedPoll);
     _sub.pause();
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [GameBoyExternalMode.Emulating],
+      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Dismissed],
+      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+        PauseExternalMode.Ineffective],
     ]);
     return ;
   }
