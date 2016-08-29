@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 18:09:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:13:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,12 +35,12 @@ enum DebuggerExternalMode {
 }
 
 enum GameBoyExternalMode {
-  Emulating, Paused, Crashed, Absent
+  Emulating, Crashed, Absent
 }
 
-enum ObserverExternalMode {
-  Operating
-}
+// enum ObserverExternalMode {
+//   Operating
+// }
 
 enum EmulatorEvent {
   GameBoyStart,
@@ -58,8 +58,12 @@ enum EmulatorEvent {
 abstract class AWorker {
 
   final Wiso.Ports ports;
-  final Ft.RoutinesController rc = new Ft.RoutinesController();
   Ft.Option<Gameboy.GameBoy> gbOpt = null;
+  final Ft.StatesController sc = new Ft.StatesController();
+
+  GameBoyExternalMode get gbMode => this.sc.getState(GameBoyExternalMode);
+  DebuggerExternalMode get debMode => this.sc.getState(DebuggerExternalMode);
+  // ObserverExternalMode get obsMode => this.sc.getState(ObserverExternalMode);
 
   AWorker(this.ports);
 
@@ -83,7 +87,7 @@ class Worker extends AWorker
     this.init_emulation();
     this.init_observer();
     this.init_debug();
-    this.rc.fireRoutines();
+    this.sc.fire();
   }
 
 }

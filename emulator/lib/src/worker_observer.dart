@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 16:10:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:13:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,7 @@ import 'package:emulator/src/worker.dart' as Worker;
 
 abstract class Observer implements Worker.AWorker {
 
-  Ft.Routine<ObserverExternalMode> _rout;
+  // Ft.Routine<ObserverExternalMode> _rout;
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
 
@@ -37,8 +37,8 @@ abstract class Observer implements Worker.AWorker {
   // EXTERNAL CONTROL ******************************************************* **
 
   void _onSpeedPoll([_]){
-    assert(this.rc.getExtMode(GameBoyExternalMode)
-        == GameBoyExternalMode.Emulating, "_onSpeedPoll with no gameboy");
+    assert(this.gbMode == GameBoyExternalMode.Emulating,
+        "_onSpeedPoll with no gameboy");
 
     final now = Ft.now();
     final elapsed =
@@ -88,9 +88,9 @@ abstract class Observer implements Worker.AWorker {
     _periodic = new Async.Stream.periodic(SPEEDPOLL_PERIOD_DURATION);
     _sub = _periodic.listen(_onSpeedPoll);
     _sub.pause();
-    _rout = new Ft.Routine<ObserverExternalMode>(
-        this.rc, [GameBoyExternalMode.Emulating], _makeLooping, _makeDormant,
-        ObserverExternalMode.Operating);
+    this.sc.addSideEffect(_makeLooping, _makeDormant, [
+      [GameBoyExternalMode.Emulating],
+    ]);
     return ;
   }
 

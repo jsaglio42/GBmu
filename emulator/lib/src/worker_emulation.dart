@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 20:34:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:32:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,7 +32,6 @@ final Map<AutoBreakMode, int> _autoBreakClocks = {
 
 abstract class Emulation implements Worker.AWorker {
 
-  Ft.Routine<GameBoyExternalMode> _rout;
   Async.Timer _timerOrNull = null;
 
   bool _simulateCrash = false;
@@ -113,7 +112,7 @@ abstract class Emulation implements Worker.AWorker {
   void _onEjectReq(_)
   {
     Ft.log('worker_emu', '_onEjectReq');
-    assert(_rout.externalMode != GameBoyExternalMode.Absent,
+    assert(this.gbMode != GameBoyExternalMode.Absent,
         "_onEjectReq with no gameboy");
     _updateMode(GameBoyExternalMode.Absent);
   }
@@ -138,7 +137,8 @@ abstract class Emulation implements Worker.AWorker {
 
   void _updateMode(GameBoyExternalMode m)
   {
-    _rout.changeExternalMode(m);
+    Ft.log('worker_emu', '_updateMode', m);
+    this.sc.setState(m);
     this.ports.send('EmulationStatus', m);
   }
 
@@ -180,7 +180,7 @@ abstract class Emulation implements Worker.AWorker {
     //   return Math.min(clockDebt.floor(), _autoBreakIn);
     // else
       if (clockDebt.isInfinite)
-      return double.INFINITY.toInt();
+        return MAX_INT_LOLDART;
     else
       return clockDebt.floor();
   }
@@ -223,6 +223,8 @@ abstract class Emulation implements Worker.AWorker {
     //     this.ports.send('EmulationPause', 42);
     //   }
     // }
+
+    // Ft.log('worker_emu', '_onEmulationDONE', _emulationCount);
     return ;
   }
 
@@ -251,9 +253,10 @@ abstract class Emulation implements Worker.AWorker {
   void init_emulation()
   {
     Ft.log('worker_emu', 'init_emulation');
-    _rout = new Ft.Routine<GameBoyExternalMode>(
-        this.rc, [GameBoyExternalMode.Emulating], _makeLooping, _makeDormant,
-        GameBoyExternalMode.Absent);
+    this.sc.setState(GameBoyExternalMode.Absent);
+    this.sc.addSideEffect(_makeLooping, _makeDormant, [
+      [GameBoyExternalMode.Emulating],
+    ]);
     this.ports.listener('EmulationStart')
       .forEach(_onEmulationStartReq);
     this.ports.listener('Debug')

@@ -6,12 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 19:20:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:30:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 final double MICROSECONDS_PER_SECOND_DOUBLE =
   Duration.MICROSECONDS_PER_SECOND.toDouble();
+final int MAX_INT_LOLDART = 9007199254740992;
 
 // Number should be close to (GB_CPU_FREQ_INT / EMULATION_PER_SEC_INT)
 const int MAXIMUM_CLOCK_PER_EXEC_INT = 100000;

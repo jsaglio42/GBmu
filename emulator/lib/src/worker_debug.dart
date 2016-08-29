@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 20:18:49 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/29 10:12:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,6 @@ import 'package:emulator/src/worker.dart' as Worker;
 
 abstract class Debug implements Worker.AWorker {
 
-  Ft.Routine<DebuggerExternalMode> _rout;
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
 
@@ -57,7 +56,7 @@ abstract class Debug implements Worker.AWorker {
 
     switch (req) {
       case (DebuggerModeRequest.Toggle):
-        if (_rout.externalMode == DebuggerExternalMode.Dismissed)
+        if (this.debMode == DebuggerExternalMode.Dismissed)
           _enable();
         else
           _disable();
@@ -75,17 +74,17 @@ abstract class Debug implements Worker.AWorker {
 
   void _enable()
   {
-    assert(_rout.externalMode == DebuggerExternalMode.Dismissed,
+    assert(this.debMode == DebuggerExternalMode.Dismissed,
         "worker_deb: _disable() while enabled");
-    _rout.changeExternalMode(DebuggerExternalMode.Operating);
+    this.sc.setState(DebuggerExternalMode.Operating);
     this.ports.send('DebStatusUpdate', true);
   }
 
   void _disable()
   {
-    assert(_rout.externalMode == DebuggerExternalMode.Operating,
+    assert(this.debMode == DebuggerExternalMode.Operating,
         "worker_deb: _disable() while disabled");
-    _rout.changeExternalMode(DebuggerExternalMode.Dismissed);
+    this.sc.setState(DebuggerExternalMode.Dismissed);
     this.ports.send('DebStatusUpdate', false);
   }
 
@@ -104,8 +103,8 @@ abstract class Debug implements Worker.AWorker {
 
   void _onDebug([_])
   {
-    assert(this.rc.getExtMode(GameBoyExternalMode)
-        != GameBoyExternalMode.Absent, "_onDebug with no gameboy");
+    assert(this.gbMode != GameBoyExternalMode.Absent,
+        "_onDebug with no gameboy");
 
     final l = new Uint8List(MemReg.values.length);
     final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
@@ -136,8 +135,7 @@ abstract class Debug implements Worker.AWorker {
     Ft.log('worker_deb', '_makeDormant');
     assert(!_sub.isPaused, "worker_deb: _makeDormant while paused");
     _sub.pause();
-    if (this.rc.getExtMode(GameBoyExternalMode) !=
-        GameBoyExternalMode.Absent)
+    if (this.gbMode != GameBoyExternalMode.Absent)
       _onDebug();
   }
 
@@ -149,10 +147,10 @@ abstract class Debug implements Worker.AWorker {
     _periodic = new Async.Stream.periodic(DEBUG_PERIOD_DURATION);
     _sub = _periodic.listen(_onDebug);
     _sub.pause();
-    _rout = new Ft.Routine<DebuggerExternalMode>(
-        this.rc,
-        [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating],
-        _makeLooping, _makeDormant, DebuggerExternalMode.Operating);
+    this.sc.setState(DebuggerExternalMode.Operating);
+    this.sc.addSideEffect(_makeLooping, _makeDormant, [
+      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating],
+    ]);
     this.ports.listener('DebStatusRequest').forEach(_onDebModeChangeReq);
     this.ports.listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
   }
