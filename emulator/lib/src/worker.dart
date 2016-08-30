@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:54:52 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/30 11:40:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,11 +50,10 @@ enum AutoBreakExternalMode {
 }
 
 enum EmulatorEvent {
-  GameBoyStart,
-  GameBoyEject,
-  GameBoyPause,
-  GameBoyCrash,
   InitError,
+  GameBoyStart,
+  GameBoyCrash,
+  GameBoyEject,
 }
 
 /** ************************************************************************* **

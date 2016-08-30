@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 20:22:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/30 08:45:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,7 @@ import './emulation_speed_codec.dart' as ESCodec;
  * Global Variable
  */
 
-var _speed = new _SpeedSlider();
+final _speed = new _SpeedSlider();
 Emulator.Emulator _emu;
 
 /*
@@ -89,7 +89,8 @@ class _SpeedSlider {
     var slider = new Js.JsObject(constr, ['#mainSpeedSlider', param]);
     assert(slider != null, "Could not build `Slider`");
 
-    slider.callMethod('on', ['slide', _onSlide]);
+    slider.callMethod('on', ['slideStop', _onSlide]);
+
     _emu.send('EmulationSpeed', <String, dynamic>{
       'speed': 1.0,
       'isInf': false,
@@ -123,7 +124,7 @@ class _SpeedSlider {
  */
 
 void init(Emulator.Emulator emu) {
-  Ft.log('main_space', 'init');
+  Ft.log('main_botPannel', 'init');
   _emu = emu;
   _speed.toString();
   return ;

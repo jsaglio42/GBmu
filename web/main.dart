@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 16:10:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/30 08:48:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,6 +23,7 @@ import './debugger/mem_explorer.dart' as Debmexplorer;
 import './debugger/clock_info.dart' as Debclocks;
 import './debugger/buttons.dart' as Debbuttons;
 import './main_space/bottom_panel.dart' as Mainbottompanel;
+import './main_space/alerts.dart' as Mainalerts;
 
 run() async
 {
@@ -101,6 +102,7 @@ run() async
   Debclocks.init(emu);
   Debbuttons.init(emu);
   Mainbottompanel.init(emu);
+  Mainalerts.init(emu);
 
 
   var mainGameBoyState = Html.querySelector('#mainGameBoyState');

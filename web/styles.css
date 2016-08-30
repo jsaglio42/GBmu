@@ -24,8 +24,14 @@ body {
     max-width:none;
 }
 
+.alert strong {
+    /* font-size: 12px; */
+    margin-right: 5px;
+}
+
 .alert span {
     font-size: 12px;
+    /* margin-left: px; */
 }
 
 #mainSpeedText {
