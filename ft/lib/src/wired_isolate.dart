@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/15 10:47:48 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 12:10:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/30 14:20:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,9 +25,9 @@ import 'package:ft/ft.dart' as Ft;
 class Ports
 {
 
-  final Map<String, Async.Stream>    _listeners;
-  final Map<String, Iso.SendPort>  _notifiers;
-  final Map<String, Type>         _notifiersTypes;
+  final Map<String, Async.Stream> _listeners;
+  final Map<String, Iso.SendPort> _notifiers;
+  final Map<String, Type> _notifiersTypes;
 
   Ports(this._listeners, this._notifiers, this._notifiersTypes);
 
@@ -149,12 +149,12 @@ void _workerSpawn(_WorkerSpawnData d)
 
 class WiredIsolate {
 
-  WiredIsolate(this.i, this.resumeCapability, this.p);
+  WiredIsolate(this.i, this.resumeCapability, this.p, this.isoErrors);
 
   final Iso.Isolate i;
   final Iso.Capability resumeCapability;
   final Ports p;
-
+  final Iso.ReceivePort isoErrors;
 }
 
 Async.Future<WiredIsolate> spawn(void entryPoint(Ports),
@@ -165,13 +165,16 @@ async {
 
   final Map<String, Iso.ReceivePort> rPortsMain = _rPortsOfTypes(mainRTypes);
   final Iso.ReceivePort tmpRPort = new Iso.ReceivePort();
+  final Iso.ReceivePort isoErrors = new Iso.ReceivePort();
   final Iso.Capability resumeCapability = new Iso.Capability();
   final spawnData = new _WorkerSpawnData(
       _sPortsOfRPorts(rPortsMain), tmpRPort.sendPort, entryPoint,
       mainRTypes, workerRTypes, resumeCapability);
-  final Iso.Isolate iso = await Iso.Isolate.spawn(_workerSpawn, spawnData);
+  final Iso.Isolate iso = await Iso.Isolate.spawn(
+      _workerSpawn, spawnData, onError:isoErrors.sendPort);
   final Map<String, Iso.SendPort> sPortsWorker = await tmpRPort.first;
   final p = new Ports(
       _streamsOfRPorts(rPortsMain), sPortsWorker, workerRTypes);
-  return new WiredIsolate(iso, resumeCapability, p);
+  return new WiredIsolate(
+      iso, resumeCapability, p, isoErrors);
 }

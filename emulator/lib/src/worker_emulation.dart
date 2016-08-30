@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 11:58:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/30 14:14:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -104,12 +104,19 @@ abstract class Emulation implements Worker.AWorker {
       gb = _assembleGameBoy(l);
     }
     catch (e) {
-      // TODO: broadcast error
+      this.ports.send('Events', <String, dynamic>{
+        'type': EmulatorEvent.InitError,
+        'msg': e,
+      });
       return ;
     }
     _updateEmulationSpeed(_emulationSpeed);
     this.gbOpt = new Ft.Option.some(gb);
     _updateGBMode(GameBoyExternalMode.Emulating);
+    this.ports.send('Events', <String, dynamic>{
+      'type': EmulatorEvent.GameBoyStart,
+      'msg': "Plokemon violet.rom",
+    });
     return ;
   }
 
@@ -119,6 +126,10 @@ abstract class Emulation implements Worker.AWorker {
     assert(this.gbMode != GameBoyExternalMode.Absent,
         "_onEjectReq with no gameboy");
     _updateGBMode(GameBoyExternalMode.Absent);
+    this.ports.send('Events', <String, dynamic>{
+      'type': EmulatorEvent.GameBoyEject,
+      'msg': "bye bye Plokemon violet.rom",
+    });
   }
 
   // SECONDARY ROUTINES ***************************************************** **
@@ -195,7 +206,10 @@ abstract class Emulation implements Worker.AWorker {
         _rescheduleTime.difference(Ft.now()), _onEmulation);
     if (error != null) {
       _updateGBMode(GameBoyExternalMode.Crashed);
-      // TODO: broadcast error
+      this.ports.send('Events', <String, dynamic>{
+        'type': EmulatorEvent.GameBoyCrash,
+        'msg': error,
+      });
     }
     else if (_autoBreak) {
       _autoBreakIn -= clockSum;
@@ -226,6 +240,7 @@ abstract class Emulation implements Worker.AWorker {
     int clockExec;
 
     if (_simulateCrash) {
+      Ft.log('worker_emu', '_emulate', 'simulate crash');
       _simulateCrash = false;
       throw new Exception('Simulated crash');
     }

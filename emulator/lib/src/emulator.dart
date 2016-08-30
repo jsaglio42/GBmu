@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:53:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/30 14:21:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -40,6 +40,7 @@ final _mainReceivers = <String, Type>{
   'EmulationResume' : int,
   'DebStatusUpdate' : bool,
   'MemInfo' : <String, dynamic>{}.runtimeType,
+  'Events': <String, dynamic>{}.runtimeType,
 };
 
 final _workerReceivers = <String, Type>{
@@ -61,12 +62,33 @@ final _workerReceivers = <String, Type>{
 
 class Emulator {
 
-  final Wiso.WiredIsolate    _wiso;
+  final Wiso.WiredIsolate _wiso;
+  final Async.StreamController<Map<String, dynamic>> _eventsBroadcast =
+    new Async.StreamController<Map<String, dynamic>>.broadcast();
 
-  Emulator(this._wiso);
+  Emulator(wiso)
+    : _wiso = wiso
+  {
+    wiso.p.listener('Events')
+    .forEach((Map e){
+          _eventsBroadcast.add(e);
+        });
+    _wiso.isoErrors
+    .forEach((e) {
+          _eventsBroadcast.add(<String, dynamic>{
+            'type': EmulatorEvent.EmulatorCrash,
+            'msg': e,
+          });
+        });
+  }
 
-  void      send(String msgType, var data)  => _wiso.p.send(msgType, data);
-  Async.Stream listener(String msgType)        => _wiso.p.listener(msgType);
+  void send(String msgType, var data) => _wiso.p.send(msgType, data);
+  Async.Stream listener(String msgType)
+  {
+    if (msgType == 'Events')
+      return _eventsBroadcast.stream;
+    return _wiso.p.listener(msgType);
+  }
 
 }
 
@@ -74,9 +96,9 @@ Async.Future<Emulator> spawn()
 async {
   Ft.log('emulator', 'spawn');
 
-  //Todo: listen isolate errors
-  final w = await Wiso.spawn(
+  final wiso = await Wiso.spawn(
       Worker.entryPoint, _mainReceivers, _workerReceivers);
-  w.i.resume(w.resumeCapability);
-  return new Emulator(w);
+
+  wiso.i.resume(wiso.resumeCapability);
+  return new Emulator(wiso);
 }

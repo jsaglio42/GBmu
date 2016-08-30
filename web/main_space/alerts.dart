@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/30 08:43:27 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 11:53:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/30 14:18:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -38,18 +38,23 @@ class _Message {
   final String msg;
   final int id;
   final static _mapping = <EmulatorEvent, Map>{
-    EmulatorEvent.GameBoyStart: {'class': 'success', 'timeout': true, 'name': 'Start'},
-    EmulatorEvent.GameBoyEject: {'class': 'info', 'timeout': true, 'name': 'Eject'},
-    EmulatorEvent.GameBoyCrash: {'class': 'danger', 'timeout': false, 'name': 'Crash'},
-    EmulatorEvent.InitError: {'class': 'error', 'timeout': false, 'name': 'Error'},
+    EmulatorEvent.EmulatorCrash: {
+      'class': 'danger', 'timeout': false, 'name': 'EmuCrash'},
+    EmulatorEvent.InitError: {
+      'class': 'error', 'timeout': false, 'name': 'Error'},
+    EmulatorEvent.GameBoyStart: {
+      'class': 'success', 'timeout': true, 'name': 'Start'},
+    EmulatorEvent.GameBoyEject: {
+      'class': 'info', 'timeout': true, 'name': 'Eject'},
+    EmulatorEvent.GameBoyCrash: {
+      'class': 'danger', 'timeout': false, 'name': 'Crash'},
   };
 
-  _Message(this.type, this.msg, this.id)
-  {
-  }
+  _Message(this.type, this.msg, this.id);
 
   String get alertClass =>
     'alert-' + _mapping[this.type]['class'];
+
   String get readableType =>
     _mapping[this.type]['name'][0].toUpperCase() +
     _mapping[this.type]['name'].substring(1) + ':';
@@ -85,7 +90,7 @@ class _Frame {
     this.block.classes.add('alert');
     _anchor.classes.add('close');
     _anchor.href = '#';
-    _anchor.text = '×';
+    _anchor.text = '×'; // utf character
     _anchor.setAttribute('aria-label', "close");
 
     this.block.append(_anchor);
@@ -128,13 +133,7 @@ class _Data {
 
   _Data(Emulator.Emulator emu)
   {
-    var m1 = new _Message(EmulatorEvent.GameBoyStart, 'msg1 lol', _ids++);
-    var m2 = new _Message(EmulatorEvent.GameBoyCrash, 'msg2 lol msg2 lol msg2 lol msg2 lol msg2 lol msg2 lol msg2 lol msg2 lol ', _ids++);
-    var m3 = new _Message(EmulatorEvent.GameBoyEject, 'msg3 lol', _ids++);
-
-    _addMessage(m1);
-    _addMessage(m2);
-    _addMessage(m3);
+    emu.listener('Events').forEach(_onEmulatorEvent);
   }
 
   void refresh()
@@ -146,34 +145,35 @@ class _Data {
   {
     var node;
 
-    print('a');
     _frames.sort((a, b) {
       if (a.shown && b.shown)
         return a.msgIdOrNull - b.msgIdOrNull;
       else
         return a.shown ? -1 : 1;
     });
-    print('b');
     try {
       node = _frames.firstWhere((n) => !n.shown);
-      print('c');
     } catch (_) {
+      Ft.log('main_alerts', '_addMessage',
+          'allocating frame number ${_frames.length + 1}');
       node = new _Frame(this);
       _frames.add(node);
-      print('d');
     }
-    print('e $node');
     node.render(msg);
-    print('f');
     this.refresh();
-    print('g');
   }
 
-  void _onEmulatorEvent(EmulatorEvent evRaw)
+  void _onEmulatorEvent(Map map)
   {
-    final EmulatorEvent ev = EmulatorEvent.values[evRaw.index];
-    // final m
+    final EmulatorEvent ev = EmulatorEvent.values[map['type'].index];
+    final _Message msg = new _Message(ev, map['msg'].toString(), _ids++);
 
+    if (ev == EmulatorEvent.EmulatorCrash ||
+        ev == EmulatorEvent.GameBoyCrash)
+      Ft.logerr('main_alerts', '_onEmulatorEvent', map);
+    else
+      Ft.log('main_alerts', '_onEmulatorEvent', map);
+    _addMessage(msg);
   }
 
 }
