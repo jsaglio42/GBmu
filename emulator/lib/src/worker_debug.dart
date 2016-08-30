@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 11:57:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/08/30 07:27:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -141,6 +141,13 @@ abstract class Debug implements Worker.AWorker {
       _onDebug();
   }
 
+  void _singleRefresh()
+  {
+    Ft.log('worker_deb', '_singleRefresh');
+    if (this.gbMode != GameBoyExternalMode.Absent)
+      _onDebug();
+  }
+
   // CONSTRUCTION *********************************************************** **
 
   void init_debug([_])
@@ -153,6 +160,9 @@ abstract class Debug implements Worker.AWorker {
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
       [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
         PauseExternalMode.Ineffective],
+    ]);
+    this.sc.addSideEffect(_singleRefresh, (){}, [
+      [DebuggerExternalMode.Operating],
     ]);
     this.ports.listener('DebStatusRequest').forEach(_onDebModeChangeReq);
     this.ports.listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
