@@ -42,10 +42,22 @@ abstract class Debug implements Worker.AWorker {
         , '_onMemoryAddrChangeReq: addr not valid');
     _debuggerMemoryAddr = addr;
 
-    // TODO: removed cause not sure that GameBoy is present
+    // TODO: removed cause not sure that GameBoy is present    
+    // Uint8List memList;
+    // if (this.gbOpt.isSome)
+    // {
+    //   _debuggerMemoryAddr = addr;
+    //   memList = _buildMemoryList(_debuggerMemoryAddr, this.gbOpt.v);
+    // }
+    // else
+    // {
+    //   print('onMemoryAddrChange: Cartridge not loaded');
+    //   _debuggerMemoryAddr = 0x0000;
+    //   memList = Uint8List(_debuggerMemoryLen);
+    // }
     // this.ports.send('MemInfo',  <String, dynamic> {
     //     'addr' : _debuggerMemoryAddr,
-    //     'data' : _buildMemoryList(_debuggerMemoryAddr, ???)
+    //     'data' : memList
     //   });
     return ;
   }
