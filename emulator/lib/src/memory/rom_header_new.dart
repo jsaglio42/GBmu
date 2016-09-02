@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 17:06:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/02 14:36:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/02 15:33:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -143,57 +143,72 @@ bool _fieldOutOfBound(Rom.IRom rom, RomHeaderFieldInfo dat)
     return false;
 }
 
-CartridgeType _cartridgeTypeOfRom(Rom.IRom rom)
+// CartridgeType _cartridgeTypeOfRom(Rom.IRom rom)
+// {
+//   final dat = headerFieldInfos[RomHeaderField.Cartridge_Type];
+//   int v;
+
+//   if (_fieldOutOfBound(rom, dat))
+//     throw new Exception('Rom Header: Out of bound');
+//   else {
+//     v = rom.pull8(dat.address);
+//     if (cartridgeTypeCodes.containsKey(v) == false)
+//       throw new Exception('Rom Header: unknown id');
+//     return cartridgeTypeCodes[v];
+//   }
+// }
+
+// int _romSizeOfRom(Rom.IRom rom)
+// {
+//   final dat = headerFieldInfos[RomHeaderField.ROM_Size];
+//   int v;
+
+//   if (_fieldOutOfBound(rom, dat))
+//     throw new Exception('Rom Header: Out of bound');
+//   else {
+//     v = rom.pull8(dat.address);
+//     if (romSizeCodes.containsKey(v) == false)
+//       throw new Exception('Rom Header: unknown id');
+//     return romSizeCodes[v];
+//   }
+// }
+
+// int _ramSizeOfRom(Rom.IRom rom)
+// {
+//   final dat = headerFieldInfos[RomHeaderField.RAM_Size];
+//   int v;
+
+//   if (_fieldOutOfBound(rom, dat))
+//     throw new Exception('Rom Header: Out of bound');
+//   else {
+//     v = rom.pull8(dat.address);
+//     if (ramSizeCodes.containsKey(v) == false)
+//       throw new Exception('Ram Header: unknown id');
+//     return ramSizeCodes[v];
+//   }
+// }
+
+_toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
 {
-  final dat = headerFieldInfos[RomHeaderField.Cartridge_Type];
-  int v;
+  return (Rom.IRom rom) {
+    final dat = headerFieldInfos[f];
+    int v;
 
-  if (_fieldOutOfBound(rom, dat))
-    throw new Exception('Rom Header: Out of bound');
-  else {
-    v = rom.pull8(dat.address);
-    if (cartridgeTypeCodes.containsKey(v) == false)
-      throw new Exception('Rom Header: unknown id');
-    return cartridgeTypeCodes[v];
-  }
-}
-
-int _romSizeOfRom(Rom.IRom rom)
-{
-  final dat = headerFieldInfos[RomHeaderField.ROM_Size];
-  int v;
-
-  if (_fieldOutOfBound(rom, dat))
-    throw new Exception('Rom Header: Out of bound');
-  else {
-    v = rom.pull8(dat.address);
-    if (romSizeCodes.containsKey(v) == false)
-      throw new Exception('Rom Header: unknown id');
-    return romSizeCodes[v];
-  }
-}
-
-int _ramSizeOfRom(Rom.IRom rom)
-{
-  final dat = headerFieldInfos[RomHeaderField.RAM_Size];
-  int v;
-
-  if (_fieldOutOfBound(rom, dat))
-    throw new Exception('Rom Header: Out of bound');
-  else {
-    v = rom.pull8(dat.address);
-    if (ramSizeCodes.containsKey(v) == false)
-      throw new Exception('Ram Header: unknown id');
-    return ramSizeCodes[v];
-  }
+    if (_fieldOutOfBound(rom, dat))
+      throw new Exception('Rom Header: Out of bound');
+    else {
+      v = rom.pull8(dat.address);
+      if (map.containsKey(v) == false)
+        throw new Exception('Ron Header: Unknown id');
+      return map[v];
+    }
+  };
 }
 
 _toValueFunc _makeByteGetterFunction(RomHeaderField f)
 {
   return (Rom.IRom rom) {
     final dat = headerFieldInfos[f];
-    int v;
-
     if (_fieldOutOfBound(rom, dat))
       throw new Exception('Rom Header: Out of bound');
     else
@@ -205,12 +220,35 @@ _toValueFunc _makeWordGetterFunction(RomHeaderField f)
 {
   return (Rom.IRom rom) {
     final dat = headerFieldInfos[f];
-    int v;
-
     if (_fieldOutOfBound(rom, dat))
       throw new Exception('Rom Header: Out of bound');
     else
       return rom.pull16(dat.address);
+  };
+}
+_toValueFunc _makeDWordGetterFunction(RomHeaderField f)
+{
+  return (Rom.IRom rom) {
+    final dat = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, dat))
+      throw new Exception('Rom Header: Out of bound');
+    else
+      return
+        rom.pull8(dat.address + 0) << 8 * 3 |
+        rom.pull8(dat.address + 1) << 8 * 2 |
+        rom.pull8(dat.address + 2) << 8 * 1 |
+        rom.pull8(dat.address + 3) << 8 * 0;
+  };
+}
+_toValueFunc _makeByteListGetterFunction(RomHeaderField f)
+{
+  return (Rom.IRom rom) {
+    final dat = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, dat))
+      throw new Exception('Rom Header: Out of bound');
+    else
+      return new Uint8List.fromList(
+          rom.data.skip(dat.address).take(dat.size).toList());
   };
 }
 
@@ -261,10 +299,19 @@ class RomHeaderFieldInfo {
 }
 
 final headerFieldInfos = <RomHeaderField, RomHeaderFieldInfo>{
+
+  RomHeaderField.Entry_Point: new RomHeaderFieldInfo(
+      0x0100, 0x4, 'Entry Point', '', true,
+      _makeByteListGetterFunction(RomHeaderField.Entry_Point)),
+
+
   //   new RomHeaderFieldInfo(0x0100, 0x4, 'Entry Point', '', false, (_)=>42); //(l) => l),
   //   new RomHeaderFieldInfo(0x0104, 0x30, 'Nintendo Logo', '', false, (_)=>42); //(l) => _nintendoLogoValid(l)),
   //   new RomHeaderFieldInfo(0x0134, 0x10, 'Title', '', true, (_)=>42); //(l) => Convert.ASCII.decode(l)),
-  //   new RomHeaderFieldInfo(0x013F, 0x4, 'Manufacturer Code', '', true, (_)=>42); //(l) => l.fold(0, (i, i8) => i << 8 | i8)),
+
+  RomHeaderField.Manufacturer_Code: new RomHeaderFieldInfo(
+      0x013F, 0x4, 'Manufacturer Code', '', true,
+      _makeDWordGetterFunction(RomHeaderField.Manufacturer_Code)),
 
   RomHeaderField.CGB_Flag: new RomHeaderFieldInfo(
       0x0143, 0x1, 'CGB Flag', '', true,
@@ -279,13 +326,16 @@ final headerFieldInfos = <RomHeaderField, RomHeaderFieldInfo>{
       _makeByteGetterFunction(RomHeaderField.SGB_Flag)),
 
   RomHeaderField.Cartridge_Type: new RomHeaderFieldInfo(
-      0x0147, 0x1, 'Cartridge Type', '', true, _cartridgeTypeOfRom),
+      0x0147, 0x1, 'Cartridge Type', '', true,
+      _makeMapGetterFunction(RomHeaderField.Cartridge_Type, cartridgeTypeCodes)),
 
   RomHeaderField.ROM_Size: new RomHeaderFieldInfo(
-      0x0148, 0x1, 'ROM Size', '', true, _romSizeOfRom),
+      0x0148, 0x1, 'ROM Size', '', true,
+      _makeMapGetterFunction(RomHeaderField.ROM_Size, romSizeCodes)),
 
   RomHeaderField.RAM_Size: new RomHeaderFieldInfo(
-      0x0148, 0x1, 'RAM Size', '', true, _ramSizeOfRom),
+      0x0149, 0x1, 'RAM Size', '', true,
+      _makeMapGetterFunction(RomHeaderField.RAM_Size, ramSizeCodes)),
 
   RomHeaderField.Destination_Code: new RomHeaderFieldInfo(
       0x014A, 0x1, 'Destination Code', '', true,
@@ -351,6 +401,8 @@ void debugRomHeader()
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+
+    //Entry point:
     0x00, 0xc3, 0x50, 0x01, 0xce, 0xed, 0x66, 0x66, 0xcc, 0x0d, 0x00, 0x0b, 0x03, 0x73, 0x00, 0x83,
     0x00, 0x0c, 0x00, 0x0d, 0x00, 0x08, 0x11, 0x1f, 0x88, 0x89, 0x00, 0x0e, 0xdc, 0xcc, 0x6e, 0xe6,
     0xdd, 0xdd, 0xd9, 0x99, 0xbb, 0xbb, 0x67, 0x63, 0x6e, 0x0e, 0xec, 0xcc, 0xdd, 0xdc, 0x99, 0x9f,
@@ -386,44 +438,22 @@ void debugRomHeader()
 
   final rom = new Rom.Rom(tetrisHead);
   var v;
+  var str;
+
+  headerFieldInfos.toString();
+
   print(rom);
 
-  v = rom.pullHeaderValue(RomHeaderField.Cartridge_Type);
-  print('v: <${v.runtimeType}>$v');
-
-  v = rom.pullHeaderValue(RomHeaderField.ROM_Size);
-  print('v: <${v.runtimeType}>$v');
-
-  v = rom.pullHeaderValue(RomHeaderField.RAM_Size);
-  print('v: <${v.runtimeType}>$v');
-
-  v = rom.pullHeaderValue(RomHeaderField.SGB_Flag);
-  print('v: <${v.runtimeType}>$v');
-
-  v = rom.pullHeaderValue(RomHeaderField.Destination_Code);
-  print('v: <${v.runtimeType}>$v');
-
-  v = rom.pullHeaderValue(RomHeaderField.Header_Checksum);
-  print('v: <${v.runtimeType}>$v');
-
-  v = rom.pullHeaderValue(RomHeaderField.New_Licensee_Code);
-  print('v: <${v.runtimeType}>$v');
-
-
-
-  // print('**************** TTTTRRRROOOOOLOOOOOLOOOOOOO *************');
-  // try {
-  //   final test = new RomHeaderData(tetrisHead);
-  //   print (test.toString());
-  // } catch(e) {
-  //   print(e);
-  // }
-  // print('**************** TTTTRRRROOOOOLOOOOOLOOOOOOO *************');
-  // try {
-  //   final test = new RomHeaderData(notValid);
-  //   print (test.toString());
-  // } catch(e) {
-  //   print(e);
-  // }
+  for (RomHeaderField f in RomHeaderField.values) {
+    str = f.toString();
+    try {
+      v = rom.pullHeaderValue(f);
+      str += ' val:[<' + v.runtimeType.toString() + '> ' + v.toString() + ']';
+    } catch (e, st) {
+      str += ' exn:[' + e.toString() + st.toString() + ']';
+    }
+    str += '\n\n';
+    print(str);
+  }
 
 }
