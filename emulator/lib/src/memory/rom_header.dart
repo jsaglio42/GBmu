@@ -10,12 +10,14 @@
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:convert' as Conv;
+import 'dart:convert' as Convert;
 import 'dart:typed_data';
 
 /*
  * Page3 : https://docs.google.com/spreadsheets/d/1ffcl5dd_Q12Eqf9Zlrho_ghUZO5lT-gIpRi392XHU10
  */
+
+/* Enums **********************************************************************/
 
 enum RomHeaderField {
   Entry_Point,
@@ -69,23 +71,44 @@ enum CartridgeType {
   HuC1_RAM_BATTERY,
 }
 
-typedef String _converter(List<int> source);
+/* HeaderFieldInfo ************************************************************/
+
+typedef String _toValue(List<int> source);
 
 class RomHeaderFieldInfo {
   final int address;
   final int size;
   final String name;
-  final String description;
-  final bool displayed;
-  final _converter valueConverter;
+  final String description; // <- not used
+  final bool displayed; // <- not used
+  final _toValue toValue;
+
   RomHeaderFieldInfo(this.address, this.size, this.name,
-      this.description, this.displayed, this.valueConverter);
+      this.description, this.displayed, this.toValue);
 }
 
 final headerFieldInfos =
-  new List<RomHeaderFieldInfo>.unmodifiable(_makeMemRegInfos());
+  new List<RomHeaderFieldInfo>.unmodifiable([
+    new RomHeaderFieldInfo(0x0100, 0x4, 'Entry Point', '', false, (l) => l),
+    new RomHeaderFieldInfo(0x0104, 0x30, 'Nintendo Logo', '', false, (l) => _nintendoLogoValid(l)),
+    new RomHeaderFieldInfo(0x0134, 0x10, 'Title', '', true, (l) => Convert.ASCII.decode(l)),
+    new RomHeaderFieldInfo(0x013F, 0x4, 'Manufacturer Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0143, 0x1, 'CGB Flag', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0144, 0x2, 'New Licensee Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0146, 0x1, 'SGB Flag', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x0147, 0x1, 'Cartridge Type', '', true, (l) => _cartridgeTypeOfMem(l)),
+    new RomHeaderFieldInfo(0x0148, 0x1, 'ROM Size', '', true, (l) => _romSizeOfMem(l)),
+    new RomHeaderFieldInfo(0x0149, 0x1, 'RAM Size', '', true, (l) => _ramSizeOfMem(l)),
+    new RomHeaderFieldInfo(0x014A, 0x1, 'Destination Code', '', true, (l) => _destinationCodeToString(l)),
+    new RomHeaderFieldInfo(0x014B, 0x1, 'Old Licensee Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x014C, 0x1, 'Mask ROM Version number', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x014D, 0x1, 'Header Checksum', '', false, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+    new RomHeaderFieldInfo(0x014E, 0x2, 'Global Checksum', '', false, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
+  ]);
 
-_cartridgeTypeOfMem(Uint8List l)
+/* To value converter *********************************************************/
+
+CartridgeType _cartridgeTypeOfMem(Uint8List l)
 {
   assert(l.length == 1);
   var map = {
@@ -121,12 +144,12 @@ _cartridgeTypeOfMem(Uint8List l)
     0xFE: CartridgeType.HuC3,
     0xFF: CartridgeType.HuC1_RAM_BATTERY,
   };
-  if (map.containsKey(l[0]))
-    return map[l[0]];
-  return null;
+  if (map.containsKey(l[0]) == false)
+    throw new FormatException('CartridgeType: unknown id');
+  return map[l[0]];
 }
 
-_romSizeOfMem(Uint8List l)
+int _romSizeOfMem(Uint8List l)
 {
   assert(l.length == 1);
   var map = <int, int>{
@@ -142,12 +165,12 @@ _romSizeOfMem(Uint8List l)
     0x53: 16384 * 80,
     0x54: 16384 * 96,
   };
-  if (map.containsKey(l[0]))
-    return map[l[0]];
-  return 'unknown';
+  if (map.containsKey(l[0]) == false)
+    throw new FormatException('ROM Size: unknown id');
+  return map[l[0]];
 }
 
-_ramSizeOfMem(Uint8List l)
+int _ramSizeOfMem(Uint8List l)
 {
   assert(l.length == 1);
   var map = {
@@ -158,12 +181,12 @@ _ramSizeOfMem(Uint8List l)
     0x04: 16 * 8192, // (16 banks of 8KBytes each)
     0x05: 8 * 8192, // (8 banks of 8KBytes each)
   };
-  if (map.containsKey(l[0]))
-    return map[l[0]];
-  return 'unknown';
+  if (map.containsKey(l[0]) == false)
+    throw new FormatException('RAM Size: unknown id');
+  return map[l[0]];
 }
 
-_destinationCodeToString(Uint8List l)
+String _destinationCodeToString(Uint8List l)
 {
   switch (l[0]) {
     case 0:
@@ -171,11 +194,11 @@ _destinationCodeToString(Uint8List l)
     case 1:
       return 'Non-Japanese';
     default:
-      return 'unknown';
+      throw new FormatException('Destination Code: unknown id');
   }
 }
 
-_nintendoLogoValid(Uint8List l)
+bool _nintendoLogoValid(Uint8List l)
 {
   const ref = const <int>[
     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83,
@@ -184,36 +207,43 @@ _nintendoLogoValid(Uint8List l)
     0x6E, 0x0E, 0xEC, 0xCC, 0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E];
 
   if (l.length != ref.length)
-    return false;
-  for (int i = 0; i < ref.length; i++) {
+    throw new FormatException('Nintendo Logo: not valid');
+  for (int i = 0; i < ref.length; i++)
+  {
     if (ref[i] != l[i])
-      return false;
+      throw new FormatException('Nintendo Logo: not valid');
   }
   return true;
 }
 
-_makeMemRegInfos()
-{
-  return [
-    new RomHeaderFieldInfo(0x0100, 0x4, 'Entry Point', '', false, (l) => l),
-    new RomHeaderFieldInfo(0x0104, 0x30, 'Nintendo Logo', '', false, (l) => _nintendoLogoValid(l)),
-    new RomHeaderFieldInfo(0x0134, 0x10, 'Title', '', true, (l) => Conv.ASCII.decode(l)),
-    new RomHeaderFieldInfo(0x013F, 0x4, 'Manufacturer Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new RomHeaderFieldInfo(0x0143, 0x1, 'CGB Flag', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new RomHeaderFieldInfo(0x0144, 0x2, 'New Licensee Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new RomHeaderFieldInfo(0x0146, 0x1, 'SGB Flag', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new RomHeaderFieldInfo(0x0147, 0x1, 'Cartridge Type', '', true, (l) => _cartridgeTypeOfMem(l)),
-    new RomHeaderFieldInfo(0x0148, 0x1, 'ROM Size', '', true, (l) => _romSizeOfMem(l)),
-    new RomHeaderFieldInfo(0x0149, 0x1, 'RAM Size', '', true, (l) => _ramSizeOfMem(l)),
-    new RomHeaderFieldInfo(0x014A, 0x1, 'Destination Code', '', true, (l) => _destinationCodeToString(l)),
-    new RomHeaderFieldInfo(0x014B, 0x1, 'Old Licensee Code', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new RomHeaderFieldInfo(0x014C, 0x1, 'Mask ROM Version number', '', true, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new RomHeaderFieldInfo(0x014D, 0x1, 'Header Checksum', '', false, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-    new RomHeaderFieldInfo(0x014E, 0x2, 'Global Checksum', '', false, (l) => l.fold(0, (i, i8) => i << 8 | i8)),
-  ];
+/* Header data ****************************************************************/
+
+class HeaderData {
+
+  final Map<String, dynamic> data;
+
+  HeaderData(Uint8List l)
+  : data = new Map<String, dynamic>()
+  {
+    if (l.length < 0x150)
+      throw new FormatException('HeaderData: ROM Size is below 0x150 bytes');
+    try {
+      headerFieldInfos.forEach((headerInfo){
+          var view = new Uint8List.view(l.buffer, headerInfo.address, headerInfo.size);
+          String k = headerInfo.name;
+          var v = headerInfo.toValue(view);
+          data[k] = v;
+        });
+      } on FormatException catch (e) { print (e); rethrow; }
+  }
+
+  String toString() {return data.toString();}
+
 }
 
-_debug()
+/* Debug Rom Header ***********************************************************/
+
+void debugRomHeader()
 {
   final tetrisHead = new Uint8List.fromList(<int>[
     0xc3, 0x8b, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc3, 0x8b, 0x02, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -239,12 +269,14 @@ _debug()
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x0b, 0x89, 0xb5,
     0xc3, 0x8b, 0x02, 0xcd, 0x2b, 0x2a, 0xf0, 0x41, 0xe6, 0x03, 0x20, 0xfa, 0x46, 0xf0, 0x41, 0xe6
   ]);
-  var view;
-  var v;
 
-  headerFieldInfos.forEach((i){
-        view = new Uint8List.view(tetrisHead.buffer, i.address, i.size);
-        v = i.valueConverter(view);
-        print('${i.name}: <${v.runtimeType}>${v}');
-      });
+  print('**************** TTTTRRRROOOOOLOOOOOLOOOOOOO *************');
+  try {
+    final test = new HeaderData(tetrisHead);
+    print (test.toString());
+  } catch(e) {
+    print(e);
+  }
+  print('**************** TTTTRRRROOOOOLOOOOOLOOOOOOO *************');
+
 }

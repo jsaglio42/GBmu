@@ -25,3 +25,6 @@ export 'package:emulator/src/memory/ram.dart';
 export 'package:emulator/src/memory/rom.dart';
 export 'package:emulator/src/memory/rom_header.dart';
 // src/worker.dart
+
+
+export 'package:emulator/src/memory/rom_header.dart';

@@ -122,5 +122,6 @@ run() async
 
 main()
 {
-  run().catchError((e) => print('main:\tError:\n$e'));
+  Emulator.debugRomHeader();
+  // run().catchError((e) => print('main:\tError:\n$e'));
 }
