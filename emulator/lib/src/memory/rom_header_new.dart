@@ -143,63 +143,16 @@ bool _fieldOutOfBound(Rom.IRom rom, RomHeaderFieldInfo dat)
     return false;
 }
 
-// CartridgeType _cartridgeTypeOfRom(Rom.IRom rom)
-// {
-//   final dat = headerFieldInfos[RomHeaderField.Cartridge_Type];
-//   int v;
-
-//   if (_fieldOutOfBound(rom, dat))
-//     throw new Exception('Rom Header: Out of bound');
-//   else {
-//     v = rom.pull8(dat.address);
-//     if (cartridgeTypeCodes.containsKey(v) == false)
-//       throw new Exception('Rom Header: unknown id');
-//     return cartridgeTypeCodes[v];
-//   }
-// }
-
-// int _romSizeOfRom(Rom.IRom rom)
-// {
-//   final dat = headerFieldInfos[RomHeaderField.ROM_Size];
-//   int v;
-
-//   if (_fieldOutOfBound(rom, dat))
-//     throw new Exception('Rom Header: Out of bound');
-//   else {
-//     v = rom.pull8(dat.address);
-//     if (romSizeCodes.containsKey(v) == false)
-//       throw new Exception('Rom Header: unknown id');
-//     return romSizeCodes[v];
-//   }
-// }
-
-// int _ramSizeOfRom(Rom.IRom rom)
-// {
-//   final dat = headerFieldInfos[RomHeaderField.RAM_Size];
-//   int v;
-
-//   if (_fieldOutOfBound(rom, dat))
-//     throw new Exception('Rom Header: Out of bound');
-//   else {
-//     v = rom.pull8(dat.address);
-//     if (ramSizeCodes.containsKey(v) == false)
-//       throw new Exception('Ram Header: unknown id');
-//     return ramSizeCodes[v];
-//   }
-// }
-
 _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
 {
   return (Rom.IRom rom) {
     final dat = headerFieldInfos[f];
-    int v;
-
     if (_fieldOutOfBound(rom, dat))
       throw new Exception('Rom Header: Out of bound');
     else {
-      v = rom.pull8(dat.address);
+      final v = rom.pull8(dat.address);
       if (map.containsKey(v) == false)
-        throw new Exception('Ron Header: Unknown id');
+        throw new Exception('Rom Header: ' + dat.name + ': Unknown id');
       return map[v];
     }
   };
@@ -210,7 +163,7 @@ _toValueFunc _makeByteGetterFunction(RomHeaderField f)
   return (Rom.IRom rom) {
     final dat = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, dat))
-      throw new Exception('Rom Header: Out of bound');
+      throw new Exception('Rom Header: ' + dat.name + ': Out of bound');
     else
       return rom.pull8(dat.address);
   };
@@ -221,7 +174,7 @@ _toValueFunc _makeWordGetterFunction(RomHeaderField f)
   return (Rom.IRom rom) {
     final dat = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, dat))
-      throw new Exception('Rom Header: Out of bound');
+      throw new Exception('Rom Header: ' + dat.name + ': Out of bound');
     else
       return rom.pull16(dat.address);
   };
@@ -231,7 +184,7 @@ _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
   return (Rom.IRom rom) {
     final dat = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, dat))
-      throw new Exception('Rom Header: Out of bound');
+      throw new Exception('Rom Header: ' + dat.name + ': Out of bound');
     else
       return
         rom.pull8(dat.address + 0) << 8 * 3 |
@@ -247,41 +200,51 @@ _toValueFunc _makeByteListGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, dat))
       throw new Exception('Rom Header: Out of bound');
     else
-      return new Uint8List.fromList(
-          rom.data.skip(dat.address).take(dat.size).toList());
+      return rom.pull8List(dat.address, dat.size);
   };
 }
 
-// To string functions ****************************************************** **
+_toValueFunc _makeStringGetterFunction(RomHeaderField f)
+{
+  return (Rom.IRom rom) {
+    final dat = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, dat))
+      throw new Exception('Rom Header: Out of bound');
+    final l = rom.pull8List(dat.address, dat.size);
+    return Convert.ASCII.decode(l);
+  };
+}
 
-// String _destinationCodeToString(Uint8List l)
+// Custom functions
+
+bool _isNintendoLogoValid(Rom.IRom rom)
+{
+  const ref = const <int>[
+    0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83,
+    0x00, 0x0C, 0x00, 0x0D, 0x00, 0x08, 0x11, 0x1F, 0x88, 0x89, 0x00, 0x0E,
+    0xDC, 0xCC, 0x6E, 0xE6, 0xDD, 0xDD, 0xD9, 0x99, 0xBB, 0xBB, 0x67, 0x63,
+    0x6E, 0x0E, 0xEC, 0xCC, 0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E];
+  final f = headerFieldInfos[RomHeaderField.Nintendo_Logo];
+  if (_fieldOutOfBound(rom, f))
+      throw new Exception('Rom Header: Out of bound');
+  final logo = rom.pull8List(f.address, f.size);
+  if (logo.length != ref.length)
+    return false;
+  for (int i = 0; i < ref.length; i++)
+  {
+    if (ref[i] != logo[i])
+      return false;
+  }
+  return true;
+}
+
+// String _getTitleFromHeader(Rom.IRom rom)
 // {
-//   switch (l[0]) {
-//     case 0:
-//       return 'Japanese';
-//     case 1:
-//       return 'Non-Japanese';
-//     default:
-//       throw new FormatException('Destination Code: unknown id');
-//   }
-// }
-
-// bool _nintendoLogoValid(Uint8List l)
-// {
-//   const ref = const <int>[
-//     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83,
-//     0x00, 0x0C, 0x00, 0x0D, 0x00, 0x08, 0x11, 0x1F, 0x88, 0x89, 0x00, 0x0E,
-//     0xDC, 0xCC, 0x6E, 0xE6, 0xDD, 0xDD, 0xD9, 0x99, 0xBB, 0xBB, 0x67, 0x63,
-//     0x6E, 0x0E, 0xEC, 0xCC, 0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E];
-
-//   if (l.length != ref.length)
-//     throw new FormatException('Nintendo Logo: not valid');
-//   for (int i = 0; i < ref.length; i++)
-//     {
-//       if (ref[i] != l[i])
-//         throw new FormatException('Nintendo Logo: not valid');
-//     }
-//   return true;
+//   final f = headerFieldInfos[RomHeaderField.Title];
+//   if (_fieldOutOfBound(rom, f))
+//       throw new Exception('Rom Header: Out of bound');
+//   final title = rom.pull8List(f.address, f.size);
+  
 // }
 
 // Rom Header Info ********************************************************** **
@@ -303,11 +266,6 @@ final headerFieldInfos = <RomHeaderField, RomHeaderFieldInfo>{
   RomHeaderField.Entry_Point: new RomHeaderFieldInfo(
       0x0100, 0x4, 'Entry Point', '', true,
       _makeByteListGetterFunction(RomHeaderField.Entry_Point)),
-
-
-  //   new RomHeaderFieldInfo(0x0100, 0x4, 'Entry Point', '', false, (_)=>42); //(l) => l),
-  //   new RomHeaderFieldInfo(0x0104, 0x30, 'Nintendo Logo', '', false, (_)=>42); //(l) => _nintendoLogoValid(l)),
-  //   new RomHeaderFieldInfo(0x0134, 0x10, 'Title', '', true, (_)=>42); //(l) => Convert.ASCII.decode(l)),
 
   RomHeaderField.Manufacturer_Code: new RomHeaderFieldInfo(
       0x013F, 0x4, 'Manufacturer Code', '', true,
@@ -357,16 +315,25 @@ final headerFieldInfos = <RomHeaderField, RomHeaderFieldInfo>{
       0x014E, 0x2, 'Global Checksum', '', true,
       _makeWordGetterFunction(RomHeaderField.Global_Checksum)),
 
+  RomHeaderField.Title: new RomHeaderFieldInfo(
+    0x0134, 0x10, 'Title', '', true,
+    _makeStringGetterFunction(RomHeaderField.Title)),
+
+  RomHeaderField.Nintendo_Logo: new RomHeaderFieldInfo(
+    0x0104, 0x30, 'Nintendo Logo', '', false, _isNintendoLogoValid)
+
 };
 
 // Rom Header *************************************************************** **
 
-class RomHeader implements Rom.IRom {
+abstract class RomHeader implements Rom.IRom {
 
   dynamic pullHeaderValue(RomHeaderField f)
   {
     final info = headerFieldInfos[f];
-
+    if (info == null) {
+      throw new Exception('Rom Header: ' + f.toString() + ': getter not implemented');
+    }
     return info.toValue(this);
   }
 
@@ -375,7 +342,7 @@ class RomHeader implements Rom.IRom {
     try {
       return this.pullHeaderValue(f).toString();
     } catch (e) {
-      return e.toString();
+      return 'unknown';
     }
   }
 }
@@ -437,23 +404,14 @@ void debugRomHeader()
   ]);
 
   final rom = new Rom.Rom(tetrisHead);
-  var v;
-  var str;
-
-  headerFieldInfos.toString();
-
-  print(rom);
-
   for (RomHeaderField f in RomHeaderField.values) {
-    str = f.toString();
+    print(f.toString());
     try {
-      v = rom.pullHeaderValue(f);
-      str += ' val:[<' + v.runtimeType.toString() + '> ' + v.toString() + ']';
+      var v = rom.pullHeaderValue(f);
+      print('-> <' + v.runtimeType.toString() + '> ' + v.toString());
     } catch (e, st) {
-      str += ' exn:[' + e.toString() + st.toString() + ']';
+      print(st.toString());
     }
-    str += '\n\n';
-    print(str);
   }
 
 }

@@ -11,25 +11,26 @@
 // ************************************************************************** //
 
 import "dart:typed_data";
-// import "package:emulator/enums.dart";
 import "package:emulator/src/memory/rom_header_new.dart" as Romheader;
 
 abstract class IRom {
 
-  final Uint8List data;
-  final Uint16List view16;
+  int   get size;
 
-  int		pull8(int romAddr);
-  int		pull16(int romAddr);
+  int pull8(int romAddr);
+  int pull16(int romAddr);
+  Uint8List   pull8List(int romAddr, int len);
 
-  IRom(Uint8List d)
-    : data = d
-    , view16 = d.buffer.asUint16List();
 }
 
 class Rom extends IRom with Romheader.RomHeader {
 
-  Rom(Uint8List d) : super(d);
+  final Uint8List data;
+  final Uint16List view16;
+
+  Rom(Uint8List d)
+    : data = d
+    , view16 = d.buffer.asUint16List();
 
   int		pull8(int romAddr)
   {
@@ -46,6 +47,13 @@ class Rom extends IRom with Romheader.RomHeader {
     assert(romAddr >= 0 && romAddr < data.length);//, "Rom.pull16($romAddr)\tout of range");
     return view16[addrView16];
   }
+
+  Uint8List   pull8List(int romAddr, int len)
+  {
+    assert(romAddr >= 0 && romAddr + len < data.length); //, "Rom.pull8($romAddr)\tout of range");
+    return new Uint8List.view(data.buffer, romAddr, len);
+  }
+
   int		get size => data.length;
 
 }

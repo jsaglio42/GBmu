@@ -22,9 +22,8 @@ export 'package:emulator/src/emulator.dart';
 export 'package:emulator/src/memory/mem_registers.dart';
 // src/memory/mmu.dart
 export 'package:emulator/src/memory/ram.dart';
-export 'package:emulator/src/memory/rom.dart';
-export 'package:emulator/src/memory/rom_header.dart';
-// src/worker.dart
+// export 'package:emulator/src/memory/rom.dart';
+// export 'package:emulator/src/memory/rom_header.dart';
 
-
-export 'package:emulator/src/memory/rom_header.dart';
+export 'package:emulator/src/memory/rom_new.dart';
+export 'package:emulator/src/memory/rom_header_new.dart';
