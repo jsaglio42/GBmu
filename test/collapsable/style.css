@@ -3,6 +3,9 @@
     background-color: black;
     padding: 7px;
     width: 265px; /* 251 + padding * 2 */
+    /* -moz-user-select: -moz-none;
+       -khtml-user-select: none;
+       -webkit-user-select: none; */
 }
 
 #accordion .panel {
@@ -41,21 +44,14 @@
     background-color: rgba(0,255,0, 0.00);
 }
 
-#accordion table {
-    border: 0px;
-}
-
 #accordion th {
     vertical-align: text-top;
 }
 
-.cart-ram-bis {
+#accordion table, .cart-ram-bis, .cart-ss-bis {
     border: 0px;
-    /* width: 182px; */
-    /* height: 49px; */
 }
-.cart-ss-bis {
-    border: 0px;
-    /* width: 86px; */
-    /* height: 49px; */
+
+.tmp {
+    transform:translateX(-9999px);
 }
