@@ -3,15 +3,10 @@
     background-color: black;
     padding: 7px;
     width: 265px; /* 251 + padding * 2 */
-
 }
 
 #accordion .panel {
     background-color: rgba(0, 0, 0, 0.0);
-
-    /* border-style: solid; */
-    /* border-color: #9500ff; */
-
     border-width: 0px;
 }
 
@@ -19,14 +14,13 @@
     outline: 0 none;
 }
 
-#accordion .btn {
+#accordion .bg-head-btn {
 
     height: 71px;
     background-image: url(images/gb_header_open.png);
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
     border-radius: 0px;
-
 }
 
 #accordion .btn.collapsed {
@@ -47,40 +41,21 @@
     background-color: rgba(0,255,0, 0.00);
 }
 
-
-.cart-ram {
-    float: left;
-    width: 182px;
-    height: 49px;
-    margin-left: 31px;
-    margin-top: 21px;
-    background-image:url(images/gb_ram.png);
-    background-color: rgba(255,0,255, 0.0);
+#accordion table {
+    border: 0px;
 }
 
-.cart-ss {
-    background-image:url(images/gb_ss.png);
-    background-color: rgba(255,0,255, 0.0);
-    width: 86px;
-    height: 49px;
+#accordion th {
+    vertical-align: text-top;
 }
-.cart-ss1 {
-    float: left;
-    margin-left: 34px;
-    margin-top: 3px; /* 73 - 21 - 49 */
+
+.cart-ram-bis {
+    border: 0px;
+    /* width: 182px; */
+    /* height: 49px; */
 }
-.cart-ss2 {
-    float: right;
-    margin-right: 41px;
-    margin-top: 3px; /* 73 - 21 - 49 */
-}
-.cart-ss3 {
-    float: left;
-    margin-left: 34px;
-    margin-top: 3px; /* 125 - 21 - 49 - 3 - 49 */
-}
-.cart-ss4 {
-    float: right;
-    margin-right: 41px;
-    margin-top: 3px; /* 73 - 21 - 49 */
+.cart-ss-bis {
+    border: 0px;
+    /* width: 86px; */
+    /* height: 49px; */
 }
