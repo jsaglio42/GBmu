@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+    <div class="container">
+      <h2>Accordion Example</h2>
+      <p><strong>Note:</strong> The <strong>data-parent</strong> attribute makes sure that all collapsible elements under the specified parent will be closed when one of the collapsible item is shown.</p>
+      <div class="panel-group col-md-3">
+        <div id="accordion">
+          <div class="panel">
+            <button data-toggle="collapse" data-parent="#accordion" href="#collapse1"
+                    type="button" class="btn btn-block collapsed"></button>
+            <div id="collapse1" class="panel-collapse collapse">
+              <div class="panel-body">
+                <div class="cart-ram"></div>
+                <div class="cart-ss cart-ss1"></div>
+                <div class="cart-ss cart-ss2"></div>
+                <div class="cart-ss cart-ss3"></div>
+                <div class="cart-ss cart-ss4"></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <button data-toggle="collapse" data-parent="#accordion" href="#collapse2"
+                    type="button" class="btn btn-block collapsed"></button>
+            <div id="collapse2" class="panel-collapse collapse">
+              <div class="panel-body">
+                <div class="cart-ram"></div>
+                <div class="cart-ss cart-ss1"></div>
+                <div class="cart-ss cart-ss2"></div>
+                <div class="cart-ss cart-ss3"></div>
+                <div class="cart-ss cart-ss4"></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <button data-toggle="collapse" data-parent="#accordion" href="#collapse3"
+                    type="button" class="btn btn-block collapsed"></button>
+            <div id="collapse3" class="panel-collapse collapse">
+              <div class="panel-body">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
