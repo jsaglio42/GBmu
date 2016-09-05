@@ -9,6 +9,7 @@ pub serve
 
 # Todos
 
+- Little endian -> check pull formulas
 - Check interfaces/traits/inheritance
 - Deal with optional/XYZorNull in a consistent way. (I would go for the use of null/notnull with an explicit name, maybe not XYZorNull but xyzOpt)
 - Have a textbox in the dom to display important messages to the user (not in debug console), for example: "Rom is not valid/not supported", "A rom is not loaded ...." ...

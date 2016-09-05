@@ -21,7 +21,7 @@ export 'package:emulator/src/cpu_registers.dart'
   show Reg16, Reg8, Reg1;
 export 'package:emulator/src/memory/mem_registers.dart'
   show MemReg;
-export 'package:emulator/src/memory/rom_header.dart'
+export 'package:emulator/src/memory/rom_headerdecoder.dart'
   show RomHeaderField, CartridgeType;
 
 enum DebuggerModeRequest {
