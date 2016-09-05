@@ -1,0 +1,19 @@
+name: test_collapsables
+description: My dart first app
+version: 0.0.1
+environment:
+  sdk: '>=1.13.0 <2.0.0'
+dependencies:
+  browser: ^0.10.0
+  ft:
+    path: ../../ft
+  emulator:
+    path: ../../emulator
+transformers:
+- $dart2js:
+    checked: true
+    environment:
+      FTLOG: 'true'
+    commandLineOptions: [--enable-diagnostic-colors, --assert-message]
+    # analyze-all: true
+    # minify: true
