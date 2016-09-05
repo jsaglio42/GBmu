@@ -34,16 +34,16 @@
 #accordion .panel-collapse {
     height: 216px;
     background-image:url(images/gb_body.png);
-    background-color: rgba(255,0,255, 0.0);
+    background-color: rgba(0, 0, 0, 0.0);
 }
 
 .panel-body {
     cursor: move;
     padding: 0px;
-    background-color: rgba(0,255,0, 0.00);
+    background-color: rgba(0, 0, 0, 0.0);
 }
 
-#accordion th {
+#accordion th * {
     vertical-align: text-top;
 }
 
@@ -53,4 +53,42 @@
 
 .cart-ram-bis, .cart-ss-bis {
 	cursor: pointer;
+}
+
+.cart-ram-socket {
+    border: 0px;
+    width: 182px;
+    height: 49px;
+    background-color: rgba(0, 255, 0, 0.25);
+}
+
+.cart-ss-socket {
+    border: 0px;
+    width: 86px;
+    height: 49px;
+    /* background-color: rgba(0, 255, 0, 0.25); */
+}
+
+.cart-ram-socket-hover {
+    background-color: rgba(255, 255, 0, 0.25);
+}
+
+.cart-ss-socket-hover {
+    background-color: rgba(255, 255, 0, 0.25);
+}
+
+.cart-ram-socket-active {
+    background-color: rgba(255, 0, 0, 0.25);
+}
+
+.cart-ss-socket-active {
+    background-color: rgba(255, 0, 0, 0.25);
+}
+
+/* ************************************************************************** */
+
+#detached-chip-bank {
+    background-color: gray;
+    padding: 7px;
+    width: 265px; /* 251 + padding * 2 */
 }
