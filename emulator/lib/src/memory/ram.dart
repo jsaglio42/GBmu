@@ -20,12 +20,16 @@ class Ram {
 
   int	pull8(int ramAddr)
   { return 0x42;}
+
   void	push8(int ramAddr, int byte)
   {}
+
   int	pull16(int ramAddr)
   { return 0x42;}
+
   void	push16(int ramAddr, int word)
   {}
+
   int	get size => _data.length;
 
 }

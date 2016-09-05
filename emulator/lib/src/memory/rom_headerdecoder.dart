@@ -12,7 +12,7 @@
 
 import 'dart:convert' as Convert;
 import 'dart:typed_data';
-import "package:emulator/src/memory/rom_new.dart" as Rom;
+import "package:emulator/src/memory/rom.dart" as Rom;
 
 /*
  * Page3 : https://docs.google.com/spreadsheets/d/1ffcl5dd_Q12Eqf9Zlrho_ghUZO5lT-gIpRi392XHU10
@@ -238,15 +238,6 @@ bool _isNintendoLogoValid(Rom.IRom rom)
   return true;
 }
 
-// String _getTitleFromHeader(Rom.IRom rom)
-// {
-//   final f = headerFieldInfos[RomHeaderField.Title];
-//   if (_fieldOutOfBound(rom, f))
-//       throw new Exception('Rom Header: Out of bound');
-//   final title = rom.pull8List(f.address, f.size);
-  
-// }
-
 // Rom Header Info ********************************************************** **
 
 class RomHeaderFieldInfo {
@@ -326,7 +317,7 @@ final headerFieldInfos = <RomHeaderField, RomHeaderFieldInfo>{
 
 // Rom Header *************************************************************** **
 
-abstract class RomHeader implements Rom.IRom {
+abstract class RomHeaderDecoder implements Rom.IRom {
 
   dynamic pullHeaderValue(RomHeaderField f)
   {
