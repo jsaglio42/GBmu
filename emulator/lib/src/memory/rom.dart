@@ -13,6 +13,8 @@
 import "dart:typed_data";
 import "package:emulator/src/memory/rom_headerdecoder.dart" as Romhdecoder;
 
+/* Rom Interface **************************************************************/
+
 abstract class IRom {
 
   int   get size;
@@ -22,6 +24,8 @@ abstract class IRom {
   Uint8List   pull8List(int romAddr, int len);
 
 }
+
+/* Rom Implementation *********************************************************/
 
 class Rom extends IRom with Romhdecoder.RomHeaderDecoder {
 
@@ -57,8 +61,3 @@ class Rom extends IRom with Romhdecoder.RomHeaderDecoder {
   int		get size => data.length;
 
 }
-
-// main () {
-//   print('hello world');
-//   Romheader.debugRomHeader();
-// }

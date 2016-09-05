@@ -238,15 +238,6 @@ bool _isNintendoLogoValid(Rom.IRom rom)
   return true;
 }
 
-// String _getTitleFromHeader(Rom.IRom rom)
-// {
-//   final f = headerFieldInfos[RomHeaderField.Title];
-//   if (_fieldOutOfBound(rom, f))
-//       throw new Exception('Rom Header: Out of bound');
-//   final title = rom.pull8List(f.address, f.size);
-  
-// }
-
 // Rom Header Info ********************************************************** **
 
 class RomHeaderFieldInfo {
