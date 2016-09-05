@@ -26,6 +26,8 @@ class Mmu {
 
   Mmu(this._mbc);
 
+  /* Memory Register API ******************************************************/
+
   int pullMemReg(MemReg reg) {
     final addr = Memregisters.memRegInfos[reg.index].address;
     return this.pullMem8(addr);
@@ -37,32 +39,38 @@ class Mmu {
     this.pushMem8(addr, byte);
   }
 
-  /** memAddr [0, 0xff] */
-  int pullMem8(int memAddr) {
-    assert(memAddr <= 0xFFFF && memAddr >= 0
-        , "Mmu.pullMem($memAddr)\tout of range");
-    if (memAddr > TAIL_RAM_LAST)
-      throw new Exception();
-    else if (memAddr >= TAIL_RAM_BEGIN)
-      return _tailRam[memAddr - TAIL_RAM_BEGIN];
-    else // TODO: pullMem
-      return 0x42;
-  }
+  /* Memory API ***************************************************************/
 
-  /** memAddr [0, 0xff], byte [0, 0xff] */
-  void pushMem8(int memAddr, int byte) {
-    if (memAddr > TAIL_RAM_LAST)
-      throw new Exception("Mmu.pushMem($memAddr, $byte)\tout of range");
-    else if (memAddr >= TAIL_RAM_BEGIN)
-      _tailRam[memAddr - TAIL_RAM_BEGIN] = byte;
-    // TODO: pullMem
-    return ;
-  }
+  // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
+  int pullMem8(int memAddr) => 0x42;
+  int pullMem16(int memAddr) => 0x42;
+  
+  // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
+  void pushMem8(int memAddr, int word) { return ; }
+  void pushMem16(int memAddr, int word) { return ; }
 
-  int pullMem16(int memAddr)  //TODO: are word addresses aligned ?
-  {return 12;}
-  void pushMem16(int memAddr, int word)
-  {}
+  /* Not working, to be fixed */
+
+  // // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
+  // int pullMem8(int memAddr) => _pullMem(memAddr, _mbc.pullMem8);
+  // int pullMem16(int memAddr) => _pullMem(memAddr, _mbc.pullMem16);
+  
+  // // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
+  // void pushMem8(int memAddr, int word) { _pushMem(memAddr, word, _mbc.pushMem8);} 
+  // void pushMem16(int memAddr, int word) { _pushMem(memAddr, word, _mbc.pushMem16);} 
+
+  // // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
+  // int _pullMem(int memAddr, pullfunction) {
+  //   return 0x42;
+  // }
+
+  // // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
+  // void _pushMem(int memAddr, int word, pushfunction)
+  // {
+  //   return ;
+  // }
+
+  /* Oldies */
 
   // void pull8(int addr, int value)
   // {
@@ -94,6 +102,27 @@ class Mmu {
   //     print ("MMU: writeByte: address not valid");
   // }
 
+  /** memAddr [0, 0xff] */
+  // int pullMem8(int memAddr) {
+  //   assert(memAddr >= 0 && memAddr <= 0xFFFF);// , "Mmu.pullMem($memAddr)\tout of range");
+  //   if (memAddr > TAIL_RAM_LAST)
+  //     throw new Exception();
+  //   else if (memAddr >= TAIL_RAM_BEGIN)
+  //     return _tailRam[memAddr - TAIL_RAM_BEGIN];
+  //   else // TODO: pullMem
+  //     return 0x42;
+  // }
+
+  /** memAddr [0, 0xff], byte [0, 0xff] */
+  // void pushMem8(int memAddr, int byte) {
+  //   assert(memAddr >= 0 && memAddr <= 0xFFFF);// , "Mmu.pullMem($memAddr)\tout of range");
+  //   if (memAddr > TAIL_RAM_LAST)
+  //     throw new Exception("Mmu.pushMem($memAddr, $byte)\tout of range");
+  //   else if (memAddr >= TAIL_RAM_BEGIN)
+  //     _tailRam[memAddr - TAIL_RAM_BEGIN] = byte;
+  //   // TODO: pullMem
+  //   return ;
+  // }
 
 
 }
