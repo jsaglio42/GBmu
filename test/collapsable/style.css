@@ -3,9 +3,6 @@
     background-color: black;
     padding: 7px;
     width: 265px; /* 251 + padding * 2 */
-    /* -moz-user-select: -moz-none;
-       -khtml-user-select: none;
-       -webkit-user-select: none; */
 }
 
 #accordion .panel {
@@ -26,11 +23,12 @@
     border-radius: 0px;
 }
 
-#accordion .btn.collapsed {
-    /* background-color: green; */
+#accordion .bg-head-btn.collapsed {
     height: 53px;
     background-image:url(images/gb_header_collapsed.png);
     background-color: rgba(0, 0, 0, 0.0);
+    border-width: 0px;
+    border-radius: 0px;
 }
 
 #accordion .panel-collapse {
@@ -40,6 +38,7 @@
 }
 
 .panel-body {
+    cursor: move;
     padding: 0px;
     background-color: rgba(0,255,0, 0.00);
 }
@@ -52,6 +51,6 @@
     border: 0px;
 }
 
-.tmp {
-    transform:translateX(-9999px);
+.cart-ram-bis, .cart-ss-bis {
+	cursor: pointer;
 }
