@@ -120,8 +120,21 @@ run() async
   Ft.log('main', 'init DONE');
 }
 
+void test_endianess(){
+  var l16 = new Uint16List(15);
+  for (int i = 0; i < 15; i++) {
+    l16[i] = (2 * i) + ((2 * i + 1) << 8);
+  }
+  var l8 = new Uint8List.view(l16.buffer); 
+  print(l16);
+  print(l8);
+  return ;
+}
+
 main()
 {
-  Emulator.debugRomHeader();
-  // run().catchError((e) => print('main:\tError:\n$e'));
+  // Emulator.debugRomHeader();
+  // test_endianess();
+  run().catchError((e) => print('main:\tError:\n$e'));
+  return ;
 }

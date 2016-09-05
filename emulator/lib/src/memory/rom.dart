@@ -21,7 +21,7 @@ abstract class IRom {
 
   int pull8(int romAddr);
   int pull16(int romAddr);
-  Uint8List   pull8List(int romAddr, int len);
+  Uint8List pull8List(int romAddr, int len);
 
 }
 
@@ -36,28 +36,26 @@ class Rom extends IRom with Romhdecoder.RomHeaderDecoder {
     : data = d
     , view16 = d.buffer.asUint16List();
 
-  int		pull8(int romAddr)
+  int pull8(int romAddr)
   {
-    assert(romAddr >= 0 && romAddr < data.length); //, "Rom.pull8($romAddr)\tout of range");
+    assert(romAddr >= 0 && romAddr < data.length);
     return this.data[romAddr];
   }
 
-  int		pull16(int romAddr)
+  int pull16(int romAddr)
   {
-    // Implementation with `Uint16List view16` makes the assertion that
-    //   words are memory aligned. TODO: verify it
+    assert(romAddr % 2 == 0);
+    assert(romAddr >= 0 && romAddr < data.length);
     final int addrView16 = romAddr ~/ 2;
-
-    assert(romAddr >= 0 && romAddr < data.length);//, "Rom.pull16($romAddr)\tout of range");
     return view16[addrView16];
   }
 
-  Uint8List   pull8List(int romAddr, int len)
+  Uint8List pull8List(int romAddr, int len)
   {
-    assert(romAddr >= 0 && romAddr + len < data.length); //, "Rom.pull8($romAddr)\tout of range");
+    assert(romAddr >= 0 && romAddr + len < data.length);
     return new Uint8List.view(data.buffer, romAddr, len);
   }
 
-  int		get size => data.length;
+  int get size => data.length;
 
 }

@@ -9,7 +9,9 @@ pub serve
 
 # Todos
 
-- Little endian -> check pull formulas
+- Ram/rom is it relevent? Cartridge would need pullRam / pullRom ??? (to be checked with mmu implementation)
+- Bug: Can't use Memory explorerwhen paused (maybe check listener list)
+- Little endian -> view16 is little endian, check pull header formulas (for dword)
 - Check interfaces/traits/inheritance
 - Deal with optional/XYZorNull in a consistent way. (I would go for the use of null/notnull with an explicit name, maybe not XYZorNull but xyzOpt)
 - Have a textbox in the dom to display important messages to the user (not in debug console), for example: "Rom is not valid/not supported", "A rom is not loaded ...." ...

@@ -19,8 +19,9 @@ import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 import 'package:emulator/src/memory/rom.dart' as Rom;
 import 'package:emulator/src/memory/ram.dart' as Ram;
+import 'package:emulator/src/memory/cartridge.dart' as Cartridge;
 import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
-import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
+// import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
 
@@ -174,7 +175,14 @@ abstract class Emulation implements Worker.AWorker {
     final irom = new Rom.Rom(drom);
     final iram = new Ram.Ram(dram);
     //TODO: Select right constructon giving r.pullHeader(RomHeaderField.Cartridge_Type)
-    final c = new Cartmbc0.CartMbc0(irom, iram);
+    Cartridge.Cartridge c;
+    try {
+      final c = new Cartridge.Cartridge(irom);
+      // final c = new Cartridge.Cartridge(irom, optionalRam: iram);
+    } catch (e, st) {
+      print(st);
+      rethrow ;
+    }
     return new Gameboy.GameBoy(c);
   }
 

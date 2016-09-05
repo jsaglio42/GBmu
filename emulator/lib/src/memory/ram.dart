@@ -11,25 +11,30 @@
 // ************************************************************************** //
 
 import "dart:typed_data";
+import "package:emulator/src/memory/rom.dart" as Rom;
 
-class Ram {
+/* Ram Implementation *********************************************************/
 
-  final		Uint8List _data;
+class Ram extends Rom.Rom {
 
-  Ram(this._data);
-
-  int	pull8(int ramAddr)
-  { return 0x42;}
+  Ram(Uint8List d) : super(d);
 
   void	push8(int ramAddr, int byte)
-  {}
-
-  int	pull16(int ramAddr)
-  { return 0x42;}
+  {
+    assert(ramAddr >= 0 && ramAddr < data.length);
+    assert(word | ~0xFF == 0);
+    this.data[ramAddr] = byte;
+    return ;
+  }
 
   void	push16(int ramAddr, int word)
-  {}
-
-  int	get size => _data.length;
+  {
+    assert(ramAddr % 2 == 0);
+    assert(ramAddr >= 0 && ramAddr < data.length);
+    assert(word | ~0xFFFF == 0);
+    final int addrView16 = ramAddr ~/ 2;
+    view16[addrView16] = word;
+    return ;
+  }
 
 }
