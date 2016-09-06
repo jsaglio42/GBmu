@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/05 12:21:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/05 19:34:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/06 10:35:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -81,6 +81,9 @@ Async.Future init(Emulator.Emulator emu) async {
 
     cList[2].changeBank(
         cab.carts[1].ssSockets[1]
+                        );
+    cList[1].changeBank(
+        cab.carts[1].ramSocket
                         );
 
   } catch (e, st) {

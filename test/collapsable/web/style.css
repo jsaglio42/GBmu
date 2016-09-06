@@ -17,7 +17,7 @@
 #accordion .bg-head-btn {
 
     height: 71px;
-    background-image: url(images/gb_header_open.png);
+    background: url(images/sprites.png) 0 0;
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
     border-radius: 0px;
@@ -25,7 +25,7 @@
 
 #accordion .bg-head-btn.collapsed {
     height: 53px;
-    background-image:url(images/gb_header_collapsed.png);
+    background: url(images/sprites.png) 0 -18px;
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
     border-radius: 0px;
@@ -33,7 +33,7 @@
 
 #accordion .panel-collapse {
     height: 216px;
-    background-image:url(images/gb_body.png);
+    background:url(images/sprites.png) 0 -71px;
     background-color: rgba(0, 0, 0, 0.0);
 }
 
@@ -44,7 +44,7 @@
 }
 
 #accordion th * {
-    vertical-align: text-top;
+    /* vertical-align: text-top; */
 }
 
 #accordion table, .cart-ram-bis, .cart-ss-bis {
@@ -59,7 +59,7 @@
     border: 0px;
     width: 182px;
     height: 49px;
-    background-color: rgba(0, 255, 0, 0.25);
+    background-color: rgba(0, 255, 0, 0.0);
 }
 
 .cart-ss-socket {
