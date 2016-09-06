@@ -22,7 +22,7 @@ class Ram extends Rom.Rom {
   void	push8(int ramAddr, int byte)
   {
     assert(ramAddr >= 0 && ramAddr < data.length);
-    assert(word | ~0xFF == 0);
+    assert(word & ~0xFF == 0);
     this.data[ramAddr] = byte;
     return ;
   }
@@ -31,7 +31,7 @@ class Ram extends Rom.Rom {
   {
     assert(ramAddr % 2 == 0);
     assert(ramAddr >= 0 && ramAddr < data.length);
-    assert(word | ~0xFFFF == 0);
+    assert(word & ~0xFFFF == 0);
     final int addrView16 = ramAddr ~/ 2;
     view16[addrView16] = word;
     return ;
