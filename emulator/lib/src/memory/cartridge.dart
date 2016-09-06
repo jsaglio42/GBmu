@@ -50,7 +50,6 @@ abstract class Cartridge implements Imbc.IMbc {
   		default : break ;
   	}
     throw new Exception('Cartridge: ' + ctype.toString() + ' not supported');
-    return null;
   }
 
 }
