@@ -42,33 +42,38 @@ class Mmu {
   /* Memory API ***************************************************************/
 
   // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  int pullMem8(int memAddr) => 0x42;
-  int pullMem16(int memAddr) => 0x42;
+  int pullMem8(int memAddr) => _pullMem(memAddr, (a) => _mbc.pullMem8(a));
+  int pullMem16(int memAddr) => _pullMem(memAddr, (a) => _mbc.pullMem16(a));
   
   // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  void pushMem8(int memAddr, int word) { return ; }
-  void pushMem16(int memAddr, int word) { return ; }
+  void pushMem8(int memAddr, int word) {
+    _pushMem(memAddr, word, (a, w) { _mbc.pushMem8(a, w); });
+  }
 
-  /* Not working, to be fixed */
+  void pushMem16(int memAddr, int word) {
+    _pushMem(memAddr, word, (a, w) { _mbc.pushMem16(a, w); });
+  }
 
-  // // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  // int pullMem8(int memAddr) => _pullMem(memAddr, _mbc.pullMem8);
-  // int pullMem16(int memAddr) => _pullMem(memAddr, _mbc.pullMem16);
-  
-  // // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  // void pushMem8(int memAddr, int word) { _pushMem(memAddr, word, _mbc.pushMem8);} 
-  // void pushMem16(int memAddr, int word) { _pushMem(memAddr, word, _mbc.pushMem16);} 
+  /* Private function */
 
-  // // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  // int _pullMem(int memAddr, pullfunction) {
-  //   return 0x42;
-  // }
+  // PrivateAddress aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
+  // To be implemented
+  int _pullMem(int memAddr, int pullFunction(int)) {
+    if (memAddr < 0x7FFF)
+      return pullFunction(memAddr);
+    else
+      return 0x24;
+  }
 
-  // // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  // void _pushMem(int memAddr, int word, pushfunction)
-  // {
-  //   return ;
-  // }
+  // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
+  // To be implemented
+  void _pushMem(int memAddr, int word, void pushFunction(int, int))
+  {
+    pushFunction(memAddr, word);
+    return ;
+  }
+
+}
 
   /* Oldies */
 
@@ -123,7 +128,3 @@ class Mmu {
   //   // TODO: pullMem
   //   return ;
   // }
-
-
-}
-

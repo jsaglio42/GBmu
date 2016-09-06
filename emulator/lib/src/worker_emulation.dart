@@ -177,7 +177,7 @@ abstract class Emulation implements Worker.AWorker {
     //TODO: Select right constructon giving r.pullHeader(RomHeaderField.Cartridge_Type)
     Cartridge.Cartridge c;
     try {
-      final c = new Cartridge.Cartridge(irom);
+      c = new Cartridge.Cartridge(irom);
       // final c = new Cartridge.Cartridge(irom, optionalRam: iram);
     } catch (e, st) {
       print(st);
