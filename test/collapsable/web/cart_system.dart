@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:48:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 16:53:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 17:37:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,6 +23,7 @@ import './chip_system.dart';
 class ChipSocket extends IChipBank {
 
   final Html.Element _elt;
+  final Js.JsObject _jqElt;
   final ChipType chipType;
 
   CartLocation _cartLoc = CartLocation.CartBank;
@@ -35,7 +36,27 @@ class ChipSocket extends IChipBank {
 
   // Construction *********************************************************** **
 
-  ChipSocket(this._elt, this.chipType);
+  ChipSocket(elt, this.chipType, String c)
+    : _elt = elt
+    , _jqElt = Js.context.callMethod(r'$', [
+      new Js.JsObject.fromBrowserObject(elt)])
+  {
+    _jqElt.callMethod('droppable', [new Js.JsObject.jsify({
+      'accept': '.cart-$c-bis',
+      'classes': {
+        'ui-droppable-active': 'cart-$c-socket-active',
+        'ui-droppable-hover': 'cart-$c-socket-hover',
+      },
+    })]);
+    _jqElt.callMethod('on', ['drop',
+      (a, b) {
+        print('helloG');
+      }
+    ]);
+  }
+
+  ChipSocket.ram(elt): this(elt, ChipType.Ram, 'ram');
+  ChipSocket.ss(elt): this(elt, ChipType.Ss, 'ss');
 
   // From ChipBank ********************************************************** **
 
@@ -73,6 +94,7 @@ class ChipSocket extends IChipBank {
   {
     assert(_locked == false, "ChipSocket.lock() while locked");
     this._locked = true;
+    _jqElt.callMethod('droppable', ['disable']);
     if (_chip.isSome)
       _chip.v.lock();
   }
@@ -81,6 +103,7 @@ class ChipSocket extends IChipBank {
   {
     assert(_locked == true, "ChipSocket.unlock() while unlocked");
     this._locked = false;
+    _jqElt.callMethod('droppable', ['enable']);
     if (_chip.isSome)
       _chip.v.lock();
   }
@@ -116,7 +139,7 @@ class Cart {
   {
     final ramElt = elt.querySelector('.cart-ram-socket');
 
-    return new ChipSocket(ramElt, ChipType.Ram);
+    return new ChipSocket.ram(ramElt);
   }
 
   static _ssSocketsOfElt(elt)
@@ -125,7 +148,7 @@ class Cart {
     var l = [];
 
     for (int i = 0; i < 4; i++) {
-      l.add(new ChipSocket(ssElts[i], ChipType.Ss));
+      l.add(new ChipSocket.ss(ssElts[i]));
     }
     return new List<ChipSocket>.unmodifiable(l);
   }

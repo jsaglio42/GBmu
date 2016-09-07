@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:49:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 16:31:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 17:15:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,11 +39,11 @@ class Chip implements IChip {
 
   // Construction *********************************************************** **
 
-  static _img()
+  static _img(String c)
   {
     return new Html.ImageElement()
       ..setAttribute('draggable', 'true')
-      ..classes.addAll(["cart-ram-bis", "ui-widget-content"]);
+      ..classes.addAll(["cart-$c-bis", "ui-widget-content"]);
   }
 
   Chip.details(this._type, elt, imgSrc, left)
@@ -64,8 +64,8 @@ class Chip implements IChip {
     this.unlock();
   }
 
-  Chip.ram() : this.details(ChipType.Ram, _img(), "images/gb_ram.png", 92);
-  Chip.ss() : this.details(ChipType.Ss, _img(), "images/gb_ss.png", 44);
+  Chip.ram() : this.details(ChipType.Ram, _img('ram'), "images/gb_ram.png", 92);
+  Chip.ss() : this.details(ChipType.Ss, _img('ss'), "images/gb_ss.png", 44);
 
   // From IChip ************************************************************* **
 
