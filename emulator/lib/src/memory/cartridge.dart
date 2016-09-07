@@ -15,7 +15,8 @@ import "dart:typed_data";
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/memory/data.dart" as Data;
-import "package:emulator/src/memory/cartromonly.dart" as C_RO;
+import "package:emulator/src/memory/cart_romonly.dart" as C_RO;
+import "package:emulator/src/memory/cart_mbc1.dart" as C_MBC1;
 
 /* Cartridge Implementation ****************************************************
 **
@@ -35,7 +36,6 @@ abstract class ACartridge {
 
   factory ACartridge(Data.Rom rom, {Data.Ram optionalRam : null})
   {
-    print('Cartridge Constructor');
     final expectedRomSize = rom.pullHeaderValue(RomHeaderField.ROM_Size);
     final expectedRamSize = rom.pullHeaderValue(RomHeaderField.RAM_Size);
     final isLogoValid = rom.pullHeaderValue(RomHeaderField.Nintendo_Logo);
@@ -48,11 +48,20 @@ abstract class ACartridge {
       throw new Exception('Cartridge: RAM Size is not matching header info');
     else if (isLogoValid == false)
       throw new Exception('Cartridge: Logo is not valid');
-    final ctype = rom.pullHeaderValue(RomHeaderField.Cartridge_Type);
+
+   final ctype = rom.pullHeaderValue(RomHeaderField.Cartridge_Type);
     switch (ctype)
     {
       case (CartridgeType.ROM_ONLY) :
         return new C_RO.CartRomOnly.internal(rom, ram);
+
+      case (CartridgeType.MBC1) :
+        return new C_MBC1.CartMBC1.internal(rom, ram);
+      case (CartridgeType.MBC1_RAM) :
+        return new C_MBC1.CartMBC1.internal(rom, ram);
+      case (CartridgeType.MBC1_RAM_BATTERY) :
+        return new C_MBC1.CartMBC1.internal(rom, ram);
+
       default : break ;
     }
     throw new Exception('Cartridge: ' + ctype.toString() + ' not supported');

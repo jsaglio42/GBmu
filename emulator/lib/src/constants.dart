@@ -49,14 +49,14 @@ final Duration SPEEDPOLL_PERIOD_DURATION = new Duration(microseconds:
 
 final Duration EMULATION_START_DELAY = new Duration(milliseconds: 100);
 
-const int WORKING_RAM_BEGIN = 0;
-const int WORKING_RAM_LAST = 10;
-const int WORKING_RAM_SIZE = WORKING_RAM_LAST - WORKING_RAM_BEGIN + 1;
-
-const int VIDEO_RAM_BEGIN = 0;
-const int VIDEO_RAM_LAST = 10;
+const int VIDEO_RAM_BEGIN = 0x8000;
+const int VIDEO_RAM_LAST = 0x9FFF;
 const int VIDEO_RAM_SIZE = VIDEO_RAM_LAST - VIDEO_RAM_BEGIN + 1;
 
-const int TAIL_RAM_BEGIN = 0xFF00;
+const int WORKING_RAM_BEGIN = 0xC000;
+const int WORKING_RAM_LAST = 0xDFFF;
+const int WORKING_RAM_SIZE = WORKING_RAM_LAST - WORKING_RAM_BEGIN + 1;
+
+const int TAIL_RAM_BEGIN = 0xFE00;
 const int TAIL_RAM_LAST = 0xFFFF;
 const int TAIL_RAM_SIZE = TAIL_RAM_LAST - TAIL_RAM_BEGIN + 1;

@@ -25,7 +25,7 @@ abstract class AData {
     _data = d,
     _view16 = d.buffer.asUint16List();
 
-  int get size => this.size;
+  int get size => _data.length;
 
 }
 
