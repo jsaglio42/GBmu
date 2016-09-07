@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 14:14:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 14:01:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -114,6 +114,9 @@ abstract class Emulation implements Worker.AWorker {
     _updateEmulationSpeed(_emulationSpeed);
     this.gbOpt = new Ft.Option.some(gb);
     _updateGBMode(GameBoyExternalMode.Emulating);
+    if (this.debMode == DebuggerExternalMode.Operating
+        && this.pauseMode != PauseExternalMode.Effective)
+      _updatePauseMode(PauseExternalMode.Effective);
     this.ports.send('Events', <String, dynamic>{
       'type': EmulatorEvent.GameBoyStart,
       'msg': "Plokemon violet.rom",

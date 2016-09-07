@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   rom.dart                                           :+:      :+:    :+:   //
+//   data.dart                                          :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/23 14:56:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/02 15:33:48 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/07 11:42:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -197,7 +197,7 @@ class RomHeaderFieldInfo {
 
 /* Rom Header Decoder *********************************************************/
 
-abstract class HeaderDecoder extends Data 
+abstract class HeaderDecoder extends Data
   with ReadOperation {
 
   dynamic pullHeaderValue(RomHeaderField f)
@@ -525,5 +525,3 @@ main(){
   debugRomHeader();
 	return ;
 }
-
-

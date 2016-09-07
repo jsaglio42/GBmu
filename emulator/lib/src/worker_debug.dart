@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 07:27:26 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 14:03:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -42,7 +42,16 @@ abstract class Debug implements Worker.AWorker {
         , '_onMemoryAddrChangeReq: addr not valid');
     _debuggerMemoryAddr = addr;
 
-    // TODO: removed cause not sure that GameBoy is present    
+    if (this.gbMode == GameBoyExternalMode.Emulating
+        && this.pauseMode == PauseExternalMode.Effective) {
+      this.ports.send('MemInfo',  <String, dynamic> {
+        'addr' : _debuggerMemoryAddr,
+        'data' : _buildMemoryList(_debuggerMemoryAddr, this.gbOpt.v)
+      });
+    }
+
+
+    // TODO: removed cause not sure that GameBoy is present
     // Uint8List memList;
     // if (this.gbOpt.isSome)
     // {

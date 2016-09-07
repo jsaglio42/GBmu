@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:30:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 14:07:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -47,7 +47,7 @@ final Duration FRAME_PERIOD_DURATION = new Duration(microseconds:
 final Duration SPEEDPOLL_PERIOD_DURATION = new Duration(microseconds:
     (SPEEDPOLL_PERIOD_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE).round());
 
-final Duration EMULATION_START_DELAY = new Duration(milliseconds: 500);
+final Duration EMULATION_START_DELAY = new Duration(milliseconds: 100);
 
 const int WORKING_RAM_BEGIN = 0;
 const int WORKING_RAM_LAST = 10;

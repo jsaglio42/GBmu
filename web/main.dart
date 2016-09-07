@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 08:48:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 11:52:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -125,7 +125,7 @@ void test_endianess(){
   for (int i = 0; i < 15; i++) {
     l16[i] = (2 * i) + ((2 * i + 1) << 8);
   }
-  var l8 = new Uint8List.view(l16.buffer); 
+  var l8 = new Uint8List.view(l16.buffer);
   print(l16);
   print(l8);
   return ;
