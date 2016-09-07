@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:49:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 17:15:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 19:32:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,15 +27,20 @@ abstract class IChip {
   void lock();
   void unlock();
 
+  set parent(IChipBank p);
+  Ft.Option<IChipBank> get parent;
+
 }
 
 class Chip implements IChip {
 
   final ChipType _type;
   final Html.ImageElement _elt;
+  final Js.JsObject _jsObject;
   final Js.JsObject _jqObject;
 
   bool _locked = true;
+  Ft.Option<IChipBank> _parent = new Ft.Option<IChipBank>.none();
 
   // Construction *********************************************************** **
 
@@ -47,9 +52,10 @@ class Chip implements IChip {
   }
 
   Chip.details(this._type, elt, imgSrc, left)
-    : _jqObject = Js.context.callMethod(r'$', [
+    : _elt = elt
+    , _jsObject = new Js.JsObject.fromBrowserObject(elt)
+    , _jqObject = Js.context.callMethod(r'$', [
       new Js.JsObject.fromBrowserObject(elt)])
-    , _elt = elt
   {
     _jqObject.callMethod('draggable', [new Js.JsObject.jsify({
       'helper': "original",
@@ -61,6 +67,7 @@ class Chip implements IChip {
       'zIndex': "100",
     })]);
     _elt.setAttribute('src', imgSrc);
+    _jsObject['dartHandle'] = this;
     this.unlock();
   }
 
@@ -69,8 +76,12 @@ class Chip implements IChip {
 
   // From IChip ************************************************************* **
 
-  bool get locked => _locked;
   Html.ImageElement get elt => _elt;
+  bool get locked => _locked;
+  set parent(IChipBank p) {
+    _parent = new Ft.Option<IChipBank>.some(p);
+  }
+  Ft.Option<IChipBank> get parent => _parent;
 
   void lock()
   {
@@ -100,7 +111,6 @@ abstract class IChipBank {
   bool acceptType(ChipType t); // Type check only, not a capacity check
   void pop(Chip c);
   void push(Chip c);
-
 }
 
 class DetachedChipBank extends IChipBank {
@@ -140,6 +150,7 @@ class DetachedChipBank extends IChipBank {
            );
     _chips.add(toPush);
     _elt.nodes = _chips.map((c) => c.elt);
+    toPush.parent = this;
   }
 
   // ************************************************************************ **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:48:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 17:37:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 19:28:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,7 +22,8 @@ import './chip_system.dart';
 
 class ChipSocket extends IChipBank {
 
-  final Html.Element _elt;
+  final Html.DivElement _elt;
+  final Js.JsObject _jsElt;
   final Js.JsObject _jqElt;
   final ChipType chipType;
 
@@ -36,10 +37,10 @@ class ChipSocket extends IChipBank {
 
   // Construction *********************************************************** **
 
-  ChipSocket(elt, this.chipType, String c)
+  ChipSocket(elt, jsElt, this.chipType, String c)
     : _elt = elt
-    , _jqElt = Js.context.callMethod(r'$', [
-      new Js.JsObject.fromBrowserObject(elt)])
+    , _jsElt = jsElt
+    , _jqElt = Js.context.callMethod(r'$', [jsElt])
   {
     _jqElt.callMethod('droppable', [new Js.JsObject.jsify({
       'accept': '.cart-$c-bis',
@@ -48,15 +49,13 @@ class ChipSocket extends IChipBank {
         'ui-droppable-hover': 'cart-$c-socket-hover',
       },
     })]);
-    _jqElt.callMethod('on', ['drop',
-      (a, b) {
-        print('helloG');
-      }
-    ]);
+    _jqElt.callMethod('on', ['drop', _onDrop]);
   }
 
-  ChipSocket.ram(elt): this(elt, ChipType.Ram, 'ram');
-  ChipSocket.ss(elt): this(elt, ChipType.Ss, 'ss');
+  ChipSocket.ram(elt): this(
+      elt, new Js.JsObject.fromBrowserObject(elt), ChipType.Ram, 'ram');
+  ChipSocket.ss(elt): this(
+      elt, new Js.JsObject.fromBrowserObject(elt), ChipType.Ss, 'ss');
 
   // From ChipBank ********************************************************** **
 
@@ -85,7 +84,29 @@ class ChipSocket extends IChipBank {
         , "ChipSocket.push($c) with `_chip.v = ${_chip.v}`"
            );
     _chip = new Ft.Option<Chip>.some(c);
+    c.parent = this;
     _elt.nodes = [_chip.v.elt];
+  }
+
+  void _onDrop(Js.JsObject event, Js.JsObject ui)
+  {
+    final Js.JsObject drag = ui['draggable'];
+    ftdump("drag", drag);
+
+    final Html.ImageElement cont = drag['context'];
+    ftdump("cont", cont);
+
+    final Js.JsObject ob = new Js.JsObject.fromBrowserObject(cont);
+    ftdump("ob", ob);
+
+    final Chip cl = ob['dartHandle'];
+    ftdump("cl", cl);
+
+    assert(cl.parent.isSome,
+        "ChipSocket._onDrop() missing parent field in Chip");
+
+    cl.parent.v.pop(cl);
+    this.push(cl);
   }
 
   // ************************************************************************ **
@@ -108,6 +129,11 @@ class ChipSocket extends IChipBank {
       _chip.v.lock();
   }
 
+}
+
+void ftdump(name, obj)
+{
+  print('$name: ($obj), (${obj.runtimeType}), (${obj.hashCode})');
 }
 
 class Cart {
