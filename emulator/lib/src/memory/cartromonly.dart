@@ -10,18 +10,12 @@
 //                                                                            //
 // ************************************************************************** //
 
-import "package:emulator/src/memory/ram.dart" as Ram;
-import "package:emulator/src/memory/rom.dart" as Rom;
+import "package:emulator/src/memory/data.dart" as Data;
 import "package:emulator/src/memory/cartridge.dart" as Cartridge;
-import "package:emulator/src/memory/imbc.dart" as Imbc;
 
-class CartRomOnly extends Cartridge.Cartridge  {
+class CartRomOnly extends Cartridge.ACartridge  {
 
-  // Not working ... should be working : http://stackoverflow.com/questions/13272035/how-do-i-call-a-super-constructor-in-dart
-  // CartMbc0(Rom.Rom rom, Ram.Ram ram)
-  //   : super._private(rom, ram);
-
-  CartRomOnly.internal(Rom.Rom rom, Ram.Ram ram) : super.internal(rom, ram);
+  CartRomOnly.internal(Data.Rom rom, Data.Ram ram) : super.internal(rom, ram);
 
   @override int pullMem8(int memAddr) { 
     assert(memAddr >= 0 && memAddr < this.rom.size);

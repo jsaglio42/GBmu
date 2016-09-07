@@ -1,7 +1,7 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   rom_header.dart                                    :+:      :+:    :+:   //
+//   headerdecoder.dart                                 :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
@@ -10,13 +10,10 @@
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:convert' as Convert;
 import 'dart:typed_data';
-import "package:emulator/src/memory/rom.dart" as Rom;
+import 'dart:convert' as Convert;
 
-/*
- * Page3 : https://docs.google.com/spreadsheets/d/1ffcl5dd_Q12Eqf9Zlrho_ghUZO5lT-gIpRi392XHU10
- */
+import 'package:emulator/src/memory/data.dart' as Data;
 
 /* Enums **********************************************************************/
 
@@ -88,7 +85,7 @@ class RomHeaderFieldInfo {
 
 /* Rom Header Decoder *********************************************************/
 
-abstract class RomHeaderDecoder implements Rom.IRom {
+abstract class AHeaderDecoder implements Data.AReadOperation {
 
   dynamic pullHeaderValue(RomHeaderField f)
   {
@@ -233,11 +230,11 @@ final headerFieldInfos = <RomHeaderField, RomHeaderFieldInfo>{
 
 /* To value functions *********************************************************/
 
-typedef dynamic _toValueFunc(Rom.IRom rom);
+typedef dynamic _toValueFunc(AHeaderDecoder rom);
 
-bool _fieldOutOfBound(Rom.IRom rom, RomHeaderFieldInfo dat)
+bool _fieldOutOfBound(AHeaderDecoder rom, RomHeaderFieldInfo info)
 {
-  if (dat.address + dat.size > rom.size)
+  if (info.address + info.size > rom.size)
     return true;
   else
     return false;
@@ -245,14 +242,14 @@ bool _fieldOutOfBound(Rom.IRom rom, RomHeaderFieldInfo dat)
 
 _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
 {
-  return (Rom.IRom rom) {
-    final dat = headerFieldInfos[f];
-    if (_fieldOutOfBound(rom, dat))
+  return (AHeaderDecoder rom) {
+    final info = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
     else {
-      final v = rom.pull8(dat.address);
+      final v = rom.pull8(info.address);
       if (map.containsKey(v) == false)
-        throw new Exception('Rom Header: ' + dat.name + ': Unknown id');
+        throw new Exception('Rom Header: ' + info.name + ': Unknown id');
       return map[v];
     }
   };
@@ -260,78 +257,74 @@ _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
 
 _toValueFunc _makeByteGetterFunction(RomHeaderField f)
 {
-  return (Rom.IRom rom) {
-    final dat = headerFieldInfos[f];
-    if (_fieldOutOfBound(rom, dat))
-      throw new Exception('Rom Header: ' + dat.name + ': Out of bound');
+  return (AHeaderDecoder rom) {
+    final info = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, info))
+      throw new Exception('Rom Header: ' + info.name + ': Out of bound');
     else
-      return rom.pull8(dat.address);
+      return rom.pull8(info.address);
   };
 }
 
 _toValueFunc _makeWordGetterFunction(RomHeaderField f)
 {
-  return (Rom.IRom rom) {
-    final dat = headerFieldInfos[f];
-    if (_fieldOutOfBound(rom, dat))
-      throw new Exception('Rom Header: ' + dat.name + ': Out of bound');
+  return (AHeaderDecoder rom) {
+    final info = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, info))
+      throw new Exception('Rom Header: ' + info.name + ': Out of bound');
     else
-      return rom.pull16(dat.address);
+      return rom.pull16(info.address);
   };
 }
 _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
 {
-  return (Rom.IRom rom) {
-    final dat = headerFieldInfos[f];
-    if (_fieldOutOfBound(rom, dat))
-      throw new Exception('Rom Header: ' + dat.name + ': Out of bound');
+  return (AHeaderDecoder rom) {
+    final info = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, info))
+      throw new Exception('Rom Header: ' + info.name + ': Out of bound');
     else
       return
-        (rom.pull8(dat.address + 0) << 0) |
-        (rom.pull8(dat.address + 1) << 8) |
-        (rom.pull8(dat.address + 2) << 16) |
-        (rom.pull8(dat.address + 3) << 24);
-        // rom.pull8(dat.address + 0) << 8 * 3 |
-        // rom.pull8(dat.address + 1) << 8 * 2 |
-        // rom.pull8(dat.address + 2) << 8 * 1 |
-        // rom.pull8(dat.address + 3) << 8 * 0;
+        (rom.pull8(info.address + 0) << 0) |
+        (rom.pull8(info.address + 1) << 8) |
+        (rom.pull8(info.address + 2) << 16) |
+        (rom.pull8(info.address + 3) << 24);
   };
 }
 _toValueFunc _makeByteListGetterFunction(RomHeaderField f)
 {
-  return (Rom.IRom rom) {
-    final dat = headerFieldInfos[f];
-    if (_fieldOutOfBound(rom, dat))
+  return (AHeaderDecoder rom) {
+    final info = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
     else
-      return rom.pull8List(dat.address, dat.size);
+      return rom.pull8View(info.address, info.size);
   };
 }
 
 _toValueFunc _makeStringGetterFunction(RomHeaderField f)
 {
-  return (Rom.IRom rom) {
-    final dat = headerFieldInfos[f];
-    if (_fieldOutOfBound(rom, dat))
+  return (AHeaderDecoder rom) {
+    final info = headerFieldInfos[f];
+    if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
-    final l = rom.pull8List(dat.address, dat.size);
+    final l = rom.pull8View(info.address, info.size);
     return Convert.ASCII.decode(l);
   };
 }
 
 /* Custom functions */
 
-bool _isNintendoLogoValid(Rom.IRom rom)
+bool _isNintendoLogoValid(AHeaderDecoder rom)
 {
   const ref = const <int>[
     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83,
     0x00, 0x0C, 0x00, 0x0D, 0x00, 0x08, 0x11, 0x1F, 0x88, 0x89, 0x00, 0x0E,
     0xDC, 0xCC, 0x6E, 0xE6, 0xDD, 0xDD, 0xD9, 0x99, 0xBB, 0xBB, 0x67, 0x63,
     0x6E, 0x0E, 0xEC, 0xCC, 0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E];
-  final f = headerFieldInfos[RomHeaderField.Nintendo_Logo];
-  if (_fieldOutOfBound(rom, f))
+  final info = headerFieldInfos[RomHeaderField.Nintendo_Logo];
+  if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
-  final logo = rom.pull8List(f.address, f.size);
+  final logo = rom.pull8View(info.address, info.size);
   if (logo.length != ref.length)
     return false;
   for (int i = 0; i < ref.length; i++)
@@ -342,7 +335,7 @@ bool _isNintendoLogoValid(Rom.IRom rom)
   return true;
 }
 
-/* Debug Rom Header ***********************************************************/
+/* Debug **********************************************************************/
 
 void debugRomHeader()
 {
@@ -398,7 +391,7 @@ void debugRomHeader()
     0xc3, 0x8b, 0x02, 0xcd, 0x2b, 0x2a, 0xf0, 0x41, 0xe6, 0x03, 0x20, 0xfa, 0x46, 0xf0, 0x41, 0xe6
   ]);
 
-  final rom = new Rom.Rom(tetrisHead);
+  final rom = new Rom(tetrisHead);
   for (RomHeaderField f in RomHeaderField.values) {
     print(f.toString());
     try {
@@ -410,3 +403,14 @@ void debugRomHeader()
   }
 
 }
+
+// main(){
+//   Rom rom = new Rom(new Uint8List(10));
+//   Ram ram = new Ram(new Uint8List(10));
+//   print(rom.pull8(2));
+//   ram.push8(2,2);
+//   debugRomHeader();
+//   return ;
+// }
+
+

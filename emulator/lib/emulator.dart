@@ -19,13 +19,13 @@ export 'package:emulator/src/emulator.dart';
 // src/memory/cartmbc0.dart
 // src/memory/cartridge.dart
 // src/memory/imbc.dart
-export 'package:emulator/src/memory/mem_registers.dart';
+export 'package:emulator/src/memory/memregisters.dart';
 // src/memory/mmu.dart
-export 'package:emulator/src/memory/ram.dart';
+// export 'package:emulator/src/memory/ram.dart';
 
 
 // export 'package:emulator/src/memory/rom.dart';
 // export 'package:emulator/src/memory/rom_header.dart';
 
-export 'package:emulator/src/memory/rom.dart';
-export 'package:emulator/src/memory/rom_headerdecoder.dart';
+export 'package:emulator/src/memory/data.dart';
+// export 'package:emulator/src/memory/rom_headerdecoder.dart';

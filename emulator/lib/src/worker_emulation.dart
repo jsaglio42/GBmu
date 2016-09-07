@@ -17,11 +17,11 @@ import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
-import 'package:emulator/src/memory/rom.dart' as Rom;
-import 'package:emulator/src/memory/ram.dart' as Ram;
+
+import 'package:emulator/src/memory/data.dart' as Data;
 import 'package:emulator/src/memory/cartridge.dart' as Cartridge;
-import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
-// import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
+// import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
+
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
 
@@ -175,17 +175,9 @@ abstract class Emulation implements Worker.AWorker {
   {
     final drom = l; //TODO: Retrieve from indexedDB
     final dram = new Uint8List.fromList([42, 43]); //TODO: Retrieve from indexedDB
-    final irom = new Rom.Rom(drom);
-    final iram = new Ram.Ram(dram);
-    //TODO: Select right constructon giving r.pullHeader(RomHeaderField.Cartridge_Type)
-    Cartridge.Cartridge c;
-    try {
-      c = new Cartridge.Cartridge(irom);
-      // final c = new Cartridge.Cartridge(irom, optionalRam: iram);
-    } catch (e, st) {
-      print(st);
-      rethrow ;
-    }
+    final irom = new Data.Rom(drom);
+    final iram = new Data.Ram(dram);
+    final c = new Cartridge.ACartridge(irom); //TODO: Take iram as parameter
     return new Gameboy.GameBoy(c);
   }
 

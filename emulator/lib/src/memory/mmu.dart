@@ -12,19 +12,20 @@
 
 import 'dart:typed_data';
 
-import "package:emulator/enums.dart";
-import 'package:emulator/constants.dart';
-import "package:emulator/src/memory/imbc.dart" as Imbc;
-import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
+import "package:emulator/src/enums.dart";
+import 'package:emulator/src/constants.dart';
+
+import "package:emulator/src/memory/cartridge.dart" as Cartridge;
+import 'package:emulator/src/memory/memregisters.dart' as Memregisters;
 
 class Mmu {
 
-  final Imbc.IMbc _mbc;
-  final Uint8List _wRam = new Uint8List(WORKING_RAM_SIZE);
+  final Cartridge.ACartridge _c;
   final Uint8List _vRam = new Uint8List(VIDEO_RAM_SIZE);
+  final Uint8List _wRam = new Uint8List(WORKING_RAM_SIZE);
   final Uint8List _tailRam = new Uint8List(TAIL_RAM_SIZE);
 
-  Mmu(this._mbc);
+  Mmu(this._c);
 
   /* Memory Register API ******************************************************/
 
@@ -42,16 +43,16 @@ class Mmu {
   /* Memory API ***************************************************************/
 
   // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  int pullMem8(int memAddr) => _pullMem(memAddr, (a) => _mbc.pullMem8(a));
-  int pullMem16(int memAddr) => _pullMem(memAddr, (a) => _mbc.pullMem16(a));
+  int pullMem8(int memAddr) => _pullMem(memAddr, (a) => _c.pullMem8(a));
+  int pullMem16(int memAddr) => _pullMem(memAddr, (a) => _c.pullMem16(a));
   
   // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
   void pushMem8(int memAddr, int word) {
-    _pushMem(memAddr, word, (a, w) { _mbc.pushMem8(a, w); });
+    _pushMem(memAddr, word, (a, w) { _c.pushMem8(a, w); });
   }
 
   void pushMem16(int memAddr, int word) {
-    _pushMem(memAddr, word, (a, w) { _mbc.pushMem16(a, w); });
+    _pushMem(memAddr, word, (a, w) { _c.pushMem16(a, w); });
   }
 
   /* Private function */

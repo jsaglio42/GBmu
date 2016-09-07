@@ -10,12 +10,13 @@
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:async' as Async;
+
 import 'dart:typed_data';
-import 'package:ft/ft.dart' as Ft;
-import 'package:ft/wired_isolate.dart' as Wiso;
+import 'dart:async' as Async;
 
 import 'package:emulator/enums.dart';
+import 'package:ft/ft.dart' as Ft;
+import 'package:ft/wired_isolate.dart' as Wiso;
 import 'package:emulator/src/worker.dart' as Worker;
 import "package:emulator/src/cpu_registers.dart" as Cpuregs;
 

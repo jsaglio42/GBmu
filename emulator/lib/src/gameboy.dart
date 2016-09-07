@@ -34,15 +34,16 @@ Map _generateRandomMapFromIterable(Iterable l, int value_range)
 
 class GameBoy {
 
-  final Cpuregs.CpuRegs cpuRegs = new Cpuregs.CpuRegs();
   final Mmu.Mmu mmu;
-  final Cartridge.Cartridge cartridge;
+  final Cartridge.ACartridge cartridge;
+  final Cpuregs.CpuRegs cpuRegs = new Cpuregs.CpuRegs();
+
   // final LCDScreen lcd;
   // final Headset sound;
 
   int         _clockCount = 0;
 
-  GameBoy(Cartridge.Cartridge c) //TODO: pass LCDScreen and eadset
+  GameBoy(Cartridge.ACartridge c) //TODO: pass LCDScreen and eadset <- DONT AGREE
     : this.cartridge = c
     , this.mmu = new Mmu.Mmu(c);
 

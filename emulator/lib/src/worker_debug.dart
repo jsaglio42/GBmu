@@ -20,7 +20,7 @@ import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 // import 'package:emulator/src/memory/rom.dart' as Rom;
 // import 'package:emulator/src/memory/ram.dart' as Ram;
-import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
+import 'package:emulator/src/memory/memregisters.dart' as Memregisters;
 // import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
