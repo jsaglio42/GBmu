@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/05 12:21:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/06 10:35:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/07 16:32:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,10 @@ import 'package:ft/ft.dart' as Ft;
 // import 'package:emulator/constants.dart';
 // import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
-import './chips.dart' as Chips;
+
+import './component_system.dart';
+import './cart_system.dart';
+import './chip_system.dart';
 
 /*
  * Global Variable
@@ -67,24 +70,24 @@ Async.Future init(Emulator.Emulator emu) async {
           })
          );
   try {
-    var cab = new Chips.CartBank(_cartHtml, _domCartValidator);
+    var cab = new CartBank(_cartHtml, _domCartValidator);
     cab.testAdd();
     cab.testAdd();
     cab.testAdd();
 
-    var dcb = new Chips.DetachedChipBank();
+    var dcb = new DetachedChipBank();
     var cList = [dcb.newRam(), dcb.newRam(), dcb.newSs()];
 
-    print(cab);
-    print(cab.carts[1]);
-    print(cab.carts[1].ssSockets[1]);
+    // print(cab);
+    // print(cab.carts[1]);
+    // print(cab.carts[1].ssSockets[1]);
 
-    cList[2].changeBank(
-        cab.carts[1].ssSockets[1]
-                        );
-    cList[1].changeBank(
-        cab.carts[1].ramSocket
-                        );
+    // cList[2].changeBank(
+        // cab.carts[1].ssSockets[1]
+                        // );
+    // cList[1].changeBank(
+    //     cab.carts[1].ramSocket
+    //                     );
 
   } catch (e, st) {
     print(e);
