@@ -98,20 +98,20 @@ class Ram extends AData
 class VideoRam extends AData
   with AReadOperation, AWriteOperation {
 
-  Ram(Uint8List d) : super(d);
+  VideoRam(Uint8List d) : super(d);
 
 }
 
 class WorkingRam extends AData
   with AReadOperation, AWriteOperation {
 
-  Ram(Uint8List d) : super(d);
+  WorkingRam(Uint8List d) : super(d);
 
 }
 
 class TailRam extends AData
   with AReadOperation, AWriteOperation {
 
-  Ram(Uint8List d) : super(d);
+  TailRam(Uint8List d) : super(d);
 
 }

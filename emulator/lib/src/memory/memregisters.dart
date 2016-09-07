@@ -55,6 +55,8 @@ enum MemReg {
   IE,
 }
 
+/* MemRegInfo *****************************************************************/
+
 class MemRegInfo {
 
   int     address;
@@ -66,6 +68,8 @@ class MemRegInfo {
   MemRegInfo(
       this.address, this.cgb, this.name, this.category, this.description);
 }
+
+/* Global *********************************************************************/
 
 final memRegInfos =
   new List<MemRegInfo>.unmodifiable([

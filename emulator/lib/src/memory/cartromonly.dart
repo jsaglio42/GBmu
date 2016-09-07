@@ -22,13 +22,18 @@ class CartRomOnly extends Cartridge.ACartridge  {
     return this.rom.pull8(memAddr);
   }
   
-  @override int pullMem16(int memAddr){ return 0x42;
+  @override int pullMem16(int memAddr){
     assert(memAddr >= 0 && memAddr < this.rom.size);
     return this.rom.pull16(memAddr);
   }
 
   // Should we throw?
-  @override void pushMem8(int memAddr, int byte) {}
-  @override void pushMem16(int memAddr, int word) {}
+  @override void pushMem8(int memAddr, int byte) {
+    throw new Exception('CartridgeType: ROM ONLY: pushmem8 not supported');
+  }
+
+  @override void pushMem16(int memAddr, int word) {
+    throw new Exception('CartridgeType: ROM ONLY: pushmem16 not supported');
+  }
 
 }

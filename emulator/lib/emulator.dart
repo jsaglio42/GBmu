@@ -12,20 +12,17 @@
 
 // imporation process (emacs): C-u   ls -d1 src/**/*.dart | sort
 
+// Root
 export 'package:emulator/src/cpu_registers.dart';
 export 'package:emulator/src/emulator.dart';
-// src/enums.dart
-// src/gameboy.dart
-// src/memory/cartmbc0.dart
-// src/memory/cartridge.dart
-// src/memory/imbc.dart
+// export 'package:emulator/src/enums.dart';
+// export 'package:emulator/src/constants.dart';
+// export 'package:emulator/src/gameboy.dart';
+
+// Memory
+// export 'package:emulator/src/memory/cartridge.dart';
+// export 'package:emulator/src/memory/cartromonly.dart';
+// export 'package:emulator/src/memory/data.dart';
+// export 'package:emulator/src/memory/headerdecoder.dart';
 export 'package:emulator/src/memory/memregisters.dart';
-// src/memory/mmu.dart
-// export 'package:emulator/src/memory/ram.dart';
-
-
-// export 'package:emulator/src/memory/rom.dart';
-// export 'package:emulator/src/memory/rom_header.dart';
-
-export 'package:emulator/src/memory/data.dart';
-// export 'package:emulator/src/memory/rom_headerdecoder.dart';
+// export 'package:emulator/src/memory/mmu.dart';

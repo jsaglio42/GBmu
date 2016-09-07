@@ -15,26 +15,26 @@ import 'dart:typed_data';
 import "package:emulator/src/enums.dart";
 import 'package:emulator/src/constants.dart';
 
+import "package:emulator/src/memory/data.dart" as Data;
 import "package:emulator/src/memory/cartridge.dart" as Cartridge;
 import 'package:emulator/src/memory/memregisters.dart' as Memregisters;
 
 class Mmu {
 
   final Cartridge.ACartridge _c;
-  final Uint8List _vRam = new Uint8List(VIDEO_RAM_SIZE);
-  final Uint8List _wRam = new Uint8List(WORKING_RAM_SIZE);
-  final Uint8List _tailRam = new Uint8List(TAIL_RAM_SIZE);
+  final _vr = new Data.VideoRam(new Uint8List(VIDEO_RAM_SIZE));
+  final _wr = new Data.WorkingRam(new Uint8List(WORKING_RAM_SIZE));
+  final _tr = new Data.TailRam(new Uint8List(TAIL_RAM_SIZE));
 
   Mmu(this._c);
 
-  /* Memory Register API ******************************************************/
+  /* Mem Reg API **************************************************************/
 
   int pullMemReg(MemReg reg) {
     final addr = Memregisters.memRegInfos[reg.index].address;
     return this.pullMem8(addr);
   }
 
-  /** memAddr [0, 0xff], byte [0, 0xff] */
   void pushMemReg(MemReg reg, int byte) {
     final addr = Memregisters.memRegInfos[reg.index].address;
     this.pushMem8(addr, byte);
