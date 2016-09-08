@@ -54,12 +54,12 @@ class GameBoy {
 
   int get clockCount => _clockCount;
 
-  void exec(int numInst) {
+  void exec(int nbClock) {
     // print('exec($numInst)');
     int inst;
     
-    _clockCount += numInst;
-    while (numInst-- > 0)
+    _clockCount += nbClock;
+    while (nbClock-- > 0)
     {
       inst = mmu.pullMem8(cpuRegs.value16(Reg16.PC));
       switch(inst)
