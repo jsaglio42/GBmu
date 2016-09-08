@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   cart_bank.dart                                     :+:      :+:    :+:   //
+//   main.dart                                          :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/05 12:21:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 16:32:05 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/08 14:36:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,8 +22,9 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/emulator.dart' as Emulator;
 
 import './component_system.dart';
-import './cart_system.dart';
-import './chip_system.dart';
+import './cart.dart';
+import './chip.dart';
+import './toplevel_banks.dart';
 
 /*
  * Global Variable

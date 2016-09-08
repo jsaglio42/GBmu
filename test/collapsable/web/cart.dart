@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   cart_system.dart                                   :+:      :+:    :+:   //
+//   cart.dart                                          :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/07 14:48:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 14:24:26 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/08 14:31:31 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/08 14:38:40 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,7 +18,9 @@ import 'dart:html' as Html;
 import 'package:ft/ft.dart' as Ft;
 
 import './component_system.dart';
-import './chip_system.dart';
+import './cart.dart';
+import './chip.dart';
+// import './toplevel_banks.dart';
 
 class ChipSocket extends AChipBank {
 
@@ -67,7 +69,7 @@ class ChipSocket extends AChipBank {
 
   bool acceptType(ChipType t) => t == this.chipType;
 
-  void pop(Chip c)
+  void pop(IChip c)
   {
     Ft.log('ChipSocket', 'pop', c);
     assert(_chip.isSome && _chip.v == c
@@ -77,7 +79,7 @@ class ChipSocket extends AChipBank {
     _elt.nodes = [];
   }
 
-  void push(Chip c)
+  void push(IChip c)
   {
     Ft.log('ChipSocket', 'push', c);
     assert(_chip.isNone
@@ -244,33 +246,6 @@ class Cart {
     _locked = false;
     _ramSocket.unlock();
     _ssSockets.forEach((p) => p.unlock());
-  }
-
-}
-
-class CartBank {
-
-  List<Cart> _carts = [];
-  List<Cart> get carts => _carts;
-
-  final Html.DivElement _elt = Html.querySelector('#accordion');
-
-  final String _cartHtml;
-  final Html.NodeValidator _validator;
-
-  static bool _instanciated = false;
-  CartBank(this._cartHtml, this._validator)
-  {
-    assert(_instanciated == false, "CartBank()");
-    _instanciated = true;
-    assert(_elt != null, "CartBank._elt");
-
-  }
-
-  testAdd() {
-    _carts.add(new Cart(_cartHtml, _validator));
-    _elt.nodes = _carts.map((c) => c.elt);
-
   }
 
 }
