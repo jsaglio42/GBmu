@@ -93,5 +93,13 @@
 #detached-chip-bank {
     background-color: gray;
     padding: 7px;
-    width: 265px; /* 251 + padding * 2 */
+    width: 265px;
+}
+
+#detached-chip-bank.chipbank-active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#detached-chip-bank.chipbank-hover {
+    background-color: rgba(0, 200, 0, 0.75);
 }

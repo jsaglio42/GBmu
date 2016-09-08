@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:49:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 13:46:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 14:09:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,8 +28,8 @@ abstract class IChip {
   void lock();
   void unlock();
 
-  set parent(IChipBank p);
-  Ft.Option<IChipBank> get parent;
+  set parent(AChipBank p);
+  Ft.Option<AChipBank> get parent;
 
 }
 
@@ -41,7 +41,7 @@ class Chip implements IChip {
   final Js.JsObject _jqObject;
 
   bool _locked = true;
-  Ft.Option<IChipBank> _parent = new Ft.Option<IChipBank>.none();
+  Ft.Option<AChipBank> _parent = new Ft.Option<AChipBank>.none();
 
   // Construction *********************************************************** **
 
@@ -81,11 +81,11 @@ class Chip implements IChip {
   bool get locked => _locked;
   ChipType get type => _type;
 
-  set parent(IChipBank p) {
-    _parent = new Ft.Option<IChipBank>.some(p);
+  set parent(AChipBank p) {
+    _parent = new Ft.Option<AChipBank>.some(p);
   }
 
-  Ft.Option<IChipBank> get parent => _parent;
+  Ft.Option<AChipBank> get parent => _parent;
 
   void lock()
   {
@@ -103,9 +103,11 @@ class Chip implements IChip {
 
 }
 
+
+
 // Monadic `Chip` container, may have `[1, inf[` chip capacity
 // jQuery's `Droppable` target.
-abstract class IChipBank {
+abstract class AChipBank {
 
   Location get loc;
   bool get full;
@@ -115,16 +117,53 @@ abstract class IChipBank {
   bool acceptType(ChipType t); // Type check only, not a capacity check
   void pop(Chip c);
   void push(Chip c);
+
+  Js.JsObject _jsObjectOfJQueryObject(Js.JsObject jqElt) =>
+    new Js.JsObject.fromBrowserObject(jqElt['context']);
+
+  Chip _chipOfJQueryObject(jqob) =>
+    _jsObjectOfJQueryObject(jqob)['chipInstance'];
+
+  void onDrop(_, Js.JsObject ui)
+  {
+    final Chip c = _chipOfJQueryObject(ui['draggable']);
+
+    assert(c.parent.isSome,
+        "AChipBank._onDrop() missing parent field in Chip");
+    c.parent.v.pop(c);
+    this.push(c);
+  }
+
+  bool isAcceptable(Js.JsObject jqob)
+  {
+    final Chip c = _chipOfJQueryObject(jqob);
+
+    return this.full != true && this.locked != true && this.acceptType(c.type);
+  }
+
 }
 
-class DetachedChipBank extends IChipBank {
+class DetachedChipBank extends AChipBank {
 
   List<Chip> _chips = [];
   final Html.Element _elt = Html.querySelector('#detached-chip-bank');
 
   // Construction *********************************************************** **
 
-  DetachedChipBank();
+  DetachedChipBank()
+  {
+    var jqElt = Js.context.callMethod(r'$', [
+      new Js.JsObject.fromBrowserObject(_elt)]);
+
+    jqElt.callMethod('droppable', [new Js.JsObject.jsify({
+      'accept': this.isAcceptable,
+      'classes': {
+        'ui-droppable-active': 'chipbank-active',
+        'ui-droppable-hover': 'chipbank-hover',
+      },
+    })]);
+    jqElt.callMethod('on', ['drop', this.onDrop]);
+  }
 
   // From ChipBank ********************************************************** **
 

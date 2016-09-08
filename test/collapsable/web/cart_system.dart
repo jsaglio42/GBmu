@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:48:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 13:51:59 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 14:03:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,7 @@ import 'package:ft/ft.dart' as Ft;
 import './component_system.dart';
 import './chip_system.dart';
 
-class ChipSocket extends IChipBank {
+class ChipSocket extends AChipBank {
 
   final Html.DivElement _elt;
   final Js.JsObject _jsElt;
@@ -43,14 +43,13 @@ class ChipSocket extends IChipBank {
     , _jqElt = Js.context.callMethod(r'$', [jsElt])
   {
     _jqElt.callMethod('droppable', [new Js.JsObject.jsify({
-      // 'accept': '.cart-$c-bis',
-      'accept': _isAcceptable,
+      'accept': this.isAcceptable,
       'classes': {
         'ui-droppable-active': 'cart-$c-socket-active',
         'ui-droppable-hover': 'cart-$c-socket-hover',
       },
     })]);
-    _jqElt.callMethod('on', ['drop', _onDrop]);
+    _jqElt.callMethod('on', ['drop', this.onDrop]);
   }
 
   ChipSocket.ram(elt): this(
@@ -87,39 +86,6 @@ class ChipSocket extends IChipBank {
     _chip = new Ft.Option<Chip>.some(c);
     c.parent = this;
     _elt.nodes = [_chip.v.elt];
-  }
-
-  Js.JsObject _jsObjectOfJQueryObject(Js.JsObject jqElt)
-  {
-    return new Js.JsObject.fromBrowserObject(jqElt['context']);
-  }
-
-  void _onDrop(Js.JsObject event, Js.JsObject ui)
-  {
-    final Js.JsObject drag = ui['draggable'];
-    ftdump("drag", drag);
-
-    final Html.ImageElement cont = drag['context'];
-    ftdump("cont", cont);
-
-    final Js.JsObject ob = new Js.JsObject.fromBrowserObject(cont);
-    ftdump("ob", ob);
-
-    final Chip cl = ob['chipInstance'];
-    ftdump("cl", cl);
-
-    assert(cl.parent.isSome,
-        "ChipSocket._onDrop() missing parent field in Chip");
-
-    cl.parent.v.pop(cl);
-    this.push(cl);
-  }
-
-  bool _isAcceptable(Js.JsObject jqob)
-  {
-    final Chip c = _jsObjectOfJQueryObject(jqob)['chipInstance'];
-
-    return this.full != true && this.locked != true && this.acceptType(c.type);
   }
 
   // ************************************************************************ **
