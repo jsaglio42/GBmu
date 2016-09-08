@@ -1,20 +1,67 @@
 
+#gb-slot {
+    padding: 7px;
+    width: 265px; /* 251 + padding * 2 */
+    background-color: gray;
+    min-height: 100px;
+}
+
+#gb-slot.gameboysocket-active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#gb-slot.gameboysocket-hover {
+    background-color: rgba(0, 200, 0, 0.75);
+}
+
+/* ************************************************************************** */
+
 #accordion {
     background-color: black;
     padding: 7px;
     width: 265px; /* 251 + padding * 2 */
+    padding-top: 50px;
 }
 
-#accordion .panel {
+#accordion.accordion-active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#accordion.accordion-hover {
+    background-color: rgba(0, 200, 0, 0.75);
+}
+
+/* ************************************************************************** */
+
+#detached-chip-bank {
+    background-color: gray;
+    padding: 7px;
+    width: 265px;
+    min-height: 100px;
+}
+
+#detached-chip-bank.chipbank-active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#detached-chip-bank.chipbank-hover {
+    background-color: rgba(0, 200, 0, 0.75);
+}
+
+/* ************************************************************************** */
+
+.gameboy-cartridge {
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
 }
 
-#accordion .btn:focus, .btn:active:focus, .btn.active:focus {
+.gameboy-cartridge .btn:focus,
+.gameboy-cartridge .btn:active:focus,
+.gameboy-cartridge .btn.active:focus {
     outline: 0 none;
 }
 
-#accordion .bg-head-btn {
+.gameboy-cartridge .bg-head-btn {
 
     height: 71px;
     background: url(images/sprites.png) 0 0;
@@ -23,7 +70,7 @@
     border-radius: 0px;
 }
 
-#accordion .bg-head-btn.collapsed {
+.gameboy-cartridge .bg-head-btn.collapsed {
     height: 53px;
     background: url(images/sprites.png) 0 -18px;
     background-color: rgba(0, 0, 0, 0.0);
@@ -31,23 +78,24 @@
     border-radius: 0px;
 }
 
-#accordion .panel-collapse {
+.gameboy-cartridge .panel-collapse {
     height: 216px;
     background:url(images/sprites.png) 0 -71px;
     background-color: rgba(0, 0, 0, 0.0);
 }
 
-.panel-body {
+.gameboy-cartridge .panel-body {
     cursor: move;
     padding: 0px;
     background-color: rgba(0, 0, 0, 0.0);
 }
 
-#accordion td, #accordion th {
+.gameboy-cartridge td,
+.gameboy-cartridge th {
     vertical-align:top;
 }
 
-#accordion table, .cart-ram-bis, .cart-ss-bis {
+.gameboy-cartridge table, .cart-ram-bis, .cart-ss-bis {
     border: 0px;
 }
 
@@ -89,17 +137,3 @@
 }
 
 /* ************************************************************************** */
-
-#detached-chip-bank {
-    background-color: gray;
-    padding: 7px;
-    width: 265px;
-}
-
-#detached-chip-bank.chipbank-active {
-    background-color: rgba(0, 200, 0, 0.4);
-}
-
-#detached-chip-bank.chipbank-hover {
-    background-color: rgba(0, 200, 0, 0.75);
-}

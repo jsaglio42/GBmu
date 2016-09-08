@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 14:36:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 15:51:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -42,15 +42,6 @@ final Html.NodeValidatorBuilder _domCartValidator =
 /*
  * Internal Methods
  */
-// callJQueryMethodOnDartElement(this.panel, 'draggable', [{
-//   'helper': "original",
-//   'revert': true,
-//   'revertDuration': 50,
-//   'cursorAt': { 'left': 125, 'top': 30 },
-//   'distance': 75,
-//   'cursor': "crosshair",
-//   'zIndex': "100",
-// }]);
 
 /*
  * Exposed Methods
@@ -79,16 +70,7 @@ Async.Future init(Emulator.Emulator emu) async {
     var dcb = new DetachedChipBank();
     var cList = [dcb.newRam(), dcb.newRam(), dcb.newSs()];
 
-    // print(cab);
-    // print(cab.carts[1]);
-    // print(cab.carts[1].ssSockets[1]);
-
-    // cList[2].changeBank(
-        // cab.carts[1].ssSockets[1]
-                        // );
-    // cList[1].changeBank(
-    //     cab.carts[1].ramSocket
-    //                     );
+    var gbs = new GameBoySocket();
 
   } catch (e, st) {
     print(e);

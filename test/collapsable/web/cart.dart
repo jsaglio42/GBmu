@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:31:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 14:38:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 16:31:53 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,7 +33,6 @@ class ChipSocket extends AChipBank {
   bool _locked = true;
 
   CartLocation get cartLoc => _cartLoc;
-  // Html.Element get elt => _elt;
 
   Ft.Option<Chip> _chip = new Ft.Option<Chip>.none();
 
@@ -46,6 +45,7 @@ class ChipSocket extends AChipBank {
   {
     _jqElt.callMethod('droppable', [new Js.JsObject.jsify({
       'accept': this.isAcceptable,
+      'greedy': true,
       'classes': {
         'ui-droppable-active': 'cart-$c-socket-active',
         'ui-droppable-hover': 'cart-$c-socket-hover',
@@ -59,13 +59,14 @@ class ChipSocket extends AChipBank {
   ChipSocket.ss(elt): this(
       elt, new Js.JsObject.fromBrowserObject(elt), ChipType.Ss, 'ss');
 
-  // From ChipBank ********************************************************** **
+  // From AChipBank ********************************************************* **
 
   Location get loc =>
     _cartLoc == CartLocation.GameBoy ? Location.GameBoy : Location.CartBank;
   bool get full => _chip.isSome;
   bool get empty => _chip.isNone;
   bool get locked => _locked;
+  Html.Element get elt => _elt;
 
   bool acceptType(ChipType t) => t == this.chipType;
 
@@ -96,7 +97,7 @@ class ChipSocket extends AChipBank {
 
   void lock()
   {
-    assert(_locked == false, "ChipSocket.lock() while locked");
+    // assert(_locked == false, "ChipSocket.lock() while locked");
     this._locked = true;
     _jqElt.callMethod('droppable', ['disable']);
     if (_chip.isSome)
@@ -105,7 +106,7 @@ class ChipSocket extends AChipBank {
 
   void unlock()
   {
-    assert(_locked == true, "ChipSocket.unlock() while unlocked");
+    // assert(_locked == true, "ChipSocket.unlock() while unlocked");
     this._locked = false;
     _jqElt.callMethod('droppable', ['enable']);
     if (_chip.isSome)
@@ -114,34 +115,24 @@ class ChipSocket extends AChipBank {
 
 }
 
-void ftdump(name, obj)
-{
-  print('$name: ($obj), (${obj.runtimeType}), (${obj.hashCode})');
-  Js.context['console'].callMethod('log', [obj]);
-}
-
-class Cart {
+class Cart implements ICart {
 
   static int _ids = 0;
 
   final Html.Element _elt;
+  final Js.JsObject _jqElt;
   final Html.ButtonElement _btn;
   final Js.JsObject _jqBtn;
+  final Js.JsObject _jqBody;
   final int _id;
   final String _bodyId;
   final ChipSocket _ramSocket;
   final List<ChipSocket> _ssSockets;
 
   bool _locked = false;
-  bool _collapsed = false;
+  bool _collapsed = true;
   CartLocation _loc = CartLocation.CartBank;
-
-  ChipSocket get ramSocket => _ramSocket;
-  List<ChipSocket> get ssSockets => _ssSockets;
-  bool get locked => _locked;
-  int get id => _id;
-  CartLocation get loc => _loc;
-  Html.Element get elt => _elt;
+  Ft.Option<ACartBank> _parent = new Ft.Option<ACartBank>.none();
 
   // Construction *********************************************************** **
 
@@ -163,32 +154,58 @@ class Cart {
     return new List<ChipSocket>.unmodifiable(l);
   }
 
-  Cart.elements(elt, btn)
+  Cart.elements(elt, jsElt, btn)
     : _elt = elt
+    , _jqElt = Js.context.callMethod(r'$', [jsElt])
     , _btn = btn
     , _jqBtn = Js.context.callMethod(r'$', [
       new Js.JsObject.fromBrowserObject(btn)])
+    , _jqBody = Js.context.callMethod(r'$', [
+      new Js.JsObject.fromBrowserObject(elt.querySelector('.panel-collapse'))])
     , _id = _ids++
     , _bodyId = 'cart${_ids - 1}Param-body'
     , _ramSocket = _ramSocketOfElt(elt)
     , _ssSockets = _ssSocketsOfElt(elt)
   {
-    var body = elt.querySelector('.panel-collapse');
-    var jqBody = Js.context.callMethod(r'$', [
-      new Js.JsObject.fromBrowserObject(body)]);
-
     _btn.setAttribute('href', '#$_bodyId');
-    jqBody.callMethod('on', ['shown.bs.collapse', _onOpenned]);
-    jqBody.callMethod('on', ['hide.bs.collapse', _onCollapsed]);
+    _jqBody.callMethod('on', ['shown.bs.collapse', _onOpenned]);
+    _jqBody.callMethod('on', ['hide.bs.collapse', _onCollapsed]);
+
+    _elt.style.zIndex = "49";
+    _jqElt.callMethod('draggable', [new Js.JsObject.jsify({
+      'helper': "original",
+      'revert': true,
+      'revertDuration': 50,
+      'cursorAt': { 'left': 125, 'top': 143 },
+      'distance': 75,
+      'cursor': "crosshair",
+      'zIndex': "99",
+    })]);
+    jsElt['chipInstance'] = this;
 
     _makeCollapsable();
   }
-  Cart.element(elt): this.elements(elt, elt.querySelector('.bg-head-btn'));
+  Cart.element(elt): this.elements(
+      elt, new Js.JsObject.fromBrowserObject(elt),
+      elt.querySelector('.bg-head-btn'));
 
   Cart(String cartHtml, Html.NodeValidator v) : this.element(
       new Html.Element.html(cartHtml, validator: v));
 
-  // ************************************************************************ **
+  // ICart implementation *************************************************** **
+
+  AChipBank get ramSocket => _ramSocket;
+  List<AChipBank> get ssSockets => _ssSockets;
+  bool get locked => _locked;
+  int get id => _id;
+  CartLocation get loc => _loc;
+  Html.Element get elt => _elt;
+
+  set parent(ACartBank p) {
+    _parent = new Ft.Option<ACartBank>.some(p);
+  }
+
+  Ft.Option<ACartBank> get parent => _parent;
 
   void setLocation(CartLocation loc)
   {
@@ -203,6 +220,20 @@ class Cart {
       _lock();
     }
   }
+
+  void collapse()
+  {
+    if (_collapsed == false)
+      _jqBody.callMethod('collapse', ["hide"]);
+  }
+
+  void open()
+  {
+    if (_collapsed == true)
+      _jqBody.callMethod('collapse', ["show"]);
+  }
+
+  // ************************************************************************ **
 
   void _onCollapsed(_)
   {

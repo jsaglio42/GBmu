@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:48:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 14:39:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 16:32:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -72,8 +72,16 @@ enum CartLocation {
   GameBoy,
 }
 
+// Some Jquery getters
+Js.JsObject _jsObjectOfJQueryObject(Js.JsObject jqElt) =>
+  new Js.JsObject.fromBrowserObject(jqElt['context']);
+
+dynamic _instanceOfJQueryObject(jqob) =>
+  _jsObjectOfJQueryObject(jqob)['chipInstance'];
+
 // Simple interface for Chip
-abstract class IChip {
+abstract class IChip
+{
 
   bool get locked;
   Html.ImageElement get elt;
@@ -83,45 +91,112 @@ abstract class IChip {
 
   set parent(AChipBank p);
   Ft.Option<AChipBank> get parent;
-
 }
 
-// Monadic `Chip` container, may have `[1, inf[` chip capacity
+// Abstract class for a monadic `Chip` container that
+//   may have `[1, inf[` chip capacity.
 // jQuery's `Droppable` target for chips
-abstract class AChipBank {
+abstract class AChipBank
+{
 
   Location get loc;
   bool get full;
   bool get empty;
   bool get locked;
+  Html.Element get elt;
 
   bool acceptType(ChipType t); // Type check only, not a capacity check
   void pop(IChip c);
   void push(IChip c);
 
-  Js.JsObject _jsObjectOfJQueryObject(Js.JsObject jqElt) =>
-    new Js.JsObject.fromBrowserObject(jqElt['context']);
-
-  IChip _chipOfJQueryObject(jqob) =>
-    _jsObjectOfJQueryObject(jqob)['chipInstance'];
-
-  void onDrop(_, Js.JsObject ui)
+  void onDrop(Js.JsObject event, Js.JsObject ui)
   {
-    final IChip c = _chipOfJQueryObject(ui['draggable']);
+    Ft.log('${this.runtimeType}', 'onDrop');
+    final target = event['target'];
 
-    assert(c.parent.isSome,
-        "AChipBank._onDrop() missing parent field in Chip");
-    c.parent.v.pop(c);
-    this.push(c);
+    if (target == this.elt) {
+      final IChip c = _instanceOfJQueryObject(ui['draggable']);
+
+      assert(c.parent.isSome,
+          "AChipBank._onDrop() missing parent field in Chip");
+      c.parent.v.pop(c);
+      this.push(c);
+    }
   }
 
   bool isAcceptable(Js.JsObject jqob)
   {
-    final IChip c = _chipOfJQueryObject(jqob);
+    final c = _instanceOfJQueryObject(jqob);
 
-    assert(c.parent.isSome);
-    return this.full != true && this.locked != true
-      && this.acceptType(c.type) && c.parent.v != this;
+    if (c is IChip) {
+      assert(c.parent.isSome);
+      return this.full != true && this.locked != true
+        && this.acceptType(c.type) && c.parent.v != this;
+    }
+    else
+      return false;
   }
 
+}
+
+// Simple interface for Cart
+abstract class ICart
+{
+
+  AChipBank get ramSocket => _ramSocket; // debug?
+  List<AChipBank> get ssSockets => _ssSockets; // debug?
+  Html.Element get elt => _elt;
+
+  void setLocation(CartLocation loc);
+  void collapse();
+
+  set parent(ACartBank p);
+  Ft.Option<ACartBank> get parent;
+}
+
+// Abstract class for a monadic `Cart` container that
+//   may have `[1, inf[` cart capacity.
+// jQuery's `Droppable` target for carts
+abstract class ACartBank
+{
+  bool get full;
+  bool get empty;
+  Html.Element get elt;
+
+  void pop(ICart c);
+  void push(ICart c);
+
+  void onDrop(Js.JsObject event, Js.JsObject ui)
+  {
+    Ft.log('${this.runtimeType}', 'onDrop');
+    final target = event['target'];
+
+    if (target == this.elt) {
+      final ICart c = _instanceOfJQueryObject(ui['draggable']);
+
+      assert(c.parent.isSome,
+          "ACartBank._onDrop() missing parent field in Cart");
+      c.parent.v.pop(c);
+      this.push(c);
+    }
+  }
+
+  bool isAcceptable(Js.JsObject jqob)
+  {
+    final c = _instanceOfJQueryObject(jqob);
+
+    if (c is ICart) {
+      assert(c.parent.isSome);
+      return this.full != true && c.parent.v != this;
+    }
+    else
+      return false;
+  }
+
+}
+
+void ftdump(name, obj) //debug
+{
+  print('$name: ($obj), (${obj.runtimeType}), (${obj.hashCode})');
+  Js.context['console'].callMethod('log', [obj]);
 }
