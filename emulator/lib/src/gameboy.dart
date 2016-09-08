@@ -43,6 +43,7 @@ class GameBoy {
   // final Headset sound;
 
   int         _clockCount = 0;
+  int         _clockWait = 0;
 
   GameBoy(Cartridge.ACartridge c) //TODO: pass LCDScreen and eadset <- DONT AGREE
     : this.cartridge = c
@@ -61,6 +62,8 @@ class GameBoy {
     _clockCount += nbClock;
     while (nbClock-- > 0)
     {
+      if (_clockWait-- > 0)
+        continue ;
       inst = mmu.pullMem8(cpuRegs.value16(Reg16.PC));
       switch(inst)
       {

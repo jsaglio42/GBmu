@@ -7,14 +7,14 @@ pub serve
 ```
 - http://localhost:8080/
 
+# BUG
+
+- Memory explorer: what if request in forbidden area ? -> CRASH
+- Memory explorer: ROM_ONLY what if request CARTRIDGE_RAM area ? -> CRASH
+
 # Todos
 
 - Ram/rom is it relevent? Cartridge would need pullRam / pullRom ??? (to be checked with mmu implementation)
-- Bug: Can't use Memory explorerwhen paused (maybe check listener list)
-- Little endian -> view16 is little endian, check pull header formulas (for dword)
-- Check interfaces/traits/inheritance
-- Deal with optional/XYZorNull in a consistent way. (I would go for the use of null/notnull with an explicit name, maybe not XYZorNull but xyzOpt)
-- Have a textbox in the dom to display important messages to the user (not in debug console), for example: "Rom is not valid/not supported", "A rom is not loaded ...." ...
 - Talk about the full asynchroneous approach for debugger, right now, in high speed, run one inst take as long as run one sec which seems weird. Running one inst feels like running two (colors in debugger). Solution -> Maybe force the update on browserside when a routine is done
 
 # Useful links:
