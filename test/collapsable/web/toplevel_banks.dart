@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:29:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 16:23:47 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 17:17:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,7 +36,6 @@ class GameBoySocket extends ACartBank {
     assert(_instanciated == false);
     _instanciated = true;
 
-    _elt.style.zIndex = "30";
     var jqElt = Js.context.callMethod(r'$', [
       new Js.JsObject.fromBrowserObject(_elt)]);
 
@@ -103,7 +102,6 @@ class CartBank extends ACartBank
     assert(_instanciated == false, "CartBank()");
     _instanciated = true;
 
-    _elt.style.zIndex = "30";
     var jqElt = Js.context.callMethod(r'$', [
       new Js.JsObject.fromBrowserObject(_elt)]);
 
@@ -169,7 +167,6 @@ class DetachedChipBank extends AChipBank {
   {
     Ft.log('${this.runtimeType}', 'constructor');
 
-    _elt.style.zIndex = "30";
     var jqElt = Js.context.callMethod(r'$', [
       new Js.JsObject.fromBrowserObject(_elt)]);
 

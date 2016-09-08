@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:31:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 16:31:53 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 17:18:53 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -171,7 +171,6 @@ class Cart implements ICart {
     _jqBody.callMethod('on', ['shown.bs.collapse', _onOpenned]);
     _jqBody.callMethod('on', ['hide.bs.collapse', _onCollapsed]);
 
-    _elt.style.zIndex = "49";
     _jqElt.callMethod('draggable', [new Js.JsObject.jsify({
       'helper': "original",
       'revert': true,
@@ -180,10 +179,11 @@ class Cart implements ICart {
       'distance': 75,
       'cursor': "crosshair",
       'zIndex': "99",
+      'cancel': "input,textarea,select,option",
     })]);
     jsElt['chipInstance'] = this;
 
-    _makeCollapsable();
+    _updateControls();
   }
   Cart.element(elt): this.elements(
       elt, new Js.JsObject.fromBrowserObject(elt),
@@ -211,14 +211,7 @@ class Cart implements ICart {
   {
     assert(loc != _loc, "Cart.setLocation($loc)");
     _loc = loc;
-    if (_loc == CartLocation.CartBank) {
-      _makeCollapsable();
-      _unlock();
-    }
-    else {
-      _unmakeCollapsable();
-      _lock();
-    }
+    _updateControls();
   }
 
   void collapse()
@@ -238,45 +231,73 @@ class Cart implements ICart {
   void _onCollapsed(_)
   {
     _collapsed = true;
-    _lock();
+    _updateControls();
   }
 
   void _onOpenned(_)
   {
     _collapsed = false;
-    _unlock();
+    _updateControls();
+  }
+
+  /*                   dragGb  ClickBtn  dragSock  dropSock
+   * GameBoySocket     true    false     false     false
+   * CartBank.closed   false   true      false     false
+   * CartBank.shown    true    true      true      true
+   */
+
+  void _updateControls()
+  {
+    if (_loc == CartLocation.GameBoy) {
+      allowDragGb();
+      denyCollapseUpdate();
+      denyChipUpdate();
+    }
+    else if (_collapsed) {
+      denyDragGb();
+      allowCollapseUpdate();
+      denyChipUpdate();
+    }
+    else if (!_collapsed) {
+      allowDragGb();
+      allowCollapseUpdate();
+      allowChipUpdate();
+    }
+    else
+      assert(false, "unreachable");
   }
 
   // ************************************************************************ **
 
-  void _makeCollapsable()
+  void allowDragGb()
   {
-    _elt.querySelector('.panel-collapse')
-      .id = _bodyId;
+    _jqElt.callMethod('draggable', ['enable']);
+
+  }
+  void denyDragGb()
+  {
+    _jqElt.callMethod('draggable', ['disable']);
+
+  }
+  void allowCollapseUpdate()
+  {
+    _elt.querySelector('.panel-collapse').id = _bodyId;
     _btn.disabled = false;
   }
-
-  void _unmakeCollapsable()
+  void denyCollapseUpdate()
   {
-    _elt.querySelector('.panel-collapse')
-      .id = null;
+    _elt.querySelector('.panel-collapse').id = null;
     _btn.disabled = true;
   }
-
-  void _lock()
+  void allowChipUpdate()
   {
-    // assert(_locked == false, "Cart.lock() while locked");
-    _locked = true;
-    _ramSocket.lock();
-    _ssSockets.forEach((p) => p.lock());
-  }
-
-  void _unlock()
-  {
-    // assert(_locked == true, "Cart.unlock() while unlocked");
-    _locked = false;
     _ramSocket.unlock();
     _ssSockets.forEach((p) => p.unlock());
+  }
+  void denyChipUpdate()
+  {
+    _ramSocket.lock();
+    _ssSockets.forEach((p) => p.lock());
   }
 
 }

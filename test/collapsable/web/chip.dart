@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:35:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 16:26:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 17:17:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -47,7 +47,6 @@ class Chip implements IChip {
     , _jqObject = Js.context.callMethod(r'$', [
       new Js.JsObject.fromBrowserObject(elt)])
   {
-    _elt.style.zIndex = "50";
     _jqObject.callMethod('draggable', [new Js.JsObject.jsify({
       'helper': "original",
       'revert': true,
