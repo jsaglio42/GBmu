@@ -70,19 +70,18 @@ void _onMemInfo(Map<String, dynamic> map) {
   assert(map['addr'] != null && map['addr'] is int, "_onMemInfo($map)");
   final addr = map['addr'];
   assert(addr >= 0x0000 && addr <= 0xFFFF, "_onMemInfo($map)");
-  assert(map['data'] != null && map['data'] is Uint8List);
+  assert(map['data'] != null && map['data'] is List<int>);
   final data = map['data'];
   assert(data.length == _data.memCells.length, "_onMemInfo($map)");
   for (var i = 0; i < _data.addrCells.length; ++i)
-    _data.addrCells[i].elt.text = (addr + i * 0x10)
-      .toRadixString(16)
-      .toUpperCase()
-      .padLeft(4, "0");
+    _data.addrCells[i].elt.text = Ft.toAddressString(addr + i * 0x10, 4);
   for (var i = 0; i < _data.memCells.length; ++i)
-    _data.memCells[i].elt.text = data[i]
-      .toRadixString(16)
-      .toUpperCase()
-      .padLeft(2, "0");
+  {
+    if (data[i] == null)
+      _data.memCells[i].elt.text = '--';
+    else
+      _data.memCells[i].elt.text = Ft.toHexaString(data[i], 2);
+  }
   return ;
 }
 
@@ -123,7 +122,7 @@ void init(Emulator.Emulator emu) {
   _data.toString(); /* Tips to instanciate _cells */
   _onMemInfo({
       'addr' : 0x0000,
-      'data' : new Uint8List(MEMORY_CELLS_COUNT)
+      'data' : new List<int>(MEMORY_CELLS_COUNT)
   });
   _emu.listener('MemInfo').forEach(_onMemInfo);
   _memAddrInput.onChange.forEach(_onMemAddrUpdate);

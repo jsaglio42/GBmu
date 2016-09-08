@@ -15,5 +15,5 @@ String   toAddressString(int value, int padding) {
 }
 
 String   toHexaString(int value, int padding) {
-  return (value.toRadixString(16).padLeft(padding, "0"));
+  return (value.toRadixString(16).toUpperCase().padLeft(padding, "0"));
 }

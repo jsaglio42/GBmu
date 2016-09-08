@@ -106,15 +106,17 @@ abstract class Debug implements Worker.AWorker {
     this.ports.send('DebStatusUpdate', false);
   }
 
-  Uint8List   _buildMemoryList(int addr, Gameboy.GameBoy gb)
+  List<int>   _buildMemoryList(int addr, Gameboy.GameBoy gb)
   {
     // Ft.log('worker_debug', '_buildMemoryList', addr);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_buildMemExplorerMap: addr not valid');
-    final memList = new List.generate(_debuggerMemoryLen, (i) {
-      return gb.mmu.pullMem8(addr + i);
-    });
-    return new Uint8List.fromList(memList);
+    final memList = new List.generate(_debuggerMemoryLen,
+      (i) {
+        try { return gb.mmu.pullMem8(addr + i); }
+        catch (e) { return null; }
+      });
+    return memList;
   }
 
   // LOOPING ROUTINE ******************************************************** **

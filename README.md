@@ -27,6 +27,10 @@ curl -O https://projects.intra.42.fr/uploads/document/document/323/ressources.tg
 ### Gameboy / Emulation
 
 <BR>
+> Z80 decode table
+> - http://www.z80.info/decoding.htm
+
+<BR>
 > Short-Blog: Writing a Game Boy emulator, Cinoop
 > - https://cturt.github.io/cinoop.html
 
