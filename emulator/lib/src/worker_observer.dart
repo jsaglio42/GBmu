@@ -50,7 +50,7 @@ abstract class Observer implements Worker.AWorker {
     final elapsed =
       now.difference(_pollTime).inMicroseconds.toDouble() /
       MICROSECONDS_PER_SECOND_DOUBLE;
-    final clock = this.gbOpt.v.clockCount;
+    final clock = this.gbOpt.clockCount;
     final cps =
       (clock - _gbClockPoll).toDouble() / elapsed;
     final observedSpeed = cps / GB_CPU_FREQ_DOUBLE;
