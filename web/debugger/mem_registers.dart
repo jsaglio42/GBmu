@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 16:57:32 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 12:02:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 11:42:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -120,13 +120,14 @@ void _onMemRegInfo(List<int> values) {
 
     if (cell.value == cur) {
       if (cell.highlighted) {
-        cell.elt.style.color = 'black';
+
+        cell.elt.style.color = '#005B79';
         _data.valueCells[reg].highlighted = false;
       }
     }
     else {
       if (!cell.highlighted) {
-        cell.elt.style.color = 'blue';
+        cell.elt.style.color = '#FF1E00';
         _data.valueCells[reg].highlighted = true;
       }
       cell.elt.text = cur

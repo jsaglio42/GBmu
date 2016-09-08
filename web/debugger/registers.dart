@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 20:17:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 11:42:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -101,13 +101,13 @@ void _onRegInfo(Emulator.CpuRegs cpur) {
 
     if (cell.value == cur) {
       if (cell.highlighted) {
-        cell.elt.style.color = 'black';
+        cell.elt.style.color = '#005B79';
         _data.reg16Cells[reg].highlighted = false;
       }
     }
     else {
       if (!cell.highlighted) {
-        cell.elt.style.color = 'blue';
+        cell.elt.style.color = '#FF1E00';
         _data.reg16Cells[reg].highlighted = true;
       }
       cell.elt.text = cur
