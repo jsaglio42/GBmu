@@ -65,8 +65,8 @@ enum EmulatorEvent {
 abstract class AWorker {
 
   final Wiso.Ports ports;
-  Ft.Option<Gameboy.GameBoy> gbOpt = null;
   final Ft.StatesController sc = new Ft.StatesController();
+  Gameboy.GameBoy gbOpt = null;
 
   GameBoyExternalMode get gbMode => this.sc.getState(GameBoyExternalMode);
   DebuggerExternalMode get debMode => this.sc.getState(DebuggerExternalMode);

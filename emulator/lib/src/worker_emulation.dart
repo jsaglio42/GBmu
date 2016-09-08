@@ -112,7 +112,7 @@ abstract class Emulation implements Worker.AWorker {
       return ;
     }
     _updateEmulationSpeed(_emulationSpeed);
-    this.gbOpt = new Ft.Option.some(gb);
+    this.gbOpt = gb;
     _updateGBMode(GameBoyExternalMode.Emulating);
     if (this.debMode == DebuggerExternalMode.Operating
         && this.pauseMode != PauseExternalMode.Effective)
@@ -253,7 +253,7 @@ abstract class Emulation implements Worker.AWorker {
       if (clockSum >= clockLimit)
         break ;
       clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
-      this.gbOpt.v.exec(clockExec);
+      this.gbOpt.exec(clockExec);
       clockSum += clockExec;
     }
     return clockSum;

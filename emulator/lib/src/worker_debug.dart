@@ -18,10 +18,9 @@ import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
-// import 'package:emulator/src/memory/rom.dart' as Rom;
-// import 'package:emulator/src/memory/ram.dart' as Ram;
+
 import 'package:emulator/src/memory/memregisters.dart' as Memregisters;
-// import 'package:emulator/src/memory/cartmbc0.dart' as Cartmbc0;
+
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
 
@@ -46,23 +45,21 @@ abstract class Debug implements Worker.AWorker {
         && this.pauseMode == PauseExternalMode.Effective) {
       this.ports.send('MemInfo',  <String, dynamic> {
         'addr' : _debuggerMemoryAddr,
-        'data' : _buildMemoryList(_debuggerMemoryAddr, this.gbOpt.v)
+        'data' : _buildMemoryList(_debuggerMemoryAddr, this.gbOpt)
       });
     }
-
-
-    // TODO: removed cause not sure that GameBoy is present
+    // ---> Again, would rather check that gb is null
     // Uint8List memList;
-    // if (this.gbOpt.isSome)
-    // {
-    //   _debuggerMemoryAddr = addr;
-    //   memList = _buildMemoryList(_debuggerMemoryAddr, this.gbOpt.v);
-    // }
-    // else
+    // if (this.gbOpt == null)
     // {
     //   print('onMemoryAddrChange: Cartridge not loaded');
     //   _debuggerMemoryAddr = 0x0000;
     //   memList = Uint8List(_debuggerMemoryLen);
+    // }
+    // else
+    // {
+    //   _debuggerMemoryAddr = addr;
+    //   memList = _buildMemoryList(_debuggerMemoryAddr, this.gbOpt);
     // }
     // this.ports.send('MemInfo',  <String, dynamic> {
     //     'addr' : _debuggerMemoryAddr,
@@ -129,7 +126,7 @@ abstract class Debug implements Worker.AWorker {
 
     final l = new Uint8List(MemReg.values.length);
     final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
-    final Gameboy.GameBoy gb = this.gbOpt.v;
+    final Gameboy.GameBoy gb = this.gbOpt;
 
     this.ports.send('RegInfo', gb.cpuRegs);
     it.forEach((r, i) {
