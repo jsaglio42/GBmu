@@ -54,23 +54,45 @@ class CpuRegs {
     : _data = d
     , _view16 = d.buffer.asUint16List();
 
-
   CpuRegs() : this.buffer(new Uint8List(6 * 2));
 
   /*
   ** API ***********************************************************************
   */
 
-  void  init(){
-    return ;
+  void init()
+  {
+    this.update16(Reg16.AF, 0x01B0);
+    this.update16(Reg16.BC, 0x0013);
+    this.update16(Reg16.DE, 0x00D8);
+    this.update16(Reg16.HL, 0x014D);
+    this.update16(Reg16.SP, 0xFFFE);
+    this.update16(Reg16.PC, 0x0100);
   }
 
-  int   value16(Reg16 r) => this._view16[r.index];
-  int   value8(Reg8 r) => this._data[r.index];
-  bool  value1(Reg1 r) => (this._data[0] >> (r.index + 4) & 1) == 1;
+  void load(CpuRegs src)
+  {
+    for (Reg16 r in Reg16.Value) {
+      this.update16(r, src.value16(r));
+    }
+  }
 
-  void update16(Reg16 r, int value) {this._view16[r.index] = value;}
-  void update8(Reg8 r, int value) {this._data[r.index] = value;}
+  /* Get */
+  int value16(Reg16 r) => this._view16[r.index];
+  int value8(Reg8 r) => this._data[r.index];
+  bool value1(Reg1 r) => (this._data[0] >> (r.index + 4) & 1) == 1;
+
+  /* Set */
+  void update16(Reg16 r, int word) {
+    assert(word & ~0xFFFF == 0);
+    this._view16[r.index] = word;
+  }
+
+  void update8(Reg8 r, int byte) {
+    assert(byte & ~0xFF == 0);
+    this._data[r.index] = byte;
+  }
+
   void update1(Reg1 r, bool value) {
     final mask = 1 << (4 + r.index);
     if (value)

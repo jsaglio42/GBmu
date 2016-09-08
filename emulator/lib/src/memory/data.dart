@@ -59,7 +59,9 @@ abstract class AReadOperation implements AData {
 
 abstract class AWriteOperation implements AData  {
 
-  void  push8(int addr, int byte)
+  void clear() { _data.fillRange(0, _data.length, 0); }
+
+  void push8(int addr, int byte)
   {
     assert(addr >= 0 && addr < this.size);
     assert(byte & ~0xFF == 0);
@@ -67,7 +69,7 @@ abstract class AWriteOperation implements AData  {
     return ;
   }
 
-  void  push16(int addr, int word)
+  void push16(int addr, int word)
   {
     assert(addr % 2 == 0);
     assert(addr >= 0 && addr < this.size);

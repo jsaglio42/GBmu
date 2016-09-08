@@ -23,6 +23,7 @@ class CartMBC1 extends Cartridge.ACartridge  {
   }
   
   @override int pullMem16(int memAddr){
+    assert(memAddr % 2 == 0);
     assert(memAddr >= 0 && memAddr < this.rom.size);
     return 0x42;
   }

@@ -23,20 +23,16 @@ class CartRomOnly extends Cartridge.ACartridge  {
   }
   
   @override int pullMem16(int memAddr){
+    assert(memAddr % 2 == 0);
     assert(memAddr >= 0 && memAddr < this.rom.size);
     return this.rom.pull16(memAddr);
   }
 
-  @override void pushMem8(int memAddr, int byte) {}
-  @override void pushMem16(int memAddr, int word) {}
-
-  // To be used when mmu is working
-  // @override void pushMem8(int memAddr, int byte) {
-  //   throw new Exception(this.runtimeType() + ': pushMem8($memAddr, $byte) not supported');
-  // }
-
-  // @override void pushMem16(int memAddr, int word) {
-  //   throw new Exception(this.runtimeType() + ': pushMem16($memAddr, $word) not supported');
-  // }
+  @override void pushMem8(int memAddr, int byte) {
+    throw new Exception('ROM_ONLY: pushMem8 not supported');
+  }
+  @override void pushMem16(int memAddr, int word) {
+    throw new Exception('ROM_ONLY: pushMem16 not supported');
+  }
 
 }

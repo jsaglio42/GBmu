@@ -12,6 +12,8 @@
 
 import 'dart:typed_data';
 
+import "package:ft/src/misc.dart" as Ft;
+
 import "package:emulator/src/enums.dart";
 import 'package:emulator/src/constants.dart';
 
@@ -28,6 +30,44 @@ class Mmu {
 
   Mmu(this._c);
 
+  void init() {
+    _vr.clear();
+    _wr.clear();
+    _tr.clear();
+    this.pushMem8(0xFF05, 0x00);
+    this.pushMem8(0xFF06, 0x00);
+    this.pushMem8(0xFF07, 0x00);
+    this.pushMem8(0xFF10, 0x80);
+    this.pushMem8(0xFF11, 0xBF);
+    this.pushMem8(0xFF12, 0xF3);
+    this.pushMem8(0xFF14, 0xBF);
+    this.pushMem8(0xFF16, 0x3F);
+    this.pushMem8(0xFF17, 0x00);
+    this.pushMem8(0xFF19, 0xBF);
+    this.pushMem8(0xFF1A, 0x7F);
+    this.pushMem8(0xFF1B, 0xFF);
+    this.pushMem8(0xFF1C, 0x9F);
+    this.pushMem8(0xFF1E, 0xBF);
+    this.pushMem8(0xFF20, 0xFF);
+    this.pushMem8(0xFF21, 0x00);
+    this.pushMem8(0xFF22, 0x00);
+    this.pushMem8(0xFF23, 0xBF);
+    this.pushMem8(0xFF24, 0x77);
+    this.pushMem8(0xFF25, 0xF3);
+    this.pushMem8(0xFF26, 0xF1);
+    this.pushMem8(0xFF40, 0x91);
+    this.pushMem8(0xFF42, 0x00);
+    this.pushMem8(0xFF43, 0x00);
+    this.pushMem8(0xFF45, 0x00);
+    this.pushMem8(0xFF47, 0xFC);
+    this.pushMem8(0xFF48, 0xFF);
+    this.pushMem8(0xFF49, 0xFF);
+    this.pushMem8(0xFF4A, 0x00);
+    this.pushMem8(0xFF4B, 0x00);
+    this.pushMem8(0xFFFF, 0x00);
+    return ;
+  }
+
   /* Mem Reg API **************************************************************/
 
   int pullMemReg(MemReg reg) {
@@ -41,91 +81,76 @@ class Mmu {
   }
 
   /* Memory API ***************************************************************/
+  /* 8 bits */
 
-  // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  int pullMem8(int memAddr) => _pullMem(memAddr, (a) => _c.pullMem8(a));
-  int pullMem16(int memAddr) => _pullMem(memAddr, (a) => _c.pullMem16(a));
-  
-  // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  void pushMem8(int memAddr, int word) {
-    _pushMem(memAddr, word, (a, w) { _c.pushMem8(a, w); });
-  }
-
-  void pushMem16(int memAddr, int word) {
-    _pushMem(memAddr, word, (a, w) { _c.pushMem16(a, w); });
-  }
-
-  /* Private function */
-
-  // PrivateAddress aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  // To be implemented
-  int _pullMem(int memAddr, int pullFunction(int)) {
-    if (memAddr < 0x7FFF)
-      return pullFunction(memAddr);
-    else
-      return 0x24;
-  }
-
-  // Address aligned ? Size ? Should we check here? I seggest to do check at the end to avoid checks everywhere
-  // To be implemented
-  void _pushMem(int memAddr, int word, void pushFunction(int, int))
+  int pullMem8(int memAddr)
   {
-    pushFunction(memAddr, word);
-    return ;
+    assert(CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST);
+    if ((CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
+      || (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST))
+      return _c.pullMem8(memAddr);
+    else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
+      return _vr.pull8(memAddr - VIDEO_RAM_FIRST);
+    else if (WORKING_RAM_FIRST <= memAddr && memAddr <= WORKING_RAM_LAST)
+      return _wr.pull8(memAddr - WORKING_RAM_FIRST);
+    else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
+      return _tr.pull8(memAddr - TAIL_RAM_FIRST);
+    else
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+  }
+
+  void pushMem8(int memAddr, int byte)
+  {
+    assert(byte & ~0xFF == 0);
+    assert(CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST);
+    if ((CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
+      || (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST))
+      _c.pushMem8(memAddr, byte);
+    else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
+      _vr.push8(memAddr - VIDEO_RAM_FIRST, byte);
+    else if (WORKING_RAM_FIRST <= memAddr && memAddr <= WORKING_RAM_LAST)
+      _wr.push8(memAddr - WORKING_RAM_FIRST, byte);
+    else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
+      _tr.push8(memAddr - TAIL_RAM_FIRST, byte);
+    else
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+  }
+
+  /* 16 bits */
+
+  int pullMem16(int memAddr)
+  {
+    assert(memAddr % 2 == 0);
+    assert(CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST);
+    if ((CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
+      || (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST))
+      return _c.pullMem16(memAddr);
+    else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
+      return _vr.pull16(memAddr - VIDEO_RAM_FIRST);
+    else if (WORKING_RAM_FIRST <= memAddr && memAddr <= WORKING_RAM_LAST)
+      return _wr.pull16(memAddr - WORKING_RAM_FIRST);
+    else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
+      return _tr.pull16(memAddr - TAIL_RAM_FIRST);
+    else
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+  }
+
+  void pushMem16(int memAddr, int word)
+  {
+    assert(memAddr % 2 == 0);
+    assert(word & ~0xFFFF == 0);
+    assert(CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST);
+    if ((CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
+      || (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST))
+      _c.pushMem16(memAddr, word);
+    else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
+      _vr.push16(memAddr - VIDEO_RAM_FIRST, word);
+    else if (WORKING_RAM_FIRST <= memAddr && memAddr <= WORKING_RAM_LAST)
+      _wr.push16(memAddr - WORKING_RAM_FIRST, word);
+    else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
+      _tr.push16(memAddr - TAIL_RAM_FIRST, word);
+    else
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
 
 }
-
-  /* Oldies */
-
-  // void pull8(int addr, int value)
-  // {
-  //   if (0x0000 <= addr && addr < 0x4000)
-  //     doNothing();
-  //   if (0x4000 <= addr && addr < 0x8000)
-  //     doNothing();
-  //   if (0x8000 <= addr && addr < 0xA000)
-  //     doNothing();
-  //   if (0xA000 <= addr && addr < 0xC000)
-  //     doNothing();
-  //   if (0xC000 <= addr && addr < 0xD000)
-  //     doNothing();
-  //   if (0xD000 <= addr && addr < 0xE000)
-  //     doNothing();
-  //   if (0xE000 <= addr && addr < 0xFE00)
-  //     doNothing();
-  //   if (0xFE00 <= addr && addr < 0xFEA0)
-  //     doNothing();
-  //   if (0xFEA0 <= addr && addr < 0xFF00)
-  //     doNothing();
-  //   if (0xFF00 <= addr && addr < 0xFF80)
-  //     doNothing();
-  //   if (0xFF80 <= addr && addr < 0xFFFF)
-  //     doNothing();
-  //     else if (addr == 0xFFFF)
-  //       doNothing();
-  //   else
-  //     print ("MMU: writeByte: address not valid");
-  // }
-
-  /** memAddr [0, 0xff] */
-  // int pullMem8(int memAddr) {
-  //   assert(memAddr >= 0 && memAddr <= 0xFFFF);// , "Mmu.pullMem($memAddr)\tout of range");
-  //   if (memAddr > TAIL_RAM_LAST)
-  //     throw new Exception();
-  //   else if (memAddr >= TAIL_RAM_BEGIN)
-  //     return _tailRam[memAddr - TAIL_RAM_BEGIN];
-  //   else // TODO: pullMem
-  //     return 0x42;
-  // }
-
-  /** memAddr [0, 0xff], byte [0, 0xff] */
-  // void pushMem8(int memAddr, int byte) {
-  //   assert(memAddr >= 0 && memAddr <= 0xFFFF);// , "Mmu.pullMem($memAddr)\tout of range");
-  //   if (memAddr > TAIL_RAM_LAST)
-  //     throw new Exception("Mmu.pushMem($memAddr, $byte)\tout of range");
-  //   else if (memAddr >= TAIL_RAM_BEGIN)
-  //     _tailRam[memAddr - TAIL_RAM_BEGIN] = byte;
-  //   // TODO: pullMem
-  //   return ;
-  // }

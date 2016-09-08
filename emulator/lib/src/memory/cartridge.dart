@@ -64,7 +64,7 @@ abstract class ACartridge {
 
       default : break ;
     }
-    throw new Exception('Cartridge: ' + ctype.toString() + ' not supported');
+    throw new Exception('Cartridge: ${ctype.toString()} not supported');
   }
 
   int pullMem8(int memAddr);

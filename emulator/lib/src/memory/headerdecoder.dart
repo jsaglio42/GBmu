@@ -91,7 +91,7 @@ abstract class AHeaderDecoder implements Data.AReadOperation {
   {
     final info = headerFieldInfos[f];
     if (info == null) {
-      throw new Exception('Rom Header: ' + f.toString() + ': getter not implemented');
+      throw new Exception('Rom Header: ${f.toString()}: getter not implemented');
     }
     return info.toValue(this);
   }
@@ -249,7 +249,7 @@ _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
     else {
       final v = rom.pull8(info.address);
       if (map.containsKey(v) == false)
-        throw new Exception('Rom Header: ' + info.name + ': Unknown id');
+        throw new Exception('Rom Header: ${info.name}: Unknown id');
       return map[v];
     }
   };
@@ -260,7 +260,7 @@ _toValueFunc _makeByteGetterFunction(RomHeaderField f)
   return (AHeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
-      throw new Exception('Rom Header: ' + info.name + ': Out of bound');
+      throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
       return rom.pull8(info.address);
   };
@@ -271,7 +271,7 @@ _toValueFunc _makeWordGetterFunction(RomHeaderField f)
   return (AHeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
-      throw new Exception('Rom Header: ' + info.name + ': Out of bound');
+      throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
       return rom.pull16(info.address);
   };
@@ -281,7 +281,7 @@ _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
   return (AHeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
-      throw new Exception('Rom Header: ' + info.name + ': Out of bound');
+      throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
       return
         (rom.pull8(info.address + 0) << 0) |
@@ -396,7 +396,7 @@ void debugRomHeader()
     print(f.toString());
     try {
       var v = rom.pullHeaderValue(f);
-      print('-> <' + v.runtimeType.toString() + '> ' + v.toString());
+      print('-> <${v.runtimeType.toString()}> ${v.toString()}');
     } catch (e, st) {
       print(st.toString());
     }
@@ -412,5 +412,3 @@ void debugRomHeader()
 //   debugRomHeader();
 //   return ;
 // }
-
-
