@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:49:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 14:09:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 14:26:03 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -138,7 +138,9 @@ abstract class AChipBank {
   {
     final Chip c = _chipOfJQueryObject(jqob);
 
-    return this.full != true && this.locked != true && this.acceptType(c.type);
+    assert(c.parent.isSome);
+    return this.full != true && this.locked != true
+      && this.acceptType(c.type) && c.parent.v != this;
   }
 
 }
@@ -193,6 +195,8 @@ class DetachedChipBank extends AChipBank {
            );
     _chips.add(toPush);
     _elt.nodes = _chips.map((c) => c.elt);
+    toPush.elt.style.left = '0px';
+    toPush.elt.style.top = '0px';
     toPush.parent = this;
   }
 

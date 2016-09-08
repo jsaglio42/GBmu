@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:48:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 14:03:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 14:24:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -84,8 +84,10 @@ class ChipSocket extends AChipBank {
         , "ChipSocket.push($c) with `_chip.v = ${_chip.v}`"
            );
     _chip = new Ft.Option<Chip>.some(c);
-    c.parent = this;
     _elt.nodes = [_chip.v.elt];
+    c.elt.style.left = '0px';
+    c.elt.style.top = '0px';
+    c.parent = this;
   }
 
   // ************************************************************************ **
