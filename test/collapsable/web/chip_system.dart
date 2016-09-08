@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:49:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 19:32:22 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 13:46:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,6 +24,7 @@ abstract class IChip {
 
   bool get locked;
   Html.ImageElement get elt;
+  ChipType get type;
   void lock();
   void unlock();
 
@@ -67,7 +68,7 @@ class Chip implements IChip {
       'zIndex': "100",
     })]);
     _elt.setAttribute('src', imgSrc);
-    _jsObject['dartHandle'] = this;
+    _jsObject['chipInstance'] = this;
     this.unlock();
   }
 
@@ -78,9 +79,12 @@ class Chip implements IChip {
 
   Html.ImageElement get elt => _elt;
   bool get locked => _locked;
+  ChipType get type => _type;
+
   set parent(IChipBank p) {
     _parent = new Ft.Option<IChipBank>.some(p);
   }
+
   Ft.Option<IChipBank> get parent => _parent;
 
   void lock()

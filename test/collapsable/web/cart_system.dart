@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 14:48:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 19:28:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/08 13:51:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,7 +43,8 @@ class ChipSocket extends IChipBank {
     , _jqElt = Js.context.callMethod(r'$', [jsElt])
   {
     _jqElt.callMethod('droppable', [new Js.JsObject.jsify({
-      'accept': '.cart-$c-bis',
+      // 'accept': '.cart-$c-bis',
+      'accept': _isAcceptable,
       'classes': {
         'ui-droppable-active': 'cart-$c-socket-active',
         'ui-droppable-hover': 'cart-$c-socket-hover',
@@ -88,6 +89,11 @@ class ChipSocket extends IChipBank {
     _elt.nodes = [_chip.v.elt];
   }
 
+  Js.JsObject _jsObjectOfJQueryObject(Js.JsObject jqElt)
+  {
+    return new Js.JsObject.fromBrowserObject(jqElt['context']);
+  }
+
   void _onDrop(Js.JsObject event, Js.JsObject ui)
   {
     final Js.JsObject drag = ui['draggable'];
@@ -99,7 +105,7 @@ class ChipSocket extends IChipBank {
     final Js.JsObject ob = new Js.JsObject.fromBrowserObject(cont);
     ftdump("ob", ob);
 
-    final Chip cl = ob['dartHandle'];
+    final Chip cl = ob['chipInstance'];
     ftdump("cl", cl);
 
     assert(cl.parent.isSome,
@@ -107,6 +113,13 @@ class ChipSocket extends IChipBank {
 
     cl.parent.v.pop(cl);
     this.push(cl);
+  }
+
+  bool _isAcceptable(Js.JsObject jqob)
+  {
+    final Chip c = _jsObjectOfJQueryObject(jqob)['chipInstance'];
+
+    return this.full != true && this.locked != true && this.acceptType(c.type);
   }
 
   // ************************************************************************ **
@@ -126,7 +139,7 @@ class ChipSocket extends IChipBank {
     this._locked = false;
     _jqElt.callMethod('droppable', ['enable']);
     if (_chip.isSome)
-      _chip.v.lock();
+      _chip.v.unlock();
   }
 
 }
@@ -134,6 +147,7 @@ class ChipSocket extends IChipBank {
 void ftdump(name, obj)
 {
   print('$name: ($obj), (${obj.runtimeType}), (${obj.hashCode})');
+  Js.context['console'].callMethod('log', [obj]);
 }
 
 class Cart {
