@@ -19,11 +19,10 @@ import "package:emulator/src/memory/headerdecoder.dart" as Headerdecoder;
 abstract class AData {
 
   final Uint8List _data;
-  final Uint16List _view16;
+  // final Uint16List _view16;
 
-  AData(Uint8List d) :
-    _data = d,
-    _view16 = d.buffer.asUint16List();
+  AData(Uint8List d) : _data = d;
+    // _view16 = d.buffer.asUint16List();
 
   int get size => _data.length;
 
@@ -41,10 +40,9 @@ abstract class AReadOperation implements AData {
 
   int pull16(int addr)
   {
-    assert(addr % 2 == 0);
-    assert(addr >= 0 && addr < this.size);
-    final int addr_View16 = addr ~/ 2;
-    return _view16[addr_View16];
+    // assert(addr % 2 == 0);
+    assert(addr >= 0 && addr + 1 < this.size);
+    return (_data[addr] + (_data[addr + 1] << 8));
   }
 
   Uint8List pull8View(int addr, int len)
@@ -71,11 +69,11 @@ abstract class AWriteOperation implements AData  {
 
   void push16(int addr, int word)
   {
-    assert(addr % 2 == 0);
-    assert(addr >= 0 && addr < this.size);
+    // assert(addr % 2 == 0);
+    assert(addr >= 0 && addr + 1 < this.size);
     assert(word & ~0xFFFF == 0);
-    final int addr_View16 = addr ~/ 2;
-    _view16[addr_View16] = word;
+    _data[addr] = word & 0x00FF;
+    _data[addr + 1] = word >> 8;
     return ;
   }
 
