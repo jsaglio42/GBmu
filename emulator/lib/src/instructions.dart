@@ -40,7 +40,8 @@ class InstructionInfo
   );
 
   String toString(){
-  return '''opCode: ${Ft.toAddressString(this.opCode, 2)} {
+  return 
+'''opCode: ${Ft.toAddressString(this.opCode, 2)} {
   name: ${this.name}
   byteSize: ${this.byteSize}
   durationSuccess: ${this.durationSuccess}
@@ -319,3 +320,5 @@ main() {
     print(info);
   }
 }
+
+

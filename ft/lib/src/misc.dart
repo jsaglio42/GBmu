@@ -11,7 +11,7 @@
 // ************************************************************************** //
 
 String   toAddressString(int value, int padding) {
-  return ('0x' + toHexaString(value, padding));
+  return ('0x${toHexaString(value, padding)}');
 }
 
 String   toHexaString(int value, int padding) {

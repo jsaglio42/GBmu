@@ -52,19 +52,10 @@ class _DomData {
     else
       cgbLabel.style.display = 'none';
     nameA.text = reginfo.name;
-    nameA.title =
-      ((new StringBuffer())
-          ..write('address: 0x')
-          ..write(reginfo.address
-              .toUnsigned(16)
-              .toRadixString(16)
-              .toUpperCase()
-              .padLeft(4, "0"))
-          ..write('\ncategory: ')
-          ..write(reginfo.category)
-          ..write('\n')
-          ..write(reginfo.description)
-       ).toString();
+    nameA.title = 
+'''address: ${Ft.toAddressString(reginfo.address, 4)}
+category: ${reginfo.category}
+${reginfo.description}''';
     switch (reginfo.category) {
       case 'Port/Mode':
         tr.style.backgroundColor = 'DarkSeaGreen';
@@ -130,11 +121,7 @@ void _onMemRegInfo(List<int> values) {
         cell.elt.style.color = '#FF1E00';
         _data.valueCells[reg].highlighted = true;
       }
-      cell.elt.text = cur
-        .toUnsigned(16)
-        .toRadixString(16)
-        .toUpperCase()
-        .padLeft(2, "0");
+      cell.elt.text = Ft.toHexaString(cur, 2);
       _data.valueCells[reg].value = cur;
     }
   });

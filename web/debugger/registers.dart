@@ -110,11 +110,7 @@ void _onRegInfo(Emulator.CpuRegs cpur) {
         cell.elt.style.color = '#FF1E00';
         _data.reg16Cells[reg].highlighted = true;
       }
-      cell.elt.text = cur
-        .toUnsigned(16)
-        .toRadixString(16)
-        .toUpperCase()
-        .padLeft(4, "0");
+      cell.elt.text = Ft.toHexaString(cur, 4);
       _data.reg16Cells[reg].value = cur;
     }
     return ;
