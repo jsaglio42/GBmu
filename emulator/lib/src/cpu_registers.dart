@@ -62,12 +62,12 @@ class CpuRegs {
 
   void init()
   {
-    this.update16(Reg16.AF, 0x01B0);
-    this.update16(Reg16.BC, 0x0013);
-    this.update16(Reg16.DE, 0x00D8);
-    this.update16(Reg16.HL, 0x014D);
-    this.update16(Reg16.SP, 0xFFFE);
-    this.update16(Reg16.PC, 0x0100);
+    this.AF = 0x01B0;
+    this.BC = 0x0013;
+    this.DE = 0x00D8;
+    this.HL = 0x014D;
+    this.SP = 0xFFFE;
+    this.PC = 0x0100;
   }
 
   void load(CpuRegs src)
@@ -77,12 +77,52 @@ class CpuRegs {
     }
   }
 
-  /* Get */
+  /* Set */
+
+  int get AF => this.value16(Reg16.AF);
+  int get BC => this.value16(Reg16.BC);
+  int get DE => this.value16(Reg16.DE);
+  int get HL => this.value16(Reg16.HL);
+  int get SP => this.value16(Reg16.SP);
+  int get PC => this.value16(Reg16.PC);
+  int get F => this.value8(Reg8.F);
+  int get A => this.value8(Reg8.A);
+  int get C => this.value8(Reg8.C);
+  int get B => this.value8(Reg8.B);
+  int get E => this.value8(Reg8.E);
+  int get D => this.value8(Reg8.D);
+  int get L => this.value8(Reg8.L);
+  int get H => this.value8(Reg8.H);
+  bool get cy => this.value1(Reg1.cy);
+  bool get n => this.value1(Reg1.n);
+  bool get h => this.value1(Reg1.h);
+  bool get zf => this.value1(Reg1.zf);
+
   int value16(Reg16 r) => this._view16[r.index];
   int value8(Reg8 r) => this._data[r.index];
   bool value1(Reg1 r) => (this._data[0] >> (r.index + 4) & 1) == 1;
 
   /* Set */
+
+  void set AF(int v) {this.update16(Reg16.AF, v);}
+  void set BC(int v) {this.update16(Reg16.BC, v);}
+  void set DE(int v) {this.update16(Reg16.DE, v);}
+  void set HL(int v) {this.update16(Reg16.HL, v);}
+  void set SP(int v) {this.update16(Reg16.SP, v);}
+  void set PC(int v) {this.update16(Reg16.PC, v);}
+  void set F(int v) {this.update8(Reg8.F, v);}
+  void set A(int v) {this.update8(Reg8.A, v);}
+  void set C(int v) {this.update8(Reg8.C, v);}
+  void set B(int v) {this.update8(Reg8.B, v);}
+  void set E(int v) {this.update8(Reg8.E, v);}
+  void set D(int v) {this.update8(Reg8.D, v);}
+  void set L(int v) {this.update8(Reg8.L, v);}
+  void set H(int v) {this.update8(Reg8.H, v);}
+  void set cy(bool v) {this.update1(Reg1.cy, v);}
+  void set n(bool v) {this.update1(Reg1.n, v);}
+  void set h(bool v) {this.update1(Reg1.h, v);}
+  void set zf(bool v) {this.update1(Reg1.zf, v);}
+
   void update16(Reg16 r, int word) {
     assert(word & ~0xFFFF == 0);
     this._view16[r.index] = word;

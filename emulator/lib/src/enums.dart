@@ -23,6 +23,8 @@ export 'package:emulator/src/memory/memregisters.dart'
   show MemReg;
 export 'package:emulator/src/memory/headerdecoder.dart'
   show RomHeaderField, CartridgeType;
+export 'package:emulator/src/instructions.dart'
+  show OpCode, EXOpCode;
 
 // Still Used ???
 enum DebuggerModeRequest {
