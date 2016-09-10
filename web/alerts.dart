@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/30 08:43:27 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:16:49 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 17:38:58 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,8 +18,6 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/constants.dart';
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
-
-import './emulation_speed_codec.dart' as ESCodec;
 
 /*
  * Global Variable
@@ -134,6 +132,9 @@ class _Data {
   _Data(Emulator.Emulator emu)
   {
     emu.listener('Events').forEach(_onEmulatorEvent);
+
+    _addMessage(new _Message(
+            EmulatorEvent.GameBoyCrash, 'Salut', _ids++)); //debug
   }
 
   void refresh()

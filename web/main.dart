@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 12:01:56 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/08 15:40:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,8 +26,9 @@ import './debugger/mem_explorer.dart' as Debmexplorer;
 import './debugger/instruction_flow.dart' as Debinstflow;
 import './debugger/clock_info.dart' as Debclocks;
 import './debugger/buttons.dart' as Debbuttons;
-import './main_space/bottom_panel.dart' as Mainbottompanel;
-import './main_space/alerts.dart' as Mainalerts;
+
+import './alerts.dart' as Mainalerts;
+import 'nav.dart' as Nav;
 
 run() async
 {
@@ -75,29 +76,25 @@ run() async
         });
       });
 
-  var debStatusOn = Html.querySelector('#debStatusOn');
-  var debStatusOff = Html.querySelector('#debStatusOff');
-  var debButtonToggle = Html.querySelector('#debButtonToggle');
-  var debBody = Js.context.callMethod(r'$', ['#debBody']);
 
-  debButtonToggle.onClick.listen((_){
-        Ft.log('main.dart', 'debToggle#onClick');
-        emu.send('DebStatusRequest', DebuggerModeRequest.Toggle);
-      });
+  // debButtonToggle.onClick.listen((_){
+  //       Ft.log('main.dart', 'debToggle#onClick');
+  //       emu.send('DebStatusRequest', DebuggerModeRequest.Toggle);
+  //     });
 
-  emu.listener('DebStatusUpdate').forEach((bool enabled) {
-    Ft.log('main.dart', 'debStatus#onEvent', [enabled]);
-    if (enabled) {
-      debStatusOn.style.display = '';
-      debStatusOff.style.display = 'none';
-      debBody.callMethod('slideDown', ['slow']);
-    }
-    else {
-      debStatusOn.style.display = 'none';
-      debStatusOff.style.display = '';
-      debBody.callMethod('slideUp', ['fast']);
-    }
-  });
+  // emu.listener('DebStatusUpdate').forEach((bool enabled) {
+  //   Ft.log('main.dart', 'debStatus#onEvent', [enabled]);
+  //   if (enabled) {
+  //     debStatusOn.style.display = '';
+  //     debStatusOff.style.display = 'none';
+  //     debBody.callMethod('slideDown', ['slow']);
+  //   }
+  //   else {
+  //     debStatusOn.style.display = 'none';
+  //     debStatusOff.style.display = '';
+  //     debBody.callMethod('slideUp', ['fast']);
+  //   }
+  // });
 
 
   Debregisters.init(emu);
@@ -106,16 +103,50 @@ run() async
   Debinstflow.init(emu);
   Debclocks.init(emu);
   Debbuttons.init(emu);
-  Mainbottompanel.init(emu);
+  // Mainbottompanel.init(emu);
   Mainalerts.init(emu);
-  
+
   Keyboard.init(emu);
   Canvas.init(emu);
 
+  // Mainalerts.init(emu);
+  Nav.init(emu);
+
   var mainGameBoyState = Html.querySelector('#mainGameBoyState');
-  emu.listener('EmulationStatus').forEach((mode){
-        mainGameBoyState.text = mode.toString().substring(20);
+
+  var mainRomName = Html.querySelector('#mainRomName');
+  emu.listener('EmulationStatus').forEach((modeRaw){
+        final mode = GameBoyExternalMode.values[modeRaw.index];
+        final name = 'Plokemon Violet super cool version 5.55';
+
+        try {
+          if (mode == GameBoyExternalMode.Absent)
+            mainRomName.text = '';
+          else if (name.length > 20)
+            mainRomName.text = name.substring(0, 20) + '...';
+          else
+            mainRomName.text = name;
+          mainGameBoyState.text = '(' + mode.toString().substring(20) + ')';
+        } catch (e) {
+          print(e);
+        }
       });
+
+
+
+  // final Html.ElementList<Html.AnchorElement> panelAnchors = Html.querySelectorAll('.navbar .nav > li > a');
+
+  // panelAnchors.onClick.forEach((Html.MouseEvent ev) {
+  //   Ft.log('main.dart', 'panelAnchors#onClick');
+
+  //   final Html.AnchorElement tar = ev.target;
+  //   tar.parent.classes.add('active');
+  //   print(tar.parent.runtimeType);
+  //   panelAnchors.where((Html.AnchorElement a) => a != tar).forEach((Html.AnchorElement a) {
+  //     a.parent.classes.remove('active');
+  //   });
+  // });
+
 
   Ft.log('main.dart', 'run#initJqTooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);

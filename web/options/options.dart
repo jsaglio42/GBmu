@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   bottom_panel.dart                                  :+:      :+:    :+:   //
+//   options.dart                                       :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:09:39 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/10 17:43:59 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/10 17:44:54 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -122,8 +122,18 @@ class _SpeedSlider {
  * Exposed Methods
  */
 
+void onOpen()
+{
+
+}
+
+void onClose()
+{
+
+}
+
 void init(Emulator.Emulator emu) {
-  Ft.log('bottom_panel.dart', 'init', [emu]);
+  Ft.log('options.dart', 'init', [emu]);
   _emu = emu;
   _speed.toString();
   return ;
