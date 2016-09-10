@@ -13,6 +13,7 @@
 import 'dart:typed_data';
 import 'dart:convert' as Convert;
 
+import 'package:emulator/src/enums.dart';
 import 'package:emulator/src/memory/data.dart' as Data;
 
 /* Enums **********************************************************************/
@@ -247,7 +248,7 @@ _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
     else {
-      final v = rom.pull8(info.address);
+      final v = rom.pull(info.address, DataType.BYTE);
       if (map.containsKey(v) == false)
         throw new Exception('Rom Header: ${info.name}: Unknown id');
       return map[v];
@@ -262,7 +263,7 @@ _toValueFunc _makeByteGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull8(info.address);
+      return rom.pull(info.address, DataType.BYTE);
   };
 }
 
@@ -273,7 +274,7 @@ _toValueFunc _makeWordGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull16(info.address);
+      return rom.pull(info.address, DataType.BYTE);
   };
 }
 _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
@@ -283,11 +284,8 @@ _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return
-        (rom.pull8(info.address + 0) << 0) |
-        (rom.pull8(info.address + 1) << 8) |
-        (rom.pull8(info.address + 2) << 16) |
-        (rom.pull8(info.address + 3) << 24);
+      return rom.pull(info.address, DataType.WORD)
+        | (rom.pull(info.address + 2, DataType.WORD) << 16);
   };
 }
 _toValueFunc _makeByteListGetterFunction(RomHeaderField f)

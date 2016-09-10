@@ -9,12 +9,10 @@ pub serve
 
 # BUG
 
-- Memory explorer: what if request in forbidden area ? -> CRASH
-- Memory explorer: ROM_ONLY what if request CARTRIDGE_RAM area ? -> CRASH
+
 
 # Todos
 
-- Ram/rom is it relevent? Cartridge would need pullRam / pullRom ??? (to be checked with mmu implementation)
 - Talk about the full asynchroneous approach for debugger, right now, in high speed, run one inst take as long as run one sec which seems weird. Running one inst feels like running two (colors in debugger). Solution -> Maybe force the update on browserside when a routine is done
 
 # Useful links:

@@ -19,7 +19,7 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 
-import 'package:emulator/src/memory/memregisters.dart' as Memregisters;
+import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
@@ -113,7 +113,7 @@ abstract class Debug implements Worker.AWorker {
         , '_buildMemExplorerMap: addr not valid');
     final memList = new List.generate(_debuggerMemoryLen,
       (i) {
-        try { return gb.mmu.pullMem8(addr + i); }
+        try { return gb.mmu.pullMem(addr + i, DataType.BYTE); }
         catch (e) { return null; }
       });
     return memList;
@@ -130,7 +130,7 @@ abstract class Debug implements Worker.AWorker {
     final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
     final Gameboy.GameBoy gb = this.gbOpt;
 
-    this.ports.send('RegInfo', gb.cpuRegs);
+    this.ports.send('RegInfo', gb.cpur);
     it.forEach((r, i) {
       l[r.index] = gb.mmu.pullMemReg(r);
     });

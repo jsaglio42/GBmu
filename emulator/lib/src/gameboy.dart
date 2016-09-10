@@ -10,7 +10,7 @@
 //                                                                            //
 // ************************************************************************** //
 
-import 'package:ft/src/misc.dart' as Ft;
+import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';
 import "package:emulator/src/cpu_registers.dart" as Cpuregs;
@@ -22,7 +22,7 @@ class GameBoy {
 
   final Mmu.Mmu mmu;
   final Cartridge.ACartridge cartridge;
-  final Cpuregs.CpuRegs cpuRegs = new Cpuregs.CpuRegs();
+  final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
   // final LCDScreen lcd;
   // final Headset sound;
 
@@ -33,7 +33,7 @@ class GameBoy {
     : this.cartridge = c
     , this.mmu = new Mmu.Mmu(c)
   {
-    cpuRegs.init();
+    cpur.init();
     mmu.init();
   }
 
@@ -52,7 +52,7 @@ class GameBoy {
   }
 
   int _execInst() {
-    final inst = this.mmu.pullMem8(cpuRegs.PC);
+    final inst = this.mmu.pullMem(cpur.PC, DataType.BYTE);
     final info = Instructions.instInfos[inst];
     bool s = true;
     switch (info.opCode)
@@ -315,26 +315,23 @@ class GameBoy {
       case OpCode.RST_38H: break;
       default: throw new Exception('Gameboy: exec: Unexpected instruction');
     }
-    this.cpuRegs.PC += info.byteSize;
+    this.cpur.PC += info.byteSize;
     return (s) ? info.durationSuccess : info.durationFail;
   }
 
   int _execExtendedInst() {
-    this.cpuRegs.PC++;
-    final inst = this.mmu.pullMem8(cpuRegs.PC);
+    this.cpur.PC++;
+    final inst = this.mmu.pullMem(cpur.PC, DataType.BYTE);
     final info = Instructions.EXinstInfos[inst];
     switch (info.opCode)
     {
       default: break;
     }
-    this.cpuRegs.PC += info.byteSize;
+    this.cpur.PC += info.byteSize;
     return info.durationSuccess;
   }
 
 }
-
-
-
 
 
 
@@ -358,7 +355,7 @@ class GameBoy {
 // void exec(int nbClock) {
     // OLD ** Only for debug
     // _generateRandomMapFromIterable(Reg16.values, 256 * 256).forEach((r, v) {
-    //   this.cpuRegs.update16(r, v);
+    //   this.cpur.update16(r, v);
     // });
     // _generateRandomMapFromIterable(MemReg.values, 256).forEach((r, v) {
     //   this.mmu.pushMemReg(r, v);

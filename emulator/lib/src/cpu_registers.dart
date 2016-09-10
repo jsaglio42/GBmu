@@ -73,67 +73,67 @@ class CpuRegs {
   void load(CpuRegs src)
   {
     for (Reg16 r in Reg16.Value) {
-      this.update16(r, src.value16(r));
+      this.push16(r, src.pull16(r));
     }
   }
 
   /* Set */
 
-  int get AF => this.value16(Reg16.AF);
-  int get BC => this.value16(Reg16.BC);
-  int get DE => this.value16(Reg16.DE);
-  int get HL => this.value16(Reg16.HL);
-  int get SP => this.value16(Reg16.SP);
-  int get PC => this.value16(Reg16.PC);
-  int get F => this.value8(Reg8.F);
-  int get A => this.value8(Reg8.A);
-  int get C => this.value8(Reg8.C);
-  int get B => this.value8(Reg8.B);
-  int get E => this.value8(Reg8.E);
-  int get D => this.value8(Reg8.D);
-  int get L => this.value8(Reg8.L);
-  int get H => this.value8(Reg8.H);
-  bool get cy => this.value1(Reg1.cy);
-  bool get n => this.value1(Reg1.n);
-  bool get h => this.value1(Reg1.h);
-  bool get zf => this.value1(Reg1.zf);
+  int get AF => this.pull16(Reg16.AF);
+  int get BC => this.pull16(Reg16.BC);
+  int get DE => this.pull16(Reg16.DE);
+  int get HL => this.pull16(Reg16.HL);
+  int get SP => this.pull16(Reg16.SP);
+  int get PC => this.pull16(Reg16.PC);
+  int get F => this.pull8(Reg8.F);
+  int get A => this.pull8(Reg8.A);
+  int get C => this.pull8(Reg8.C);
+  int get B => this.pull8(Reg8.B);
+  int get E => this.pull8(Reg8.E);
+  int get D => this.pull8(Reg8.D);
+  int get L => this.pull8(Reg8.L);
+  int get H => this.pull8(Reg8.H);
+  bool get cy => this.pull1(Reg1.cy);
+  bool get n => this.pull1(Reg1.n);
+  bool get h => this.pull1(Reg1.h);
+  bool get zf => this.pull1(Reg1.zf);
 
-  int value16(Reg16 r) => this._view16[r.index];
-  int value8(Reg8 r) => this._data[r.index];
-  bool value1(Reg1 r) => (this._data[0] >> (r.index + 4) & 1) == 1;
+  int pull16(Reg16 r) => this._view16[r.index];
+  int pull8(Reg8 r) => this._data[r.index];
+  bool pull1(Reg1 r) => (this._data[0] >> (r.index + 4) & 1) == 1;
 
   /* Set */
 
-  void set AF(int v) {this.update16(Reg16.AF, v);}
-  void set BC(int v) {this.update16(Reg16.BC, v);}
-  void set DE(int v) {this.update16(Reg16.DE, v);}
-  void set HL(int v) {this.update16(Reg16.HL, v);}
-  void set SP(int v) {this.update16(Reg16.SP, v);}
-  void set PC(int v) {this.update16(Reg16.PC, v);}
-  void set F(int v) {this.update8(Reg8.F, v);}
-  void set A(int v) {this.update8(Reg8.A, v);}
-  void set C(int v) {this.update8(Reg8.C, v);}
-  void set B(int v) {this.update8(Reg8.B, v);}
-  void set E(int v) {this.update8(Reg8.E, v);}
-  void set D(int v) {this.update8(Reg8.D, v);}
-  void set L(int v) {this.update8(Reg8.L, v);}
-  void set H(int v) {this.update8(Reg8.H, v);}
-  void set cy(bool v) {this.update1(Reg1.cy, v);}
-  void set n(bool v) {this.update1(Reg1.n, v);}
-  void set h(bool v) {this.update1(Reg1.h, v);}
-  void set zf(bool v) {this.update1(Reg1.zf, v);}
+  void set AF(int v) {this.push16(Reg16.AF, v);}
+  void set BC(int v) {this.push16(Reg16.BC, v);}
+  void set DE(int v) {this.push16(Reg16.DE, v);}
+  void set HL(int v) {this.push16(Reg16.HL, v);}
+  void set SP(int v) {this.push16(Reg16.SP, v);}
+  void set PC(int v) {this.push16(Reg16.PC, v);}
+  void set F(int v) {this.push8(Reg8.F, v);}
+  void set A(int v) {this.push8(Reg8.A, v);}
+  void set C(int v) {this.push8(Reg8.C, v);}
+  void set B(int v) {this.push8(Reg8.B, v);}
+  void set E(int v) {this.push8(Reg8.E, v);}
+  void set D(int v) {this.push8(Reg8.D, v);}
+  void set L(int v) {this.push8(Reg8.L, v);}
+  void set H(int v) {this.push8(Reg8.H, v);}
+  void set cy(bool v) {this.push1(Reg1.cy, v);}
+  void set n(bool v) {this.push1(Reg1.n, v);}
+  void set h(bool v) {this.push1(Reg1.h, v);}
+  void set zf(bool v) {this.push1(Reg1.zf, v);}
 
-  void update16(Reg16 r, int word) {
+  void push16(Reg16 r, int word) {
     assert(word & ~0xFFFF == 0);
     this._view16[r.index] = word;
   }
 
-  void update8(Reg8 r, int byte) {
+  void push8(Reg8 r, int byte) {
     assert(byte & ~0xFF == 0);
     this._data[r.index] = byte;
   }
 
-  void update1(Reg1 r, bool value) {
+  void push1(Reg1 r, bool value) {
     final mask = 1 << (4 + r.index);
     if (value)
       this._data[0] = this._data[0] | mask;
@@ -149,48 +149,48 @@ class CpuRegs {
     for (int i = 0; i < 12 ; i++)
       _data[i] = i;
 
-    assert(this.value1(Reg1.cy) == false);
-    assert(this.value1(Reg1.n) == false);
-    assert(this.value1(Reg1.h) == false);
-    assert(this.value1(Reg1.zf) == false);
-    assert(this.value8(Reg8.A) == 0x1);
-    assert(this.value16(Reg16.AF) == 0x0100);
+    assert(this.pull1(Reg1.cy) == false);
+    assert(this.pull1(Reg1.n) == false);
+    assert(this.pull1(Reg1.h) == false);
+    assert(this.pull1(Reg1.zf) == false);
+    assert(this.pull8(Reg8.A) == 0x1);
+    assert(this.pull16(Reg16.AF) == 0x0100);
 
-    assert(this.value8(Reg8.C) == 0x2);
-    assert(this.value8(Reg8.B) == 0x3);
-    assert(this.value16(Reg16.BC) == 0x0302);
+    assert(this.pull8(Reg8.C) == 0x2);
+    assert(this.pull8(Reg8.B) == 0x3);
+    assert(this.pull16(Reg16.BC) == 0x0302);
 
-    assert(this.value8(Reg8.E) == 0x4);
-    assert(this.value8(Reg8.D) == 0x5);
-    assert(this.value16(Reg16.DE) == 0x0504);
+    assert(this.pull8(Reg8.E) == 0x4);
+    assert(this.pull8(Reg8.D) == 0x5);
+    assert(this.pull16(Reg16.DE) == 0x0504);
 
-    assert(this.value8(Reg8.L) == 0x6);
-    assert(this.value8(Reg8.H) == 0x7);
-    assert(this.value16(Reg16.HL) == 0x0706);
+    assert(this.pull8(Reg8.L) == 0x6);
+    assert(this.pull8(Reg8.H) == 0x7);
+    assert(this.pull16(Reg16.HL) == 0x0706);
 
-    assert(this.value16(Reg16.SP) == 0x0908);
-    assert(this.value16(Reg16.PC) == 0x0B0A);
+    assert(this.pull16(Reg16.SP) == 0x0908);
+    assert(this.pull16(Reg16.PC) == 0x0B0A);
 
     for (int i = 0; i < 12 ; i++)
       _data[i] = 0;
 
-    this.update1(Reg1.cy, true);
-    this.update1(Reg1.n, false);
-    this.update1(Reg1.h, false);
-    this.update1(Reg1.zf, true);
-    this.update8(Reg8.A, 0x5);
+    this.push1(Reg1.cy, true);
+    this.push1(Reg1.n, false);
+    this.push1(Reg1.h, false);
+    this.push1(Reg1.zf, true);
+    this.push8(Reg8.A, 0x5);
 
-    this.update8(Reg8.C, 0x6);
-    this.update8(Reg8.B, 0x7);
+    this.push8(Reg8.C, 0x6);
+    this.push8(Reg8.B, 0x7);
 
-    this.update8(Reg8.E, 0x8);
-    this.update8(Reg8.D, 0x9);
+    this.push8(Reg8.E, 0x8);
+    this.push8(Reg8.D, 0x9);
 
-    this.update8(Reg8.L, 0xA);
-    this.update8(Reg8.H, 0xB);
+    this.push8(Reg8.L, 0xA);
+    this.push8(Reg8.H, 0xB);
 
-    this.update16(Reg16.SP, 0x0C0D);
-    this.update16(Reg16.PC, 0x0E0F);
+    this.push16(Reg16.SP, 0x0C0D);
+    this.push16(Reg16.PC, 0x0E0F);
 
     assert(_data[0] == (1 << 7) | (1 << 4));
     assert(_data[1] == 0x5);

@@ -50,7 +50,7 @@ abstract class ACartridge {
     else if (isLogoValid == false)
       throw new Exception('Cartridge: Logo is not valid');
 
-   final ctype = rom.pullHeaderValue(RomHeaderField.Cartridge_Type);
+    final ctype = rom.pullHeaderValue(RomHeaderField.Cartridge_Type);
     switch (ctype)
     {
       case (CartridgeType.ROM_ONLY) :
@@ -68,10 +68,10 @@ abstract class ACartridge {
     throw new Exception('Cartridge: $ctype not supported');
   }
 
-  int pullMem8(int memAddr);
-  void pushMem8(int memAddr, int byte);
-  int pullMem16(int memAddr);
-  void pushMem16(int memAddr, int word);
+  int pullRam(int memAddr, DataType t);
+  int pullRom(int memAddr, DataType t);
+  void pushRam(int memAddr, int v, DataType t);
+  void pushRom(int memAddr, int v, DataType t);
 
   String toString()
     => '\{rom: $rom, ram: $ram\}';

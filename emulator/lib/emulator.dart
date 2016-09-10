@@ -24,5 +24,5 @@ export 'package:emulator/src/emulator.dart';
 // export 'package:emulator/src/memory/cartromonly.dart';
 // export 'package:emulator/src/memory/data.dart';
 // export 'package:emulator/src/memory/headerdecoder.dart';
-export 'package:emulator/src/memory/memregisters.dart';
+export 'package:emulator/src/memory/mem_registers.dart';
 // export 'package:emulator/src/memory/mmu.dart';

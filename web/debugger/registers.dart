@@ -96,7 +96,7 @@ final _DomData _data = new _DomData();
 
 void _onRegInfo(Emulator.CpuRegs cpur) {
   toggleReg16Element(Reg16 reg, _HtmlElement cell){
-    final int cur = cpur.value16(reg);
+    final int cur = cpur.pull16(reg);
 
     if (cell.value == cur) {
       if (cell.highlighted) {
@@ -115,7 +115,7 @@ void _onRegInfo(Emulator.CpuRegs cpur) {
     return ;
   };
   toggleFlagLabels(Reg1 reg, _HtmlLabel cell){
-    final bool cur = cpur.value1(reg);
+    final bool cur = cpur.pull1(reg);
 
     if (cell.value != cur) {
       _data.flagLabels[reg].value = cur;

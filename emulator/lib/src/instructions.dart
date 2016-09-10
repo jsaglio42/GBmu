@@ -1,5 +1,5 @@
 
-import 'package:ft/src/misc.dart' as Ft;
+import 'package:ft/ft.dart' as Ft;
 
 /* Classes */
 
