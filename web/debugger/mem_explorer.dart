@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 11:58:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/27 14:53:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:13:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -117,7 +117,7 @@ Emulator.Emulator _emu;
  */
 
 void init(Emulator.Emulator emu) {
-  Ft.log('deb_mem_expl', 'init');
+  Ft.log('mem_explorer.dart', 'init');
   _emu = emu;
   _data.toString(); /* Tips to instanciate _cells */
   _onMemInfo({

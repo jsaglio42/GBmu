@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:03:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/28 20:22:26 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:10:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,7 @@ void _onClockInfo(int clock) {
   final double tMs = clock.toDouble() / GB_CPU_FREQ_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE;
   final double f = clock.toDouble() / GB_FRAME_PER_CLOCK_DOUBLE;
 
-  Ft.log('deb_clock', '_onClockInfo', clock);
+  Ft.log('clock_info.dart', '_onClockInfo', [clock]);
   _clock.text = clock.toStringAsPrecision(9);
   _time.text = new Duration(microseconds: tMs.round()).toString();
   _frames.text = f.toStringAsPrecision(6);
@@ -43,7 +43,7 @@ void _onClockInfo(int clock) {
  */
 
 void init(Emulator.Emulator emu) {
-  Ft.log('deb_clock', 'init');
+  Ft.log('clock_info.dart', 'init', [emu]);
   _time.toString();
   _clock.toString();
   _frames.toString();

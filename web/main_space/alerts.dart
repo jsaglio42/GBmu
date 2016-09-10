@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/30 08:43:27 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 14:18:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:16:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -154,8 +154,7 @@ class _Data {
     try {
       node = _frames.firstWhere((n) => !n.shown);
     } catch (_) {
-      Ft.log('main_alerts', '_addMessage',
-          'allocating frame number ${_frames.length + 1}');
+      Ft.log('alerts.dart', '_addMessage#newFrameAllocation');
       node = new _Frame(this);
       _frames.add(node);
     }
@@ -168,11 +167,12 @@ class _Data {
     final EmulatorEvent ev = EmulatorEvent.values[map['type'].index];
     final _Message msg = new _Message(ev, map['msg'].toString(), _ids++);
 
-    if (ev == EmulatorEvent.EmulatorCrash ||
-        ev == EmulatorEvent.GameBoyCrash)
-      Ft.logerr('main_alerts', '_onEmulatorEvent', map);
+    if (ev == EmulatorEvent.EmulatorCrash)
+      Ft.logerr('alerts.dart', 'event', [map]);
+    else if (ev == EmulatorEvent.GameBoyCrash)
+      Ft.logwarn('alerts.dart', 'event', [map]);
     else
-      Ft.log('main_alerts', '_onEmulatorEvent', map);
+      Ft.log('alerts.dart', 'event', [map]);
     _addMessage(msg);
   }
 
@@ -183,7 +183,7 @@ class _Data {
  */
 
 void init(Emulator.Emulator emu) {
-  Ft.log('main_alerts', 'init');
+  Ft.log('alerts.dart', 'event');
   _data = new _Data(emu);
   return ;
 }

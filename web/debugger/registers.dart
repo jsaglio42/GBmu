@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 11:42:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:10:12 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -95,7 +95,6 @@ final _DomData _data = new _DomData();
  */
 
 void _onRegInfo(Emulator.CpuRegs cpur) {
-  // Ft.log[('deb_reg', '_onRegInfo', cpur);
   toggleReg16Element(Reg16 reg, _HtmlElement cell){
     final int cur = cpur.value16(reg);
 
@@ -135,7 +134,7 @@ void _onRegInfo(Emulator.CpuRegs cpur) {
  */
 
 void init(Emulator.Emulator emu) {
-  Ft.log('deb_reg', 'init');
+  Ft.log('registers.dart', 'init', [emu]);
   _data.toString(); /* Tips to instanciate _data */
   emu.listener('RegInfo').listen(_onRegInfo);
   return ;

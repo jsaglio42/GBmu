@@ -6,14 +6,15 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:30:40 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 11:44:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:56:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import "dart:typed_data";
 
-import "package:emulator/src/enums.dart";
+import "package:ft/ft.dart" as Ft;
 
+import "package:emulator/src/enums.dart";
 import "package:emulator/src/memory/data.dart" as Data;
 import "package:emulator/src/memory/cart_romonly.dart" as C_RO;
 import "package:emulator/src/memory/cart_mbc1.dart" as C_MBC1;
@@ -64,12 +65,15 @@ abstract class ACartridge {
 
       default : break ;
     }
-    throw new Exception('Cartridge: ${ctype.toString()} not supported');
+    throw new Exception('Cartridge: $ctype not supported');
   }
 
   int pullMem8(int memAddr);
   void pushMem8(int memAddr, int byte);
   int pullMem16(int memAddr);
   void pushMem16(int memAddr, int word);
+
+  String toString()
+    => '\{rom: $rom, ram: $ram\}';
 
 }

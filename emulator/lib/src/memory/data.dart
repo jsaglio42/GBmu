@@ -6,11 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 11:42:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:56:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import "dart:typed_data";
+
+import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/memory/headerdecoder.dart" as Headerdecoder;
 
@@ -26,6 +28,9 @@ abstract class AData {
 
   int get size => _data.length;
 
+  String toString()
+    => '\{len: $size\}';
+
 }
 
 /* ReadOperation **************************************************************/
@@ -34,20 +39,23 @@ abstract class AReadOperation implements AData {
 
   int pull8(int addr)
   {
-    assert(addr >= 0 && addr < this.size);
+    assert(addr >= 0 && addr < this.size,
+        Ft.loc2Str('ReadOp: $this', 'pull8', p:[addr]));
     return this._data[addr];
   }
 
   int pull16(int addr)
   {
     // assert(addr % 2 == 0);
-    assert(addr >= 0 && addr + 1 < this.size);
+    assert(addr >= 0 && addr + 1 < this.size,
+        Ft.loc2Str('ReadOp: $this', 'pull16', p:[addr]));
     return (_data[addr] + (_data[addr + 1] << 8));
   }
 
   Uint8List pull8View(int addr, int len)
   {
-    assert(addr >= 0 && addr + len < this.size);
+    assert(addr >= 0 && addr + len < this.size,
+        Ft.loc2Str('ReadOp: $this', 'pull8View', p:[addr, len]));
     return new Uint8List.view(_data.buffer, addr, len);
   }
 
@@ -61,8 +69,10 @@ abstract class AWriteOperation implements AData  {
 
   void push8(int addr, int byte)
   {
-    assert(addr >= 0 && addr < this.size);
-    assert(byte & ~0xFF == 0);
+    assert(addr >= 0 && addr < this.size,
+        Ft.loc2Str('WriteOp: $this', 'push8', p:[addr, byte]));
+    assert(byte & ~0xFF == 0,
+        Ft.loc2Str('WriteOp: $this', 'push8', p:[addr, byte]));
     this._data[addr] = byte;
     return ;
   }
@@ -70,9 +80,11 @@ abstract class AWriteOperation implements AData  {
   void push16(int addr, int word)
   {
     // assert(addr % 2 == 0);
-    assert(addr >= 0 && addr + 1 < this.size);
-    assert(word & ~0xFFFF == 0);
-    _data[addr] = word & 0x00FF;
+    assert(addr >= 0 && addr + 1 < this.size,
+        Ft.loc2Str('WriteOp: $this', 'push16', p:[addr, word]));
+    assert(word & ~0xFFFF == 0,
+        Ft.loc2Str('WriteOp: $this', 'push16', p:[addr, word]));
+    _data[addr] = word;
     _data[addr + 1] = word >> 8;
     return ;
   }

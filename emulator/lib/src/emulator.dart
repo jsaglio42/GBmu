@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 14:21:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:03:54 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -95,7 +95,7 @@ class Emulator {
 
 Async.Future<Emulator> spawn()
 async {
-  Ft.log('emulator', 'spawn');
+  Ft.log('emulator.dart', 'spawn');
 
   final wiso = await Wiso.spawn(
       Worker.entryPoint, _mainReceivers, _workerReceivers);

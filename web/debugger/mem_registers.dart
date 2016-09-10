@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 16:57:32 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 11:42:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:09:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,7 +52,7 @@ class _DomData {
     else
       cgbLabel.style.display = 'none';
     nameA.text = reginfo.name;
-    nameA.title = 
+    nameA.title =
 '''address: ${Ft.toAddressString(reginfo.address, 4)}
 category: ${reginfo.category}
 ${reginfo.description}''';
@@ -105,7 +105,6 @@ final _data = new _DomData();
 void _onMemRegInfo(List<int> values) {
   int i = 0;
 
-  // Ft.log('deb_mem_reg', '_onMemRegInfo', values);
   _data.valueCells.forEach((MemReg reg, _ValueCell cell){
     final int cur = values[i++];
 
@@ -133,7 +132,7 @@ void _onMemRegInfo(List<int> values) {
  */
 
 void init(Emulator.Emulator emu) {
-  Ft.log('deb_mem_reg', 'init');
+  Ft.log('mem_registers.dart', 'init', [emu]);
   _data.toString(); /* Tips to instanciate _cells */
   emu.listener('MemRegInfo').listen(_onMemRegInfo);
   return ;

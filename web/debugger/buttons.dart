@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 18:57:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:52:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:09:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -78,6 +78,7 @@ Emulator.Emulator _emu;
 
 void init(Emulator.Emulator emu)
 {
+  Ft.log('button.dart', 'init', [emu]);
   Ft.log('deb_but', 'init');
   _emu = emu;
   _data.toString(); /* Tips to instanciate _data */

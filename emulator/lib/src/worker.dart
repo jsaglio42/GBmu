@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 13:55:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:06:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -104,7 +104,7 @@ Worker _globalWorker;
 
 void entryPoint(Wiso.Ports p)
 {
-  Ft.log('worker', 'entryPoint', p);
+  Ft.log('worker.dart', 'entryPoint', [p]);
   assert(_globalWorker == null, "Worker already instanciated");
   _globalWorker = new Worker(p);
   return ;

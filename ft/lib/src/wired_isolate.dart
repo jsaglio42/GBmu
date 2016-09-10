@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/15 10:47:48 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 14:20:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:28:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -129,7 +129,7 @@ class _WorkerSpawnData {
 
 void _workerSpawn(_WorkerSpawnData d)
 {
-  Ft.log('wiso', '_workerSpawn', d);
+  Ft.log('wiso.dart', '_workerSpawn', [d]);
   final Map<String, Iso.ReceivePort> rPortsWorker = _rPortsOfTypes(
       d.workerRTypes);
   final p = new Ports(
@@ -161,7 +161,7 @@ Async.Future<WiredIsolate> spawn(void entryPoint(Ports),
   Map<String, Type> mainRTypes,
   Map<String, Type> workerRTypes)
 async {
-  Ft.log('wiso', 'spawn');
+  Ft.log('wiso.dart', 'spawn');
 
   final Map<String, Iso.ReceivePort> rPortsMain = _rPortsOfTypes(mainRTypes);
   final Iso.ReceivePort tmpRPort = new Iso.ReceivePort();

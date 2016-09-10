@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 11:52:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:13:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,7 @@ import './main_space/alerts.dart' as Mainalerts;
 
 run() async
 {
-  Ft.log('main', 'run');
+  Ft.log('main.dart', 'run');
 
   final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
   assert(inBut != null, "no inbut");
@@ -47,17 +47,17 @@ run() async
   .catchError((e) => print('main:\tError while creating emulator:\n$e'));
 
   var emu = await emuFut;
-  Ft.log('main', 'Emulator created');
+  Ft.log('main.dart', 'run#emuCreated');
 
   Html.querySelector('#magbut')
   .onClick.listen((_) {
-        Ft.log('main', 'on magbut');
+        Ft.log('main.dart', 'magbut#onClick');
         emu.send('EmulationStart', lst);
       });
 
   Html.querySelector('#ejectbut')
   .onClick.listen((_) {
-        Ft.log('maint', 'on ejectbut');
+        Ft.log('main.dart', 'ejectbut#onClick');
         emu.send('Debug', <String, dynamic>{
           'action': 'eject',
         });
@@ -65,7 +65,7 @@ run() async
 
   Html.querySelector('#crashbut')
   .onClick.listen((_) {
-        Ft.log('maint', 'on crashbut');
+        Ft.log('main.dart', 'crashbut#onClick');
         emu.send('Debug', <String, dynamic>{
           'action': 'crash',
         });
@@ -78,12 +78,12 @@ run() async
 
 
   debButtonToggle.onClick.listen((_){
-        Ft.log('main', 'debugger toggle');
+        Ft.log('main.dart', 'debToggle#onClick');
         emu.send('DebStatusRequest', DebuggerModeRequest.Toggle);
       });
 
   emu.listener('DebStatusUpdate').forEach((bool enabled) {
-    Ft.log('main', 'onDebStatusUpdate', enabled);
+    Ft.log('main.dart', 'debStatus#onEvent', [enabled]);
     if (enabled) {
       debStatusOn.style.display = '';
       debStatusOff.style.display = 'none';
@@ -112,12 +112,12 @@ run() async
 
 
 
-  Ft.log('main', 'init jquery tooltips');
+  Ft.log('main.dart', 'run#initJqTooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);
   assert(req != null, "Jquery request failed");
   req.callMethod('tooltip', []);
 
-  Ft.log('main', 'init DONE');
+  Ft.log('main.dart', 'run#done');
 }
 
 void test_endianess(){

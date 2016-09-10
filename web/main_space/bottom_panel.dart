@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 18:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/30 08:45:22 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:09:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -100,7 +100,6 @@ class _SpeedSlider {
   }
 
   _onSpeedUpdate(map) {
-    // Ft.log('main_space', '_onSpeedUpdate', map);
     final double speed = map['speed'];
 
     _text.text = '${speed.toStringAsFixed(2)}x';
@@ -124,7 +123,7 @@ class _SpeedSlider {
  */
 
 void init(Emulator.Emulator emu) {
-  Ft.log('main_botPannel', 'init');
+  Ft.log('bottom_panel.dart', 'init', [emu]);
   _emu = emu;
   _speed.toString();
   return ;

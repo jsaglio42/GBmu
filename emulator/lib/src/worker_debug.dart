@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/07 14:03:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/10 11:04:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,7 +36,7 @@ abstract class Debug implements Worker.AWorker {
 
   void _onMemoryAddrChangeReq(int addr)
   {
-    Ft.log('worker_debug', '_onMemoryAddrChangeReq', addr);
+    Ft.log(Ft.typeStr(this), '_onMemoryAddrChangeReq', [addr]);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_onMemoryAddrChangeReq: addr not valid');
     _debuggerMemoryAddr = addr;
@@ -108,7 +108,7 @@ abstract class Debug implements Worker.AWorker {
 
   List<int>   _buildMemoryList(int addr, Gameboy.GameBoy gb)
   {
-    // Ft.log('worker_debug', '_buildMemoryList', addr);
+    Ft.log(Ft.typeStr(this), '_buildMemoryList', [addr, gb]);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_buildMemExplorerMap: addr not valid');
     final memList = new List.generate(_debuggerMemoryLen,
@@ -147,14 +147,14 @@ abstract class Debug implements Worker.AWorker {
 
   void _makeLooping()
   {
-    Ft.log('worker_deb', '_makeLooping');
+    Ft.log(Ft.typeStr(this), '_makeLooping');
     assert(_sub.isPaused, "worker_deb: _makeLooping while not paused");
     _sub.resume();
   }
 
   void _makeDormant()
   {
-    Ft.log('worker_deb', '_makeDormant');
+    Ft.log(Ft.typeStr(this), '_makeDormant');
     assert(!_sub.isPaused, "worker_deb: _makeDormant while paused");
     _sub.pause();
     if (this.gbMode != GameBoyExternalMode.Absent)
@@ -163,7 +163,7 @@ abstract class Debug implements Worker.AWorker {
 
   void _singleRefresh()
   {
-    Ft.log('worker_deb', '_singleRefresh');
+    Ft.log(Ft.typeStr(this), '_singleRefresh');
     if (this.gbMode != GameBoyExternalMode.Absent)
       _onDebug();
   }
@@ -172,7 +172,7 @@ abstract class Debug implements Worker.AWorker {
 
   void init_debug([_])
   {
-    Ft.log('worker_debug', 'init_debug');
+    Ft.log(Ft.typeStr(this), 'init_debug');
     _periodic = new Async.Stream.periodic(DEBUG_PERIOD_DURATION);
     _sub = _periodic.listen(_onDebug);
     _sub.pause();
