@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/11 11:00:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/11 16:29:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,7 @@ import 'dart:js' as Js;
 import 'dart:math' as Math;
 import 'dart:async' as Async;
 import 'dart:html' as Html;
+import 'dart:indexed_db' as Idb;
 
 import 'package:ft/ft.dart' as Ft;
 
@@ -31,7 +32,7 @@ import './file_db.dart' as Filedb;
  * Global Variable
  */
 
-String _cartHtml;
+// String _cartHtml;
 final Html.NodeValidatorBuilder _domCartValidator =
   new Html.NodeValidatorBuilder()
   ..allowHtml5()
@@ -48,48 +49,68 @@ final Html.NodeValidatorBuilder _domCartValidator =
  * Exposed Methods
  */
 
-Async.Future init(Emulator.Emulator emu) async {
-  Ft.log('cart_bank', 'init');
+typedef void _callback_t(key, value);
 
-  await Filedb.init(emu);
+class _IdbStoreIteratorCallback extends Filedb.IdbStoreIterator {
 
-  await (
-      Html.HttpRequest.getString("cart_table.html")
-      ..then(
-          (resp){
-            Ft.log('cart_bank', 'HttpRequest.then', 'content...');
-            _cartHtml = resp;
-          })
-      ..catchError((e){
-            Ft.log('cart_bank', 'HttpRequest.getString()..catchError', e);
-          })
-         );
-  try {
-    var cab = new CartBank(_cartHtml, _domCartValidator);
-    cab.testAdd();
-    cab.testAdd();
-    cab.testAdd();
+  final _callback_t _cb;
 
-    var dcb = new DetachedChipBank();
-    var cList = [dcb.newRam(), dcb.newRam(), dcb.newSs()];
+  _IdbStoreIteratorCallback(Idb.Database db, Filedb.IdbStore v, this._cb)
+    : super(db, v, 'readonly');
 
-    var gbs = new GameBoySocket();
-
-  } catch (e, st) {
-    print(e);
-    print(st);
+  void forEach(k, v)
+  {
+    _cb(k, v);
   }
+
+}
+
+Async.Future init(Emulator.Emulator emu) async {
+  Ft.log('main', 'init', [emu]);
+
+  final filedbFut = Filedb.init(emu);
+  final cartHtmlFut = Html.HttpRequest.getString("cart_table.html");
+
+  final filedb = await filedbFut;
+  final cartHtml = await cartHtmlFut;
+
+  var cab = new CartBank(cartHtml, _domCartValidator);
+  var dcb = new DetachedChipBank();
+  var gbs = new GameBoySocket();
+
+  // final List iterators = [
+  //   new _IdbStoreIteratorCallback(filedb, Filedb.IdbStore.Rom, (k, v){
+  //     print('rom $k, $v');
+  //   }),
+  //   new _IdbStoreIteratorCallback(filedb, Filedb.IdbStore.Ram, (k, v){
+  //     print('ram $k, $v');
+  //   }),
+  //   new _IdbStoreIteratorCallback(filedb, Filedb.IdbStore.Ss, (k, v){
+  //     print('ss $k, $v');
+  //   }),
+  //   new _IdbStoreIteratorCallback(filedb, Filedb.IdbStore.Cart, (k, v){
+  //     print('cart $k, $v');
+  //   }),
+  // ];
+
+  // await Async.Future.wait(iterators.map((it) => it.tra.completed));
+
+  // cab.testAdd();
+  // cab.testAdd();
+  // cab.testAdd();
+
+  // var cList = [dcb.newRam(), dcb.newRam(), dcb.newSs()];
+
+
   return ;
 }
 
 main () {
   print('Hello World');
 
-
   init(null)
-
-    ..catchError((e) {
+    ..catchError((e, st) {
           print(e);
-
+          print(st);
   });
 }

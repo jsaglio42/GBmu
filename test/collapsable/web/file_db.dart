@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/11 10:47:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/11 11:57:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/11 16:26:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,14 +22,88 @@ import 'package:ft/ft.dart' as Ft;
 // import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
+// http://dartdoc.takyam.com/docs/tutorials/indexeddb/
+
 const String _DBNAME = 'GBmu_db';
-const String _ROMSTORE = 'romStore';
-const String _IDK = 'idk';
 
-bool _dbValid(Idb.Database db)
+enum IdbStore {
+  Rom, Ram, Ss, Cart,
+}
+
+// Template method pattern
+abstract class IdbStoreIterator {
+
+  final Idb.Transaction tra;
+
+  IdbStoreIterator.transaction(Idb.Transaction tra, IdbStore v)
+    : tra = tra
+  {
+    tra
+    .objectStore(v.toString())
+    .openCursor(autoAdvance: true)
+    .forEach((Idb.CursorWithValue cur){
+      this.forEach(cur.key, cur.value);
+    });
+  }
+
+  IdbStoreIterator(Idb.Database db, IdbStore v, String type)
+    : this.transaction(db.transaction(v.toString(), type), v);
+
+  void forEach(dynamic k, dynamic v);
+
+}
+
+// Some kind on `asynchronous functor`, mixed with the above `Template method`
+class _StoreInvariantsIterator<T> extends IdbStoreIterator {
+
+  bool _valid = true;
+  bool get valid => _valid;
+
+  _StoreInvariantsIterator(Idb.Database db, IdbStore v)
+    : super(db, v, 'readonly');
+
+  void forEach(k, v)
+  {
+    void err() {
+      if (_valid)
+        Ft.log('_StoreInvariantsIterator<$T>', 'forEach', [
+          '<${k.runtimeType}>$k', '<${v.runtimeType}>$v)']);
+      _valid = false;
+    };
+    if (!(k is int))
+      err();
+    if (!(v is T))
+      err();
+    //TODO: Implement `invariants` memfun on all 4 stored classes
+    // if (!v.invariants())
+      // error();
+    return ;
+  }
+
+}
+
+Async.Future<bool> _dbValid(Idb.Database db) async
 {
+  List<_StoreInvariantsIterator> iterators;
 
-  return true;
+  if (db.objectStoreNames.length != IdbStore.values.length) {
+    Ft.log('file_db.dart', '_dbValid', ['missing store']);
+    return false;
+  }
+  if (db.objectStoreNames.toSet().containsAll(IdbStore.values)) {
+    Ft.log('file_db.dart', '_dbValid', ['bad store name']);
+    return false;
+  }
+  iterators = [
+    new _StoreInvariantsIterator<int>(db, IdbStore.Rom), //TODO: put real types here
+    new _StoreInvariantsIterator<int>(db, IdbStore.Ram),
+    new _StoreInvariantsIterator<int>(db, IdbStore.Ss),
+    new _StoreInvariantsIterator<int>(db, IdbStore.Cart),
+  ];
+  await Async.Future.wait(
+      iterators.map((_StoreInvariantsIterator it) => it.tra.completed));
+  return iterators.fold(
+      true, (bool prev, _StoreInvariantsIterator it) => prev && it.valid);
 }
 
 void _dbBuild(Idb.VersionChangeEvent ev) async
@@ -37,14 +111,10 @@ void _dbBuild(Idb.VersionChangeEvent ev) async
   Ft.log('file_db.dart', '_dbBuild', [ev]);
 
   final Idb.Database db = (ev.target as Idb.Request).result;
-  final Idb.ObjectStore romStore = db.createObjectStore(_ROMSTORE);
 
-  print(romStore.indexNames);
-  print(romStore.name);
-  print(romStore.transaction);
-
-  final Idb.Index ind = romStore.createIndex(_IDK, 'fieldlol', unique: true);
-
+  IdbStore.values.forEach((v) {
+        db.createObjectStore(v.toString(), autoIncrement: true);
+      });
 }
 
 Async.Future<Idb.Database> _dbMake() async
@@ -60,14 +130,16 @@ Async.Future<Idb.Database> _dbMake() async
     db = await dbf.open(_DBNAME, version: 1, onUpgradeNeeded:(_){
           assert(false, "oups");
         });
-    if (!_dbValid(db)) {
+    if (!await _dbValid(db)) {
       Ft.log('file_db.dart', '_dbMake#db_exists#invalid');
       db.close();
       dbf.deleteDatabase(_DBNAME);
       return dbf.open(_DBNAME, version: 1, onUpgradeNeeded: _dbBuild);
     }
-    Ft.log('file_db.dart', '_dbMake#db_exists#valid');
-    return db;
+    else {
+      Ft.log('file_db.dart', '_dbMake#db_exists#valid');
+      return db;
+    }
   }
   else {
     Ft.log('file_db.dart', '_dbMake#db_noexists');
@@ -75,27 +147,52 @@ Async.Future<Idb.Database> _dbMake() async
   }
 }
 
-
 Async.Future init(Emulator.Emulator emu) async
 {
-  try {
-  Html.window.indexedDB.deleteDatabase(_DBNAME); //debug
-  } catch (_) {
+  Ft.log('file_db.dart', 'init#make_db', [emu]);
+  final Idb.Database db = await _dbMake();
+  Idb.Transaction tra;
+  Ft.log('file_db.dart', 'init#make_db#DONE');
 
-  }
-  Ft.log('file_db.dart', 'init', [emu]);
+  Ft.log('file_db.dart', 'init#add_debug_entries');
+  tra = db.transaction(IdbStore.Rom.toString(), 'readwrite');
+  tra.objectStore(IdbStore.Rom.toString())
+  ..add(41)
+  ..add(42)
+  ..add(43);
+  await tra.completed;
+  Ft.log('file_db.dart', 'init#add_debug_entries#DONE');
 
-  // print((await idb.getDatabaseNames()));
 
-  // final Idb.Database db = await idb.open(_DBNAME);
+  Ft.log('file_db.dart', 'init#add_debug_entries');
+  tra = db.transaction(IdbStore.Ss.toString(), 'readwrite');
+  tra.objectStore(IdbStore.Ss.toString())
+  ..add(41)
+  ..add(42)
+  ..add(43);
+  await tra.completed;
+  Ft.log('file_db.dart', 'init#add_debug_entries#DONE');
 
-  // print('db: ${db}');
-  // print('name: ${db.name}');
-  // print('objectStoreNames: ${db.objectStoreNames}');
-  // print('version: ${db.version}');
+  Ft.log('file_db.dart', 'init#cursor');
+  tra = db.transaction(IdbStore.Rom.toString(), 'readonly');
 
-  await _dbMake();
-  // db.createObjectStore("ram");
+  tra.objectStore(IdbStore.Rom.toString())
+  .openCursor(autoAdvance: true)
+  .forEach((Idb.CursorWithValue cur){
+        Ft.log('file_db.dart', 'init#cursor_iteration', [cur]);
+  });
 
+
+  await tra.completed;
+  Ft.log('file_db.dart', 'init#cursor#DONE');
+
+  return db;
+
+  // ..then((p){
+  //       Ft.log('hello', 'lol', p);
+  //     })
+  // ..catchError((e){
+  //       print(e);
+  // });
 
 }
