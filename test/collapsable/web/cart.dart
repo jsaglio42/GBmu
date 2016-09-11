@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:31:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 17:18:53 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/11 10:48:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,9 +18,7 @@ import 'dart:html' as Html;
 import 'package:ft/ft.dart' as Ft;
 
 import './component_system.dart';
-import './cart.dart';
 import './chip.dart';
-// import './toplevel_banks.dart';
 
 class ChipSocket extends AChipBank {
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 15:51:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/11 11:00:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,6 +25,7 @@ import './component_system.dart';
 import './cart.dart';
 import './chip.dart';
 import './toplevel_banks.dart';
+import './file_db.dart' as Filedb;
 
 /*
  * Global Variable
@@ -49,6 +50,8 @@ final Html.NodeValidatorBuilder _domCartValidator =
 
 Async.Future init(Emulator.Emulator emu) async {
   Ft.log('cart_bank', 'init');
+
+  await Filedb.init(emu);
 
   await (
       Html.HttpRequest.getString("cart_table.html")
@@ -83,5 +86,10 @@ main () {
   print('Hello World');
 
 
-  init(null);
+  init(null)
+
+    ..catchError((e) {
+          print(e);
+
+  });
 }

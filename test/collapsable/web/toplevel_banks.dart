@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:29:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/08 17:17:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/11 10:46:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,6 @@ import 'package:ft/ft.dart' as Ft;
 import './component_system.dart';
 import './cart.dart';
 import './chip.dart';
-// import './toplevel_banks.dart';
 
 class GameBoySocket extends ACartBank {
 
