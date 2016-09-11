@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/11 16:29:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/11 17:54:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -44,6 +44,20 @@ final Html.NodeValidatorBuilder _domCartValidator =
 /*
  * Internal Methods
  */
+
+class DbCart {
+
+  final int romkey;
+  int ramkeyOpt = null;
+  final sskeysOpt = new List<int>.filled(4, null, growable: false);
+
+  DbCart(this.romkey);
+
+  bool invariants()
+    => true;
+
+}
+
 
 /*
  * Exposed Methods

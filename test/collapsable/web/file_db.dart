@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/11 10:47:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/11 16:26:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/11 18:24:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -53,57 +53,130 @@ abstract class IdbStoreIterator {
 
 }
 
-// Some kind on `asynchronous functor`, mixed with the above `Template method`
-class _StoreInvariantsIterator<T> extends IdbStoreIterator {
+typedef dynamic folder_t(dynamic acc, dynamic key, dynamic v);
 
-  bool _valid = true;
-  bool get valid => _valid;
+class _StoreFold<T> extends IdbStoreIterator {
 
-  _StoreInvariantsIterator(Idb.Database db, IdbStore v)
+  final folder_t _f;
+  T _value;
+  Async.Future<T> get value =>
+    this.tra.completed.then((_) => _value);
+
+  _StoreFold(Idb.Database db, IdbStore v, this._value, this._f)
     : super(db, v, 'readonly');
 
   void forEach(k, v)
   {
-    void err() {
-      if (_valid)
-        Ft.log('_StoreInvariantsIterator<$T>', 'forEach', [
-          '<${k.runtimeType}>$k', '<${v.runtimeType}>$v)']);
-      _valid = false;
-    };
-    if (!(k is int))
-      err();
-    if (!(v is T))
-      err();
-    //TODO: Implement `invariants` memfun on all 4 stored classes
-    // if (!v.invariants())
-      // error();
-    return ;
+    _value = _f(_value, k, v);
   }
 
 }
 
-Async.Future<bool> _dbValid(Idb.Database db) async
+// Functor
+class _DbValidator
 {
-  List<_StoreInvariantsIterator> iterators;
+  final Idb.Database _db;
 
-  if (db.objectStoreNames.length != IdbStore.values.length) {
-    Ft.log('file_db.dart', '_dbValid', ['missing store']);
-    return false;
+  _DbValidator(this._db);
+
+  bool _storesPresence()
+  {
+    if (_db.objectStoreNames.length != IdbStore.values.length) {
+      Ft.log('file_db.dart', '_dbValid', ['missing store']);
+      return false;
+    }
+    if (_db.objectStoreNames.toSet().containsAll(IdbStore.values)) {
+      Ft.log('file_db.dart', '_dbValid', ['bad store name']);
+      return false;
+    }
+    return true;
   }
-  if (db.objectStoreNames.toSet().containsAll(IdbStore.values)) {
-    Ft.log('file_db.dart', '_dbValid', ['bad store name']);
-    return false;
+
+  static bool _mapValid(Map map, Type keyType) {
+    bool valid = true;
+    map.forEach((k, v){
+      if (k.runtimeType != int)
+        valid = false;
+      if (v.runtimeType != keyType)
+        valid = false;
+      //TODO: Implement `invariants` memfun on all 4 stored classes
+      // if (!v.invariants())
+      // error();
+    });
+    if (!valid)
+      Ft.log('_DbValidator', '_mapValid', [map, keyType]);
+    return valid;
   }
-  iterators = [
-    new _StoreInvariantsIterator<int>(db, IdbStore.Rom), //TODO: put real types here
-    new _StoreInvariantsIterator<int>(db, IdbStore.Ram),
-    new _StoreInvariantsIterator<int>(db, IdbStore.Ss),
-    new _StoreInvariantsIterator<int>(db, IdbStore.Cart),
-  ];
-  await Async.Future.wait(
-      iterators.map((_StoreInvariantsIterator it) => it.tra.completed));
-  return iterators.fold(
-      true, (bool prev, _StoreInvariantsIterator it) => prev && it.valid);
+
+  bool _cartsContent(Map<int, DbCart> carts,
+      Set<int> roms, Set<int> rams, Set<int> sss) {
+
+    for (DbCart cart in carts.values) {
+      if (cart.romKey == null || !roms.contains(cart.romKey))
+        return false;
+      roms.remove(cart.romKey);
+      if (cart.ramKeyOpt != null) {
+        if (!rams.contains(cart.ramKeyOpt))
+          return false;
+        rams.remove(cart.ramKeyOpt);
+      }
+      for (int ssIdOpt in cart.ssKeysOpt) {
+        if (ssIdOpt != null) {
+          if (!sss.contains(ssIdOpt))
+            return false;
+          sss.remove(ssIdOpt);
+        }
+      }
+    }
+    return true;
+  }
+
+  static Map _accFun(Map acc, int k, v) {
+    acc[k] = v;
+    return acc;
+  }
+
+  Async.Future<bool> _content() async
+  {
+    final List<Async.Future<Map>> futs = [
+      new _StoreFold(_db, IdbStore.Rom, {}, _accFun).value,
+      new _StoreFold(_db, IdbStore.Ram, {}, _accFun).value,
+      new _StoreFold(_db, IdbStore.Ss, {}, _accFun).value,
+      new _StoreFold(_db, IdbStore.Cart, {}, _accFun).value,
+    ];
+    final List<Map> maps = await Async.Future.wait(futs);
+    final Map roms = maps[0];
+    final Map rams = maps[1];
+    final Map sss = maps[2];
+    final Map carts = maps[3];
+    bool valid = true;
+
+    if (!_mapValid(roms, int)
+        || !_mapValid(rams, int)
+        || !_mapValid(sss, int)
+        || !_mapValid(carts, DbCart))
+      return false;
+    if (roms.length != carts.length)
+      return false;
+    return _cartsContent(carts, new Set.from(roms.keys),
+        new Set.from(rams.keys), new Set.from(sss.keys));
+  }
+
+  Async.Future<bool> valid() async =>
+    _storesPresence() && await _content();
+}
+
+class DbCart {
+
+  final int romKey;
+  int ramKeyOpt = null;
+  final ssKeysOpt = new List<int>.filled(4, null, growable: false);
+
+  DbCart(this.romKey);
+
+  bool invariants()
+    => true;
+
 }
 
 void _dbBuild(Idb.VersionChangeEvent ev) async
@@ -130,7 +203,7 @@ Async.Future<Idb.Database> _dbMake() async
     db = await dbf.open(_DBNAME, version: 1, onUpgradeNeeded:(_){
           assert(false, "oups");
         });
-    if (!await _dbValid(db)) {
+    if (!await new _DbValidator(db).valid()) {
       Ft.log('file_db.dart', '_dbMake#db_exists#invalid');
       db.close();
       dbf.deleteDatabase(_DBNAME);
@@ -164,14 +237,14 @@ Async.Future init(Emulator.Emulator emu) async
   Ft.log('file_db.dart', 'init#add_debug_entries#DONE');
 
 
-  Ft.log('file_db.dart', 'init#add_debug_entries');
-  tra = db.transaction(IdbStore.Ss.toString(), 'readwrite');
-  tra.objectStore(IdbStore.Ss.toString())
-  ..add(41)
-  ..add(42)
-  ..add(43);
-  await tra.completed;
-  Ft.log('file_db.dart', 'init#add_debug_entries#DONE');
+  // Ft.log('file_db.dart', 'init#add_debug_entries');
+  // tra = db.transaction(IdbStore.Cart.toString(), 'readwrite');
+  // tra.objectStore(IdbStore.Cart.toString())
+  // ..add(41)
+  // ..add(42)
+  // ..add(43);
+  // await tra.completed;
+  // Ft.log('file_db.dart', 'init#add_debug_entries#DONE');
 
   Ft.log('file_db.dart', 'init#cursor');
   tra = db.transaction(IdbStore.Rom.toString(), 'readonly');
