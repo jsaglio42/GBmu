@@ -17,14 +17,14 @@
 export 'package:emulator/src/worker.dart'
   show DebuggerExternalMode, GameBoyExternalMode, PauseExternalMode,
   AutoBreakExternalMode, EmulatorEvent;
-export 'package:emulator/src/cpu_registers.dart'
+export 'package:emulator/src/z80/cpu_registers.dart'
   show Reg16, Reg8, Reg1;
 export 'package:emulator/src/memory/mem_registers.dart'
   show MemReg;
 export 'package:emulator/src/memory/headerdecoder.dart'
   show RomHeaderField, CartridgeType;
-export 'package:emulator/src/instructions.dart'
-  show OpCode, EXOpCode;
+export 'package:emulator/src/z80/instructions.dart'
+  show OpPrefix;
 
 enum DataType {
   BYTE,

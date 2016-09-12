@@ -56,11 +56,14 @@ class CpuRegs {
 
   CpuRegs() : this.buffer(new Uint8List(6 * 2));
 
+  CpuRegs.clone(CpuRegs src) :
+    this.buffer(new Uint8List.fromList(src._data.asUint8List()));
+
   /*
   ** API ***********************************************************************
   */
 
-  void init()
+  void reset()
   {
     this.AF = 0x01B0;
     this.BC = 0x0013;
@@ -77,7 +80,7 @@ class CpuRegs {
     }
   }
 
-  /* Set */
+  /* Get */
 
   int get AF => this.pull16(Reg16.AF);
   int get BC => this.pull16(Reg16.BC);

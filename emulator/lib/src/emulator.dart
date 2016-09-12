@@ -18,7 +18,8 @@ import 'package:emulator/enums.dart';
 import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 import 'package:emulator/src/worker.dart' as Worker;
-import "package:emulator/src/cpu_registers.dart" as Cpuregs;
+import "package:emulator/src/z80/instructions.dart" as Instructions;
+import "package:emulator/src/z80/cpu_registers.dart" as Cpuregs;
 
 /*
  * ************************************************************************** **
@@ -41,6 +42,7 @@ final _mainReceivers = <String, Type>{
   'EmulationResume' : int,
   'DebStatusUpdate' : bool,
   'MemInfo' : <String, dynamic>{}.runtimeType,
+  'InstInfo' : <Instructions.Instruction>[].runtimeType,
   'Events': <String, dynamic>{}.runtimeType,
 };
 

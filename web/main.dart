@@ -20,6 +20,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
 import './debugger/mem_explorer.dart' as Debmexplorer;
+import './debugger/instruction_flow.dart' as Debinstflow;
 import './debugger/clock_info.dart' as Debclocks;
 import './debugger/buttons.dart' as Debbuttons;
 import './main_space/bottom_panel.dart' as Mainbottompanel;
@@ -99,6 +100,7 @@ run() async
   Debregisters.init(emu);
   Debmregisters.init(emu);
   Debmexplorer.init(emu);
+  Debinstflow.init(emu);
   Debclocks.init(emu);
   Debbuttons.init(emu);
   Mainbottompanel.init(emu);

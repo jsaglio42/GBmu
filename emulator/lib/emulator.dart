@@ -13,8 +13,8 @@
 // imporation process (emacs): C-u   ls -d1 src/**/*.dart | sort
 
 // Root
-export 'package:emulator/src/cpu_registers.dart';
 export 'package:emulator/src/emulator.dart';
+export 'package:emulator/src/z80/cpu_registers.dart';
 // export 'package:emulator/src/enums.dart';
 // export 'package:emulator/src/constants.dart';
 // export 'package:emulator/src/gameboy.dart';

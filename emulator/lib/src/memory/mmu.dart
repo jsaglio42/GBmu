@@ -23,14 +23,14 @@ import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 
 class Mmu {
 
-  final Cartridge.ACartridge _c;
+  final Cartridge.ACartridge c;
   final _vr = new Data.VideoRam(new Uint8List(VIDEO_RAM_SIZE));
   final _wr = new Data.WorkingRam(new Uint8List(WORKING_RAM_SIZE));
   final _tr = new Data.TailRam(new Uint8List(TAIL_RAM_SIZE));
 
-  Mmu(this._c);
+  Mmu(this.c);
 
-  void init() {
+  void reset() {
     _vr.clear();
     _wr.clear();
     _tr.clear();
@@ -86,9 +86,9 @@ class Mmu {
   {
     assert(CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST);
     if (CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
-      return _c.pullRom(memAddr, t);
+      return this.c.pullRom(memAddr, t);
     else if (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST)
-      return _c.pullRam(memAddr, t);
+      return this.c.pullRam(memAddr, t);
     else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
       return _vr.pull(memAddr - VIDEO_RAM_FIRST, t);
     else if (WORKING_RAM_FIRST <= memAddr && memAddr <= WORKING_RAM_LAST)
@@ -103,9 +103,9 @@ class Mmu {
   {
     assert(CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST);
     if (CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
-      _c.pushRom(memAddr, v, t);
+      this.c.pushRom(memAddr, v, t);
     else if (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST)
-      _c.pushRam(memAddr, v, t);
+      this.c.pushRam(memAddr, v, t);
     else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
       _vr.push(memAddr - VIDEO_RAM_FIRST, t);
     else if (WORKING_RAM_FIRST <= memAddr && memAddr <= WORKING_RAM_LAST)
