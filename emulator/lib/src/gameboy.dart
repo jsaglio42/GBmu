@@ -30,7 +30,11 @@ class GameBoy {
   
   GameBoy._fromMMU(Mmu.Mmu mmu) :
     this.mmu = mmu,
-    this.z80 = new Z80.Z80(mmu);
+    this.z80 = new Z80.Z80(mmu)
+  {
+    z80.reset();
+    mmu.reset();
+  }
 
   GameBoy(Cartridge.ACartridge c) :  
     this._fromMMU(new Mmu.Mmu(c));

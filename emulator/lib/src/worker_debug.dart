@@ -19,10 +19,13 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 
-import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
-
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
+
+import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
+
+import 'package:emulator/src/z80/instructions.dart' as Instructions;
+import 'package:emulator/src/z80/z80.dart' as Z80;
 
 abstract class Debug implements Worker.AWorker {
 
@@ -30,6 +33,7 @@ abstract class Debug implements Worker.AWorker {
   Async.StreamSubscription _sub;
 
   static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
+  static const int _debuggerInstFlowLen = 7; // <- bad, should be initialised by dom
   int _debuggerMemoryAddr = 0;
 
   // EXTERNAL INTERFACE ***************************************************** **
@@ -119,6 +123,17 @@ abstract class Debug implements Worker.AWorker {
     return memList;
   }
 
+  List<Instructions.Instruction>   _buildInstList(Gameboy.GameBoy gb)
+  {
+    Ft.log(Ft.typeStr(this), '_buildInstList', [gb]);
+    final instDecoder = new Z80.Z80.clone(gb.z80);
+    final lst = <Instructions.Instruction>[];
+    for (var i = 0; i < _debuggerInstFlowLen; ++i) {
+      lst.add(instDecoder.pullInstruction());
+    }
+    return lst;
+  }
+
   // LOOPING ROUTINE ******************************************************** **
 
   void _onDebug([_])
@@ -138,6 +153,7 @@ abstract class Debug implements Worker.AWorker {
       'addr' : _debuggerMemoryAddr,
       'data' : _buildMemoryList(_debuggerMemoryAddr, gb)
     });
+    this.ports.send('InstInfo', _buildInstList(gb));
     this.ports.send('MemRegInfo', l);
     this.ports.send('ClockInfo', gb.clockCount);
     return ;

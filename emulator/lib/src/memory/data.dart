@@ -50,7 +50,7 @@ abstract class AReadOperation implements AData {
           Ft.loc2Str('ReadOp: $this', 'pull16', p:[addr]));
         return (_data[addr] + (_data[addr + 1] << 8));
       default : 
-        assert(false);
+        assert(false, 'ReadOp: switch(dataType): failure');
     }
   }
 
@@ -91,21 +91,21 @@ abstract class AWriteOperation implements AData  {
     {
       case (DataType.BYTE) :
         assert(v & ~0xFF == 0,
-          Ft.loc2Str('ReadOp: $this', 'push8', p:[addr]));
+          Ft.loc2Str('WriteOp: $this', 'push8', p:[addr]));
         assert(addr >= 0 && addr < this.size,
-          Ft.loc2Str('ReadOp: $this', 'push8', p:[addr]));
+          Ft.loc2Str('WriteOp: $this', 'push8', p:[addr]));
         this._data[addr] = v;
         break ;
       case (DataType.WORD) :
         assert(v & ~0xFFFF == 0,
-          Ft.loc2Str('ReadOp: $this', 'pull16', p:[addr]));
+          Ft.loc2Str('WriteOp: $this', 'push16', p:[addr]));
         assert(addr >= 0 && addr + 1 < this.size,
-          Ft.loc2Str('ReadOp: $this', 'pull16', p:[addr]));
+          Ft.loc2Str('WriteOp: $this', 'push16', p:[addr]));
         _data[addr] = v & 0x00FF;
         _data[addr + 1] = v >> 8;
         break ;
       default :
-        assert(false);
+        assert(false, 'WriteOp: switch(dataType): failure');
     }
   }
 

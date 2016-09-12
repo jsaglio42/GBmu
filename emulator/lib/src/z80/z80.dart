@@ -25,8 +25,9 @@ class Z80 {
   final Mmu.Mmu _mmu;
 
   int _clockCount;
-  OpPrefix _prefix;
   int _clockWait;
+  OpPrefix _prefix;
+
 
   /*
   ** Constructors **************************************************************
@@ -40,11 +41,11 @@ class Z80 {
     _clockWait = 0;
   
   Z80.clone(Z80 src) :
-    this.mmu = src.mmu,
-    this.cpur = new Cpuregs.clone(src.cpur),
-    _prefix = src.prefix,
+    this.cpur = new Cpuregs.CpuRegs.clone(src.cpur),
+    _mmu = src._mmu,
     _clockCount = src._clockCount,
-    _clockWait = src._clockWait;
+    _clockWait = src._clockWait,
+    _prefix = src._prefix;
 
   /*
   ** API ***********************************************************************
@@ -70,13 +71,45 @@ class Z80 {
       {
         switch (_prefix)
         {
-          case (OpPrefix.None) : _execInst(); break;
-          case (OpPrefix.CB) : _execInst_CB(); break;
-          default : assert(false);
+          case (OpPrefix.None) : _clockWait = _execInst(); break;
+          case (OpPrefix.CB) : _clockWait = _execInst_CB(); break;
+          default : assert(false, 'z80: exec: switch(prefix): failure');
         }
       }
     }
     return ;
+  }
+  
+  Instructions.Instruction pullInstruction() {
+    final addr = this.cpur.PC++;
+    final OpPrefix p = _prefix;
+    final op = _mmu.pullMem(addr, DataType.BYTE);
+    if (op == 0xCB && p == OpPrefix.None)
+      _prefix = OpPrefix.CB;
+    else
+      _prefix = OpPrefix.None;
+    List<Instructions.InstructionInfo> infoList;
+    switch (p)
+    {
+      case (OpPrefix.None) :
+        infoList = Instructions.instInfos;
+        break;
+      case (OpPrefix.CB) :
+        infoList = Instructions.instInfos_CB;
+        break;
+      default : assert(false, 'InstructionDecoder: switch(OpPrefix): failure');
+    }
+    final info = infoList[op];
+    int data;
+    switch (info.dataSize)
+    {
+      case (0): data = null; break;
+      case (1): data = _mmu.pullMem(this.cpur.PC, DataType.BYTE); break;
+      case (2): data = _mmu.pullMem(this.cpur.PC, DataType.WORD); break;
+      default : assert(false, 'InstructionDecoder: switch(dataSize): failure');
+    }
+    this.cpur.PC += info.dataSize;
+    return new Instructions.Instruction(addr, info, data);
   }
 
   /*
@@ -84,7 +117,7 @@ class Z80 {
   */
 
   int _execInst() {
-    final inst = _mmu.pullMem(cpur.PC, DataType.BYTE);
+    final inst = _mmu.pullMem(cpur.PC++, DataType.BYTE);
     final info = Instructions.instInfos[inst];
     bool s = true;
     switch (info.opCode)
@@ -603,20 +636,19 @@ class Z80 {
         break;
       default: throw new Exception('Gameboy: exec: Unexpected instruction');
     }
-    this.cpur.PC += info.byteSize;
-    return (s) ? info.durationSuccess : info.durationFail;
+    this.cpur.PC += info.dataSize;
+    return 0;
   }
 
   int _execInst_CB() {
-    this.cpur.PC++;
-    final inst = _mmu.pullMem(cpur.PC, DataType.BYTE);
+    final inst = _mmu.pullMem(cpur.PC++, DataType.BYTE);
     final info = Instructions.instInfos_CB[inst];
     switch (info.opCode)
     {
       default: break;
     }
-    this.cpur.PC += info.byteSize;
-    return info.durationSuccess;
+    this.cpur.PC += info.dataSize;
+    return 0;
   }
 
 }

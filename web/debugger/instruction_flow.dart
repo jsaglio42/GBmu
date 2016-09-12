@@ -38,6 +38,7 @@ class _Data {
 
   final List<_Cell> addrCells = _createAddrCells();
   final List<_Cell> instCells = _createInstCells();
+  final List<_Cell> opcodeCells = _createOpCodeCells();
   final List<_Cell> dataCells = _createDataCells();
 
   static _createAddrCells() {
@@ -50,13 +51,13 @@ class _Data {
     return lst;
   }
 
-  static _createInstCells() {
+  static _createOpCodeCells() {
     final Html.TableSectionElement tbody = Html.querySelector('#debTbodyInstFlow');
     final lst = tbody.rows
       .map((tr) => new _Cell(tr.cells[1]))
       .toList();
-    assert(lst != null, "_createInstCells: InstList is null");
-    assert(lst.length == INST_ROWS, "_createInstCells: Invalid number of rows");
+    assert(lst != null, "_createOpCodeCells: dataList is null");
+    assert(lst.length == INST_ROWS, "_createOpCodeCells: Invalid number of rows");
     return lst;
   }
 
@@ -67,6 +68,16 @@ class _Data {
       .toList();
     assert(lst != null, "_createDataCells: dataList is null");
     assert(lst.length == INST_ROWS, "_createDataCells: Invalid number of rows");
+    return lst;
+  }
+
+  static _createInstCells() {
+    final Html.TableSectionElement tbody = Html.querySelector('#debTbodyInstFlow');
+    final lst = tbody.rows
+      .map((tr) => new _Cell(tr.cells[3]))
+      .toList();
+    assert(lst != null, "_createInstCells: InstList is null");
+    assert(lst.length == INST_ROWS, "_createInstCells: Invalid number of rows");
     return lst;
   }
 
@@ -81,10 +92,20 @@ void _onInstInfo(List<Instructions.Instruction> instList) {
   for (var i = 0; i < INST_ROWS; ++i) {
     _data.addrCells[i].elt.text = Ft.toAddressString(instList[i].addr, 4);
     _data.instCells[i].elt.text = instList[i].info.name;
-    if (instList[i].dataOpt == null)
-      _data.dataCells[i].elt.text = "--";
-    else
-      _data.dataCells[i].elt.text = Ft.toHexaString(instList[i].dataOpt, 4);
+    _data.opcodeCells[i].elt.text = Ft.toAddressString(instList[i].info.opCode, 2);
+    switch (instList[i].info.dataSize)
+    {
+      case (0):
+        _data.dataCells[i].elt.text = '--';
+        break ;
+      case (1):
+        _data.dataCells[i].elt.text = '${Ft.toHexaString(instList[i].dataOpt, 2)}';
+        break;
+      case (2):
+        _data.dataCells[i].elt.text = '${Ft.toHexaString(instList[i].dataOpt, 4)}';
+        break;
+      default : assert(false, 'onInstInfo: swith(datasize): failure');
+    }
   }
   return ;
 }

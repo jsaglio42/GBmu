@@ -57,7 +57,7 @@ class CpuRegs {
   CpuRegs() : this.buffer(new Uint8List(6 * 2));
 
   CpuRegs.clone(CpuRegs src) :
-    this.buffer(new Uint8List.fromList(src._data.asUint8List()));
+    this.buffer(new Uint8List.fromList(src._data.buffer.asUint8List()));
 
   /*
   ** API ***********************************************************************
