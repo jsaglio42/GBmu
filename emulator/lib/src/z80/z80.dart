@@ -63,27 +63,20 @@ class Z80 {
       if (_clockWait > 0)
         _clockWait--;
       else
-      {
-        var inst = this.pullInstruction(); //Automatically adjust PC to the next instruction, simply need to exec code
-        // <-- Save as current instruction ?
-        // <-- Execute some code here ?
-      }
+        _execInst();
     }
     return ;
   }
   
   Instructions.Instruction pullInstruction() {
     final addr = this.cpur.PC;
-    final op = _mmu.pullMem(addr, DataType.WORD);
-    Instructions.InstructionInfo info;
-    if ((op & 0x00FF) != 0xCB)
-      info = Instructions.instInfos[(op & 0x00FF)];
-    else
-      info = Instructions.instInfos_CB[(op >> 8)];
+    final info = _getInstructionInfo(addr);
     int data;
     switch (info.dataSize)
     {
-      case (0): data = 0; break;
+      case (0):
+        data = 0;
+        break;
       case (1):
         data = _mmu.pullMem(this.cpur.PC + info.opCodeSize, DataType.BYTE);
         break;
@@ -93,13 +86,28 @@ class Z80 {
       default :
         assert(false, 'InstructionDecoder: switch(dataSize): failure');
     }
-    this.cpur.PC += info.instSize; // Should be done elsewhere ? When looking at CALL instructions, it seems OK
+    this.cpur.PC += info.instSize;
     return new Instructions.Instruction(addr, info, data);
   }
 
   /*
   ** Private *******************************************************************
   */
+
+  Instructions.InstructionInfo _getInstructionInfo(int addr) {
+    assert(addr >= 0 && addr + 1 <= 0xFFFF);
+    final op = _mmu.pullMem(addr, DataType.WORD);
+    if ((op & 0x00FF) != 0xCB)
+      return Instructions.instInfos[(op & 0x00FF)];
+    else
+      return Instructions.instInfos_CB[(op >> 8)];
+  }
+
+  void _execInst(){
+    var info = _getInstructionInfo(this.cpur.PC);
+    this.cpur.PC += info.instSize;
+    return ;
+  }
 
   void _NOP() {
     return ;
