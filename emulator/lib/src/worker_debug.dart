@@ -126,10 +126,10 @@ abstract class Debug implements Worker.AWorker {
   List<Instructions.Instruction>   _buildInstList(Gameboy.GameBoy gb)
   {
     Ft.log(Ft.typeStr(this), '_buildInstList', [gb]);
-    final instDecoder = new Z80.Z80.clone(gb.z80);
+    final z80 = new Z80.Z80.clone(gb.z80);
     final lst = <Instructions.Instruction>[];
     for (var i = 0; i < _debuggerInstFlowLen; ++i) {
-      lst.add(instDecoder.pullInstruction());
+      lst.add(z80.pullInstruction());
     }
     return lst;
   }

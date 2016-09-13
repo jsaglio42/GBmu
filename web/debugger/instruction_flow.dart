@@ -90,22 +90,25 @@ class _Data {
 void _onInstInfo(List<Instructions.Instruction> instList) {
   assert(instList != null && instList.length == INST_ROWS, "_onInstInfo($instList)");
   for (var i = 0; i < INST_ROWS; ++i) {
+    int padding;
     _data.addrCells[i].elt.text = Ft.toAddressString(instList[i].addr, 4);
-    _data.instCells[i].elt.text = instList[i].info.name;
-    _data.opcodeCells[i].elt.text = Ft.toAddressString(instList[i].info.opCode, 2);
+    switch (instList[i].info.opCodeSize)
+    {
+      case (1): padding = 2; break;
+      case (2): padding = 4; break;
+      default : assert(false, 'onInstInfo: swith(opCodeSize): failure');
+    }
+    _data.opcodeCells[i].elt.text = '${Ft.toHexaString(instList[i].info.opCode, padding)}';
     switch (instList[i].info.dataSize)
     {
-      case (0):
-        _data.dataCells[i].elt.text = '--';
-        break ;
-      case (1):
-        _data.dataCells[i].elt.text = '${Ft.toHexaString(instList[i].dataOpt, 2)}';
-        break;
-      case (2):
-        _data.dataCells[i].elt.text = '${Ft.toHexaString(instList[i].dataOpt, 4)}';
-        break;
-      default : assert(false, 'onInstInfo: swith(datasize): failure');
+      case (0): padding = 0; break;
+      case (1): padding = 2; break;
+      case (2): padding = 4; break;
+      default : assert(false, 'onInstInfo: swith(dataSize): failure');
     }
+    _data.dataCells[i].elt.text = (padding == 0) ?
+      '--' : '${Ft.toHexaString(instList[i].data, padding)}';
+    _data.instCells[i].elt.text = instList[i].info.desc;
   }
   return ;
 }
@@ -126,7 +129,7 @@ void init(Emulator.Emulator emu) {
   _emu = emu;
   _data.toString(); /* Tips to instanciate _cells */
   _onInstInfo(new List.generate(INST_ROWS, (i) {
-      return new Instructions.Instruction(i, Instructions.instInfos[0], null);
+      return new Instructions.Instruction(i, Instructions.instInfos[0], 0);
     }));
   _emu.listener('InstInfo').forEach(_onInstInfo);
   return ;

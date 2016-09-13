@@ -90,7 +90,10 @@ void _onMemInfo(Map<String, dynamic> map) {
  */
 
 void _onMemAddrUpdate(_) {
-  final int parsedValue = int.parse(_memAddrInput.value,
+  final String parsedString = _memAddrInput.value.startsWith('0x') ?
+    _memAddrInput.value.substring(2):
+    _memAddrInput.value;
+  final int parsedValue = int.parse(parsedString,
     radix:16,
     onError: (s) => -1);
   if (parsedValue >= 0x0000 && parsedValue <= 0xFFFF) {

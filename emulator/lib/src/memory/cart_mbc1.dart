@@ -37,5 +37,4 @@ class CartMBC1 extends Cartridge.ACartridge  {
     throw new Exception('ROM_ONLY: RAM Operation not supported');
   }
 
-
 }
