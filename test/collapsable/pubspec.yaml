@@ -14,6 +14,6 @@ transformers:
     checked: true
     environment:
       FTLOG: 'true'
-    commandLineOptions: [--enable-diagnostic-colors, --assert-message]
+    commandLineOptions: [--enable-diagnostic-colors, --show-package-warnings, --assert-message]
     # analyze-all: true
     # minify: true

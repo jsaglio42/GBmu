@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/11 17:54:26 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/14 17:27:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,8 +82,12 @@ class _IdbStoreIteratorCallback extends Filedb.IdbStoreIterator {
 Async.Future init(Emulator.Emulator emu) async {
   Ft.log('main', 'init', [emu]);
 
-  final filedbFut = Filedb.init(emu);
+  final filedbFut = Filedb.init(emu)
+  ..catchError((e){
+        print('filedb init error: $e');
+      });
   final cartHtmlFut = Html.HttpRequest.getString("cart_table.html");
+
 
   final filedb = await filedbFut;
   final cartHtml = await cartHtmlFut;
@@ -109,7 +113,11 @@ Async.Future init(Emulator.Emulator emu) async {
 
   // await Async.Future.wait(iterators.map((it) => it.tra.completed));
 
-  // cab.testAdd();
+  cab.testAdd();
+  cab.testAdd();
+  cab.testAdd();
+  dcb.newRam();
+  dcb.newSs();
   // cab.testAdd();
   // cab.testAdd();
 
