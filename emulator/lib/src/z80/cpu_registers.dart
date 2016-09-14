@@ -96,10 +96,10 @@ class CpuRegs {
   int get D => this.pull8(Reg8.D);
   int get L => this.pull8(Reg8.L);
   int get H => this.pull8(Reg8.H);
-  bool get cy => this.pull1(Reg1.cy);
-  bool get n => this.pull1(Reg1.n);
-  bool get h => this.pull1(Reg1.h);
-  bool get zf => this.pull1(Reg1.zf);
+  int get cy => this.pull1(Reg1.cy) ? 1 : 0;
+  int get n => this.pull1(Reg1.n) ? 1 : 0;
+  int get h => this.pull1(Reg1.h) ? 1 : 0;
+  int get z => this.pull1(Reg1.zf) ? 1 : 0;
 
   int pull16(Reg16 r) => this._view16[r.index];
   int pull8(Reg8 r) => this._data[r.index];
@@ -121,10 +121,10 @@ class CpuRegs {
   void set D(int v) {this.push8(Reg8.D, v);}
   void set L(int v) {this.push8(Reg8.L, v);}
   void set H(int v) {this.push8(Reg8.H, v);}
-  void set cy(bool v) {this.push1(Reg1.cy, v);}
-  void set n(bool v) {this.push1(Reg1.n, v);}
-  void set h(bool v) {this.push1(Reg1.h, v);}
-  void set zf(bool v) {this.push1(Reg1.zf, v);}
+  void set cy(int v) {this.push1(Reg1.cy, v == 0 ? false : true);}
+  void set n(int v) {this.push1(Reg1.n, v == 0 ? false : true);}
+  void set h(int v) {this.push1(Reg1.h, v == 0 ? false : true);}
+  void set z(int v) {this.push1(Reg1.zf, v == 0 ? false : true);}
 
   void push16(Reg16 r, int word) {
     assert(word & ~0xFFFF == 0);

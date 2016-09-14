@@ -382,6 +382,7 @@ class Z80 {
 
   int _execInst_CB(){
     final op = _mmu.pullMem(this.cpur.PC + 1, DataType.BYTE);
+    this.cpur.PC += 2;    //  Can be done, always 2 byte long
     switch (op) {
       case (0x00) : return _RLC(Reg8.B);        //  RLC B
       case (0x01) : return _RLC(Reg8.C);        //  RLC C
@@ -677,122 +678,116 @@ class Z80 {
 
   /* RLC **********************************/
   int _RLC(Reg8 r) {
-    this.cpur.PC += 2;
+    final int val_old = this.cpur.pull8(r);
+    final int cy_new = (val_old >> 7);
+    final int val_new = ((val_old << 1) & 0xFF) | this.cpur.cy;
+    this.cpur.push8(r, val_new);
+    this.cpur.cy = cy_new;
+    this.cpur.h = 0;
+    this.cpur.n = 0;
+    this.cpur.z = val_new;
     return 8;
   }
 
   int _RLC_M() {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* RRC **********************************/
   int _RRC(Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _RRC_M() {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* RL  **********************************/
   int _RL(Reg8 r) {
-    this.cpur.PC += 2;
+    final int val_old = this.cpur.pull8(r);
+    final int cy_new = (val_old >> 7);
+    final int val_new = ((val_old << 1) & 0xFF) | cy_new;
+    this.cpur.push8(r, val_new);
+    this.cpur.cy = cy_new;
+    this.cpur.h = 0;
+    this.cpur.n = 0;
+    this.cpur.z = val_new;
     return 8;
   }
 
   int _RL_M() {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* RR  **********************************/
   int _RR(Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _RR_M() {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* SLA **********************************/
   int _SLA(Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _SLA_M() {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* SRA **********************************/
   int _SRA(Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _SRA_M() {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* SWAP ********************************/
   int _SWAP(Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _SWAP_M() {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* SRL **********************************/
   int _SRL(Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _SRL_M() {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* BIT **********************************/
   int _BIT(int index, Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _BIT_M(int index) {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* RES **********************************/
   int _RES(int index, Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _RES_M(int index) {
-    this.cpur.PC += 2;
     return 16;
   }
 
   /* SET **********************************/
   int _SET(int index, Reg8 r) {
-    this.cpur.PC += 2;
     return 8;
   }
 
   int _SET_M(int index) {
-    this.cpur.PC += 2;
     return 16;
   }
 
