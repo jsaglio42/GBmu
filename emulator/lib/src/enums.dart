@@ -24,10 +24,11 @@ export 'package:emulator/src/memory/mem_registers.dart'
 export 'package:emulator/src/memory/headerdecoder.dart'
   show RomHeaderField, CartridgeType;
 
-enum DataType {
-  BYTE,
-  WORD
-}
+// Not used anymore
+// enum DataType {
+//   BYTE,
+//   WORD
+// }
 
 // Still Used ???
 enum DebuggerModeRequest {

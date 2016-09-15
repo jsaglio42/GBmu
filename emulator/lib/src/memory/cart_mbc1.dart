@@ -20,20 +20,20 @@ class CartMBC1 extends Cartridge.ACartridge  {
 
   CartMBC1.internal(Data.Rom rom, Data.Ram ram) : super.internal(rom, ram);
 
-  @override int pullRom(int memAddr, DataType t) {
+  @override int pull8_Rom(int memAddr) {
     assert (memAddr >= CARTRIDGE_ROM_FIRST && memAddr <= CARTRIDGE_ROM_LAST);
-    return this.rom.pull(memAddr, t);
+    return this.rom.pull8(memAddr - CARTRIDGE_ROM_FIRST);
   }
 
-  @override int pullRam(int memAddr, DataType t) {
+  @override int pull8_Ram(int memAddr) {
     throw new Exception('ROM_ONLY: RAM Operation not supported');
   }
 
-  @override void pushRom(int memAddr, int v, DataType t) {
+  @override void push8_Rom(int memAddr, int v) {
     throw new Exception('ROM_ONLY: MBC Operations not supported');
   }
 
-  @override void pushRam(int memAddr, int v, DataType t) {
+  @override void push8_Ram(int memAddr, int v) {
     throw new Exception('ROM_ONLY: RAM Operation not supported');
   }
 

@@ -68,10 +68,10 @@ abstract class ACartridge {
     throw new Exception('Cartridge: $ctype not supported');
   }
 
-  int pullRam(int memAddr, DataType t);
-  int pullRom(int memAddr, DataType t);
-  void pushRam(int memAddr, int v, DataType t);
-  void pushRom(int memAddr, int v, DataType t);
+  int pull8_Ram(int memAddr);
+  int pull8_Rom(int memAddr);
+  void push8_Ram(int memAddr, int v);
+  void push8_Rom(int memAddr, int v);
 
   String toString()
     => '\{rom: $rom, ram: $ram\}';

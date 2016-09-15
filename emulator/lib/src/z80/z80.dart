@@ -76,14 +76,11 @@ class Z80 {
     switch (info.dataSize)
     {
       case (0):
-        data = 0;
-        break;
+        data = 0; break;
       case (1):
-        data = _mmu.pullMem(this.cpur.PC + info.opCodeSize, DataType.BYTE);
-        break;
+        data = _mmu.pull8(this.cpur.PC + info.opCodeSize); break;
       case (2):
-        data = _mmu.pullMem(this.cpur.PC + info.opCodeSize, DataType.WORD);
-        break;
+        data = _mmu.pull16(this.cpur.PC + info.opCodeSize); break;
       default :
         assert(false, 'InstructionDecoder: switch(dataSize): failure');
     }
@@ -96,11 +93,10 @@ class Z80 {
   */
 
   Instructions.InstructionInfo _getInstructionInfo(int addr) {
-    assert(addr >= 0 && addr + 1 <= 0xFFFF);
-    final op = _mmu.pullMem(addr, DataType.BYTE);
+    final op = _mmu.pull8(addr);
     if (op == 0xCB)
     {
-      final opX = _mmu.pullMem(addr + 1, DataType.BYTE);
+      final opX = _mmu.pull8(addr + 1);
       return Instructions.instInfos_CB[opX];
     }
     else
@@ -110,7 +106,7 @@ class Z80 {
   /* Instructions */
 
   int _execInst(){
-    final op = _mmu.pullMem(this.cpur.PC, DataType.BYTE);
+    final op = _mmu.pull8(this.cpur.PC);
     switch (op) {
       case (0x00) : return _NOP();                             //  NOP
       case (0x01) : this.cpur.PC += 1; return 1;               //  LD BC, d16
@@ -407,7 +403,7 @@ class Z80 {
   /* Extended Instructions */
 
   int _execInst_CB(){
-    final op = _mmu.pullMem(this.cpur.PC + 1, DataType.BYTE);
+    final op = _mmu.pull8(this.cpur.PC + 1);
     switch (op) {
       case (0x00) : return _RLC(Reg8.B);        //  RLC B
       case (0x01) : return _RLC(Reg8.C);        //  RLC C
@@ -963,27 +959,27 @@ class Z80 {
 
   int _BIT_M(int index) {
     assert(index >= 0 && index < 8);
-    // final int val = _mmu.pull(thhis.cpur.HL, DataType.BYTE);
-    // final int b = ((val >> index) & 0x1);
-    // this.cpur.h = 1;
-    // this.cpur.n = 0;
-    // this.cpur.z = (1 - b);
+    final int val = _mmu.pull8(this.cpur.HL);
+    final int b = ((val >> index) & 0x1);
+    this.cpur.h = 1;
+    this.cpur.n = 0;
+    this.cpur.z = (1 - b);
     this.cpur.PC += 2;
     return 12;
   }
 
   int _SET_M(int index) {
     assert(index >= 0 && index < 8);
-    // final int val = _mmu.pull(thhis.cpur.HL, DataType.BYTE);
-    // _mmu.push(this.cpur.HL, val | (0x1 << index));
+    final int val = _mmu.pull8(this.cpur.HL);
+    _mmu.push8(this.cpur.HL, val | (0x1 << index));
     this.cpur.PC += 2;
     return 16;
   }
 
   int _RES_M(int index) {
     assert(index >= 0 && index < 8);
-    // final int val = _mmu.pull(thhis.cpur.HL, DataType.BYTE);
-    // _mmu.push(this.cpur.HL, val | (0x1 << index));
+    final int val = _mmu.pull8(this.cpur.HL);
+    _mmu.push8(this.cpur.HL, val & ~(0x1 << index));
     this.cpur.PC += 2;
     return 16;
   }
@@ -992,7 +988,7 @@ class Z80 {
   /* 16 bit */
 
   int _JP_nn() {
-    // this.cpur.PC = _mmu.pull(this.cpur.PC + 1, DataType.WORD);
+    this.cpur.PC = _mmu.pull16(this.cpur.PC + 1);
     return 16;  
   }
 
@@ -1012,14 +1008,14 @@ class Z80 {
   int _JP_C_nn()  { return  _JP_cc_nn(this.cpur.cy == 1); }
   
   int _JP_M() {
-    // this.cpur.PC = _mmu.pull16(this.cpur.HL);
+    this.cpur.PC = _mmu.pull16(this.cpur.HL);
     return 4;
   }
 
   /* 8 bit */
 
   int _JR_e(int offset) {
-    final int offset = _mmu.pull(this.cpur.PC + 1, DataType.BYTE).toSigned(8);
+    final int offset = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
     this.cpur.PC += offset;
     return 12;
   }
@@ -1044,9 +1040,9 @@ class Z80 {
 
   int _CALL_nn()
   {
-    // final int addr = _mmu.pull16(this.cpur.PC + 1 , DataType.WORD);
-    // _mmu.push(this.cpur.SP - 2, this.cpur.PC + 3, DataType.WORD);
-    // this.cpur.PC = addr;
+    final int addr = _mmu.pull16(this.cpur.PC + 1);
+    _mmu.push16(this.cpur.SP - 2, this.cpur.PC + 3);
+    this.cpur.PC = addr;
     this.cpur.SP -= 2;
     return 24;
   }
@@ -1071,7 +1067,7 @@ class Z80 {
 
   int _RET()
   {
-    // this.cpur.PC = _mmu.pull(this.cpur.SP, DataType.WORD);
+    this.cpur.PC = _mmu.pull16(this.cpur.SP);
     this.cpur.SP += 2;
     return 16;
   }
@@ -1100,8 +1096,8 @@ class Z80 {
   /* Resets */
 
   int _RST_f(int low) {
-    assert(low & 0xFF);
-    // _mmu.push(this.cpur.SP - 2, this.cpur.PC + 1, DataType.WORD);
+    assert(low & ~0xFF == 0);
+    _mmu.push16(this.cpur.SP - 2, this.cpur.PC + 1);
     this.cpur.SP -= 2;
     this.cpur.PC = low;
     return 16;

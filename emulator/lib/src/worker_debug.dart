@@ -117,7 +117,7 @@ abstract class Debug implements Worker.AWorker {
         , '_buildMemExplorerMap: addr not valid');
     final memList = new List.generate(_debuggerMemoryLen,
       (i) {
-        try { return gb.mmu.pullMem(addr + i, DataType.BYTE); }
+        try { return gb.mmu.pull8(addr + i); }
         catch (e) { return null; }
       });
     return memList;

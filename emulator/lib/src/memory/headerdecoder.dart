@@ -248,7 +248,7 @@ _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
     else {
-      final v = rom.pull(info.address, DataType.BYTE);
+      final v = rom.pull8(info.address);
       if (map.containsKey(v) == false)
         throw new Exception('Rom Header: ${info.name}: Unknown id');
       return map[v];
@@ -263,7 +263,7 @@ _toValueFunc _makeByteGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull(info.address, DataType.BYTE);
+      return rom.pull8(info.address);
   };
 }
 
@@ -274,7 +274,8 @@ _toValueFunc _makeWordGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull(info.address, DataType.BYTE);
+      return rom.pull8(info.address)
+        | rom.pull8(info.address + 1) << 8;
   };
 }
 _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
@@ -284,8 +285,10 @@ _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull(info.address, DataType.WORD)
-        | (rom.pull(info.address + 2, DataType.WORD) << 16);
+      return rom.pull8(info.address)
+        | rom.pull8(info.address + 1) << 8
+        | rom.pull8(info.address + 2) << 16
+        | rom.pull8(info.address + 3) << 24;
   };
 }
 _toValueFunc _makeByteListGetterFunction(RomHeaderField f)
