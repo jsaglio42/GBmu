@@ -9,11 +9,10 @@ pub serve
 
 # BUG
 
-
-
 # Todos
 
-- Talk about the full asynchroneous approach for debugger, right now, in high speed, run one inst take as long as run one sec which seems weird. Running one inst feels like running two (colors in debugger). Solution -> Maybe force the update on browserside when a routine is done
+- Change mmu pull methods ?
+- Change reg1 pull methods ?
 
 # Useful links:
 
