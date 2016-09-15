@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:29:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/11 10:46:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 17:08:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,8 +16,10 @@ import 'dart:async' as Async;
 import 'dart:html' as Html;
 
 import 'package:ft/ft.dart' as Ft;
+import 'package:emulator/filedb.dart' as Emufiledb;
 
 import './component_system.dart';
+import './component_system_dom.dart';
 import './cart.dart';
 import './chip.dart';
 
@@ -145,8 +147,10 @@ class CartBank extends ACartBank
 
   // ************************************************************************ **
 
-  testAdd() {
-    final Cart c = new Cart(_cartHtml, _validator);
+  // Call at startup: Once for each cart/rom in indexedDB
+  // Call at new `.rom` file.
+  void add(Emufiledb.ProxyEntry prox) {
+    final Cart c = new Cart(_cartHtml, _validator, prox);
 
     c.parent = this;
     _carts.add(c);
@@ -216,15 +220,15 @@ class DetachedChipBank extends AChipBank {
 
   // ************************************************************************ **
 
-  Chip newRam()
+  Chip newRam(Emufiledb.ProxyEntry prox)
   {
-    var c = new Chip.ram();
+    var c = new Chip.ram(prox);
     this.push(c);
     return c;
   }
-  Chip newSs()
+  Chip newSs(Emufiledb.ProxyEntry prox)
   {
-    var c = new Chip.ss();
+    var c = new Chip.ss(prox);
     this.push(c);
     return c;
   }

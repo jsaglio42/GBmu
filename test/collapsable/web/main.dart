@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 14:22:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 17:12:03 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,6 +25,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 import 'package:emulator/filedb.dart' as Emufiledb;
 
 import './component_system.dart';
+import './component_system_dom.dart';
 import './cart.dart';
 import './chip.dart';
 import './toplevel_banks.dart';
@@ -76,27 +77,62 @@ final tetrisHead = new Uint8List.fromList(<int>[
  * Exposed Methods
  */
 
+Async.Future<Map<Emufiledb.IdbStore, Set<int>>> _detachedChips() async {
+
+  final Set<int> rams = new Set.from(g_dbProxy.rams.keys);
+  final Set<int> sss = new Set.from(g_dbProxy.sss.keys);
+
+  final Iterable<Async.Future<Map<String, dynamic>>> futureCartsInfo =
+    g_dbProxy.carts.values.map(
+        (Emufiledb.ProxyEntry prox) => g_dbProxy.info(prox));
+
+  (await Async.Future.wait(futureCartsInfo))
+  .forEach(
+      (Map<String, dynamic> cinfo) {
+        rams.remove(cinfo['ram']);
+        cinfo['ssList']?.forEach((int ssIdOpt) {
+          sss.remove(ssIdOpt);
+        });
+      });
+  return {
+    Emufiledb.IdbStore.Ram: rams,
+    Emufiledb.IdbStore.Ss: sss,
+  };
+}
+
 Async.Future init(Emulator.Emulator emu) async {
   Ft.log('main', 'init', [emu]);
 
   final filedbFut = Emufiledb.make(Html.window.indexedDB);
   final cartHtmlFut = Html.HttpRequest.getString("cart_table.html");
 
-  final Emufiledb.DatabaseProxy dbp = await filedbFut;
+  g_dbProxy = await filedbFut;
   final cartHtml = await cartHtmlFut;
 
-  var cab = new CartBank(cartHtml, _domCartValidator);
-  var dcb = new DetachedChipBank();
-  var gbs = new GameBoySocket();
+  g_cartBank = new CartBank(cartHtml, _domCartValidator);
+  g_dChipBank = new DetachedChipBank();
+  g_gbSocket = new GameBoySocket();
 
-  cab.testAdd();
-  cab.testAdd();
-  cab.testAdd();
-  dcb.newRam();
-  dcb.newSs();
+  await g_dbProxy.addRom('tetris_head.rom', tetrisHead);
+  await g_dbProxy.addRom('tetris_head.rom', tetrisHead);
+  await g_dbProxy.addRam('pokemon.save', tetrisHead);
+  await g_dbProxy.addRam('pokemon.save', tetrisHead);
+  await g_dbProxy.addRam('pokemon.save', tetrisHead);
+  print(g_dbProxy);
 
-  await dbp.addRom('tetris_head.rom', tetrisHead);
-  print(dbp);
+  final futureDetachedChips = _detachedChips();
+
+  g_dbProxy.carts.forEach((int i, Emufiledb.ProxyEntry prox){
+    g_cartBank.add(prox);
+  });
+
+  final detachedChips = await futureDetachedChips;
+  detachedChips[Emufiledb.IdbStore.Ram].forEach((int id){
+    g_dChipBank.newRam(g_dbProxy.rams[id]);
+  });
+  detachedChips[Emufiledb.IdbStore.Ss].forEach((int id){
+    g_dChipBank.newSs(g_dbProxy.sss[id]);
+  });
 
   return ;
 }

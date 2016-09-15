@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/15 10:25:02 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 14:13:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 17:24:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -34,7 +34,7 @@ abstract class Factory_intf {
 }
 
 // Factory method implementation
-class Factory<EmuType, ProxType> implements Factory_intf {
+class Factory<EmuType, ProxType extends ProxyEntry> implements Factory_intf {
 
   final IdbStore _type;
   final _toProxy;
@@ -110,6 +110,10 @@ class RomProxy implements ProxyEntry {
         r.pullHeaderValue(RomHeaderField.Global_Checksum));
   }
 
+  String toString() =>
+    "${this.runtimeType}\{"
+    "id:$id, ramSize:$ramSize, globalChecksum:$globalChecksum\}";
+
 }
 
 class RamProxy implements ProxyEntry {
@@ -120,7 +124,11 @@ class RamProxy implements ProxyEntry {
   RamProxy(this.id, this.size);
 
   static RamProxy ofDbMap(Map<String, dynamic> map, int index) =>
-    new RamProxy(index, map['data'].size);
+    new RamProxy(index, map['data'].elementSizeInBytes);
+
+  String toString() =>
+    "${this.runtimeType}\{"
+    "id:$id, size:$size\}";
 
 }
 
@@ -135,6 +143,10 @@ class SsProxy implements ProxyEntry {
     assert(false, 'TODO: Implement SsProxy.ofDbMap');
     return new SsProxy(index, 42);
   }
+
+  String toString() =>
+    "${this.runtimeType}\{"
+    "id:$id, romGlobalChecksum:$romGlobalChecksum\}";
 
 }
 
@@ -180,5 +192,17 @@ class CartProxy implements ProxyEntry {
 
   static CartProxy ofDbMap(Map<String, dynamic> map, int index) =>
     new CartProxy(index, map['rom'], ram: map['ram'], ssList: map['ssList']);
+
+  String toString() {
+    String vToString(v) => v == null ? '' : v.toString();
+    String lToString(List l) => l.map(vToString).join(',');
+
+    return
+      "${this.runtimeType}\{id:$id, "
+      "rom:$rom, "
+      "ram:${vToString(ramOpt)}, "
+      "ss:[${lToString(ssOptList)}]"
+      "\}";
+  }
 
 }

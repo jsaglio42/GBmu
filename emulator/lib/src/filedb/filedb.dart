@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/14 13:00:45 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 14:23:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 17:13:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,14 +26,31 @@ const String _DBNAME = 'GBmu_db';
 
 class DatabaseProxy {
 
+  // PRIVATE **************************************************************** **
+
   final Idb.Database _db;
   final Map<int, RomProxy> _roms;
   final Map<int, RamProxy> _rams;
   final Map<int, SsProxy> _sss;
   final Map<int, CartProxy> _carts;
+  Async.StreamController<ProxyEntry> _entryMoved;
+
+  // PUBLIC ***************************************************************** **
+
+  // Call at startup
+  // Call by `Cart` to retrieve child chips
+  Map<int, ProxyEntry> get roms => _roms;
+  Map<int, ProxyEntry> get rams => _rams;
+  Map<int, ProxyEntry> get sss => _sss;
+  Map<int, ProxyEntry> get carts => _carts;
+
+  // Listen from banks
+  // Trigger soon after drop
+  Async.Stream<ProxyEntry> get entryMoved => _entryMoved.stream;
 
   DatabaseProxy(this._db, this._roms, this._rams, this._sss, this._carts);
 
+  // Call from banks, on drag start
   bool joinable(ProxyEntry src, CartProxy target) {
     switch (src.type) {
       case (IdbStore.Ram):
@@ -46,6 +63,7 @@ class DatabaseProxy {
     }
   }
 
+  // Call from ??, on drop
   Async.Future join(ProxyEntry src, CartProxy target, int slot) {
     Idb.Transaction tra;
     CartProxy newCart;
@@ -73,9 +91,17 @@ class DatabaseProxy {
     }
   }
 
-  // Async.Future<Map<String, dynamic>> info(ProxyEntry component) {
-  // }
+  Async.Future<Map<String, dynamic>> info(ProxyEntry prox) async {
+    switch (prox.type) {
+      case (IdbStore.Cart):
+        return (prox as CartProxy).toDbMap();
+      default:
+        assert(false, 'TODO: implement data retrieval');
+        break ;
+    }
+  }
 
+  // Call from `CartBank` on new file loaded
   Async.Future addRom(String filename, Uint8List data) async {
     Idb.Transaction tra;
     int romIndex, cartIndex;
@@ -83,22 +109,33 @@ class DatabaseProxy {
     <String, dynamic>{'filename': filename, 'data': data};
     Map<String, dynamic> cartMap;
 
-    Ft.log('DatabaseProxy', 'addRom', [filename, data]);
+    Ft.log('DatabaseProxy', 'addRom', [filename]);
     tra = _db.transaction(
         [IdbStore.Cart.toString(), IdbStore.Rom.toString()], 'readwrite');
     romIndex = await tra.objectStore(IdbStore.Rom.toString()).add(romMap);
-    print('romAdded');
     cartMap = <String, dynamic>{
       'rom': romIndex,
       'ram': null,
       'ssList': [null, null, null, null],
     };
     cartIndex = await tra.objectStore(IdbStore.Cart.toString()).add(cartMap);
-    print('cartAdded');
     return tra.completed.then((_){
-          print('tra done');
           _roms[romIndex] = RomProxy.ofDbMap(romMap, romIndex);
           _carts[cartIndex] = CartProxy.ofDbMap(cartMap, cartIndex);
+        });
+  }
+
+  Async.Future addRam(String filename, Uint8List data) async {
+    Idb.Transaction tra;
+    int ramIndex;
+    final Map<String, dynamic> ramMap =
+    <String, dynamic>{'filename': filename, 'data': data};
+
+    Ft.log('DatabaseProxy', 'addRam', [filename]);
+    tra = _db.transaction(IdbStore.Ram.toString(), 'readwrite');
+    ramIndex = await tra.objectStore(IdbStore.Ram.toString()).add(ramMap);
+    return tra.completed.then((_){
+          _rams[ramIndex] = RamProxy.ofDbMap(ramMap, ramIndex);
         });
   }
 
@@ -110,6 +147,8 @@ class DatabaseProxy {
 Async.Future<DatabaseProxy> _makeFromExistant(Idb.Database db) async {
 
   Ft.log('filedb.dart', '_makeFromExistant#', [db]);
+
+  throw new Exception('debug');
 
   if (db.objectStoreNames.length != IdbStore.values.length) {
     Ft.log('filedb.dart', '_makeFromExistant#wrong-number-of-store');
@@ -166,6 +205,8 @@ Async.Future<DatabaseProxy> _makeFromScratch(Idb.IdbFactory dbf) async {
       <int, SsProxy>{}, <int, CartProxy>{});
 
 }
+
+// PUBLIC ******************************************************************* **
 
 Async.Future<DatabaseProxy> make(Idb.IdbFactory dbf) async {
   Idb.Database db;

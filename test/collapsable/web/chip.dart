@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:35:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/11 10:48:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 16:14:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,8 +16,10 @@ import 'dart:async' as Async;
 import 'dart:html' as Html;
 
 import 'package:ft/ft.dart' as Ft;
+import 'package:emulator/filedb.dart' as Emufiledb;
 
 import './component_system.dart';
+import './component_system_dom.dart';
 import './cart.dart';
 
 class Chip implements IChip {
@@ -26,6 +28,7 @@ class Chip implements IChip {
   final Html.ImageElement _elt;
   final Js.JsObject _jsObject;
   final Js.JsObject _jqObject;
+  final Emufiledb.ProxyEntry _prox;
 
   bool _locked = true;
   Ft.Option<AChipBank> _parent = new Ft.Option<AChipBank>.none();
@@ -39,7 +42,7 @@ class Chip implements IChip {
       ..classes.addAll(["cart-$c-bis", "ui-widget-content"]);
   }
 
-  Chip.details(this._type, elt, imgSrc, left)
+  Chip.detail(this._type, this._prox, elt, imgSrc, left)
     : _elt = elt
     , _jsObject = new Js.JsObject.fromBrowserObject(elt)
     , _jqObject = Js.context.callMethod(r'$', [
@@ -59,8 +62,10 @@ class Chip implements IChip {
     this.unlock();
   }
 
-  Chip.ram() : this.details(ChipType.Ram, _img('ram'), "images/gb_ram.png", 92);
-  Chip.ss() : this.details(ChipType.Ss, _img('ss'), "images/gb_ss.png", 44);
+  Chip.ram(Emufiledb.ProxyEntry prox)
+    : this.detail(ChipType.Ram, prox, _img('ram'), "images/gb_ram.png", 92);
+  Chip.ss(Emufiledb.ProxyEntry prox)
+    : this.detail(ChipType.Ss, prox, _img('ss'), "images/gb_ss.png", 44);
 
   // From IChip ************************************************************* **
 

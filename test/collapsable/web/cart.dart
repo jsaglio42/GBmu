@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:31:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/11 10:48:10 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 16:18:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,8 +16,10 @@ import 'dart:async' as Async;
 import 'dart:html' as Html;
 
 import 'package:ft/ft.dart' as Ft;
+import 'package:emulator/filedb.dart' as Emufiledb;
 
 import './component_system.dart';
+import './component_system_dom.dart';
 import './chip.dart';
 
 class ChipSocket extends AChipBank {
@@ -126,6 +128,7 @@ class Cart implements ICart {
   final String _bodyId;
   final ChipSocket _ramSocket;
   final List<ChipSocket> _ssSockets;
+  final Emufiledb.ProxyEntry _prox;
 
   bool _locked = false;
   bool _collapsed = true;
@@ -152,7 +155,7 @@ class Cart implements ICart {
     return new List<ChipSocket>.unmodifiable(l);
   }
 
-  Cart.elements(elt, jsElt, btn)
+  Cart._detail2(elt, jsElt, btn, this._prox)
     : _elt = elt
     , _jqElt = Js.context.callMethod(r'$', [jsElt])
     , _btn = btn
@@ -182,13 +185,25 @@ class Cart implements ICart {
     jsElt['chipInstance'] = this;
 
     _updateControls();
+    _loadChips();
   }
-  Cart.element(elt): this.elements(
-      elt, new Js.JsObject.fromBrowserObject(elt),
-      elt.querySelector('.bg-head-btn'));
 
-  Cart(String cartHtml, Html.NodeValidator v) : this.element(
-      new Html.Element.html(cartHtml, validator: v));
+  Cart._detail1(elt, prox): this._detail2(
+      elt, new Js.JsObject.fromBrowserObject(elt),
+      elt.querySelector('.bg-head-btn'), prox);
+
+  Cart(String cartHtml, Html.NodeValidator v, Emufiledb.ProxyEntry prox)
+    : this._detail1(new Html.Element.html(cartHtml, validator: v), prox);
+
+  Async.Future _loadChips() async {
+    final Map<String, dynamic> cartInfo = await g_dbProxy.info(_prox);
+    IChip c;
+
+    if (cartInfo['ram'] != null) {
+      c = new Chip.ram(g_dbProxy.rams[cartInfo['ram']]);
+      _ramSocket.push(c);
+    }
+  }
 
   // ICart implementation *************************************************** **
 
