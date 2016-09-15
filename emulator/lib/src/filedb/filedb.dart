@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/14 13:00:45 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 12:11:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 14:23:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,8 +17,6 @@ import 'dart:typed_data';
 
 import 'package:ft/ft.dart' as Ft;
 
-// import 'package:emulator/src/memory/rom.dart' as Rom;
-// import 'package:emulator/src/memory/ram.dart' as Ram;
 import 'package:emulator/enums.dart';
 import 'package:emulator/src/filedb/filedb_chunks.dart';
 
@@ -36,7 +34,7 @@ class DatabaseProxy {
 
   DatabaseProxy(this._db, this._roms, this._rams, this._sss, this._carts);
 
-  bool joinable(DatabaseProxyEntry src, CartProxy target) {
+  bool joinable(ProxyEntry src, CartProxy target) {
     switch (src.type) {
       case (IdbStore.Ram):
         return (src as RamProxy).size == target.ramSize;
@@ -48,7 +46,7 @@ class DatabaseProxy {
     }
   }
 
-  Async.Future join(DatabaseProxyEntry src, CartProxy target, int slot) {
+  Async.Future join(ProxyEntry src, CartProxy target, int slot) {
     Idb.Transaction tra;
     CartProxy newCart;
 
@@ -75,9 +73,8 @@ class DatabaseProxy {
     }
   }
 
-  Async.Future<Map<String, dynamic>> info(DatabaseProxyEntry component) {
-
-  }
+  // Async.Future<Map<String, dynamic>> info(ProxyEntry component) {
+  // }
 
   Async.Future addRom(String filename, Uint8List data) async {
     Idb.Transaction tra;
@@ -123,17 +120,24 @@ Async.Future<DatabaseProxy> _makeFromExistant(Idb.Database db) async {
     throw new Exception('store-with-bad-name');
   }
 
-  Map<IdbStore, Map<int, Map<String, dynamic>>> stores = await dbMapsOfDb(db);
+  final List<Async.Future> futList = [
+    factories[IdbStore.Rom].storablesFromDb(db),
+    factories[IdbStore.Ram].storablesFromDb(db),
+    factories[IdbStore.Ss].storablesFromDb(db),
+    factories[IdbStore.Cart].storablesFromDb(db),
+  ];
+  final List<Map<int, Map<String, dynamic>>> storableList =
+  await Async.Future.wait(futList);
   //TODO: Check invariants on maps
 
   final Map<int, RomProxy> roms =
-  DatabaseProxyEntry.ofDbMaps(stores[IdbStore.Rom], IdbStore.Rom);
+  factories[IdbStore.Rom].proxiesOfStorables(storableList[0]);
   final Map<int, RamProxy> rams =
-  DatabaseProxyEntry.ofDbMaps(stores[IdbStore.Ram], IdbStore.Ram);
+  factories[IdbStore.Ram].proxiesOfStorables(storableList[1]);
   final Map<int, SsProxy> sss =
-  DatabaseProxyEntry.ofDbMaps(stores[IdbStore.Ss], IdbStore.Ss);
+  factories[IdbStore.Ss].proxiesOfStorables(storableList[2]);
   final Map<int, CartProxy> carts =
-  DatabaseProxyEntry.ofDbMaps(stores[IdbStore.Cart], IdbStore.Cart);
+  factories[IdbStore.Cart].proxiesOfStorables(storableList[3]);
 
   if (carts.length != roms.length)
     throw new Exception('missing-rom-or-cart-field');

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/15 10:25:02 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 12:11:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 14:13:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,76 +17,84 @@ import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/src/memory/rom.dart' as Rom;
+import 'package:emulator/src/memory/ram.dart' as Ram;
 import 'package:emulator/enums.dart';
-// import 'package:emulator/src/memory/ram.dart' as Ram;
 
 enum IdbStore {
   Rom, Ram, Ss, Cart,
 }
 
-/* DatabaseProxy
- *
- * DatabaseProxyEntry {RomProxy, RamProxy, SsProxy, CartProxy}
- * StoreProxies<T> {Map<int, T>} (T from DatabaseProxyEntry)
- * DbProxies {Map<IdbStore, dynamic>}
- *
- * DbMap {Map<String, dynamic>}
- * StoreMaps {Map<int, DbMap>}
- * DbMaps {Map<IdbStore, StoreMaps>}
- *
- * Where is the `using` or the `typedef`? Abstraction gets impossible.
- */
-
-Async.Future<Map<int, Map<String, dynamic>>> storeDbMapOfDb(
-    Idb.Database db, IdbStore s) {
-  final Map<int, Map<String, dynamic>> store = <int, Map<String, dynamic>>{};
-  final it =
-    new Ft.IdbStoreForeach<int, Map<String, dynamic>>(db, s.toString());
-
-  return it((int k, Map<String, dynamic> v) {
-    store[k] = v;
-  }).then((_) => store);
+// Factory method interface
+abstract class Factory_intf {
+  dynamic proxyOfStorable(Map<String, dynamic> s, int index);
+  dynamic emuOfStorable(Map<String, dynamic> s);
+  // Future<Map<String, dynamic>> storableFromDb(Idb.Database db, int index);
+  Async.Future<Map<int, Map<String, dynamic>>> storablesFromDb(Idb.Database db);
+  Map<int, dynamic> proxiesOfStorables(Map<int, Map<String, dynamic>> s);
 }
 
-Async.Future<Map<IdbStore, Map<int, Map<String, dynamic>>>>
-  dbMapsOfDb(Idb.Database db) async {
-    final futList = [
-      storeDbMapOfDb(db, IdbStore.Rom),
-      storeDbMapOfDb(db, IdbStore.Ram),
-      storeDbMapOfDb(db, IdbStore.Ss),
-      storeDbMapOfDb(db, IdbStore.Cart),
-    ];
-    final mapList = await Async.Future.wait(futList);
-    return new Map.fromIterables(IdbStore.values, mapList);
+// Factory method implementation
+class Factory<EmuType, ProxType> implements Factory_intf {
+
+  final IdbStore _type;
+  final _toProxy;
+  final _toEmu;
+
+  Factory(this._type,
+      ProxType toProxy(Map<String, dynamic> s, int index),
+      EmuType toEmu(Map<String, dynamic> s))
+    : _toProxy = toProxy
+    , _toEmu = toEmu;
+
+  ProxType proxyOfStorable(Map<String, dynamic> s, int index) =>
+    _toProxy(s, index);
+
+  EmuType emuOfStorable(Map<String, dynamic> s) =>
+    _toEmu(s);
+
+  // Future<Map<String, dynamic>> storableFromDb(Idb.Database db, int index) {
+  // }
+
+  Async.Future<Map<int, Map<String, dynamic>>> storablesFromDb(
+      Idb.Database db) {
+    final Map<int, Map<String, dynamic>> store = <int, Map<String, dynamic>>{};
+    final it = new Ft.IdbStoreForeach<int, Map<String, dynamic>>(
+        db, _type.toString());
+
+    return it((int k, Map<String, dynamic> v) {
+      store[k] = v;
+    }).then((_) => store);
   }
 
-typedef DatabaseProxyEntry _entryOfMap_t(Map<String, dynamic> map, int index);
+  Map<int, ProxType> proxiesOfStorables(Map<int, Map<String, dynamic>> s) {
+    final Map<int, ProxType> result = <int, ProxType>{};
 
-abstract class DatabaseProxyEntry {
-  int get id;
-  IdbStore get type;
-
-  static Map<IdbStore, _entryOfMap_t> ofDbMap = <IdbStore, _entryOfMap_t>{
-    IdbStore.Rom: RomProxy.ofDbMap,
-    IdbStore.Ss: SsProxy.ofDbMap,
-    IdbStore.Ram: RamProxy.ofDbMap,
-    IdbStore.Cart: CartProxy.ofDbMap,
-  };
-
-  static Map<int, dynamic> ofDbMaps(
-      Map<int, Map<String, dynamic>> store, IdbStore type) {
-    final Map<int, dynamic> result = <int, dynamic>{};
-    final _entryOfMap_t mapFun = ofDbMap[type];
-
-    store.forEach((int k, Map<String, dynamic> v) {
-      result[k] = mapFun(v, k);
+    s.forEach((int k, Map<String, dynamic> v){
+      result[k] = _toProxy(v, k);
     });
     return result;
   }
 
 }
 
-class RomProxy implements DatabaseProxyEntry {
+// Factory method instanciation
+final Map<IdbStore, Factory_intf> factories = <IdbStore, Factory_intf>{
+  IdbStore.Rom: new Factory<Rom.Rom, RomProxy>(
+      IdbStore.Rom, RomProxy.ofDbMap, null),
+  IdbStore.Ram: new Factory<Ram.Ram, RamProxy>(
+      IdbStore.Ram, RamProxy.ofDbMap, null),
+  IdbStore.Ss: new Factory<double, SsProxy>(
+      IdbStore.Ss, SsProxy.ofDbMap, null),
+  IdbStore.Cart: new Factory<double, CartProxy>(
+      IdbStore.Cart, CartProxy.ofDbMap, null),
+};
+
+abstract class ProxyEntry {
+  int get id;
+  IdbStore get type;
+}
+
+class RomProxy implements ProxyEntry {
   final int id;
   IdbStore get type => IdbStore.Rom;
   final int ramSize;
@@ -102,10 +110,9 @@ class RomProxy implements DatabaseProxyEntry {
         r.pullHeaderValue(RomHeaderField.Global_Checksum));
   }
 
-
 }
 
-class RamProxy implements DatabaseProxyEntry {
+class RamProxy implements ProxyEntry {
   final int id;
   IdbStore get type => IdbStore.Ram;
   final int size;
@@ -117,7 +124,7 @@ class RamProxy implements DatabaseProxyEntry {
 
 }
 
-class SsProxy implements DatabaseProxyEntry {
+class SsProxy implements ProxyEntry {
   final int id;
   IdbStore get type => IdbStore.Ss;
   final int romGlobalChecksum;
@@ -131,7 +138,7 @@ class SsProxy implements DatabaseProxyEntry {
 
 }
 
-class CartProxy implements DatabaseProxyEntry {
+class CartProxy implements ProxyEntry {
   final int id;
   IdbStore get type => IdbStore.Cart;
   final int rom;
@@ -173,4 +180,5 @@ class CartProxy implements DatabaseProxyEntry {
 
   static CartProxy ofDbMap(Map<String, dynamic> map, int index) =>
     new CartProxy(index, map['rom'], ram: map['ram'], ssList: map['ssList']);
+
 }
