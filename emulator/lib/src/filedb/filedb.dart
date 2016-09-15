@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/14 13:00:45 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/14 19:22:49 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 12:11:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,178 +17,44 @@ import 'dart:typed_data';
 
 import 'package:ft/ft.dart' as Ft;
 
-import 'package:emulator/src/memory/rom.dart';
-import 'package:emulator/src/memory/ram.dart';
-
+// import 'package:emulator/src/memory/rom.dart' as Rom;
+// import 'package:emulator/src/memory/ram.dart' as Ram;
 import 'package:emulator/enums.dart';
+import 'package:emulator/src/filedb/filedb_chunks.dart';
 
 // http://dartdoc.takyam.com/docs/tutorials/indexeddb/
 
 const String _DBNAME = 'GBmu_db';
 
-enum IdbStore {
-  Rom, Ram, Ss, Cart,
-}
-
-// Conversions
-
-typedef DatabaseEntry proxyOfMap_t(int index, Map<String, dynamic> map);
-
-final Map<IdbStore, proxyOfMap_t> _proxyOfMap = {
-  IdbStore.Rom: (int i, Map<String, dynamic> map) {
-    final Rom r = new Rom(map['data']);
-    return new _RomProxy(i, r.pullHeaderValue(RomHeaderField.RAM_Size),
-        r.pullHeaderValue(RomHeaderField.Global_Checksum));
-  },
-  IdbStore.Ram: (int i, Map<String, dynamic> map) {
-    return new _RamProxy(i, map['data'].size);
-  },
-  IdbStore.Cart: (int i, Map<String, dynamic> map) {
-    return new _CartProxy(
-        i, map['rom'], ram: map['ram'], ssList: map['ssList']);
-  },
-    // Ss: (int i, r) => new _SsProxy(i, ) // TODO: save states
-};
-
-typedef Map<String, dynamic> mapOfProxy_t(DatabaseEntry e);
-
-final Map<IdbStore, mapOfProxy_t> _mapOfProxy = {
-  IdbStore.Cart: (_CartProxy e) => {
-    'rom': e.rom,
-    'ram': e.ramOpt,
-    'ssList': e.ssOptList,
-  },
-};
-
-// Template method pattern
-abstract class _IdbStoreIterator {
-
-  final Idb.Transaction _tra;
-  final Async.Stream<Idb.CursorWithValue> _cur;
-
-  _IdbStoreIterator.transaction(Idb.Transaction tra, IdbStore v)
-    : _tra = tra
-    , _cur = tra
-    .objectStore(v.toString())
-    .openCursor(autoAdvance: true);
-
-  _IdbStoreIterator(Idb.Database db, IdbStore v, String type)
-    : this.transaction(db.transaction(v.toString(), type), v);
-
-}
-
-// Callable class
-class _IdbForeach extends _IdbStoreIterator {
-
-  _IdbForeach(Idb.Database db, IdbStore v)
-    : super(db, v, 'readonly');
-
-  Async.Future call(dynamic fun) {
-    _cur.forEach((Idb.CursorWithValue cur) {
-      print('salutlol ca va thtow');
-      fun(cur.key, cur.value);
-    });
-    return _tra.completed;
-  }
-
-}
-
-// Callable class
-class _IdbFold<T> extends _IdbStoreIterator {
-
-  _IdbFold(Idb.Database db, IdbStore v)
-    : super(db, v, 'readonly');
-
-  Async.Future<T> call(T v, dynamic fun) {
-    _cur.forEach((Idb.CursorWithValue cur) {
-      v = fun(v, cur.key, cur.value);
-    });
-    return _tra.completed.then((_) => v);
-  }
-
-}
-
-abstract class DatabaseEntry {
-  int get id;
-}
-
-class _RomProxy implements DatabaseEntry {
-  final int id;
-  final int ramSize;
-  final int globalChecksum;
-
-  _RomProxy(this.id, this.ramSize, this.globalChecksum);
-}
-
-class _SsProxy implements DatabaseEntry {
-  final int id;
-  final int romGlobalChecksum;
-
-  _SsProxy(this.id, this.romGlobalChecksum);
-}
-
-class _RamProxy implements DatabaseEntry {
-  final int id;
-  final int size;
-
-  _RamProxy(this.id, this.size);
-}
-
-// _CartProxy is also what is stored in iDB
-class _CartProxy implements DatabaseEntry {
-  final int id;
-  final int rom;
-  final int ramOpt;
-  final List<int> ssOptList;
-
-  _CartProxy(this.id, this.rom, {int ram, List<int> ssList})
-    : ramOpt = ram
-    , ssOptList = new List<int>.generate(4, (int i) =>
-        i >= ssList.length ? null : ssList[i], growable: false);
-
-  _CartProxy.copyTouchRam(_CartProxy src, int ram)
-    : id = src.id
-    , rom = src.rom
-    , ram = ram
-    , ssOptList = new List<int>.from(src.ssOptList);
-
-  _CartProxy.copyTouchSs(_CartProxy src, int ss, int index)
-    : id = src.id
-    , rom = src.rom
-    , ram = src.ramOpt
-    , ssOptList = new List<int>.generate(4, (int i) =>
-        i == index ? ss : src.ssOptList[i], growable: false);
-}
-
 class DatabaseProxy {
 
   final Idb.Database _db;
-  final Map<int, _RomProxy> _roms;
-  final Map<int, _RamProxy> _rams;
-  final Map<int, _SsProxy> _sss;
-  final Map<int, _CartProxy> _carts;
+  final Map<int, RomProxy> _roms;
+  final Map<int, RamProxy> _rams;
+  final Map<int, SsProxy> _sss;
+  final Map<int, CartProxy> _carts;
 
   DatabaseProxy(this._db, this._roms, this._rams, this._sss, this._carts);
 
-  bool joinable(DatabaseEntry src, _CartProxy target) {
-    switch (src.runtimeType) {
-      case (_RamProxy):
-        return (src as _RamProxy).size == target.ramSize;
-      case (_SsProxy):
-        return (src as _SsProxy).romGlobalChecksum == target.globalChecksum;
+  bool joinable(DatabaseProxyEntry src, CartProxy target) {
+    switch (src.type) {
+      case (IdbStore.Ram):
+        return (src as RamProxy).size == target.ramSize;
+      case (IdbStore.SsProxy):
+        return (src as SsProxy).romGlobalChecksum == target.globalChecksum;
       default:
         assert(false, 'DatabaseProxy#joinable($src, $target)');
         break ;
     }
   }
 
-  Async.Future join(DatabaseEntry src, _CartProxy target, int slot) {
+  Async.Future join(DatabaseProxyEntry src, CartProxy target, int slot) {
     Idb.Transaction tra;
-    _CartProxy newCart;
+    CartProxy newCart;
 
     Ft.log('DatabaseProxy', 'join', [src, target, slot]);
-    switch (src.runtimeType) {
-      case (_RamProxy):
+    switch (src.type) {
+      case (IdbStore.Ram):
         tra = _db.transaction(IdbStore.Cart.toString(), 'readwrite');
         newCart = new _Cart.copyTouchRam(target, src.id);
         tra.objectStore(IdbStore.Cart.toString())
@@ -200,7 +66,7 @@ class DatabaseProxy {
           _carts[target.id] = newCart;
           return ;
         });
-      // case (_SsProxy):
+      // case (IdbStore.Ss):
       //   assert(slot >= 0 && slot < 4, 'DatabaseProxy#join($src, $target, $slot)');
       //   break ;
       default:
@@ -209,47 +75,38 @@ class DatabaseProxy {
     }
   }
 
-  Async.Future<Map<String, dynamic>> info(DatabaseEntry component) {
+  Async.Future<Map<String, dynamic>> info(DatabaseProxyEntry component) {
 
   }
 
-  Async.Future addRom(String filename, Uint8List data) {
+  Async.Future addRom(String filename, Uint8List data) async {
     Idb.Transaction tra;
     int romIndex, cartIndex;
-    final romMap = {'filename': filename, 'data': data};
-    var cartMap;
+    final Map<String, dynamic> romMap =
+    <String, dynamic>{'filename': filename, 'data': data};
+    Map<String, dynamic> cartMap;
 
     Ft.log('DatabaseProxy', 'addRom', [filename, data]);
     tra = _db.transaction(
         [IdbStore.Cart.toString(), IdbStore.Rom.toString()], 'readwrite');
-    tra.objectStore(IdbStore.Rom.toString())
-      .add(romMap)
-      ..then((int j){
-        print('romAdded');
-        romIndex = j;
-        cartMap = {
-          'rom': j,
-          'ram': null,
-          'ssList': [null, null, null, null],
-        };
-        tra.objectStore(IdbStore.Cart.toString())
-          .add(cartMap)
-          ..then((int j){
-            print('cartAdded');
-            cartIndex = j;
-          });
-
-      });
+    romIndex = await tra.objectStore(IdbStore.Rom.toString()).add(romMap);
+    print('romAdded');
+    cartMap = <String, dynamic>{
+      'rom': romIndex,
+      'ram': null,
+      'ssList': [null, null, null, null],
+    };
+    cartIndex = await tra.objectStore(IdbStore.Cart.toString()).add(cartMap);
+    print('cartAdded');
     return tra.completed.then((_){
           print('tra done');
-          _roms[romIndex] = _proxyOfMap[IdbStore.Rom](romIndex, romMap);
-          _carts[cartIndex] = _proxyOfMap[IdbStore.Cart](cartIndex, cartMap);
+          _roms[romIndex] = RomProxy.ofDbMap(romMap, romIndex);
+          _carts[cartIndex] = CartProxy.ofDbMap(cartMap, cartIndex);
         });
   }
 
   String toString() =>
     'roms: $_roms\nrams: $_rams\nsss: $_sss\ncarts: $_carts';
-
 
 }
 
@@ -266,31 +123,17 @@ Async.Future<DatabaseProxy> _makeFromExistant(Idb.Database db) async {
     throw new Exception('store-with-bad-name');
   }
 
-  Async.Future<Map> proxyMapOfStore(IdbStore store, toProxyFunc) async
-  {
-    return new _IdbFold(db, store)({}, (Map acc, int k, var v) {
-      // if (!v.invariants) //TODO: implement `invariants` method on all 4 containers
-        // throw new Exception('corrupted $v');
-      acc[k] = toProxyFunc(k, v);
-      return acc;
-    });
-  }
-  final List<Map> maps = await Async.Future.wait([
-    proxyMapOfStore(IdbStore.Rom, _proxyOfMap[IdbStore.Rom]),
-    proxyMapOfStore(IdbStore.Ram, _proxyOfMap[IdbStore.Ram]),
-    // proxyMapOfStore(IdbStore.Rom, _proxyOfMap[Ss]),     //TODO: save states
-  ]);
-  final Map<int, _RomProxy> roms = maps[0];
-  final Map<int, _RamProxy> rams = maps[1];
-  // final Map<int, _SsProxy> sss = maps[2];
-  final Map<int, _SsProxy> sss = {};
-  final Map<int, _CartProxy> carts = {};
+  Map<IdbStore, Map<int, Map<String, dynamic>>> stores = await dbMapsOfDb(db);
+  //TODO: Check invariants on maps
 
-  await new _IdbForeach(db, IdbStore.Cart)((int k, Map<String, dynamic> v) {
-    carts[k] = _proxyOfMap[IdbStore.Cart](k, v);
-    // TODO: check that all fields of `_CartProxy` are valid
-    return ;
-  });
+  final Map<int, RomProxy> roms =
+  DatabaseProxyEntry.ofDbMaps(stores[IdbStore.Rom], IdbStore.Rom);
+  final Map<int, RamProxy> rams =
+  DatabaseProxyEntry.ofDbMaps(stores[IdbStore.Ram], IdbStore.Ram);
+  final Map<int, SsProxy> sss =
+  DatabaseProxyEntry.ofDbMaps(stores[IdbStore.Ss], IdbStore.Ss);
+  final Map<int, CartProxy> carts =
+  DatabaseProxyEntry.ofDbMaps(stores[IdbStore.Cart], IdbStore.Cart);
 
   if (carts.length != roms.length)
     throw new Exception('missing-rom-or-cart-field');
@@ -315,8 +158,8 @@ Async.Future<DatabaseProxy> _makeFromScratch(Idb.IdbFactory dbf) async {
   final Idb.Database db = await dbf.open(
       _DBNAME, version: 1, onUpgradeNeeded:upgrade);
 
-  return new DatabaseProxy(db, <int, _RomProxy>{}, <int, _RamProxy>{},
-      <int, _SsProxy>{}, <int, _CartProxy>{});
+  return new DatabaseProxy(db, <int, RomProxy>{}, <int, RamProxy>{},
+      <int, SsProxy>{}, <int, CartProxy>{});
 
 }
 
