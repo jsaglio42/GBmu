@@ -112,7 +112,7 @@ class Z80 {
   int _execInst(){
     final op = _mmu.pullMem(this.cpur.PC, DataType.BYTE);
     switch (op) {
-      case (0x00) : return _NOP();          //  NOP
+      case (0x00) : return _NOP();                              //  NOP
       case (0x01) : this.cpur.PC += 1; return 1;               //  LD BC, d16
       case (0x02) : this.cpur.PC += 1; return 1;               //  LD (BC), A
       case (0x03) : this.cpur.PC += 1; return 1;               //  INC BC
@@ -120,7 +120,7 @@ class Z80 {
       case (0x05) : this.cpur.PC += 1; return 1;               //  DEC B
       case (0x06) : this.cpur.PC += 1; return 1;               //  LD B, d8
       case (0x07) : this.cpur.PC += 1; return 1;               //  RLCA
-      case (0x08) : this.cpur.PC += 1; return 1;               //  LD (a16), SP
+      case (0x08) : this.cpur.PC += 1; return 1;               //  LD (nn), SP
       case (0x09) : this.cpur.PC += 1; return 1;               //  ADD HL, BC
       case (0x0A) : this.cpur.PC += 1; return 1;               //  LD A, (BC)
       case (0x0B) : this.cpur.PC += 1; return 1;               //  DEC BC
@@ -315,7 +315,7 @@ class Z80 {
       case (0xC8) : this.cpur.PC += 1; return 1;               //  RET Z
       case (0xC9) : this.cpur.PC += 1; return 1;               //  RET
       case (0xCA) : this.cpur.PC += 1; return 1;               //  JP Z, a16
-      case (0xCB) : return _execInst_CB();  //  0xCB: PREFIX
+      case (0xCB) : return _execInst_CB();                     //  0xCB: PREFIX
       case (0xCC) : this.cpur.PC += 1; return 1;               //  CALL Z, a16
       case (0xCD) : this.cpur.PC += 1; return 1;               //  CALL a16
       case (0xCE) : this.cpur.PC += 1; return 1;               //  ADC A, d8
@@ -323,7 +323,7 @@ class Z80 {
       case (0xD0) : this.cpur.PC += 1; return 1;               //  RET NC
       case (0xD1) : this.cpur.PC += 1; return 1;               //  POP DE
       case (0xD2) : this.cpur.PC += 1; return 1;               //  JP NC, a16
-      case (0xD3) : return _NOP();          //  0xD3: N/A
+      case (0xD3) : return _NOP();                             //  0xD3: N/A
       case (0xD4) : this.cpur.PC += 1; return 1;               //  CALL NC, a16
       case (0xD5) : this.cpur.PC += 1; return 1;               //  PUSH DE
       case (0xD6) : this.cpur.PC += 1; return 1;               //  SUB d8
@@ -331,32 +331,32 @@ class Z80 {
       case (0xD8) : this.cpur.PC += 1; return 1;               //  RET C
       case (0xD9) : this.cpur.PC += 1; return 1;               //  RETI
       case (0xDA) : this.cpur.PC += 1; return 1;               //  JP C, a16
-      case (0xDB) : return _NOP();          //  0xDB: N/A
+      case (0xDB) : return _NOP();                             //  0xDB: N/A
       case (0xDC) : this.cpur.PC += 1; return 1;               //  CALL C, a16
-      case (0xDD) : return _NOP();          //  0xDD: N/A
+      case (0xDD) : return _NOP();                             //  0xDD: N/A
       case (0xDE) : this.cpur.PC += 1; return 1;               //  SBC A, d8
       case (0xDF) : this.cpur.PC += 1; return 1;               //  RST 18H
       case (0xE0) : this.cpur.PC += 1; return 1;               //  LDH (a8), A
       case (0xE1) : this.cpur.PC += 1; return 1;               //  POP HL
       case (0xE2) : this.cpur.PC += 1; return 1;               //  LD (C), A
-      case (0xE3) : return _NOP();          //  0xE3: N/A
-      case (0xE4) : return _NOP();          //  0xE4: N/A
+      case (0xE3) : return _NOP();                             //  0xE3: N/A
+      case (0xE4) : return _NOP();                             //  0xE4: N/A
       case (0xE5) : this.cpur.PC += 1; return 1;               //  PUSH HL
       case (0xE6) : this.cpur.PC += 1; return 1;               //  AND d8
       case (0xE7) : this.cpur.PC += 1; return 1;               //  RST 20H
       case (0xE8) : this.cpur.PC += 1; return 1;               //  ADD SP, r8
       case (0xE9) : this.cpur.PC += 1; return 1;               //  JP (HL)
       case (0xEA) : this.cpur.PC += 1; return 1;               //  LD (a16), A
-      case (0xEB) : return _NOP();          //  0xEB: N/A
-      case (0xEC) : return _NOP();          //  0xEC: N/A
-      case (0xED) : return _NOP();          //  0xED: N/A
+      case (0xEB) : return _NOP();                             //  0xEB: N/A
+      case (0xEC) : return _NOP();                             //  0xEC: N/A
+      case (0xED) : return _NOP();                             //  0xED: N/A
       case (0xEE) : this.cpur.PC += 1; return 1;               //  XOR d8
       case (0xEF) : this.cpur.PC += 1; return 1;               //  RST 28H
       case (0xF0) : this.cpur.PC += 1; return 1;               //  LDH A, (a8)
       case (0xF1) : this.cpur.PC += 1; return 1;               //  POP AF
       case (0xF2) : this.cpur.PC += 1; return 1;               //  LD A, (C)
       case (0xF3) : this.cpur.PC += 1; return 1;               //  DI
-      case (0xF4) : return _NOP();          //  0xF4: N/A
+      case (0xF4) : return _NOP();                             //  0xF4: N/A
       case (0xF5) : this.cpur.PC += 1; return 1;               //  PUSH AF
       case (0xF6) : this.cpur.PC += 1; return 1;               //  OR d8
       case (0xF7) : this.cpur.PC += 1; return 1;               //  RST 30H
@@ -364,8 +364,8 @@ class Z80 {
       case (0xF9) : this.cpur.PC += 1; return 1;               //  LD SP, HL
       case (0xFA) : this.cpur.PC += 1; return 1;               //  LD A, (a16)
       case (0xFB) : this.cpur.PC += 1; return 1;               //  EI
-      case (0xFC) : return _NOP();          //  0xFC: N/A
-      case (0xFD) : return _NOP();          //  0xFD: N/A
+      case (0xFC) : return _NOP();                             //  0xFC: N/A
+      case (0xFD) : return _NOP();                             //  0xFD: N/A
       case (0xFE) : this.cpur.PC += 1; return 1;               //  CP d8
       case (0xFF) : this.cpur.PC += 1; return 1;               //  RST 38H
       default : break;
@@ -373,16 +373,10 @@ class Z80 {
     throw new Exception('z80: Opcode ${Ft.toAddressString(op, 4)} not suported');
   }
 
-  int _NOP() {
-    this.cpur.PC += 1;
-    return 4;
-  }
-
   /* Extended Instructions */
 
   int _execInst_CB(){
     final op = _mmu.pullMem(this.cpur.PC + 1, DataType.BYTE);
-    this.cpur.PC += 2;    //  Can be done, always 2 byte long
     switch (op) {
       case (0x00) : return _RLC(Reg8.B);        //  RLC B
       case (0x01) : return _RLC(Reg8.C);        //  RLC C
@@ -676,7 +670,68 @@ class Z80 {
     throw new Exception('z80: Opcode ${Ft.toAddressString(op, 4)} not suported');
   }
 
-  /* RLC **********************************/
+  /* Miscellaneous ************************************************************/
+
+  int _DAA() {
+    assert(false, "DAA");
+  }
+
+  int _CPL() {
+    assert(false, "CPL");
+    return 4;
+  }
+
+  int _CCF() {
+    assert(false, "CCF");
+    return 4;
+  }
+
+  int _SCF() {
+    assert(false, "SCF");
+    return 4;
+  }
+
+  int _NOP() {
+    this.cpur.PC += 1;
+    return 4;
+  }
+
+  int _HALT() {
+    assert(false, "HALT");
+  }
+
+  int _STOP() {
+    assert(false, "STOP");
+  }
+
+  int _DI() {
+    assert(false, "DI");
+  }
+
+  int _EI() {
+    assert(false, "EI");
+  }
+
+  /* Rotates and Shifts *******************************************************/
+
+  int _RLCA() {
+    assert(false, "RLCA");
+  }
+
+  int _RLA() {
+    assert(false, "RLA");
+  }
+
+  int _RRCA() {
+    assert(false, "RRCA");
+  }
+
+  int _RRA() {
+    assert(false, "RRA");
+  }
+
+  /* Registers */
+
   int _RLC(Reg8 r) {
     final int val_old = this.cpur.pull8(r);
     final int cy_new = (val_old >> 7);
@@ -686,23 +741,10 @@ class Z80 {
     this.cpur.h = 0;
     this.cpur.n = 0;
     this.cpur.z = val_new;
+    this.cpur.PC += 2;
     return 8;
   }
 
-  int _RLC_M() {
-    return 16;
-  }
-
-  /* RRC **********************************/
-  int _RRC(Reg8 r) {
-    return 8;
-  }
-
-  int _RRC_M() {
-    return 16;
-  }
-
-  /* RL  **********************************/
   int _RL(Reg8 r) {
     final int val_old = this.cpur.pull8(r);
     final int cy_new = (val_old >> 7);
@@ -712,83 +754,265 @@ class Z80 {
     this.cpur.h = 0;
     this.cpur.n = 0;
     this.cpur.z = val_new;
+    this.cpur.PC += 2;
     return 8;
+  }
+
+  int _RRC(Reg8 r) {
+    final int val_old = this.cpur.pull8(r);
+    final int cy_new = (val_old >> 7);
+    final int val_new = ((val_old << 1) & 0xFF) | this.cpur.cy;
+    this.cpur.push8(r, val_new);
+    this.cpur.cy = cy_new;
+    this.cpur.h = 0;
+    this.cpur.n = 0;
+    this.cpur.z = val_new;
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _RR(Reg8 r) {
+    final int val_old = this.cpur.pull8(r);
+    final int cy_new = (val_old >> 7);
+    final int val_new = ((val_old << 1) & 0xFF) | cy_new;
+    this.cpur.push8(r, val_new);
+    this.cpur.cy = cy_new;
+    this.cpur.h = 0;
+    this.cpur.n = 0;
+    this.cpur.z = val_new;
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _SLA(Reg8 r) {
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _SRA(Reg8 r) {
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _SRL(Reg8 r) {
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _SWAP(Reg8 r){
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  /* Memory */
+
+  int _RLC_M() {
+    this.cpur.PC += 2;
+    return 16;
   }
 
   int _RL_M() {
+    this.cpur.PC += 2;
     return 16;
   }
 
-  /* RR  **********************************/
-  int _RR(Reg8 r) {
-    return 8;
+  int _RRC_M() {
+    this.cpur.PC += 2;
+    return 16;
   }
 
   int _RR_M() {
+    this.cpur.PC += 2;
     return 16;
-  }
-
-  /* SLA **********************************/
-  int _SLA(Reg8 r) {
-    return 8;
   }
 
   int _SLA_M() {
+    this.cpur.PC += 2;
     return 16;
-  }
-
-  /* SRA **********************************/
-  int _SRA(Reg8 r) {
-    return 8;
   }
 
   int _SRA_M() {
+    this.cpur.PC += 2;
     return 16;
-  }
-
-  /* SWAP ********************************/
-  int _SWAP(Reg8 r) {
-    return 8;
-  }
-
-  int _SWAP_M() {
-    return 16;
-  }
-
-  /* SRL **********************************/
-  int _SRL(Reg8 r) {
-    return 8;
   }
 
   int _SRL_M() {
+    this.cpur.PC += 2;
     return 16;
   }
 
-  /* BIT **********************************/
+  int _SWAP_M(){
+    this.cpur.PC += 2;
+    return 16;
+  }
+
+  /* Bit OpCode ***************************************************************/
+  /* Registers */
+  
   int _BIT(int index, Reg8 r) {
+    this.cpur.PC += 2;
     return 8;
   }
+
+  int _SET(int index, Reg8 r) {
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _RES(int index, Reg8 r) {
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  /* Memory */
 
   int _BIT_M(int index) {
-    return 16;
-  }
-
-  /* RES **********************************/
-  int _RES(int index, Reg8 r) {
-    return 8;
-  }
-
-  int _RES_M(int index) {
-    return 16;
-  }
-
-  /* SET **********************************/
-  int _SET(int index, Reg8 r) {
-    return 8;
+    this.cpur.PC += 2;
+    return 12;
   }
 
   int _SET_M(int index) {
+    this.cpur.PC += 2;
+    return 12;
+  }
+
+  int _RES_M(int index) {
+    this.cpur.PC += 2;
+    return 12;
+  }
+
+  /* Jumps ********************************************************************/
+  /* 16 bit */
+
+  int _JP_nn(int addr) {
+    assert(addr & 0xFFFF == 0);
+    this.cpur.PC = addr;
+    return 16;  
+  }
+
+  int _JP_cc_nn(bool cc, int addr) {
+    assert(addr & 0xFFFF == 0);
+    if (cc)
+      return _JP_nn(addr);
+    else
+    {
+      this.cpur.PC += 3;
+      return 12;
+    }
+  }
+
+  int _JP_NZ(int addr) { return  _JP_cc_nn(this.cpur.z == 0, addr); }
+  int _JP_Z(int addr) { return  _JP_cc_nn(this.cpur.z == 1, addr); }
+  int _JP_NC(int addr) { return  _JP_cc_nn(this.cpur.cy == 0, addr); }
+  int _JP_C(int addr) { return  _JP_cc_nn(this.cpur.cy == 1, addr); }
+  
+  int _JP_M() {
+    this.cpur.PC = _mmu.pull16(this.cpur.HL);
+    return 4;
+  }
+
+  /* 8 bit */
+
+  int _JR_e(int offset) {
+    assert(offset & 0xFF == 0);
+    offset = offset.toSigned(8);
+    this.cpur.PC += offset;
+    return 12;
+  }
+
+  int _JR_cc_e(bool cc, int offset) {
+    assert(offset & 0xFF == 0);
+    offset = offset.toSigned(8);
+    if (cc)
+      return _JR_e(offset);
+    else
+    {
+      this.cpur.PC += 2;
+      return 8;
+    }
+  }
+
+  int _JR_NZ(int offset) { return  _JR_cc_e(this.cpur.z == 0, offset); }
+  int _JR_Z(int offset) { return  _JR_cc_e(this.cpur.z == 1, offset); }
+  int _JR_NC(int offset) { return  _JR_cc_e(this.cpur.cy == 0, offset); }
+  int _JR_C(int offset) { return  _JR_cc_e(this.cpur.cy == 1, offset); }
+
+  /* Calls and returns ********************************************************/
+  /* Calls */
+
+  int _CALL_nn(int addr)
+  {
+    assert(addr & 0xFFFF == 0);
+    _mmu.push(this.cpur.SP - 2, this.cpur.PC + 3, DataType.WORD);
+    this.cpur.PC = addr;
+    this.cpur.SP -= 2;
+    return 24;
+  }
+
+  int _CALL_cc_nn(bool cc, int addr)
+  {
+    assert(addr & 0xFFFF == 0);
+    if (cc)
+      return _CALL_nn(addr);
+    else
+    {
+      this.cpur.PC += 3;
+      return 12;
+    }
+  }
+
+  int _CALL_NZ(int addr) { return  _CALL_cc_nn(this.cpur.z == 0, addr); }
+  int _CALL_Z(int addr) { return  _CALL_cc_nn(this.cpur.z == 1, addr); }
+  int _CALL_NC(int addr) { return  _CALL_cc_nn(this.cpur.cy == 0, addr); }
+  int _CALL_C(int addr) { return  _CALL_cc_nn(this.cpur.cy == 1, addr); }
+
+  /* Returns */
+
+  int _RET()
+  {
+    this.cpur.CP = _mmu.pull(this.cpur.SP, DataType.WORD);
+    this.cpur.SP += 2;
     return 16;
   }
+
+  int _RET_cc(bool cc)
+  {
+    if (cc)
+      return _RET();
+    else
+    {
+      this.cpur.PC += 3;
+      return 16;
+    }
+  }
+
+  int _RET_NZ() { return  _RET_cc(this.cpur.z == 0); }
+  int _RET_Z() { return  _RET_cc(this.cpur.z == 1); }
+  int _RET_NC() { return  _RET_cc(this.cpur.cy == 0); }
+  int _RET_C() { return  _RET_cc(this.cpur.cy == 1); }
+
+  int _RETI()
+  {
+    assert(false, "RETI");
+  }
+
+  /* Resets */
+
+  int _RST_f(int low) {
+    assert(low & 0xFF);
+    _mmu.push(this.cpur.SP - 2, this.cpur.PC + 1, DataType.WORD);
+    this.cpur.SP -= 2;
+    this.cpur.PC = low;
+    return 16;
+  }
+
+  int _RST_00H() { return _RST_f(0x00); }
+  int _RST_08H() { return _RST_f(0x08); }
+  int _RST_10H() { return _RST_f(0x10); }
+  int _RST_18H() { return _RST_f(0x18); }
+  int _RST_20H() { return _RST_f(0x20); }
+  int _RST_28H() { return _RST_f(0x28); }
+  int _RST_30H() { return _RST_f(0x30); }
+  int _RST_38H() { return _RST_f(0x38); }
 
 }
