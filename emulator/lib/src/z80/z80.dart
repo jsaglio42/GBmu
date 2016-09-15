@@ -135,7 +135,7 @@ class Z80 {
       case (0x16) : this.cpur.PC += 1; return 1;               //  LD D, d8
       case (0x17) : this.cpur.PC += 1; return 1;               //  RLA
       
-      case (0x18) : this.cpur.PC += 1; return 1;               //  JR r8
+      case (0x18) : return _JR_e();                            //  JR e
       case (0x19) : this.cpur.PC += 1; return 1;               //  ADD HL, DE
       case (0x1A) : this.cpur.PC += 1; return 1;               //  LD A, (DE)
       case (0x1B) : this.cpur.PC += 1; return 1;               //  DEC DE
@@ -144,7 +144,7 @@ class Z80 {
       case (0x1E) : this.cpur.PC += 1; return 1;               //  LD E, d8
       case (0x1F) : this.cpur.PC += 1; return 1;               //  RRA
       
-      case (0x20) : this.cpur.PC += 1; return 1;               //  JR NZ, r8
+      case (0x20) : return _JR_NZ_e();                         //  JR NZ, e
       case (0x21) : this.cpur.PC += 1; return 1;               //  LD HL, d16
       case (0x22) : this.cpur.PC += 1; return 1;               //  LD (HL+), A
       case (0x23) : this.cpur.PC += 1; return 1;               //  INC HL
@@ -153,7 +153,7 @@ class Z80 {
       case (0x26) : this.cpur.PC += 1; return 1;               //  LD H, d8
       case (0x27) : this.cpur.PC += 1; return 1;               //  DAA
       
-      case (0x28) : this.cpur.PC += 1; return 1;               //  JR Z, r8
+      case (0x28) : return _JR_Z_e();                          //  JR Z, e
       case (0x29) : this.cpur.PC += 1; return 1;               //  ADD HL, HL
       case (0x2A) : this.cpur.PC += 1; return 1;               //  LD A, (HL+)
       case (0x2B) : this.cpur.PC += 1; return 1;               //  DEC HL
@@ -162,7 +162,7 @@ class Z80 {
       case (0x2E) : this.cpur.PC += 1; return 1;               //  LD L, d8
       case (0x2F) : this.cpur.PC += 1; return 1;               //  CPL
       
-      case (0x30) : this.cpur.PC += 1; return 1;               //  JR NC, r8
+      case (0x30) : return _JR_NC_e();                         //  JR NC, e
       case (0x31) : this.cpur.PC += 1; return 1;               //  LD SP, d16
       case (0x32) : this.cpur.PC += 1; return 1;               //  LD (HL-), A
       case (0x33) : this.cpur.PC += 1; return 1;               //  INC SP
@@ -171,7 +171,7 @@ class Z80 {
       case (0x36) : this.cpur.PC += 1; return 1;               //  LD (HL), d8
       case (0x37) : this.cpur.PC += 1; return 1;               //  SCF
       
-      case (0x38) : this.cpur.PC += 1; return 1;               //  JR C, r8
+      case (0x38) : return _JR_C_e();                           //  JR C, e
       case (0x39) : this.cpur.PC += 1; return 1;               //  ADD HL, SP
       case (0x3A) : this.cpur.PC += 1; return 1;               //  LD A, (HL-)
       case (0x3B) : this.cpur.PC += 1; return 1;               //  DEC SP
@@ -326,8 +326,8 @@ class Z80 {
 
       case (0xC0) : this.cpur.PC += 1; return 1;               //  RET NZ
       case (0xC1) : this.cpur.PC += 1; return 1;               //  POP BC
-      case (0xC2) : this.cpur.PC += 1; return 1;               //  JP NZ, a16
-      case (0xC3) : this.cpur.PC += 1; return 1;               //  JP a16
+      case (0xC2) : return _JP_NZ_nn();                        //  JP NZ, nn
+      case (0xC3) : return _JP_nn();                           //  JP nn
       case (0xC4) : return _CALL_NZ_nn();                      //  CALL NZ, nn
       case (0xC5) : this.cpur.PC += 1; return 1;               //  PUSH BC
       case (0xC6) : this.cpur.PC += 1; return 1;               //  ADD A, d8
@@ -335,7 +335,7 @@ class Z80 {
       
       case (0xC8) : this.cpur.PC += 1; return 1;               //  RET Z
       case (0xC9) : this.cpur.PC += 1; return 1;               //  RET
-      case (0xCA) : this.cpur.PC += 1; return 1;               //  JP Z, a16
+      case (0xCA) : return _JP_Z_nn();                         //  JP Z, nn
       case (0xCB) : return _execInst_CB();                     //  0xCB: PREFIX
       case (0xCC) : return _CALL_Z_nn();                       //  CALL Z, nn
       case (0xCD) : return _CALL_nn();                         //  CALL nn
@@ -344,7 +344,7 @@ class Z80 {
       
       case (0xD0) : this.cpur.PC += 1; return 1;               //  RET NC
       case (0xD1) : this.cpur.PC += 1; return 1;               //  POP DE
-      case (0xD2) : this.cpur.PC += 1; return 1;               //  JP NC, a16
+      case (0xD2) : return _JP_NC_nn();                        //  JP NC, nn
       case (0xD3) : return _NOP();                             //  0xD3: N/A
       case (0xD4) : return _CALL_NC_nn();                      //  CALL NC, nn
       case (0xD5) : this.cpur.PC += 1; return 1;               //  PUSH DE
@@ -353,7 +353,7 @@ class Z80 {
       
       case (0xD8) : this.cpur.PC += 1; return 1;               //  RET C
       case (0xD9) : this.cpur.PC += 1; return 1;               //  RETI
-      case (0xDA) : this.cpur.PC += 1; return 1;               //  JP C, a16
+      case (0xDA) : return _JP_C_nn();                         //  JP C, nn
       case (0xDB) : return _NOP();                             //  0xDB: N/A
       case (0xDC) : return _CALL_C_nn();                       //  CALL C, nn
       case (0xDD) : return _NOP();                             //  0xDD: N/A
@@ -370,7 +370,7 @@ class Z80 {
       case (0xE7) : return _RST_20H();                         //  RST 20H
       
       case (0xE8) : this.cpur.PC += 1; return 1;               //  ADD SP, r8
-      case (0xE9) : this.cpur.PC += 1; return 1;               //  JP (HL)
+      case (0xE9) : return _JP_HL();                           //  JP (HL)
       case (0xEA) : this.cpur.PC += 1; return 1;               //  LD (a16), A
       case (0xEB) : return _NOP();                             //  0xEB: N/A
       case (0xEC) : return _NOP();                             //  0xEC: N/A
@@ -405,59 +405,59 @@ class Z80 {
   int _execInst_CB(){
     final op = _mmu.pull8(this.cpur.PC + 1);
     switch (op) {
-      case (0x00) : return _RLC(Reg8.B);        //  RLC B
-      case (0x01) : return _RLC(Reg8.C);        //  RLC C
-      case (0x02) : return _RLC(Reg8.D);        //  RLC D
-      case (0x03) : return _RLC(Reg8.E);        //  RLC E
-      case (0x04) : return _RLC(Reg8.H);        //  RLC H
-      case (0x05) : return _RLC(Reg8.L);        //  RLC L
-      case (0x06) : return _RLC_M();            //  RLC (HL)
-      case (0x07) : return _RLC(Reg8.A);        //  RLC A
+      case (0x00) : return _RLC(Reg8.B);         //  RLC B
+      case (0x01) : return _RLC(Reg8.C);         //  RLC C
+      case (0x02) : return _RLC(Reg8.D);         //  RLC D
+      case (0x03) : return _RLC(Reg8.E);         //  RLC E
+      case (0x04) : return _RLC(Reg8.H);         //  RLC H
+      case (0x05) : return _RLC(Reg8.L);         //  RLC L
+      case (0x06) : return _RLC_HL();            //  RLC (HL)
+      case (0x07) : return _RLC(Reg8.A);         //  RLC A
+ 
+      case (0x08) : return _RRC(Reg8.B);         //  RRC B
+      case (0x09) : return _RRC(Reg8.C);         //  RRC C
+      case (0x0A) : return _RRC(Reg8.D);         //  RRC D
+      case (0x0B) : return _RRC(Reg8.E);         //  RRC E
+      case (0x0C) : return _RRC(Reg8.H);         //  RRC H
+      case (0x0D) : return _RRC(Reg8.L);         //  RRC L
+      case (0x0E) : return _RRC_HL();            //  RRC (HL)
+      case (0x0F) : return _RRC(Reg8.A);         //  RRC A
 
-      case (0x08) : return _RRC(Reg8.B);        //  RRC B
-      case (0x09) : return _RRC(Reg8.C);        //  RRC C
-      case (0x0A) : return _RRC(Reg8.D);        //  RRC D
-      case (0x0B) : return _RRC(Reg8.E);        //  RRC E
-      case (0x0C) : return _RRC(Reg8.H);        //  RRC H
-      case (0x0D) : return _RRC(Reg8.L);        //  RRC L
-      case (0x0E) : return _RRC_M();            //  RRC (HL)
-      case (0x0F) : return _RRC(Reg8.A);        //  RRC A
+      case (0x10) : return _RL(Reg8.B);          //  RL B
+      case (0x11) : return _RL(Reg8.C);          //  RL C
+      case (0x12) : return _RL(Reg8.D);          //  RL D
+      case (0x13) : return _RL(Reg8.E);          //  RL E
+      case (0x14) : return _RL(Reg8.H);          //  RL H
+      case (0x15) : return _RL(Reg8.L);          //  RL L
+      case (0x16) : return _RL_HL();             //  RL (HL)
+      case (0x17) : return _RL(Reg8.A);          //  RL A
 
-      case (0x10) : return _RL(Reg8.B);         //  RL B
-      case (0x11) : return _RL(Reg8.C);         //  RL C
-      case (0x12) : return _RL(Reg8.D);         //  RL D
-      case (0x13) : return _RL(Reg8.E);         //  RL E
-      case (0x14) : return _RL(Reg8.H);         //  RL H
-      case (0x15) : return _RL(Reg8.L);         //  RL L
-      case (0x16) : return _RL_M();             //  RL (HL)
-      case (0x17) : return _RL(Reg8.A);         //  RL A
+      case (0x18) : return _RR(Reg8.B);          //  RR B
+      case (0x19) : return _RR(Reg8.C);          //  RR C
+      case (0x1A) : return _RR(Reg8.D);          //  RR D
+      case (0x1B) : return _RR(Reg8.E);          //  RR E
+      case (0x1C) : return _RR(Reg8.H);          //  RR H
+      case (0x1D) : return _RR(Reg8.L);          //  RR L
+      case (0x1E) : return _RR_HL();             //  RR (HL)
+      case (0x1F) : return _RR(Reg8.A);          //  RR A
 
-      case (0x18) : return _RR(Reg8.B);         //  RR B
-      case (0x19) : return _RR(Reg8.C);         //  RR C
-      case (0x1A) : return _RR(Reg8.D);         //  RR D
-      case (0x1B) : return _RR(Reg8.E);         //  RR E
-      case (0x1C) : return _RR(Reg8.H);         //  RR H
-      case (0x1D) : return _RR(Reg8.L);         //  RR L
-      case (0x1E) : return _RR_M();             //  RR (HL)
-      case (0x1F) : return _RR(Reg8.A);         //  RR A
+      case (0x20) : return _SLA(Reg8.B);         //  SLA B
+      case (0x21) : return _SLA(Reg8.C);         //  SLA C
+      case (0x22) : return _SLA(Reg8.D);         //  SLA D
+      case (0x23) : return _SLA(Reg8.E);         //  SLA E
+      case (0x24) : return _SLA(Reg8.H);         //  SLA H
+      case (0x25) : return _SLA(Reg8.L);         //  SLA L
+      case (0x26) : return _SLA_HL();            //  SLA (HL)
+      case (0x27) : return _SLA(Reg8.A);         //  SLA A
 
-      case (0x20) : return _SLA(Reg8.B);        //  SLA B
-      case (0x21) : return _SLA(Reg8.C);        //  SLA C
-      case (0x22) : return _SLA(Reg8.D);        //  SLA D
-      case (0x23) : return _SLA(Reg8.E);        //  SLA E
-      case (0x24) : return _SLA(Reg8.H);        //  SLA H
-      case (0x25) : return _SLA(Reg8.L);        //  SLA L
-      case (0x26) : return _SLA_M();            //  SLA (HL)
-      case (0x27) : return _SLA(Reg8.A);        //  SLA A
-
-      case (0x28) : return _SRA(Reg8.B);        //  SRA B
-      case (0x29) : return _SRA(Reg8.C);        //  SRA C
-      case (0x2A) : return _SRA(Reg8.D);        //  SRA D
-      case (0x2B) : return _SRA(Reg8.E);        //  SRA E
-      case (0x2C) : return _SRA(Reg8.H);        //  SRA H
-      case (0x2D) : return _SRA(Reg8.L);        //  SRA L
-      case (0x2E) : return _SRA_M();            //  SRA (HL)
-      case (0x2F) : return _SRA(Reg8.A);        //  SRA A
+      case (0x28) : return _SRA(Reg8.B);         //  SRA B
+      case (0x29) : return _SRA(Reg8.C);         //  SRA C
+      case (0x2A) : return _SRA(Reg8.D);         //  SRA D
+      case (0x2B) : return _SRA(Reg8.E);         //  SRA E
+      case (0x2C) : return _SRA(Reg8.H);         //  SRA H
+      case (0x2D) : return _SRA(Reg8.L);         //  SRA L
+      case (0x2E) : return _SRA_HL();            //  SRA (HL)
+      case (0x2F) : return _SRA(Reg8.A);         //  SRA A
 
       case (0x30) : return _SWAP(Reg8.B);        //  SWAP B
       case (0x31) : return _SWAP(Reg8.C);        //  SWAP C
@@ -465,233 +465,233 @@ class Z80 {
       case (0x33) : return _SWAP(Reg8.E);        //  SWAP E
       case (0x34) : return _SWAP(Reg8.H);        //  SWAP H
       case (0x35) : return _SWAP(Reg8.L);        //  SWAP L
-      case (0x36) : return _SWAP_M();            //  SWAP (HL)
+      case (0x36) : return _SWAP_HL();           //  SWAP (HL)
       case (0x37) : return _SWAP(Reg8.A);        //  SWAP A
 
-      case (0x38) : return _SRL(Reg8.B);        //  SRL B
-      case (0x39) : return _SRL(Reg8.C);        //  SRL C
-      case (0x3A) : return _SRL(Reg8.D);        //  SRL D
-      case (0x3B) : return _SRL(Reg8.E);        //  SRL E
-      case (0x3C) : return _SRL(Reg8.H);        //  SRL H
-      case (0x3D) : return _SRL(Reg8.L);        //  SRL L
-      case (0x3E) : return _SRL_M();            //  SRL (HL)
-      case (0x3F) : return _SRL(Reg8.A);        //  SRL A
+      case (0x38) : return _SRL(Reg8.B);         //  SRL B
+      case (0x39) : return _SRL(Reg8.C);         //  SRL C
+      case (0x3A) : return _SRL(Reg8.D);         //  SRL D
+      case (0x3B) : return _SRL(Reg8.E);         //  SRL E
+      case (0x3C) : return _SRL(Reg8.H);         //  SRL H
+      case (0x3D) : return _SRL(Reg8.L);         //  SRL L
+      case (0x3E) : return _SRL_HL();            //  SRL (HL)
+      case (0x3F) : return _SRL(Reg8.A);         //  SRL A
 
-      case (0x40) : return _BIT(  0, Reg8.B);   //  BIT 0, B
-      case (0x41) : return _BIT(  0, Reg8.C);   //  BIT 0, C
-      case (0x42) : return _BIT(  0, Reg8.D);   //  BIT 0, D
-      case (0x43) : return _BIT(  0, Reg8.E);   //  BIT 0, E
-      case (0x44) : return _BIT(  0, Reg8.H);   //  BIT 0, H
-      case (0x45) : return _BIT(  0, Reg8.L);   //  BIT 0, L
-      case (0x46) : return _BIT_M(0);           //  BIT 0, (HL)
-      case (0x47) : return _BIT(  0, Reg8.A);   //  BIT 0, A
+      case (0x40) : return _BIT(   0, Reg8.B);   //  BIT 0, B
+      case (0x41) : return _BIT(   0, Reg8.C);   //  BIT 0, C
+      case (0x42) : return _BIT(   0, Reg8.D);   //  BIT 0, D
+      case (0x43) : return _BIT(   0, Reg8.E);   //  BIT 0, E
+      case (0x44) : return _BIT(   0, Reg8.H);   //  BIT 0, H
+      case (0x45) : return _BIT(   0, Reg8.L);   //  BIT 0, L
+      case (0x46) : return _BIT_HL(0);           //  BIT 0, (HL)
+      case (0x47) : return _BIT(   0, Reg8.A);   //  BIT 0, A
 
-      case (0x48) : return _BIT(  1, Reg8.B);   //  BIT 1, B
-      case (0x49) : return _BIT(  1, Reg8.C);   //  BIT 1, C
-      case (0x4A) : return _BIT(  1, Reg8.D);   //  BIT 1, D
-      case (0x4B) : return _BIT(  1, Reg8.E);   //  BIT 1, E
-      case (0x4C) : return _BIT(  1, Reg8.H);   //  BIT 1, H
-      case (0x4D) : return _BIT(  1, Reg8.L);   //  BIT 1, L
-      case (0x4E) : return _BIT_M(1);           //  BIT 1, (HL)
-      case (0x4F) : return _BIT(  1, Reg8.A);   //  BIT 1, A
+      case (0x48) : return _BIT(   1, Reg8.B);   //  BIT 1, B
+      case (0x49) : return _BIT(   1, Reg8.C);   //  BIT 1, C
+      case (0x4A) : return _BIT(   1, Reg8.D);   //  BIT 1, D
+      case (0x4B) : return _BIT(   1, Reg8.E);   //  BIT 1, E
+      case (0x4C) : return _BIT(   1, Reg8.H);   //  BIT 1, H
+      case (0x4D) : return _BIT(   1, Reg8.L);   //  BIT 1, L
+      case (0x4E) : return _BIT_HL(1);           //  BIT 1, (HL)
+      case (0x4F) : return _BIT(   1, Reg8.A);   //  BIT 1, A
 
-      case (0x50) : return _BIT(  2, Reg8.B);   //  BIT 2, B
-      case (0x51) : return _BIT(  2, Reg8.C);   //  BIT 2, C
-      case (0x52) : return _BIT(  2, Reg8.D);   //  BIT 2, D
-      case (0x53) : return _BIT(  2, Reg8.E);   //  BIT 2, E
-      case (0x54) : return _BIT(  2, Reg8.H);   //  BIT 2, H
-      case (0x55) : return _BIT(  2, Reg8.L);   //  BIT 2, L
-      case (0x56) : return _BIT_M(2);           //  BIT 2, (HL)
-      case (0x57) : return _BIT(  2, Reg8.A);   //  BIT 2, A
+      case (0x50) : return _BIT(   2, Reg8.B);   //  BIT 2, B
+      case (0x51) : return _BIT(   2, Reg8.C);   //  BIT 2, C
+      case (0x52) : return _BIT(   2, Reg8.D);   //  BIT 2, D
+      case (0x53) : return _BIT(   2, Reg8.E);   //  BIT 2, E
+      case (0x54) : return _BIT(   2, Reg8.H);   //  BIT 2, H
+      case (0x55) : return _BIT(   2, Reg8.L);   //  BIT 2, L
+      case (0x56) : return _BIT_HL(2);           //  BIT 2, (HL)
+      case (0x57) : return _BIT(   2, Reg8.A);   //  BIT 2, A
 
-      case (0x58) : return _BIT(  3, Reg8.B);   //  BIT 3, B
-      case (0x59) : return _BIT(  3, Reg8.C);   //  BIT 3, C
-      case (0x5A) : return _BIT(  3, Reg8.D);   //  BIT 3, D
-      case (0x5B) : return _BIT(  3, Reg8.E);   //  BIT 3, E
-      case (0x5C) : return _BIT(  3, Reg8.H);   //  BIT 3, H
-      case (0x5D) : return _BIT(  3, Reg8.L);   //  BIT 3, L
-      case (0x5E) : return _BIT_M(3);           //  BIT 3, (HL)
-      case (0x5F) : return _BIT(  3, Reg8.A);   //  BIT 3, A
+      case (0x58) : return _BIT(   3, Reg8.B);   //  BIT 3, B
+      case (0x59) : return _BIT(   3, Reg8.C);   //  BIT 3, C
+      case (0x5A) : return _BIT(   3, Reg8.D);   //  BIT 3, D
+      case (0x5B) : return _BIT(   3, Reg8.E);   //  BIT 3, E
+      case (0x5C) : return _BIT(   3, Reg8.H);   //  BIT 3, H
+      case (0x5D) : return _BIT(   3, Reg8.L);   //  BIT 3, L
+      case (0x5E) : return _BIT_HL(3);           //  BIT 3, (HL)
+      case (0x5F) : return _BIT(   3, Reg8.A);   //  BIT 3, A
 
-      case (0x60) : return _BIT(  4, Reg8.B);   //  BIT 4, B
-      case (0x61) : return _BIT(  4, Reg8.C);   //  BIT 4, C
-      case (0x62) : return _BIT(  4, Reg8.D);   //  BIT 4, D
-      case (0x63) : return _BIT(  4, Reg8.E);   //  BIT 4, E
-      case (0x64) : return _BIT(  4, Reg8.H);   //  BIT 4, H
-      case (0x65) : return _BIT(  4, Reg8.L);   //  BIT 4, L
-      case (0x66) : return _BIT_M(4);           //  BIT 4, (HL)
-      case (0x67) : return _BIT(  4, Reg8.A);   //  BIT 4, A
+      case (0x60) : return _BIT(   4, Reg8.B);   //  BIT 4, B
+      case (0x61) : return _BIT(   4, Reg8.C);   //  BIT 4, C
+      case (0x62) : return _BIT(   4, Reg8.D);   //  BIT 4, D
+      case (0x63) : return _BIT(   4, Reg8.E);   //  BIT 4, E
+      case (0x64) : return _BIT(   4, Reg8.H);   //  BIT 4, H
+      case (0x65) : return _BIT(   4, Reg8.L);   //  BIT 4, L
+      case (0x66) : return _BIT_HL(4);           //  BIT 4, (HL)
+      case (0x67) : return _BIT(   4, Reg8.A);   //  BIT 4, A
 
-      case (0x68) : return _BIT(  5, Reg8.B);   //  BIT 5, B
-      case (0x69) : return _BIT(  5, Reg8.C);   //  BIT 5, C
-      case (0x6A) : return _BIT(  5, Reg8.D);   //  BIT 5, D
-      case (0x6B) : return _BIT(  5, Reg8.E);   //  BIT 5, E
-      case (0x6C) : return _BIT(  5, Reg8.H);   //  BIT 5, H
-      case (0x6D) : return _BIT(  5, Reg8.L);   //  BIT 5, L
-      case (0x6E) : return _BIT_M(5);           //  BIT 5, (HL)
-      case (0x6F) : return _BIT(  5, Reg8.A);   //  BIT 5, A
+      case (0x68) : return _BIT(   5, Reg8.B);   //  BIT 5, B
+      case (0x69) : return _BIT(   5, Reg8.C);   //  BIT 5, C
+      case (0x6A) : return _BIT(   5, Reg8.D);   //  BIT 5, D
+      case (0x6B) : return _BIT(   5, Reg8.E);   //  BIT 5, E
+      case (0x6C) : return _BIT(   5, Reg8.H);   //  BIT 5, H
+      case (0x6D) : return _BIT(   5, Reg8.L);   //  BIT 5, L
+      case (0x6E) : return _BIT_HL(5);           //  BIT 5, (HL)
+      case (0x6F) : return _BIT(   5, Reg8.A);   //  BIT 5, A
 
-      case (0x70) : return _BIT(  6, Reg8.B);   //  BIT 6, B
-      case (0x71) : return _BIT(  6, Reg8.C);   //  BIT 6, C
-      case (0x72) : return _BIT(  6, Reg8.D);   //  BIT 6, D
-      case (0x73) : return _BIT(  6, Reg8.E);   //  BIT 6, E
-      case (0x74) : return _BIT(  6, Reg8.H);   //  BIT 6, H
-      case (0x75) : return _BIT(  6, Reg8.L);   //  BIT 6, L
-      case (0x76) : return _BIT_M(6);           //  BIT 6, (HL)
-      case (0x77) : return _BIT(  6, Reg8.A);   //  BIT 6, A
+      case (0x70) : return _BIT(   6, Reg8.B);   //  BIT 6, B
+      case (0x71) : return _BIT(   6, Reg8.C);   //  BIT 6, C
+      case (0x72) : return _BIT(   6, Reg8.D);   //  BIT 6, D
+      case (0x73) : return _BIT(   6, Reg8.E);   //  BIT 6, E
+      case (0x74) : return _BIT(   6, Reg8.H);   //  BIT 6, H
+      case (0x75) : return _BIT(   6, Reg8.L);   //  BIT 6, L
+      case (0x76) : return _BIT_HL(6);           //  BIT 6, (HL)
+      case (0x77) : return _BIT(   6, Reg8.A);   //  BIT 6, A
 
-      case (0x78) : return _BIT(  7, Reg8.B);   //  BIT 7, B
-      case (0x79) : return _BIT(  7, Reg8.C);   //  BIT 7, C
-      case (0x7A) : return _BIT(  7, Reg8.D);   //  BIT 7, D
-      case (0x7B) : return _BIT(  7, Reg8.E);   //  BIT 7, E
-      case (0x7C) : return _BIT(  7, Reg8.H);   //  BIT 7, H
-      case (0x7D) : return _BIT(  7, Reg8.L);   //  BIT 7, L
-      case (0x7E) : return _BIT_M(7);           //  BIT 7, (HL)
-      case (0x7F) : return _BIT(  7, Reg8.A);   //  BIT 7, A
+      case (0x78) : return _BIT(   7, Reg8.B);   //  BIT 7, B
+      case (0x79) : return _BIT(   7, Reg8.C);   //  BIT 7, C
+      case (0x7A) : return _BIT(   7, Reg8.D);   //  BIT 7, D
+      case (0x7B) : return _BIT(   7, Reg8.E);   //  BIT 7, E
+      case (0x7C) : return _BIT(   7, Reg8.H);   //  BIT 7, H
+      case (0x7D) : return _BIT(    7, Reg8.L);   //  BIT 7, L
+      case (0x7E) : return _BIT_HL(7);           //  BIT 7, (HL)
+      case (0x7F) : return _BIT(   7, Reg8.A);   //  BIT 7, A
 
-      case (0x80) : return _RES(  0, Reg8.B);   //  RES 0, B
-      case (0x81) : return _RES(  0, Reg8.C);   //  RES 0, C
-      case (0x82) : return _RES(  0, Reg8.D);   //  RES 0, D
-      case (0x83) : return _RES(  0, Reg8.E);   //  RES 0, E
-      case (0x84) : return _RES(  0, Reg8.H);   //  RES 0, H
-      case (0x85) : return _RES(  0, Reg8.L);   //  RES 0, L
-      case (0x86) : return _RES_M(0);           //  RES 0, (HL)
-      case (0x87) : return _RES(  0, Reg8.A);   //  RES 0, A
+      case (0x80) : return _RES(   0, Reg8.B);   //  RES 0, B
+      case (0x81) : return _RES(   0, Reg8.C);   //  RES 0, C
+      case (0x82) : return _RES(   0, Reg8.D);   //  RES 0, D
+      case (0x83) : return _RES(   0, Reg8.E);   //  RES 0, E
+      case (0x84) : return _RES(   0, Reg8.H);   //  RES 0, H
+      case (0x85) : return _RES(   0, Reg8.L);   //  RES 0, L
+      case (0x86) : return _RES_HL(0);           //  RES 0, (HL)
+      case (0x87) : return _RES(   0, Reg8.A);   //  RES 0, A
 
-      case (0x88) : return _RES(  1, Reg8.B);   //  RES 1, B
-      case (0x89) : return _RES(  1, Reg8.C);   //  RES 1, C
-      case (0x8A) : return _RES(  1, Reg8.D);   //  RES 1, D
-      case (0x8B) : return _RES(  1, Reg8.E);   //  RES 1, E
-      case (0x8C) : return _RES(  1, Reg8.H);   //  RES 1, H
-      case (0x8D) : return _RES(  1, Reg8.L);   //  RES 1, L
-      case (0x8E) : return _RES_M(1);           //  RES 1, (HL)
-      case (0x8F) : return _RES(  1, Reg8.A);   //  RES 1, A
+      case (0x88) : return _RES(   1, Reg8.B);   //  RES 1, B
+      case (0x89) : return _RES(   1, Reg8.C);   //  RES 1, C
+      case (0x8A) : return _RES(   1, Reg8.D);   //  RES 1, D
+      case (0x8B) : return _RES(   1, Reg8.E);   //  RES 1, E
+      case (0x8C) : return _RES(   1, Reg8.H);   //  RES 1, H
+      case (0x8D) : return _RES(   1, Reg8.L);   //  RES 1, L
+      case (0x8E) : return _RES_HL(1);           //  RES 1, (HL)
+      case (0x8F) : return _RES(   1, Reg8.A);   //  RES 1, A
 
-      case (0x90) : return _RES(  2, Reg8.B);   //  RES 2, B
-      case (0x91) : return _RES(  2, Reg8.C);   //  RES 2, C
-      case (0x92) : return _RES(  2, Reg8.D);   //  RES 2, D
-      case (0x93) : return _RES(  2, Reg8.E);   //  RES 2, E
-      case (0x94) : return _RES(  2, Reg8.H);   //  RES 2, H
-      case (0x95) : return _RES(  2, Reg8.L);   //  RES 2, L
-      case (0x96) : return _RES_M(2);           //  RES 2, (HL)
-      case (0x97) : return _RES(  2, Reg8.A);   //  RES 2, A
+      case (0x90) : return _RES(   2, Reg8.B);   //  RES 2, B
+      case (0x91) : return _RES(   2, Reg8.C);   //  RES 2, C
+      case (0x92) : return _RES(   2, Reg8.D);   //  RES 2, D
+      case (0x93) : return _RES(   2, Reg8.E);   //  RES 2, E
+      case (0x94) : return _RES(   2, Reg8.H);   //  RES 2, H
+      case (0x95) : return _RES(   2, Reg8.L);   //  RES 2, L
+      case (0x96) : return _RES_HL(2);           //  RES 2, (HL)
+      case (0x97) : return _RES(   2, Reg8.A);   //  RES 2, A
 
-      case (0x98) : return _RES(  3, Reg8.B);   //  RES 3, B
-      case (0x99) : return _RES(  3, Reg8.C);   //  RES 3, C
-      case (0x9A) : return _RES(  3, Reg8.D);   //  RES 3, D
-      case (0x9B) : return _RES(  3, Reg8.E);   //  RES 3, E
-      case (0x9C) : return _RES(  3, Reg8.H);   //  RES 3, H
-      case (0x9D) : return _RES(  3, Reg8.L);   //  RES 3, L
-      case (0x9E) : return _RES_M(3);           //  RES 3, (HL)
-      case (0x9F) : return _RES(  3, Reg8.A);   //  RES 3, A
+      case (0x98) : return _RES(   3, Reg8.B);   //  RES 3, B
+      case (0x99) : return _RES(   3, Reg8.C);   //  RES 3, C
+      case (0x9A) : return _RES(   3, Reg8.D);   //  RES 3, D
+      case (0x9B) : return _RES(   3, Reg8.E);   //  RES 3, E
+      case (0x9C) : return _RES(   3, Reg8.H);   //  RES 3, H
+      case (0x9D) : return _RES(   3, Reg8.L);   //  RES 3, L
+      case (0x9E) : return _RES_HL(3);           //  RES 3, (HL)
+      case (0x9F) : return _RES(   3, Reg8.A);   //  RES 3, A
 
-      case (0xA0) : return _RES(  4, Reg8.B);   //  RES 4, B
-      case (0xA1) : return _RES(  4, Reg8.C);   //  RES 4, C
-      case (0xA2) : return _RES(  4, Reg8.D);   //  RES 4, D
-      case (0xA3) : return _RES(  4, Reg8.E);   //  RES 4, E
-      case (0xA4) : return _RES(  4, Reg8.H);   //  RES 4, H
-      case (0xA5) : return _RES(  4, Reg8.L);   //  RES 4, L
-      case (0xA6) : return _RES_M(4);           //  RES 4, (HL)
-      case (0xA7) : return _RES(  4, Reg8.A);   //  RES 4, A
+      case (0xA0) : return _RES(   4, Reg8.B);   //  RES 4, B
+      case (0xA1) : return _RES(   4, Reg8.C);   //  RES 4, C
+      case (0xA2) : return _RES(   4, Reg8.D);   //  RES 4, D
+      case (0xA3) : return _RES(   4, Reg8.E);   //  RES 4, E
+      case (0xA4) : return _RES(   4, Reg8.H);   //  RES 4, H
+      case (0xA5) : return _RES(   4, Reg8.L);   //  RES 4, L
+      case (0xA6) : return _RES_HL(4);           //  RES 4, (HL)
+      case (0xA7) : return _RES(   4, Reg8.A);   //  RES 4, A
 
-      case (0xA8) : return _RES(  5, Reg8.B);   //  RES 5, B
-      case (0xA9) : return _RES(  5, Reg8.C);   //  RES 5, C
-      case (0xAA) : return _RES(  5, Reg8.D);   //  RES 5, D
-      case (0xAB) : return _RES(  5, Reg8.E);   //  RES 5, E
-      case (0xAC) : return _RES(  5, Reg8.H);   //  RES 5, H
-      case (0xAD) : return _RES(  5, Reg8.L);   //  RES 5, L
-      case (0xAE) : return _RES_M(5);           //  RES 5, (HL)
-      case (0xAF) : return _RES(  5, Reg8.A);   //  RES 5, A
+      case (0xA8) : return _RES(   5, Reg8.B);   //  RES 5, B
+      case (0xA9) : return _RES(   5, Reg8.C);   //  RES 5, C
+      case (0xAA) : return _RES(   5, Reg8.D);   //  RES 5, D
+      case (0xAB) : return _RES(   5, Reg8.E);   //  RES 5, E
+      case (0xAC) : return _RES(   5, Reg8.H);   //  RES 5, H
+      case (0xAD) : return _RES(   5, Reg8.L);   //  RES 5, L
+      case (0xAE) : return _RES_HL(5);           //  RES 5, (HL)
+      case (0xAF) : return _RES(   5, Reg8.A);   //  RES 5, A
 
-      case (0xB0) : return _RES(  6, Reg8.B);   //  RES 6, B
-      case (0xB1) : return _RES(  6, Reg8.C);   //  RES 6, C
-      case (0xB2) : return _RES(  6, Reg8.D);   //  RES 6, D
-      case (0xB3) : return _RES(  6, Reg8.E);   //  RES 6, E
-      case (0xB4) : return _RES(  6, Reg8.H);   //  RES 6, H
-      case (0xB5) : return _RES(  6, Reg8.L);   //  RES 6, L
-      case (0xB6) : return _RES_M(6);           //  RES 6, (HL)
-      case (0xB7) : return _RES(  6, Reg8.A);   //  RES 6, A
+      case (0xB0) : return _RES(   6, Reg8.B);   //  RES 6, B
+      case (0xB1) : return _RES(   6, Reg8.C);   //  RES 6, C
+      case (0xB2) : return _RES(   6, Reg8.D);   //  RES 6, D
+      case (0xB3) : return _RES(   6, Reg8.E);   //  RES 6, E
+      case (0xB4) : return _RES(   6, Reg8.H);   //  RES 6, H
+      case (0xB5) : return _RES(   6, Reg8.L);   //  RES 6, L
+      case (0xB6) : return _RES_HL(6);           //  RES 6, (HL)
+      case (0xB7) : return _RES(   6, Reg8.A);   //  RES 6, A
 
-      case (0xB8) : return _RES(  7, Reg8.B);   //  RES 7, B
-      case (0xB9) : return _RES(  7, Reg8.C);   //  RES 7, C
-      case (0xBA) : return _RES(  7, Reg8.D);   //  RES 7, D
-      case (0xBB) : return _RES(  7, Reg8.E);   //  RES 7, E
-      case (0xBC) : return _RES(  7, Reg8.H);   //  RES 7, H
-      case (0xBD) : return _RES(  7, Reg8.L);   //  RES 7, L
-      case (0xBE) : return _RES_M(7);           //  RES 7, (HL)
-      case (0xBF) : return _RES(  7, Reg8.A);   //  RES 7, A
+      case (0xB8) : return _RES(   7, Reg8.B);   //  RES 7, B
+      case (0xB9) : return _RES(   7, Reg8.C);   //  RES 7, C
+      case (0xBA) : return _RES(   7, Reg8.D);   //  RES 7, D
+      case (0xBB) : return _RES(   7, Reg8.E);   //  RES 7, E
+      case (0xBC) : return _RES(   7, Reg8.H);   //  RES 7, H
+      case (0xBD) : return _RES(   7, Reg8.L);   //  RES 7, L
+      case (0xBE) : return _RES_HL(7);           //  RES 7, (HL)
+      case (0xBF) : return _RES(   7, Reg8.A);   //  RES 7, A
 
-      case (0xC0) : return _SET(  0, Reg8.B);   //  SET 0, B
-      case (0xC1) : return _SET(  0, Reg8.C);   //  SET 0, C
-      case (0xC2) : return _SET(  0, Reg8.D);   //  SET 0, D
-      case (0xC3) : return _SET(  0, Reg8.E);   //  SET 0, E
-      case (0xC4) : return _SET(  0, Reg8.H);   //  SET 0, H
-      case (0xC5) : return _SET(  0, Reg8.L);   //  SET 0, L
-      case (0xC6) : return _SET_M(0);           //  SET 6, (HL)
-      case (0xC7) : return _SET(  0, Reg8.A);   //  SET 0, A
+      case (0xC0) : return _SET(   0, Reg8.B);   //  SET 0, B
+      case (0xC1) : return _SET(   0, Reg8.C);   //  SET 0, C
+      case (0xC2) : return _SET(   0, Reg8.D);   //  SET 0, D
+      case (0xC3) : return _SET(   0, Reg8.E);   //  SET 0, E
+      case (0xC4) : return _SET(   0, Reg8.H);   //  SET 0, H
+      case (0xC5) : return _SET(   0, Reg8.L);   //  SET 0, L
+      case (0xC6) : return _SET_HL(0);           //  SET 6, (HL)
+      case (0xC7) : return _SET(   0, Reg8.A);   //  SET 0, A
 
-      case (0xC8) : return _SET(  1, Reg8.B);   //  SET 1, B
-      case (0xC9) : return _SET(  1, Reg8.C);   //  SET 1, C
-      case (0xCA) : return _SET(  1, Reg8.D);   //  SET 1, D
-      case (0xCB) : return _SET(  1, Reg8.E);   //  SET 1, E
-      case (0xCC) : return _SET(  1, Reg8.H);   //  SET 1, H
-      case (0xCD) : return _SET(  1, Reg8.L);   //  SET 1, L
-      case (0xCE) : return _SET_M(1);           //  SET 6, (HL)
-      case (0xCF) : return _SET(  1, Reg8.A);   //  SET 1, A
+      case (0xC8) : return _SET(   1, Reg8.B);   //  SET 1, B
+      case (0xC9) : return _SET(   1, Reg8.C);   //  SET 1, C
+      case (0xCA) : return _SET(   1, Reg8.D);   //  SET 1, D
+      case (0xCB) : return _SET(   1, Reg8.E);   //  SET 1, E
+      case (0xCC) : return _SET(   1, Reg8.H);   //  SET 1, H
+      case (0xCD) : return _SET(   1, Reg8.L);   //  SET 1, L
+      case (0xCE) : return _SET_HL(1);           //  SET 6, (HL)
+      case (0xCF) : return _SET(   1, Reg8.A);   //  SET 1, A
 
-      case (0xD0) : return _SET(  2, Reg8.B);   //  SET 2, B
-      case (0xD1) : return _SET(  2, Reg8.C);   //  SET 2, C
-      case (0xD2) : return _SET(  2, Reg8.D);   //  SET 2, D
-      case (0xD3) : return _SET(  2, Reg8.E);   //  SET 2, E
-      case (0xD4) : return _SET(  2, Reg8.H);   //  SET 2, H
-      case (0xD5) : return _SET(  2, Reg8.L);   //  SET 2, L
-      case (0xD6) : return _SET_M(2);           //  SET 6, (HL)
-      case (0xD7) : return _SET(  2, Reg8.A);   //  SET 2, A
+      case (0xD0) : return _SET(   2, Reg8.B);   //  SET 2, B
+      case (0xD1) : return _SET(   2, Reg8.C);   //  SET 2, C
+      case (0xD2) : return _SET(   2, Reg8.D);   //  SET 2, D
+      case (0xD3) : return _SET(   2, Reg8.E);   //  SET 2, E
+      case (0xD4) : return _SET(   2, Reg8.H);   //  SET 2, H
+      case (0xD5) : return _SET(   2, Reg8.L);   //  SET 2, L
+      case (0xD6) : return _SET_HL(2);           //  SET 6, (HL)
+      case (0xD7) : return _SET(   2, Reg8.A);   //  SET 2, A
 
-      case (0xD8) : return _SET(  3, Reg8.B);   //  SET 3, B
-      case (0xD9) : return _SET(  3, Reg8.C);   //  SET 3, C
-      case (0xDA) : return _SET(  3, Reg8.D);   //  SET 3, D
-      case (0xDB) : return _SET(  3, Reg8.E);   //  SET 3, E
-      case (0xDC) : return _SET(  3, Reg8.H);   //  SET 3, H
-      case (0xDD) : return _SET(  3, Reg8.L);   //  SET 3, L
-      case (0xDE) : return _SET_M(3);           //  SET 6, (HL)
-      case (0xDF) : return _SET(  3, Reg8.A);   //  SET 3, A
+      case (0xD8) : return _SET(   3, Reg8.B);   //  SET 3, B
+      case (0xD9) : return _SET(   3, Reg8.C);   //  SET 3, C
+      case (0xDA) : return _SET(   3, Reg8.D);   //  SET 3, D
+      case (0xDB) : return _SET(   3, Reg8.E);   //  SET 3, E
+      case (0xDC) : return _SET(   3, Reg8.H);   //  SET 3, H
+      case (0xDD) : return _SET(   3, Reg8.L);   //  SET 3, L
+      case (0xDE) : return _SET_HL(3);           //  SET 6, (HL)
+      case (0xDF) : return _SET(   3, Reg8.A);   //  SET 3, A
 
-      case (0xE0) : return _SET(  4, Reg8.B);   //  SET 4, B
-      case (0xE1) : return _SET(  4, Reg8.C);   //  SET 4, C
-      case (0xE2) : return _SET(  4, Reg8.D);   //  SET 4, D
-      case (0xE3) : return _SET(  4, Reg8.E);   //  SET 4, E
-      case (0xE4) : return _SET(  4, Reg8.H);   //  SET 4, H
-      case (0xE5) : return _SET(  4, Reg8.L);   //  SET 4, L
-      case (0xE6) : return _SET_M(4);           //  SET 6, (HL)
-      case (0xE7) : return _SET(  4, Reg8.A);   //  SET 4, A
+      case (0xE0) : return _SET(   4, Reg8.B);   //  SET 4, B
+      case (0xE1) : return _SET(   4, Reg8.C);   //  SET 4, C
+      case (0xE2) : return _SET(   4, Reg8.D);   //  SET 4, D
+      case (0xE3) : return _SET(   4, Reg8.E);   //  SET 4, E
+      case (0xE4) : return _SET(   4, Reg8.H);   //  SET 4, H
+      case (0xE5) : return _SET(   4, Reg8.L);   //  SET 4, L
+      case (0xE6) : return _SET_HL(4);           //  SET 6, (HL)
+      case (0xE7) : return _SET(   4, Reg8.A);   //  SET 4, A
 
-      case (0xE8) : return _SET(  5, Reg8.B);   //  SET 5, B
-      case (0xE9) : return _SET(  5, Reg8.C);   //  SET 5, C
-      case (0xEA) : return _SET(  5, Reg8.D);   //  SET 5, D
-      case (0xEB) : return _SET(  5, Reg8.E);   //  SET 5, E
-      case (0xEC) : return _SET(  5, Reg8.H);   //  SET 5, H
-      case (0xED) : return _SET(  5, Reg8.L);   //  SET 5, L
-      case (0xEE) : return _SET_M(5);           //  SET 6, (HL)
-      case (0xEF) : return _SET(  5, Reg8.A);   //  SET 5, A
+      case (0xE8) : return _SET(   5, Reg8.B);   //  SET 5, B
+      case (0xE9) : return _SET(   5, Reg8.C);   //  SET 5, C
+      case (0xEA) : return _SET(   5, Reg8.D);   //  SET 5, D
+      case (0xEB) : return _SET(   5, Reg8.E);   //  SET 5, E
+      case (0xEC) : return _SET(   5, Reg8.H);   //  SET 5, H
+      case (0xED) : return _SET(   5, Reg8.L);   //  SET 5, L
+      case (0xEE) : return _SET_HL(5);           //  SET 6, (HL)
+      case (0xEF) : return _SET(   5, Reg8.A);   //  SET 5, A
 
-      case (0xF0) : return _SET(  6, Reg8.B);   //  SET 6, B
-      case (0xF1) : return _SET(  6, Reg8.C);   //  SET 6, C
-      case (0xF2) : return _SET(  6, Reg8.D);   //  SET 6, D
-      case (0xF3) : return _SET(  6, Reg8.E);   //  SET 6, E
-      case (0xF4) : return _SET(  6, Reg8.H);   //  SET 6, H
-      case (0xF5) : return _SET(  6, Reg8.L);   //  SET 6, L
-      case (0xF6) : return _SET_M(6);           //  SET 6, (HL)
-      case (0xF7) : return _SET(  6, Reg8.A);   //  SET 6, A
+      case (0xF0) : return _SET(   6, Reg8.B);   //  SET 6, B
+      case (0xF1) : return _SET(   6, Reg8.C);   //  SET 6, C
+      case (0xF2) : return _SET(   6, Reg8.D);   //  SET 6, D
+      case (0xF3) : return _SET(   6, Reg8.E);   //  SET 6, E
+      case (0xF4) : return _SET(   6, Reg8.H);   //  SET 6, H
+      case (0xF5) : return _SET(   6, Reg8.L);   //  SET 6, L
+      case (0xF6) : return _SET_HL(6);           //  SET 6, (HL)
+      case (0xF7) : return _SET(   6, Reg8.A);   //  SET 6, A
 
-      case (0xF8) : return _SET(  7, Reg8.B);   //  SET 7, B
-      case (0xF9) : return _SET(  7, Reg8.C);   //  SET 7, C
-      case (0xFA) : return _SET(  7, Reg8.D);   //  SET 7, D
-      case (0xFB) : return _SET(  7, Reg8.E);   //  SET 7, E
-      case (0xFC) : return _SET(  7, Reg8.H);   //  SET 7, H
-      case (0xFD) : return _SET(  7, Reg8.L);   //  SET 7, L
-      case (0xFE) : return _SET_M(7);           //  SET 6, (HL)
-      case (0xFF) : return _SET(  7, Reg8.A);   //  SET 7, A
+      case (0xF8) : return _SET(   7, Reg8.B);   //  SET 7, B
+      case (0xF9) : return _SET(   7, Reg8.C);   //  SET 7, C
+      case (0xFA) : return _SET(   7, Reg8.D);   //  SET 7, D
+      case (0xFB) : return _SET(   7, Reg8.E);   //  SET 7, E
+      case (0xFC) : return _SET(   7, Reg8.H);   //  SET 7, H
+      case (0xFD) : return _SET(   7, Reg8.L);   //  SET 7, L
+      case (0xFE) : return _SET_HL(7);           //  SET 6, (HL)
+      case (0xFF) : return _SET(   7, Reg8.A);   //  SET 7, A
       default : break;
     }
     throw new Exception('z80: CB Prefix: Opcode ${Ft.toAddressString(op, 4)} not suported');
@@ -877,50 +877,50 @@ class Z80 {
 
   /* Memory */
 
-  int _RLC_M() {
-    assert(false, "RLC_M");
+  int _RLC_HL() {
+    assert(false, "RLC_HL");
     this.cpur.PC += 2;
     return 16;
   }
 
-  int _RL_M() {
-    assert(false, "RLC_M");
+  int _RL_HL() {
+    assert(false, "RLC_HL");
     this.cpur.PC += 2;
     return 16;
   }
 
-  int _RRC_M() {
-    assert(false, "RLC_M");
+  int _RRC_HL() {
+    assert(false, "RLC_HL");
     this.cpur.PC += 2;
     return 16;
   }
 
-  int _RR_M() {
-    assert(false, "RLC_M");
+  int _RR_HL() {
+    assert(false, "RLC_HL");
     this.cpur.PC += 2;
     return 16;
   }
 
-  int _SLA_M() {
-    assert(false, "RLC_M");
+  int _SLA_HL() {
+    assert(false, "RLC_HL");
     this.cpur.PC += 2;
     return 16;
   }
 
-  int _SRL_M() {
-    assert(false, "RLC_M");
+  int _SRL_HL() {
+    assert(false, "RLC_HL");
     this.cpur.PC += 2;
     return 16;
   }
 
-  int _SRA_M() {
-    assert(false, "RLC_M");
+  int _SRA_HL() {
+    assert(false, "RLC_HL");
     this.cpur.PC += 2;
     return 16;
   }
 
-  int _SWAP_M(){
-    assert(false, "RLC_M");
+  int _SWAP_HL(){
+    assert(false, "RLC_HL");
     this.cpur.PC += 2;
     return 16;
   }
@@ -957,7 +957,7 @@ class Z80 {
 
   /* Memory */
 
-  int _BIT_M(int index) {
+  int _BIT_HL(int index) {
     assert(index >= 0 && index < 8);
     final int val = _mmu.pull8(this.cpur.HL);
     final int b = ((val >> index) & 0x1);
@@ -968,7 +968,7 @@ class Z80 {
     return 12;
   }
 
-  int _SET_M(int index) {
+  int _SET_HL(int index) {
     assert(index >= 0 && index < 8);
     final int val = _mmu.pull8(this.cpur.HL);
     _mmu.push8(this.cpur.HL, val | (0x1 << index));
@@ -976,7 +976,7 @@ class Z80 {
     return 16;
   }
 
-  int _RES_M(int index) {
+  int _RES_HL(int index) {
     assert(index >= 0 && index < 8);
     final int val = _mmu.pull8(this.cpur.HL);
     _mmu.push8(this.cpur.HL, val & ~(0x1 << index));
@@ -1007,14 +1007,14 @@ class Z80 {
   int _JP_NC_nn() { return  _JP_cc_nn(this.cpur.cy == 0); }
   int _JP_C_nn()  { return  _JP_cc_nn(this.cpur.cy == 1); }
   
-  int _JP_M() {
+  int _JP_HL() {
     this.cpur.PC = _mmu.pull16(this.cpur.HL);
     return 4;
   }
 
   /* 8 bit */
 
-  int _JR_e(int offset) {
+  int _JR_e() {
     final int offset = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
     this.cpur.PC += offset;
     return 12;
