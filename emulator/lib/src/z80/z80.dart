@@ -667,7 +667,7 @@ class Z80 {
       case (0xFF) : return _SET(  7, Reg8.A);   //  SET 7, A
       default : break;
     }
-    throw new Exception('z80: Opcode ${Ft.toAddressString(op, 4)} not suported');
+    throw new Exception('z80: CB Prefix: Opcode ${Ft.toAddressString(op, 4)} not suported');
   }
 
   /* Miscellaneous ************************************************************/
@@ -677,17 +677,23 @@ class Z80 {
   }
 
   int _CPL() {
-    assert(false, "CPL");
+    this.cpur.A = (~this.cpur.A & 0xFF);
+    this.cpur.h = 1;
+    this.cpur.n = 1;
     return 4;
   }
 
   int _CCF() {
-    assert(false, "CCF");
+    this.cpur.cy = 1 - this.cpur.cy;
+    this.n = 0;
+    this.h = 0;
     return 4;
   }
 
   int _SCF() {
-    assert(false, "SCF");
+    this.cpur.cy = 1;
+    this.n = 0;
+    this.h = 0;
     return 4;
   }
 
