@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:35:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 16:14:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 19:13:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -72,6 +72,7 @@ class Chip implements IChip {
   Html.ImageElement get elt => _elt;
   bool get locked => _locked;
   ChipType get type => _type;
+  Emufiledb.ProxyEntry get prox => _prox;
 
   set parent(AChipBank p) {
     _parent = new Ft.Option<AChipBank>.some(p);
@@ -81,14 +82,12 @@ class Chip implements IChip {
 
   void lock()
   {
-    assert(_locked == false, "Chip.lock() while locked");
     _jqObject.callMethod('draggable', ['disable']);
     _locked = true;
   }
 
   void unlock()
   {
-    assert(_locked == true, "Chip.unlock() while unlocked");
     _jqObject.callMethod('draggable', ['enable']);
     _locked = false;
   }

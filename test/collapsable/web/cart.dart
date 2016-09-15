@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:31:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 16:18:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 18:57:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,6 +27,9 @@ class ChipSocket extends AChipBank {
   final Html.DivElement _elt;
   final Js.JsObject _jsElt;
   final Js.JsObject _jqElt;
+  final ICart _parent;
+  final int _slot;
+
   final ChipType chipType;
 
   CartLocation _cartLoc = CartLocation.CartBank;
@@ -38,7 +41,7 @@ class ChipSocket extends AChipBank {
 
   // Construction *********************************************************** **
 
-  ChipSocket(elt, jsElt, this.chipType, String c)
+  ChipSocket(elt, this._parent, this._slot, jsElt, this.chipType, String c)
     : _elt = elt
     , _jsElt = jsElt
     , _jqElt = Js.context.callMethod(r'$', [jsElt])
@@ -52,12 +55,20 @@ class ChipSocket extends AChipBank {
       },
     })]);
     _jqElt.callMethod('on', ['drop', this.onDrop]);
+    // g_dbProxy.entryMoved
+    //   .when((Emufiledb.ProxyEntry p) =>
+    //       _chip.isSome && _chip.prox == p)
+    //   .forEach((Emufiledb.ProxyEntry p) {
+    //     this.pop(_chip.v);
+    //   });
   }
 
-  ChipSocket.ram(elt): this(
-      elt, new Js.JsObject.fromBrowserObject(elt), ChipType.Ram, 'ram');
-  ChipSocket.ss(elt): this(
-      elt, new Js.JsObject.fromBrowserObject(elt), ChipType.Ss, 'ss');
+  ChipSocket.ram(elt, parent, slot): this(
+      elt, parent, slot,
+      new Js.JsObject.fromBrowserObject(elt), ChipType.Ram, 'ram');
+  ChipSocket.ss(elt, parent, slot): this(
+      elt, parent, slot,
+      new Js.JsObject.fromBrowserObject(elt), ChipType.Ss, 'ss');
 
   // From AChipBank ********************************************************* **
 
@@ -67,12 +78,15 @@ class ChipSocket extends AChipBank {
   bool get empty => _chip.isNone;
   bool get locked => _locked;
   Html.Element get elt => _elt;
+  Ft.Option<Emufiledb.ProxyEntry> get cartProx =>
+    new Ft.Option.some(_parent.prox);
+  Ft.Option<int> get slot => new Ft.Option<int>.some(_slot);
 
   bool acceptType(ChipType t) => t == this.chipType;
 
   void pop(IChip c)
   {
-    Ft.log('ChipSocket', 'pop', c);
+    Ft.log('ChipSocket', 'pop', [c]);
     assert(_chip.isSome && _chip.v == c
         , "ChipSocket.pop($c) with `_chip.v = ${_chip.v}`"
            );
@@ -82,7 +96,7 @@ class ChipSocket extends AChipBank {
 
   void push(IChip c)
   {
-    Ft.log('ChipSocket', 'push', c);
+    Ft.log('ChipSocket', 'push', [c]);
     assert(_chip.isNone
         , "ChipSocket.push($c) with `_chip.v = ${_chip.v}`"
            );
@@ -126,8 +140,8 @@ class Cart implements ICart {
   final Js.JsObject _jqBody;
   final int _id;
   final String _bodyId;
-  final ChipSocket _ramSocket;
-  final List<ChipSocket> _ssSockets;
+  ChipSocket _ramSocket;
+  List<ChipSocket> _ssSockets;
   final Emufiledb.ProxyEntry _prox;
 
   bool _locked = false;
@@ -137,20 +151,20 @@ class Cart implements ICart {
 
   // Construction *********************************************************** **
 
-  static _ramSocketOfElt(elt)
+  _ramSocketOfElt(elt)
   {
     final ramElt = elt.querySelector('.cart-ram-socket');
 
-    return new ChipSocket.ram(ramElt);
+    return new ChipSocket.ram(ramElt, this, 0);
   }
 
-  static _ssSocketsOfElt(elt)
+  _ssSocketsOfElt(elt)
   {
     final ssElts = elt.querySelectorAll('.cart-ss-socket');
     var l = [];
 
     for (int i = 0; i < 4; i++) {
-      l.add(new ChipSocket.ss(ssElts[i]));
+      l.add(new ChipSocket.ss(ssElts[i], this, i));
     }
     return new List<ChipSocket>.unmodifiable(l);
   }
@@ -165,9 +179,10 @@ class Cart implements ICart {
       new Js.JsObject.fromBrowserObject(elt.querySelector('.panel-collapse'))])
     , _id = _ids++
     , _bodyId = 'cart${_ids - 1}Param-body'
-    , _ramSocket = _ramSocketOfElt(elt)
-    , _ssSockets = _ssSocketsOfElt(elt)
   {
+    _ramSocket = _ramSocketOfElt(elt);
+    _ssSockets = _ssSocketsOfElt(elt);
+
     _btn.setAttribute('href', '#$_bodyId');
     _jqBody.callMethod('on', ['shown.bs.collapse', _onOpenned]);
     _jqBody.callMethod('on', ['hide.bs.collapse', _onCollapsed]);
@@ -203,6 +218,7 @@ class Cart implements ICart {
       c = new Chip.ram(g_dbProxy.rams[cartInfo['ram']]);
       _ramSocket.push(c);
     }
+    // TODO: Ss
   }
 
   // ICart implementation *************************************************** **
@@ -213,6 +229,7 @@ class Cart implements ICart {
   int get id => _id;
   CartLocation get loc => _loc;
   Html.Element get elt => _elt;
+  Emufiledb.ProxyEntry get prox => _prox;
 
   set parent(ACartBank p) {
     _parent = new Ft.Option<ACartBank>.some(p);

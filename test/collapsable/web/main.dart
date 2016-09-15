@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 17:12:03 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 19:11:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -113,11 +113,13 @@ Async.Future init(Emulator.Emulator emu) async {
   g_dChipBank = new DetachedChipBank();
   g_gbSocket = new GameBoySocket();
 
-  await g_dbProxy.addRom('tetris_head.rom', tetrisHead);
-  await g_dbProxy.addRom('tetris_head.rom', tetrisHead);
-  await g_dbProxy.addRam('pokemon.save', tetrisHead);
-  await g_dbProxy.addRam('pokemon.save', tetrisHead);
-  await g_dbProxy.addRam('pokemon.save', tetrisHead);
+  if (g_dbProxy.roms.length == 0) {
+    await g_dbProxy.addRom('tetris_head.rom', tetrisHead);
+    await g_dbProxy.addRom('tetris_head.rom', tetrisHead);
+    await g_dbProxy.addRam('pokemon.save', tetrisHead);
+    await g_dbProxy.addRam('pokemon.save', tetrisHead);
+    await g_dbProxy.addRam('pokemon.save', tetrisHead);
+  }
   print(g_dbProxy);
 
   final futureDetachedChips = _detachedChips();

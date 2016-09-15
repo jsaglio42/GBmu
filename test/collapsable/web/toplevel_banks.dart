@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 14:29:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 17:08:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 18:39:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -59,7 +59,7 @@ class GameBoySocket extends ACartBank {
 
   void pop(ICart c)
   {
-    Ft.log('GameBoySocket', 'pop', c);
+    Ft.log('GameBoySocket', 'pop', [c]);
     assert(_cart.isSome && _cart.v == c
         , "GameBoySocket.pop($c) with `_cart.v = ${_cart.v}`"
            );
@@ -69,7 +69,7 @@ class GameBoySocket extends ACartBank {
 
   void push(ICart c)
   {
-    Ft.log('GameBoySocket', 'push', c);
+    Ft.log('GameBoySocket', 'push', [c]);
     assert(_cart.isNone
         , "GameBoySocket.push($c) with `_cart.v = ${_cart.v}`"
            );
@@ -125,7 +125,7 @@ class CartBank extends ACartBank
 
   void pop(ICart c)
   {
-    Ft.log('CartBank', 'pop', c);
+    Ft.log('CartBank', 'pop', [c]);
     final bool poped = _carts.remove(c);
 
     assert(poped, "CartBank.pop($c) not found");
@@ -134,7 +134,7 @@ class CartBank extends ACartBank
 
   void push(ICart c)
   {
-    Ft.log('CartBank', 'push', c);
+    Ft.log('CartBank', 'push', [c]);
     assert(!_carts.contains(c), "DetachedCartBank.push($c) already in");
     _carts.forEach((c) => c.collapse());
     _carts.add(c);
@@ -182,6 +182,12 @@ class DetachedChipBank extends AChipBank {
       },
     })]);
     jqElt.callMethod('on', ['drop', this.onDrop]);
+    // g_dbProxy.entryMoved
+    //   .when((Emufiledb.ProxyEntry p) =>
+    //       _chips.any((IChip c) => c.prox == p))
+    //   .forEach((Emufiledb.ProxyEntry p) {
+    //     this.pop(_chips.singleWhere((IChip c) => c.prox == p));
+    //   });
   }
 
   // From ChipBank ********************************************************** **
@@ -191,12 +197,14 @@ class DetachedChipBank extends AChipBank {
   bool get empty => _chips.isEmpty;
   bool get locked => false;
   Html.Element get elt => _elt;
+  Ft.Option<Emufiledb.ProxyEntry> get cartProx => new Ft.Option.none();
+  Ft.Option<int> get slot => new Ft.Option<int>.none();
 
   bool acceptType(ChipType t) => true;
 
   void pop(IChip toPop)
   {
-    Ft.log('DetachedChipBank', 'pop', toPop);
+    Ft.log('DetachedChipBank', 'pop', [toPop]);
     final bool poped = _chips.remove(toPop);
 
     assert(poped
@@ -207,7 +215,7 @@ class DetachedChipBank extends AChipBank {
 
   void push(IChip toPush)
   {
-    Ft.log('DetachedChipBank', 'push', toPush);
+    Ft.log('DetachedChipBank', 'push', [toPush]);
     assert(!_chips.contains(toPush)
         , "DetachedChipBank.push($toPush) already in"
            );

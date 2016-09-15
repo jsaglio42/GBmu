@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/14 13:00:45 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/15 17:13:10 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 19:22:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,7 +33,7 @@ class DatabaseProxy {
   final Map<int, RamProxy> _rams;
   final Map<int, SsProxy> _sss;
   final Map<int, CartProxy> _carts;
-  Async.StreamController<ProxyEntry> _entryMoved;
+  // Async.StreamController<ProxyEntry> _entryMoved;
 
   // PUBLIC ***************************************************************** **
 
@@ -46,7 +46,7 @@ class DatabaseProxy {
 
   // Listen from banks
   // Trigger soon after drop
-  Async.Stream<ProxyEntry> get entryMoved => _entryMoved.stream;
+  // Async.Stream<ProxyEntry> get entryMoved => _entryMoved.stream;
 
   DatabaseProxy(this._db, this._roms, this._rams, this._sss, this._carts);
 
@@ -66,27 +66,61 @@ class DatabaseProxy {
   // Call from ??, on drop
   Async.Future join(ProxyEntry src, CartProxy target, int slot) {
     Idb.Transaction tra;
-    CartProxy newCart;
+    CartProxy newCartProxy;
 
     Ft.log('DatabaseProxy', 'join', [src, target, slot]);
     switch (src.type) {
       case (IdbStore.Ram):
         tra = _db.transaction(IdbStore.Cart.toString(), 'readwrite');
-        newCart = new _Cart.copyTouchRam(target, src.id);
+        newCartProxy = new CartProxy.copyTouchRam(target, src.id);
         tra.objectStore(IdbStore.Cart.toString())
-          .openCursor(key: src.id)
-          .first((Idb.Cursor cur) {
-            cur.update(newCart);
+          .openCursor(key: target.id)
+          .first
+          .then((Idb.Cursor cur) {
+            cur.update(newCartProxy.toDbMap());
           });
         return tra.completed.then((_) {
-          _carts[target.id] = newCart;
-          return ;
-        });
+              _carts[target.id] = newCartProxy;
+              return ;
+            });
       // case (IdbStore.Ss):
+        // TODO: SS
       //   assert(slot >= 0 && slot < 4, 'DatabaseProxy#join($src, $target, $slot)');
       //   break ;
       default:
         assert(false, 'DatabaseProxy#join($src, $target, $slot)');
+        break ;
+    }
+  }
+
+  Async.Future detach(ProxyEntry src) {
+    Idb.Transaction tra;
+    CartProxy newCartProxy;
+    int cartId;
+
+    Ft.log('DatabaseProxy', 'detach', [src]);
+    switch (src.type) {
+      case (IdbStore.Ram):
+        cartId =
+          _carts.values.singleWhere((CartProxy c) => c.ramOpt == src.id).id;
+        newCartProxy = new CartProxy.copyTouchRam(_carts[cartId], null);
+        tra = _db.transaction(IdbStore.Cart.toString(), 'readwrite');
+        tra.objectStore(IdbStore.Cart.toString())
+          .openCursor(key: cartId)
+          .first
+          .then((Idb.Cursor cur) {
+            cur.update(newCartProxy.toDbMap());
+          });
+        return tra.completed.then((_) {
+          _carts[cartId] = newCartProxy;
+          // _entryMoved.add(src);
+          return ;
+        });
+        // case (IdbStore.Ss):
+        // TODO: SS
+        //   break ;
+      default:
+        assert(false, 'DatabaseProxy#detach($src)');
         break ;
     }
   }
@@ -148,7 +182,7 @@ Async.Future<DatabaseProxy> _makeFromExistant(Idb.Database db) async {
 
   Ft.log('filedb.dart', '_makeFromExistant#', [db]);
 
-  throw new Exception('debug');
+  // throw new Exception('debug');
 
   if (db.objectStoreNames.length != IdbStore.values.length) {
     Ft.log('filedb.dart', '_makeFromExistant#wrong-number-of-store');
