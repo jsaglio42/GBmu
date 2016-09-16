@@ -11,8 +11,7 @@ pub serve
 
 # Todos
 
-- Change mmu pull methods ?
-- Change reg1 pull methods ?
+- Check operands where a signed byte 'e' is added
 
 # Useful links:
 

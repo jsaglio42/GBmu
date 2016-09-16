@@ -699,46 +699,52 @@ class Z80 {
 
   /* 8-bits Loads *************************************************************/
   /* 16-bits Loads ************************************************************/
-
-
-
-  /* 16-bits ALU **************************************************************/
-  int _ADD16_calculate(int l, int r) {
-    assert((l & ~0xFFFF == 0) && (r & ~0xFFFF == 0));
-    final int calculated = l + r;
-    final int result = calculated & 0xFFFF;
-    this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
-    this.cpur.h = ((l & 0xFF) + (r & 0xFF) > 0xFF) ? 1 : 0;
-    return result;
+  int _LD_rr_nn(Reg16 r) {
+    final int val = _mmu.pull16(this.cpur.PC + 1);
+    this.cpur.push16(r, val);
+    this.cpur.PC += 3;
+    return 12;
   }
 
-  int _ADD_HL_r(Reg16 r) {
-    final int val = this.cpur.pull16(r);
-    this.cpur.HL = _ADD16_calculate(this.cpur.HL, val);
-    this.cpur.n = 0;
+  int _LD_nn_SP() {
+    final int addr = _mmu.pull16(this.cpur.PC + 1);
+    _mmu.push16(addr, this.cpur.SP);
+    this.cpur.PC += 3;
+    return 20;
+  }
+
+  int _LD_SP_HL() {
+    this.cpur.SP = this.cpur.HL;
+    this.cpur.PC += 1;
     return 8;
   }
 
-  int _ADD_SP_e() {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
-    this.cpur.HL = _ADD16_calculate(this.cpur.HL, val);
+  int _LD_HL_SP_e() {
+    final int l = this.cpur.SP;
+    final int r = _mmu.pull8(this.cpur.PC + 1).toSigned(16);
+    this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xFF) + (r & 0xFF) > 0xF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = 0;
+    this.cpur.HL = (l + r) & 0xFFFF;
+    this.cpur.PC += 2;
+    return 12;
+  }
+
+  int _PUSH(Reg16 r){
+    final int val = this.cpur.pull16(r);
+    _mmu.push16(this.cpur.SP - 2, val);
+    this.cpur.SP -= 2;
+    this.cpur.PC += 1;
     return 16;
   }
 
-  int _INC_rr(Reg16 r) {
-    final int val = this.cpur.pull16(r);
-    final int res = (val + 1) & 0xFFFF;
-    this.cpur.push16(r, res);
-    return 8;
-  }
-
-  int _DEC_rr(Reg16 r) {
-    final int val = this.cpur.pull16(r);
-    final int res = (val - 1) & 0xFFFF;
-    this.cpur.push16(r, res);
-    return 8;
+  int _PULL(Reg16 r) {
+    final int val = _mmu.pull16(this.cpur.SP);
+    this.cpur.push16(r, val);
+    this.cpur.SP += 2;
+    this.cpur.PC += 1;
+    return 12;
   }
 
   /* 8-bits ALU ***************************************************************/
@@ -1012,6 +1018,49 @@ class Z80 {
   int _XOR_HL() {
     final int val = _mmu.pull8(this.cpur.HL);
     this.cpur.A = _XOR_calculate(this.cpur.A, val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  /* 16-bits ALU **************************************************************/
+  int _ADD16_calculate(int l, int r) {
+    assert((l & ~0xFFFF == 0) && (r & ~0xFFFF == 0));
+    final int calculated = l + r;
+    final int result = calculated & 0xFFFF;
+    this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xFF) + (r & 0xFF) > 0xFF) ? 1 : 0;
+    return result;
+  }
+
+  int _ADD_HL_r(Reg16 r) {
+    final int val = this.cpur.pull16(r);
+    this.cpur.HL = _ADD16_calculate(this.cpur.HL, val);
+    this.cpur.n = 0;
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _ADD_SP_e() {
+    final int val = _mmu.pull8(this.cpur.PC + 1).toSigned(16);
+    this.cpur.HL = _ADD16_calculate(this.cpur.HL, val);
+    this.cpur.n = 0;
+    this.cpur.z = 0;
+    this.cpur.PC += 2;
+    return 16;
+  }
+
+  int _INC_rr(Reg16 r) {
+    final int val = this.cpur.pull16(r);
+    final int res = (val + 1) & 0xFFFF;
+    this.cpur.push16(r, res);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _DEC_rr(Reg16 r) {
+    final int val = this.cpur.pull16(r);
+    final int res = (val - 1) & 0xFFFF;
+    this.cpur.push16(r, res);
     this.cpur.PC += 1;
     return 8;
   }
@@ -1387,7 +1436,7 @@ class Z80 {
 
   /* 8 bit */
   int _JR_e() {
-    final int offset = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
+    final int offset = _mmu.pull8(this.cpur.PC + 1).toSigned(16);
     this.cpur.PC += offset;
     return 12;
   }
