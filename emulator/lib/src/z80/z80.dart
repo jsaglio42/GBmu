@@ -109,76 +109,76 @@ class Z80 {
     final op = _mmu.pull8(this.cpur.PC);
     switch (op) {
       case (0x00) : return _NOP();                             //  NOP
-      case (0x01) : assert(false, 'No Inst');                  //  LD BC, nn
-      case (0x02) : assert(false, 'No Inst');                  //  LD (BC), A
-      case (0x03) : assert(false, 'No Inst');                  //  INC BC
+      case (0x01) : return _LD_rr_nn(Reg16.BC);                //  LD BC, nn
+      case (0x02) : return _LD_rr_A(Reg16.BC);                 //  LD (BC), A
+      case (0x03) : return _INC_rr(Reg16.BC);                  //  INC BC
       case (0x04) : return _INC_r(Reg8.B);                     //  INC B
       case (0x05) : return _DEC_r(Reg8.B);                     //  DEC B
-      case (0x06) : assert(false, 'No Inst');                  //  LD B, d8
-      case (0x07) : assert(false, 'No Inst');                  //  RLCA
+      case (0x06) : return _LD_r_n(Reg8.B);                    //  LD B, n
+      case (0x07) : return _RLCA() ;                           //  RLCA
 
-      case (0x08) : assert(false, 'No Inst');                  //  LD (nn), SP
-      case (0x09) : return _ADD_HL_r(Reg16.BC);                //  ADD HL, BC
-      case (0x0A) : assert(false, 'No Inst');                  //  LD A, (BC)
-      case (0x0B) : assert(false, 'No Inst');                  //  DEC BC
+      case (0x08) : return _LD_nn_SP();                        //  LD (nn), SP
+      case (0x09) : return _ADD_HL_rr(Reg16.BC);               //  ADD HL, BC
+      case (0x0A) : return _LD_A_rr(Reg16.BC);                 //  LD A, (BC)
+      case (0x0B) : return _DEC_rr(Reg16.BC);                  //  DEC BC
       case (0x0C) : return _INC_r(Reg8.C);                     //  INC C
       case (0x0D) : return _DEC_r(Reg8.C);                     //  DEC C
-      case (0x0E) : assert(false, 'No Inst');                  //  LD C, d8
-      case (0x0F) : assert(false, 'No Inst');                  //  RRCA
+      case (0x0E) : return _LD_r_n(Reg8.C);                    //  LD C, n
+      case (0x0F) : return _RRCA() ;                           //  RRCA
 
       case (0x10) : return _STOP();                            //  STOP
-      case (0x11) : assert(false, 'No Inst');                  //  LD DE, nn
-      case (0x12) : assert(false, 'No Inst');                  //  LD (DE), A
-      case (0x13) : assert(false, 'No Inst');                  //  INC DE
+      case (0x11) : return _LD_rr_nn(Reg16.DE);                //  LD DE, nn
+      case (0x12) : return _LD_rr_A(Reg16.DE);                 //  LD (DE), A
+      case (0x13) : return _INC_rr(Reg16.DE);                  //  INC DE
       case (0x14) : return _INC_r(Reg8.D);                     //  INC D
       case (0x15) : return _DEC_r(Reg8.D);                     //  DEC D
-      case (0x16) : assert(false, 'No Inst');                  //  LD D, d8
-      case (0x17) : assert(false, 'No Inst');                  //  RLA
+      case (0x16) : return _LD_r_n(Reg8.D);                    //  LD D, n
+      case (0x17) : return _RLA();                             //  RLA
 
       case (0x18) : return _JR_e();                            //  JR e
-      case (0x19) : return _ADD_HL_r(Reg16.DE);                //  ADD HL, DE
-      case (0x1A) : assert(false, 'No Inst');                  //  LD A, (DE)
-      case (0x1B) : assert(false, 'No Inst');                  //  DEC DE
+      case (0x19) : return _ADD_HL_rr(Reg16.DE);               //  ADD HL, DE
+      case (0x1A) : return _LD_A_rr(Reg16.DE);                 //  LD A, (DE)
+      case (0x1B) : return _DEC_rr(Reg16.DE);                  //  DEC DE
       case (0x1C) : return _INC_r(Reg8.E);                     //  INC E
       case (0x1D) : return _DEC_r(Reg8.E);                     //  DEC E
-      case (0x1E) : assert(false, 'No Inst');                  //  LD E, d8
-      case (0x1F) : assert(false, 'No Inst');                  //  RRA
+      case (0x1E) : return _LD_r_n(Reg8.E);                    //  LD E, n
+      case (0x1F) : return _RRA();                             //  RRA
 
       case (0x20) : return _JR_NZ_e();                         //  JR NZ, e
-      case (0x21) : assert(false, 'No Inst');                  //  LD HL, nn
-      case (0x22) : assert(false, 'No Inst');                  //  LD (HL+), A
-      case (0x23) : assert(false, 'No Inst');                  //  INC HL
+      case (0x21) : return _LD_rr_nn(Reg16.HL);                //  LD HL, nn
+      case (0x22) : return _LDI_HL_A();                        //  LD (HL+), A
+      case (0x23) : return _INC_rr(Reg16.HL);                  //  INC HL
       case (0x24) : return _INC_r(Reg8.H);                     //  INC H
       case (0x25) : return _DEC_r(Reg8.H);                     //  DEC H
-      case (0x26) : assert(false, 'No Inst');                  //  LD H, d8
-      case (0x27) : assert(false, 'No Inst');                  //  DAA
+      case (0x26) : return _LD_r_n(Reg8.H);                    //  LD H, n
+      case (0x27) : return _DAA();                             //  DAA
 
       case (0x28) : return _JR_Z_e();                          //  JR Z, e
-      case (0x29) : return _ADD_HL_r(Reg16.HL);                //  ADD HL, HL
-      case (0x2A) : assert(false, 'No Inst');                  //  LD A, (HL+)
-      case (0x2B) : assert(false, 'No Inst');                  //  DEC HL
+      case (0x29) : return _ADD_HL_rr(Reg16.HL);               //  ADD HL, HL
+      case (0x2A) : return _LDI_A_HL();                        //  LD A, (HL+)
+      case (0x2B) : return _DEC_rr(Reg16.HL);                  //  DEC HL
       case (0x2C) : return _INC_r(Reg8.L);                     //  INC L
       case (0x2D) : return _DEC_r(Reg8.L);                     //  DEC L
-      case (0x2E) : assert(false, 'No Inst');                  //  LD L, d8
-      case (0x2F) : assert(false, 'No Inst');                  //  CPL
+      case (0x2E) : return _LD_r_n(Reg8.L);                    //  LD L, n
+      case (0x2F) : return _CPL();                             //  CPL
 
       case (0x30) : return _JR_NC_e();                         //  JR NC, e
-      case (0x31) : assert(false, 'No Inst');                  //  LD SP, nn
-      case (0x32) : assert(false, 'No Inst');                  //  LD (HL-), A
-      case (0x33) : assert(false, 'No Inst');                  //  INC SP
+      case (0x31) : return _LD_rr_nn(Reg16.SP);                //  LD SP, nn
+      case (0x32) : return _LDD_HL_A();                        //  LD (HL-), A
+      case (0x33) : return _INC_rr(Reg16.SP);                  //  INC SP
       case (0x34) : return _INC_HL();                          //  INC (HL)
       case (0x35) : return _INC_HL();                          //  DEC (HL)
-      case (0x36) : assert(false, 'No Inst');                  //  LD (HL), d8
-      case (0x37) : assert(false, 'No Inst');                  //  SCF
+      case (0x36) : return _LD_HL_n();                         //  LD (HL), n
+      case (0x37) : return _SCF();                             //  SCF
 
       case (0x38) : return _JR_C_e();                          //  JR C, e
-      case (0x39) : return _ADD_HL_r(Reg16.SP);                //  ADD HL, SP
-      case (0x3A) : assert(false, 'No Inst');                  //  LD A, (HL-)
-      case (0x3B) : assert(false, 'No Inst');                  //  DEC SP
+      case (0x39) : return _ADD_HL_rr(Reg16.SP);               //  ADD HL, SP
+      case (0x3A) : return _LDD_A_HL();                        //  LD A, (HL-)
+      case (0x3B) : return _DEC_rr(Reg16.SP);                  //  DEC SP
       case (0x3C) : return _INC_r(Reg8.A);                     //  INC A
       case (0x3D) : return _DEC_r(Reg8.A);                     //  DEC A
-      case (0x3E) : assert(false, 'No Inst');                  //  LD A, d8
-      case (0x3F) : assert(false, 'No Inst');                  //  CCF
+      case (0x3E) : return _LD_r_n(Reg8.A);                      //  LD A, n
+      case (0x3F) : return _CCF();                             //  CCF
 
       case (0x40) : return _LD_r_r(Reg8.B, Reg8.B);            //  LD B, B
       case (0x41) : return _LD_r_r(Reg8.B, Reg8.C);            //  LD B, C
@@ -360,27 +360,27 @@ class Z80 {
       case (0xDE) : return _SBC_n();                           //  SBC A, d8
       case (0xDF) : return _RST_18H();                         //  RST 18H
 
-      case (0xE0) : assert(false, 'No Inst');                  //  LDH (a8), A
+      case (0xE0) : return _LD_n_A();                          //  LD (0xFF+n), A
       case (0xE1) : return _POP(Reg16.HL);                     //  POP HL
-      case (0xE2) : assert(false, 'No Inst');                  //  LD (C), A
+      case (0xE2) : return _LD_C_A();                          //  LD (0xFF+C), A
       case (0xE3) : return _NOP();                             //  0xE3: N/A
       case (0xE4) : return _NOP();                             //  0xE4: N/A
       case (0xE5) : return _PUSH(Reg16.HL);                    //  PUSH HL
       case (0xE6) : return _AND_n();                           //  AND n
       case (0xE7) : return _RST_20H();                         //  RST 20H
 
-      case (0xE8) : assert(false, 'No Inst');                  //  ADD SP, r8
+      case (0xE8) : return _ADD_SP_e();                        //  ADD SP, e
       case (0xE9) : return _JP_HL();                           //  JP (HL)
-      case (0xEA) : assert(false, 'No Inst');                  //  LD (a16), A
+      case (0xEA) : return _LD_nn_A();                         //  LD (nn), A
       case (0xEB) : return _NOP();                             //  0xEB: N/A
       case (0xEC) : return _NOP();                             //  0xEC: N/A
       case (0xED) : return _NOP();                             //  0xED: N/A
       case (0xEE) : return _XOR_n();                           //  XOR n
       case (0xEF) : return _RST_28H();                         //  RST 28H
 
-      case (0xF0) : assert(false, 'No Inst');                  //  LDH A, (a8)
+      case (0xF0) : return _LD_A_n();                          //  LD A, (0xFF+n)
       case (0xF1) : return _POP(Reg16.AF);                     //  POP AF
-      case (0xF2) : assert(false, 'No Inst');                  //  LD A, (C)
+      case (0xF2) : return _LD_A_C();                          //  LD A, (0xFF+C)
       case (0xF3) : return _DI();                              //  DI
       case (0xF4) : return _NOP();                             //  0xF4: N/A
       case (0xF5) : return _PUSH(Reg16.AF);                    //  PUSH AF
@@ -389,7 +389,7 @@ class Z80 {
 
       case (0xF8) : return _LD_HL_SP_e();                      //  LD HL, SP+e
       case (0xF9) : return _LD_SP_HL();                        //  LD SP, HL
-      case (0xFA) : assert(false, 'No Inst');                  //  LD A, (a16)
+      case (0xFA) : return _LD_A_nn();                         //  LD A, (nn)
       case (0xFB) : return _EI();                              //  EI
       case (0xFC) : return _NOP();                             //  0xFC: N/A
       case (0xFD) : return _NOP();                             //  0xFD: N/A
@@ -716,9 +716,9 @@ class Z80 {
     return 4;
   }
 
-  int _LD_r_n() {
+  int _LD_r_n(Reg8 r) {
     final int val = _mmu.pull8(this.cpur.PC + 1);
-    _LD_r(r1, val);
+    _LD_r(r, val);
     this.cpur.PC += 2;
     return 8;
   }
@@ -801,7 +801,7 @@ class Z80 {
     return 8;
   }
 
-  int _LD_nn_A(Reg16 r) {
+  int _LD_nn_A() {
     final int addr = _mmu.pull16(this.cpur.PC + 1);
     _LD_n(addr, this.cpur.A);
     this.cpur.PC += 3;
@@ -1172,7 +1172,7 @@ class Z80 {
     return result;
   }
 
-  int _ADD_HL_r(Reg16 r) {
+  int _ADD_HL_rr(Reg16 r) {
     final int val = this.cpur.pull16(r);
     this.cpur.HL = _ADD16_calculate(this.cpur.HL, val);
     this.cpur.n = 0;
@@ -1219,15 +1219,15 @@ class Z80 {
 
   int _CCF() {
     this.cpur.cy = 1 - this.cpur.cy;
-    this.n = 0;
-    this.h = 0;
+    this.cpur.n = 0;
+    this.cpur.h = 0;
     return 4;
   }
 
   int _SCF() {
     this.cpur.cy = 1;
-    this.n = 0;
-    this.h = 0;
+    this.cpur.n = 0;
+    this.cpur.h = 0;
     return 4;
   }
 
