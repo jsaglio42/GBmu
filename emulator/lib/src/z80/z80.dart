@@ -730,6 +730,55 @@ class Z80 {
     return 8;
   }
 
+  /* Register Accu */
+  int _LD_A_rr(Reg16 r) {
+    final int addr = this.cpur.pull16(r);
+    final int val = _mmu.pull8(addr);
+    _LD_r(Reg8.A, val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _LD_A_nn() {
+    final int addr = _mmu.pull16(this.cpur.PC + 1);
+    final int val = _mmu.pull8(addr);
+    _LD_r(Reg8.A, val);
+    this.cpur.PC += 3;
+    return 16;
+  }
+
+  int _LD_A_C() {
+    final int val = _mmu.pull8(0xFF00 | this.cpur.C);
+    _LD_r(Reg8.A, val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _LDI_A_HL() {
+    final int val = _mmu.pull8(this.cpur.HL);
+    _LD_r(Reg8.A, val);
+    this.cpur.HL += 1;
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _LDD_A_HL() {
+    final int val = _mmu.pull8(this.cpur.HL);
+    _LD_r(Reg8.A, val);
+    this.cpur.HL -= 1;
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _LD_A_n() {
+    final int addr = 0xFF00 | _mmu.pull8(this.cpur.PC + 1);
+    final int val = _mmu.pull8(addr);
+    _LD_r(Reg8.A, val);
+    this.cpur.PC += 2;
+    return 12;
+  }
+
+  /* Memory */
   int _LD_HL_r(Reg8 r) {
     final int val = this.cpur.pull8(r);
     _LD_n(this.cpur.HL, val);
@@ -744,25 +793,9 @@ class Z80 {
     return 12;
   }
 
-  int _LD_A_rr(Reg16 r) {
-    final int addr = this.cpur.pull16(r);
-    final int val = _mmu.pull8(addr);
-    _LD_r(this.cpur.A, val);
-    this.cpur.PC += 1;
-    return 8;
-  }
-
-  int _LD_A_nn(Reg16 r) {
-    final int addr = _mmu.pull16(this.cpur.PC + 1);
-    final int val = _mmu.pull8(addr);
-    _LD_r(this.cpur.A, val);
-    this.cpur.PC += 3;
-    return 16;
-  }
-
+  /* Memory Accu */
   int _LD_rr_A(Reg16 r) {
     final int addr = this.cpur.pull16(r);
-    final int val = this.cpur.A;
     _LD_n(addr, this.cpur.A);
     this.cpur.PC += 1;
     return 8;
@@ -770,26 +803,40 @@ class Z80 {
 
   int _LD_nn_A(Reg16 r) {
     final int addr = _mmu.pull16(this.cpur.PC + 1);
-    final int val = this.cpur.A;
     _LD_n(addr, this.cpur.A);
     this.cpur.PC += 3;
     return 16;
   }
 
-  /* Memory */
-  // int _LD_n_r(Reg8 r) {
-  //   final int val = this.cpur.pull8(r2);
-  //   _LD_n(r1, val);
-  //   this.cpur.PC += 1;
-  //   return 4;
-  // }
+  int _LD_C_A() {
+    final int addr = 0xFF00 | this.cpur.C;
+    _LD_n(addr, this.cpur.A);
+    this.cpur.PC += 1;
+    return 8;
+  }
 
-  // int _LD_n_HL() {
-  //   final int val = _mmu.pull8(this.cpur.HL);
-  //   _LD_r(r1, val);
-  //   this.cpur.PC += 1;
-  //   return 8;
-  // }
+  int _LDI_HL_A() {
+    final int addr = this.cpur.HL;
+    _LD_n(addr, this.cpur.A);
+    this.cpur.HL += 1;
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _LDD_HL_A() {
+    final int addr = this.cpur.HL;
+    _LD_n(addr, this.cpur.A);
+    this.cpur.HL -= 1;
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _LD_n_A() {
+    final int addr = 0xFF00 | _mmu.pull8(this.cpur.PC + 1);
+    _LD_n(addr, this.cpur.A);
+    this.cpur.PC += 2;
+    return 12;
+  }
 
   /* 16-bits Loads ************************************************************/
   int _LD_rr_nn(Reg16 r) {
