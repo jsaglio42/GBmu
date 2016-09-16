@@ -115,7 +115,7 @@ void _onRegInfo(Emulator.CpuRegs cpur) {
     return ;
   };
   toggleFlagLabels(Reg1 reg, _HtmlLabel cell){
-    final bool cur = cpur.pull1(reg);
+    final bool cur = (cpur.pull1(reg) == 1);
 
     if (cell.value != cur) {
       _data.flagLabels[reg].value = cur;

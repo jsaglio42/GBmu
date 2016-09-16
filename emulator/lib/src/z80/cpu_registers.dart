@@ -96,14 +96,14 @@ class CpuRegs {
   int get D => this.pull8(Reg8.D);
   int get L => this.pull8(Reg8.L);
   int get H => this.pull8(Reg8.H);
-  int get cy => this.pull1(Reg1.cy) ? 1 : 0;
-  int get n => this.pull1(Reg1.n) ? 1 : 0;
-  int get h => this.pull1(Reg1.h) ? 1 : 0;
-  int get z => this.pull1(Reg1.zf) ? 1 : 0;
+  int get cy => this.pull1(Reg1.cy);
+  int get n => this.pull1(Reg1.n);
+  int get h => this.pull1(Reg1.h);
+  int get z => this.pull1(Reg1.zf);
 
   int pull16(Reg16 r) => this._view16[r.index];
   int pull8(Reg8 r) => this._data[r.index];
-  bool pull1(Reg1 r) => (this._data[0] >> (r.index + 4) & 1) == 1;
+  int pull1(Reg1 r) => (this._data[0] >> (r.index + 4)) & 0x1;
 
   /* Set */
 
@@ -121,10 +121,10 @@ class CpuRegs {
   void set D(int v) {this.push8(Reg8.D, v);}
   void set L(int v) {this.push8(Reg8.L, v);}
   void set H(int v) {this.push8(Reg8.H, v);}
-  void set cy(int v) {this.push1(Reg1.cy, v == 0 ? false : true);}
-  void set n(int v) {this.push1(Reg1.n, v == 0 ? false : true);}
-  void set h(int v) {this.push1(Reg1.h, v == 0 ? false : true);}
-  void set z(int v) {this.push1(Reg1.zf, v == 0 ? false : true);}
+  void set cy(int v) {this.push1(Reg1.cy, v);}
+  void set n(int v) {this.push1(Reg1.n, v);}
+  void set h(int v) {this.push1(Reg1.h, v);}
+  void set z(int v) {this.push1(Reg1.zf, v);}
 
   void push16(Reg16 r, int word) {
     assert(word & ~0xFFFF == 0);
@@ -136,13 +136,13 @@ class CpuRegs {
     this._data[r.index] = byte;
   }
 
-  void push1(Reg1 r, bool value) {
+  void push1(Reg1 r, int val) {
     final mask = 1 << (4 + r.index);
-    if (value)
-      this._data[0] = this._data[0] | mask;
-    else
+    if (val == 0)
       this._data[0] = this._data[0] & (~mask);
-  }
+    else
+      this._data[0] = this._data[0] | mask;
+   }
 
   /*
   ** Debug *********************************************************************
@@ -152,10 +152,10 @@ class CpuRegs {
     for (int i = 0; i < 12 ; i++)
       _data[i] = i;
 
-    assert(this.pull1(Reg1.cy) == false);
-    assert(this.pull1(Reg1.n) == false);
-    assert(this.pull1(Reg1.h) == false);
-    assert(this.pull1(Reg1.zf) == false);
+    assert(this.pull1(Reg1.cy) == 0);
+    assert(this.pull1(Reg1.n) == 0);
+    assert(this.pull1(Reg1.h) == 0);
+    assert(this.pull1(Reg1.zf) == 0);
     assert(this.pull8(Reg8.A) == 0x1);
     assert(this.pull16(Reg16.AF) == 0x0100);
 
@@ -177,10 +177,10 @@ class CpuRegs {
     for (int i = 0; i < 12 ; i++)
       _data[i] = 0;
 
-    this.push1(Reg1.cy, true);
-    this.push1(Reg1.n, false);
-    this.push1(Reg1.h, false);
-    this.push1(Reg1.zf, true);
+    this.push1(Reg1.cy, 1);
+    this.push1(Reg1.n, 0);
+    this.push1(Reg1.h, 0);
+    this.push1(Reg1.zf, 1);
     this.push8(Reg8.A, 0x5);
 
     this.push8(Reg8.C, 0x6);

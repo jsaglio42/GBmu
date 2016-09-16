@@ -697,6 +697,62 @@ class Z80 {
     throw new Exception('z80: CB Prefix: Opcode ${Ft.toAddressString(op, 4)} not suported');
   }
 
+  /* 8-bits ALU ***************************************************************/
+  /* ADD */
+  int _ADD_calculate(int v) {
+    final int accu = this.cpur.A;
+    final int calculated = this.cpur.A + v;
+    final int result = calculated & 0xFF;
+    this.cpur.cy = calculated >> 8;
+    this.cpur.h = (calculated >> 3) & 0x1;
+    this.cpur.n = 0;
+    this.cpur.z = result;
+    return result;
+  }
+
+  int _ADD_r(Reg8 r) {
+    final int val = this.cpur.pull8(r);
+    this.cpur.A = _ADD_calculate(val);
+    this.cpur.PC += 1;
+    return 4;
+  }
+
+  int _ADD_n() {
+    final int val = _mmu.pull8(this.cpur.PC + 1);
+    this.cpur.A = _ADD_calculate(val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _ADD_HL() {
+    final int val = _mmu.pull8(this.cpur.HL);
+    this.cpur.A = _ADD_calculate(val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  /* ADC */
+  int _ADC_r(Reg8 r) {
+    final int val = this.cpur.pull8(r) + this.cpur.cy;
+    this.cpur.A = _ADD_calculate(val);
+    this.cpur.PC += 1;
+    return 4;
+  }
+
+  int _ADC_n() {
+    final int val = _mmu.pull8(this.cpur.PC + 1) + this.cpur.cy;
+    this.cpur.A = _ADD_calculate(val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _ADC_HL() {
+    final int val = _mmu.pull8(this.cpur.HL) + this.cpur.cy;
+    this.cpur.A = _ADD_calculate(val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
   /* Miscellaneous ************************************************************/
 
   int _DAA() {
@@ -747,316 +803,303 @@ class Z80 {
 
   /* Rotates and Shifts *******************************************************/
 
+  int _SL_calculate(int val, int newbit) {
+    assert(val & ~0xFF == 0);
+    assert(newbit & ~0x1 == 0);
+    final int cy_new = val >> 7;
+    final int val_new = ((val << 1) | newbit) & 0xFF;
+    this.cpur.cy = cy_new;
+    this.cpur.h = 0;
+    this.cpur.n = 0;
+    this.cpur.z = val_new;
+    return val_new;
+  }
+
+  int _SR_calculate(int val, int newbit) {
+    assert(val & ~0xFF == 0);
+    assert(newbit & ~0x1 == 0);
+    final int cy_new = val & 0x1;
+    final int val_new = (val >> 1) | (newbit << 7);
+    this.cpur.cy = cy_new;
+    this.cpur.h = 0;
+    this.cpur.n = 0;
+    this.cpur.z = val_new;
+    return val_new;
+  }
+
+  /* Accu */
   int _RLCA() {
-    _RLC(Reg8.A);
+    final val = this.cpur.pull8(Reg8.A);
+    final newbit = this.cpur.cy;
+    final res = _SL_calculate(val, newbit);
+    this.cpur.push8(Reg8.A, res);
     this.cpur.z = 0;
+    this.cpur.PC += 1;
     return 4;
   }
 
   int _RLA() {
-    _RL(Reg8.A);
+    final val = this.cpur.pull8(Reg8.A);
+    final newbit = val >> 7;
+    final res = _SL_calculate(val, newbit);
+    this.cpur.push8(Reg8.A, res);
     this.cpur.z = 0;
+    this.cpur.PC += 1;
     return 4;
   }
 
   int _RRCA() {
-    _RRC(Reg8.A);
+    final val = this.cpur.pull8(Reg8.A);
+    final newbit = this.cpur.cy;
+    final res = _SR_calculate(val, newbit);
+    this.cpur.push8(Reg8.A, res);
     this.cpur.z = 0;
+    this.cpur.PC += 1;
     return 4;
   }
 
   int _RRA() {
-    _RR(Reg8.A);
+    final val = this.cpur.pull8(Reg8.A);
+    final newbit = val & 0x1;
+    final res = _SR_calculate(val, newbit);
+    this.cpur.push8(Reg8.A, res);
     this.cpur.z = 0;
+    this.cpur.PC += 1;
     return 4;
   }
 
   /* Registers */
-
   int _RLC(Reg8 r) {
-    final int val_old = this.cpur.pull8(r);
-    final int cy_new = (val_old >> 7);
-    final int b = this.cpur.cy;
-    final int val_new = ((val_old << 1) & 0xFF) | b;
-    this.cpur.push8(r, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = this.cpur.pull8(r);
+    final newbit = this.cpur.cy;
+    final res = _SL_calculate(val, newbit);
+    this.cpur.push8(r, res);
     this.cpur.PC += 2;
-    return 8;
+    return 4;
   }
 
   int _RL(Reg8 r) {
-    final int val_old = this.cpur.pull8(r);
-    final int cy_new = (val_old >> 7);
-    final int b = cy_new;
-    final int val_new = ((val_old << 1) & 0xFF) | b;
-    this.cpur.push8(r, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = this.cpur.pull8(r);
+    final newbit = val >> 7;
+    final res = _SL_calculate(val, newbit);
+    this.cpur.push8(r, res);
     this.cpur.PC += 2;
-    return 8;
+    return 4;
   }
 
   int _RRC(Reg8 r) {
-    final int val_old = this.cpur.pull8(r);
-    final int cy_new = (val_old & 0x1);
-    final int b = this.cpur.cy;
-    final int val_new = (val_old >> 1) | (b << 7);
-    this.cpur.push8(r, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = this.cpur.pull8(r);
+    final newbit = this.cpur.cy;
+    final res = _SR_calculate(val, newbit);
+    this.cpur.push8(r, res);
     this.cpur.PC += 2;
-    return 8;
+    return 4;
   }
 
   int _RR(Reg8 r) {
-    final int val_old = this.cpur.pull8(r);
-    final int cy_new = (val_old & 0x1);
-    final int b = cy_new;
-    final int val_new = (val_old >> 1) | (b << 7);
-    this.cpur.push8(r, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = this.cpur.pull8(r);
+    final newbit = val & 0x1;
+    final res = _SR_calculate(val, newbit);
+    this.cpur.push8(r, res);
     this.cpur.PC += 2;
-    return 8;
+    return 4;
   }
 
   int _SLA(Reg8 r) { /* Shift Left: bit-0 is unset */
-    final int val_old = this.cpur.pull8(r);
-    final int cy_new = (val_old >> 7);
-    final int val_new = ((val_old << 1) & 0xFF);
-    this.cpur.push8(r, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = this.cpur.pull8(r);
+    final newbit = 0;
+    final res = _SL_calculate(val, newbit);
+    this.cpur.push8(r, res);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _SRL(Reg8 r) { /* Shift Right: bit-7 is unset */
-    final int val_old = this.cpur.pull8(r);
-    final int cy_new = (val_old & 0x1);
-    final int val_new = (val_old >> 1);
-    this.cpur.push8(r, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = this.cpur.pull8(r);
+    final newbit = 0;
+    final res = _SR_calculate(val, newbit);
+    this.cpur.push8(r, res);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _SRA(Reg8 r) { /* Shift Right but bit-7 is not changed */
-    final int val_old = this.cpur.pull8(r);
-    final int cy_new = (val_old & 0x1);
-    final int b = (val_old >> 7);
-    final int val_new = (val_old >> 1) | (b << 7);
-    this.cpur.push8(r, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
-    this.cpur.PC += 2;
-    return 8;
-  }
-
-  int _SWAP(Reg8 r){
-    final int val_old = this.cpur.pull8(r);
-    final int h = (val_old >> 4);
-    final int l = (val_old & 0xFF);
-    final int val_new = h | (l << 4);
-    this.cpur.push8(r, val_new);
-    this.cpur.cy = 0;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = this.cpur.pull8(r);
+    final newbit = 0;
+    final res = _SR_calculate(val, newbit);
+    this.cpur.push8(r, res);
     this.cpur.PC += 2;
     return 8;
   }
 
   /* Memory */
-
   int _RLC_HL() {
-    final int val_old = _mmu.pull8(this.cpur.HL);
-    final int cy_new = (val_old >> 7);
-    final int b = this.cpur.cy;
-    final int val_new = ((val_old << 1) & 0xFF) | b;
-    _mmu.push8(this.cpur.HL, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = this.cpur.cy;
+    final res = _SL_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 16;
+    return 4;
   }
 
   int _RL_HL() {
-    final int val_old = _mmu.pull8(this.cpur.HL);
-    final int cy_new = (val_old >> 7);
-    final int b = cy_new;
-    final int val_new = ((val_old << 1) & 0xFF) | b;
-    _mmu.push8(this.cpur.HL, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = val >> 7;
+    final res = _SL_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 16;
+    return 4;
   }
 
   int _RRC_HL() {
-    final int val_old = _mmu.pull8(this.cpur.HL);
-    final int cy_new = (val_old & 0x1);
-    final int b = this.cpur.cy;
-    final int val_new = (val_old >> 1) | (b << 7);
-    _mmu.push8(this.cpur.HL, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = this.cpur.cy;
+    final res = _SR_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 16;
+    return 4;
   }
 
   int _RR_HL() {
-    final int val_old = _mmu.pull8(this.cpur.HL);
-    final int cy_new = (val_old & 0x1);
-    final int b = cy_new;
-    final int val_new = (val_old >> 1) | (b << 7);
-    _mmu.push8(this.cpur.HL, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = val & 0x1;
+    final res = _SR_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 16;
+    return 4;
   }
 
   int _SLA_HL() { /* Shift Left: bit-0 is unset */
-    final int val_old = _mmu.pull8(this.cpur.HL);
-    final int cy_new = (val_old >> 7);
-    final int val_new = ((val_old << 1) & 0xFF);
-    _mmu.push8(this.cpur.HL, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = 0;
+    final res = _SL_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 16;
+    return 8;
   }
 
   int _SRL_HL() { /* Shift Right: bit-7 is unset */
-    final int val_old = _mmu.pull8(this.cpur.HL);
-    final int cy_new = (val_old & 0x1);
-    final int val_new = (val_old >> 1);
-    _mmu.push8(this.cpur.HL, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = 0;
+    final res = _SR_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 16;
+    return 8;
   }
 
   int _SRA_HL() { /* Shift Right but bit-7 is not changed */
-    final int val_old = _mmu.pull8(this.cpur.HL);
-    final int cy_new = (val_old & 0x1);
-    final int b = (val_old >> 7);
-    final int val_new = (val_old >> 1) | (b << 7);
-    _mmu.push8(this.cpur.HL, val_new);
-    this.cpur.cy = cy_new;
-    this.cpur.h = 0;
-    this.cpur.n = 0;
-    this.cpur.z = val_new;
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = 0;
+    final res = _SR_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 16;
+    return 8;
   }
 
-  int _SWAP_HL(){
-    final int val_old = _mmu.pull8(this.cpur.HL);
-    final int h = (val_old >> 4);
-    final int l = (val_old & 0xFF);
-    final int val_new = h | (l << 4);
-    _mmu.push8(this.cpur.HL, val_new);
+  /* SWAP */
+  int _SWAP_calculate(int val) {
+    assert(val & ~0xFF == 0);
+    final int h = (val >> 4);
+    final int l = (val & 0xFF);
+    final int res = h | (l << 4);
     this.cpur.cy = 0;
     this.cpur.h = 0;
     this.cpur.n = 0;
-    this.cpur.z = val_new;
+    this.cpur.z = res;
+    return res;
+  }
+
+  int _SWAP(Reg8 r){
+    final int val = this.cpur.pull8(r);
+    final int res = _SWAP_calculate(val);
+    this.cpur.push8(r, res);
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _SWAP_HL(){
+    final int val = _mmu.pull8(this.cpur.HL);
+    final int res = _SWAP_calculate(val);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
   /* Bit OpCode ***************************************************************/
-  /* Registers */
+
+  /* BIT */
+  void _BIT_calculate(int index, int val) {
+      assert(val & ~0xFF == 0);
+      assert(index >= 0 && index < 8);
+      final int b = ((val >> index) & 0x1);
+      this.cpur.h = 1;
+      this.cpur.n = 0;
+      this.cpur.z = (1 - b);
+      return ;
+  }
 
   int _BIT(int index, Reg8 r) {
-    assert(index >= 0 && index < 8);
     final int val = this.cpur.pull8(r);
-    final int b = ((val >> index) & 0x1);
-    this.cpur.h = 1;
-    this.cpur.n = 0;
-    this.cpur.z = (1 - b);
+    _BIT_calculate(index, val);
     this.cpur.PC += 2;
     return 8;
   }
-
-  int _SET(int index, Reg8 r) {
-    assert(index >= 0 && index < 8);
-    final int val = this.cpur.pull8(r);
-    this.cpur.push8(r, val | (0x1 << index));
-    this.cpur.PC += 2;
-    return 8;
-  }
-
-  int _RES(int index, Reg8 r) {
-    assert(index >= 0 && index < 8);
-    final int val = this.cpur.pull8(r);
-    this.cpur.push8(r, val & ~(0x1 << index));
-    this.cpur.PC += 2;
-    return 8;
-  }
-
-  /* Memory */
 
   int _BIT_HL(int index) {
-    assert(index >= 0 && index < 8);
     final int val = _mmu.pull8(this.cpur.HL);
-    final int b = ((val >> index) & 0x1);
-    this.cpur.h = 1;
-    this.cpur.n = 0;
-    this.cpur.z = (1 - b);
+    _BIT_calculate(index, val);
     this.cpur.PC += 2;
     return 12;
   }
 
-  int _SET_HL(int index) {
+  /* SET */
+  int _SET_calculate(int val, int index) {
+    assert(val & ~0xFF == 0);
     assert(index >= 0 && index < 8);
+    return (val | (0x1 << index));
+  }
+
+  int _SET(int index, Reg8 r) {
+    final int val = this.cpur.pull8(r);
+    final int res = _SET_calculate(val, index);
+    this.cpur.push8(r, res);
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _SET_HL(int index) {
     final int val = _mmu.pull8(this.cpur.HL);
-    _mmu.push8(this.cpur.HL, val | (0x1 << index));
+    final int res = _SET_calculate(val, index);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
-  int _RES_HL(int index) {
+  /* RES */
+  int _RES_calculate(int val, int index) {
+    assert(val & ~0xFF == 0);
     assert(index >= 0 && index < 8);
+    return (val & ~(0x1 << index));
+  }
+
+  int _RES(int index, Reg8 r) {
+    final int val = this.cpur.pull8(r);
+    final int res = _RES_calculate(val, index);
+    this.cpur.push8(r, res);
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _RES_HL(int index) {
     final int val = _mmu.pull8(this.cpur.HL);
-    _mmu.push8(this.cpur.HL, val & ~(0x1 << index));
+    final int res = _RES_calculate(val, index);
+    _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
   /* Jumps ********************************************************************/
   /* 16 bit */
-
   int _JP_nn() {
     this.cpur.PC = _mmu.pull16(this.cpur.PC + 1);
     return 16;
@@ -1105,8 +1148,7 @@ class Z80 {
   int _JR_NC_e()  { return  _JR_cc_e(this.cpur.cy == 0); }
   int _JR_C_e()   { return  _JR_cc_e(this.cpur.cy == 1); }
 
-  /* Calls and returns ********************************************************/
-  /* Calls */
+  /* Calls ********************************************************************/
 
   int _CALL_nn()
   {
@@ -1133,7 +1175,7 @@ class Z80 {
   int _CALL_NC_nn()  { return  _CALL_cc_nn(this.cpur.cy == 0); }
   int _CALL_C_nn()   { return  _CALL_cc_nn(this.cpur.cy == 1); }
 
-  /* Returns */
+  /* Returns ******************************************************************/
 
   int _RET()
   {
