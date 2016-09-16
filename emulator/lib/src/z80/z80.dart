@@ -1,7 +1,7 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   cpu_registers.dart                                 :+:      :+:    :+:   //
+//   z80.dart                                           :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
@@ -109,76 +109,76 @@ class Z80 {
     final op = _mmu.pull8(this.cpur.PC);
     switch (op) {
       case (0x00) : return _NOP();                             //  NOP
-      case (0x01) : this.cpur.PC += 1; return 1;               //  LD BC, nn
-      case (0x02) : this.cpur.PC += 1; return 1;               //  LD (BC), A
-      case (0x03) : this.cpur.PC += 1; return 1;               //  INC BC
-      case (0x04) : this.cpur.PC += 1; return 1;               //  INC B
-      case (0x05) : this.cpur.PC += 1; return 1;               //  DEC B
-      case (0x06) : this.cpur.PC += 1; return 1;               //  LD B, d8
-      case (0x07) : this.cpur.PC += 1; return 1;               //  RLCA
+      case (0x01) : assert(false, 'No Inst');                  //  LD BC, nn
+      case (0x02) : assert(false, 'No Inst');                  //  LD (BC), A
+      case (0x03) : assert(false, 'No Inst');                  //  INC BC
+      case (0x04) : return _INC_r(Reg8.B);                     //  INC B
+      case (0x05) : return _DEC_r(Reg8.B);                     //  DEC B
+      case (0x06) : assert(false, 'No Inst');                  //  LD B, d8
+      case (0x07) : assert(false, 'No Inst');                  //  RLCA
 
-      case (0x08) : this.cpur.PC += 1; return 1;               //  LD (nn), SP
+      case (0x08) : assert(false, 'No Inst');                  //  LD (nn), SP
       case (0x09) : return _ADD_HL_r(Reg16.BC);                //  ADD HL, BC
-      case (0x0A) : this.cpur.PC += 1; return 1;               //  LD A, (BC)
-      case (0x0B) : this.cpur.PC += 1; return 1;               //  DEC BC
-      case (0x0C) : this.cpur.PC += 1; return 1;               //  INC C
-      case (0x0D) : this.cpur.PC += 1; return 1;               //  DEC C
-      case (0x0E) : this.cpur.PC += 1; return 1;               //  LD C, d8
-      case (0x0F) : this.cpur.PC += 1; return 1;               //  RRCA
+      case (0x0A) : assert(false, 'No Inst');                  //  LD A, (BC)
+      case (0x0B) : assert(false, 'No Inst');                  //  DEC BC
+      case (0x0C) : return _INC_r(Reg8.C);                     //  INC C
+      case (0x0D) : return _DEC_r(Reg8.C);                     //  DEC C
+      case (0x0E) : assert(false, 'No Inst');                  //  LD C, d8
+      case (0x0F) : assert(false, 'No Inst');                  //  RRCA
 
       case (0x10) : return _STOP();                            //  STOP
-      case (0x11) : this.cpur.PC += 1; return 1;               //  LD DE, nn
-      case (0x12) : this.cpur.PC += 1; return 1;               //  LD (DE), A
-      case (0x13) : this.cpur.PC += 1; return 1;               //  INC DE
-      case (0x14) : this.cpur.PC += 1; return 1;               //  INC D
-      case (0x15) : this.cpur.PC += 1; return 1;               //  DEC D
-      case (0x16) : this.cpur.PC += 1; return 1;               //  LD D, d8
-      case (0x17) : this.cpur.PC += 1; return 1;               //  RLA
+      case (0x11) : assert(false, 'No Inst');                  //  LD DE, nn
+      case (0x12) : assert(false, 'No Inst');                  //  LD (DE), A
+      case (0x13) : assert(false, 'No Inst');                  //  INC DE
+      case (0x14) : return _INC_r(Reg8.D);                     //  INC D
+      case (0x15) : return _DEC_r(Reg8.D);                     //  DEC D
+      case (0x16) : assert(false, 'No Inst');                  //  LD D, d8
+      case (0x17) : assert(false, 'No Inst');                  //  RLA
 
       case (0x18) : return _JR_e();                            //  JR e
       case (0x19) : return _ADD_HL_r(Reg16.DE);                //  ADD HL, DE
-      case (0x1A) : this.cpur.PC += 1; return 1;               //  LD A, (DE)
-      case (0x1B) : this.cpur.PC += 1; return 1;               //  DEC DE
-      case (0x1C) : this.cpur.PC += 1; return 1;               //  INC E
-      case (0x1D) : this.cpur.PC += 1; return 1;               //  DEC E
-      case (0x1E) : this.cpur.PC += 1; return 1;               //  LD E, d8
-      case (0x1F) : this.cpur.PC += 1; return 1;               //  RRA
+      case (0x1A) : assert(false, 'No Inst');                  //  LD A, (DE)
+      case (0x1B) : assert(false, 'No Inst');                  //  DEC DE
+      case (0x1C) : return _INC_r(Reg8.E);                     //  INC E
+      case (0x1D) : return _DEC_r(Reg8.E);                     //  DEC E
+      case (0x1E) : assert(false, 'No Inst');                  //  LD E, d8
+      case (0x1F) : assert(false, 'No Inst');                  //  RRA
 
       case (0x20) : return _JR_NZ_e();                         //  JR NZ, e
-      case (0x21) : this.cpur.PC += 1; return 1;               //  LD HL, nn
-      case (0x22) : this.cpur.PC += 1; return 1;               //  LD (HL+), A
-      case (0x23) : this.cpur.PC += 1; return 1;               //  INC HL
-      case (0x24) : this.cpur.PC += 1; return 1;               //  INC H
-      case (0x25) : this.cpur.PC += 1; return 1;               //  DEC H
-      case (0x26) : this.cpur.PC += 1; return 1;               //  LD H, d8
-      case (0x27) : this.cpur.PC += 1; return 1;               //  DAA
+      case (0x21) : assert(false, 'No Inst');                  //  LD HL, nn
+      case (0x22) : assert(false, 'No Inst');                  //  LD (HL+), A
+      case (0x23) : assert(false, 'No Inst');                  //  INC HL
+      case (0x24) : return _INC_r(Reg8.H);                     //  INC H
+      case (0x25) : return _DEC_r(Reg8.H);                     //  DEC H
+      case (0x26) : assert(false, 'No Inst');                  //  LD H, d8
+      case (0x27) : assert(false, 'No Inst');                  //  DAA
 
       case (0x28) : return _JR_Z_e();                          //  JR Z, e
       case (0x29) : return _ADD_HL_r(Reg16.HL);                //  ADD HL, HL
-      case (0x2A) : this.cpur.PC += 1; return 1;               //  LD A, (HL+)
-      case (0x2B) : this.cpur.PC += 1; return 1;               //  DEC HL
-      case (0x2C) : this.cpur.PC += 1; return 1;               //  INC L
-      case (0x2D) : this.cpur.PC += 1; return 1;               //  DEC L
-      case (0x2E) : this.cpur.PC += 1; return 1;               //  LD L, d8
-      case (0x2F) : this.cpur.PC += 1; return 1;               //  CPL
+      case (0x2A) : assert(false, 'No Inst');                  //  LD A, (HL+)
+      case (0x2B) : assert(false, 'No Inst');                  //  DEC HL
+      case (0x2C) : return _INC_r(Reg8.L);                     //  INC L
+      case (0x2D) : return _DEC_r(Reg8.L);                     //  DEC L
+      case (0x2E) : assert(false, 'No Inst');                  //  LD L, d8
+      case (0x2F) : assert(false, 'No Inst');                  //  CPL
 
       case (0x30) : return _JR_NC_e();                         //  JR NC, e
-      case (0x31) : this.cpur.PC += 1; return 1;               //  LD SP, nn
-      case (0x32) : this.cpur.PC += 1; return 1;               //  LD (HL-), A
-      case (0x33) : this.cpur.PC += 1; return 1;               //  INC SP
-      case (0x34) : this.cpur.PC += 1; return 1;               //  INC (HL)
-      case (0x35) : this.cpur.PC += 1; return 1;               //  DEC (HL)
-      case (0x36) : this.cpur.PC += 1; return 1;               //  LD (HL), d8
-      case (0x37) : this.cpur.PC += 1; return 1;               //  SCF
+      case (0x31) : assert(false, 'No Inst');                  //  LD SP, nn
+      case (0x32) : assert(false, 'No Inst');                  //  LD (HL-), A
+      case (0x33) : assert(false, 'No Inst');                  //  INC SP
+      case (0x34) : return _INC_HL();                          //  INC (HL)
+      case (0x35) : return _INC_HL();                          //  DEC (HL)
+      case (0x36) : assert(false, 'No Inst');                  //  LD (HL), d8
+      case (0x37) : assert(false, 'No Inst');                  //  SCF
 
       case (0x38) : return _JR_C_e();                          //  JR C, e
       case (0x39) : return _ADD_HL_r(Reg16.SP);                //  ADD HL, SP
-      case (0x3A) : this.cpur.PC += 1; return 1;               //  LD A, (HL-)
-      case (0x3B) : this.cpur.PC += 1; return 1;               //  DEC SP
-      case (0x3C) : this.cpur.PC += 1; return 1;               //  INC A
-      case (0x3D) : this.cpur.PC += 1; return 1;               //  DEC A
-      case (0x3E) : this.cpur.PC += 1; return 1;               //  LD A, d8
-      case (0x3F) : this.cpur.PC += 1; return 1;               //  CCF
+      case (0x3A) : assert(false, 'No Inst');                  //  LD A, (HL-)
+      case (0x3B) : assert(false, 'No Inst');                  //  DEC SP
+      case (0x3C) : return _INC_r(Reg8.A);                     //  INC A
+      case (0x3D) : return _DEC_r(Reg8.A);                     //  DEC A
+      case (0x3E) : assert(false, 'No Inst');                  //  LD A, d8
+      case (0x3F) : assert(false, 'No Inst');                  //  CCF
 
       case (0x40) : return _LD_r_r(Reg8.B, Reg8.B);            //  LD B, B
       case (0x41) : return _LD_r_r(Reg8.B, Reg8.C);            //  LD B, C
@@ -360,27 +360,27 @@ class Z80 {
       case (0xDE) : return _SBC_n();                           //  SBC A, d8
       case (0xDF) : return _RST_18H();                         //  RST 18H
 
-      case (0xE0) : this.cpur.PC += 1; return 1;               //  LDH (a8), A
+      case (0xE0) : assert(false, 'No Inst');                  //  LDH (a8), A
       case (0xE1) : return _POP(Reg16.HL);                     //  POP HL
-      case (0xE2) : this.cpur.PC += 1; return 1;               //  LD (C), A
+      case (0xE2) : assert(false, 'No Inst');                  //  LD (C), A
       case (0xE3) : return _NOP();                             //  0xE3: N/A
       case (0xE4) : return _NOP();                             //  0xE4: N/A
       case (0xE5) : return _PUSH(Reg16.HL);                    //  PUSH HL
       case (0xE6) : return _AND_n();                           //  AND n
       case (0xE7) : return _RST_20H();                         //  RST 20H
 
-      case (0xE8) : this.cpur.PC += 1; return 1;               //  ADD SP, r8
+      case (0xE8) : assert(false, 'No Inst');                  //  ADD SP, r8
       case (0xE9) : return _JP_HL();                           //  JP (HL)
-      case (0xEA) : this.cpur.PC += 1; return 1;               //  LD (a16), A
+      case (0xEA) : assert(false, 'No Inst');                  //  LD (a16), A
       case (0xEB) : return _NOP();                             //  0xEB: N/A
       case (0xEC) : return _NOP();                             //  0xEC: N/A
       case (0xED) : return _NOP();                             //  0xED: N/A
       case (0xEE) : return _XOR_n();                           //  XOR n
       case (0xEF) : return _RST_28H();                         //  RST 28H
 
-      case (0xF0) : this.cpur.PC += 1; return 1;               //  LDH A, (a8)
+      case (0xF0) : assert(false, 'No Inst');                  //  LDH A, (a8)
       case (0xF1) : return _POP(Reg16.AF);                     //  POP AF
-      case (0xF2) : this.cpur.PC += 1; return 1;               //  LD A, (C)
+      case (0xF2) : assert(false, 'No Inst');                  //  LD A, (C)
       case (0xF3) : return _DI();                              //  DI
       case (0xF4) : return _NOP();                             //  0xF4: N/A
       case (0xF5) : return _PUSH(Reg16.AF);                    //  PUSH AF
@@ -389,7 +389,7 @@ class Z80 {
 
       case (0xF8) : return _LD_HL_SP_e();                      //  LD HL, SP+e
       case (0xF9) : return _LD_SP_HL();                        //  LD SP, HL
-      case (0xFA) : this.cpur.PC += 1; return 1;               //  LD A, (a16)
+      case (0xFA) : assert(false, 'No Inst');                  //  LD A, (a16)
       case (0xFB) : return _EI();                              //  EI
       case (0xFC) : return _NOP();                             //  0xFC: N/A
       case (0xFD) : return _NOP();                             //  0xFD: N/A
