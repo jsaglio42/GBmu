@@ -105,7 +105,7 @@ class Z80 {
 
   /* Instructions */
 
-  int _execInst(){
+  int _execInst() {
     final op = _mmu.pull8(this.cpur.PC);
     switch (op) {
       case (0x00) : return _NOP();                             //  NOP
@@ -402,7 +402,7 @@ class Z80 {
 
   /* Extended Instructions */
 
-  int _execInst_CB(){
+  int _execInst_CB() {
     final op = _mmu.pull8(this.cpur.PC + 1);
     switch (op) {
       case (0x00) : return _RLC(Reg8.B);         //  RLC B
@@ -698,53 +698,93 @@ class Z80 {
   }
 
   /* 8-bits Loads *************************************************************/
-  void _LD_r(Reg8 r, int val){
+  void _LD_r(Reg8 r, int val) {
     assert(val & ~0xFF == 0);
     this.cpur.push8(r, val);
   }
 
-  void _LD_n(int addr, int val){
+  void _LD_n(int addr, int val) {
     assert(val & ~0xFF == 0);
     _mmu.push8(addr, val);
   }
 
   /* Registers */
-  int _LD_r_r(Reg8 r1, Reg8 r2){
+  int _LD_r_r(Reg8 r1, Reg8 r2) {
     final int val = this.cpur.pull8(r2);
     _LD_r(r1, val);
     this.cpur.PC += 1;
     return 4;
   }
 
-  int _LD_r_n(){
+  int _LD_r_n() {
     final int val = _mmu.pull8(this.cpur.PC + 1);
     _LD_r(r1, val);
+    this.cpur.PC += 2;
     return 8;
   }
 
-  int _LD_r_HL(Reg8 r){
+  int _LD_r_HL(Reg8 r) {
     final int val = _mmu.pull8(this.cpur.HL);
     _LD_r(r, val);
     this.cpur.PC += 1;
     return 8;
   }
 
-  int _LD_HL_r(Reg8 r){
+  int _LD_HL_r(Reg8 r) {
     final int val = this.cpur.pull8(r);
     _LD_n(this.cpur.HL, val);
     this.cpur.PC += 1;
     return 8;
   }
 
+  int _LD_HL_n() {
+    final int val = _mmu.pull8(this.cpur.PC + 1);
+    _LD_n(this.cpur.HL, val);
+    this.cpur.PC += 2;
+    return 12;
+  }
+
+  int _LD_A_rr(Reg16 r) {
+    final int addr = this.cpur.pull16(r);
+    final int val = _mmu.pull8(addr);
+    _LD_r(this.cpur.A, val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _LD_A_nn(Reg16 r) {
+    final int addr = _mmu.pull16(this.cpur.PC + 1);
+    final int val = _mmu.pull8(addr);
+    _LD_r(this.cpur.A, val);
+    this.cpur.PC += 3;
+    return 16;
+  }
+
+  int _LD_rr_A(Reg16 r) {
+    final int addr = this.cpur.pull16(r);
+    final int val = this.cpur.A;
+    _LD_n(addr, this.cpur.A);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  int _LD_nn_A(Reg16 r) {
+    final int addr = _mmu.pull16(this.cpur.PC + 1);
+    final int val = this.cpur.A;
+    _LD_n(addr, this.cpur.A);
+    this.cpur.PC += 3;
+    return 16;
+  }
+
   /* Memory */
-  // int _LD_n_r(Reg8 r){
+  // int _LD_n_r(Reg8 r) {
   //   final int val = this.cpur.pull8(r2);
   //   _LD_n(r1, val);
   //   this.cpur.PC += 1;
   //   return 4;
   // }
 
-  // int _LD_n_HL(){
+  // int _LD_n_HL() {
   //   final int val = _mmu.pull8(this.cpur.HL);
   //   _LD_r(r1, val);
   //   this.cpur.PC += 1;
@@ -784,7 +824,7 @@ class Z80 {
     return 12;
   }
 
-  int _PUSH(Reg16 r){
+  int _PUSH(Reg16 r) {
     final int val = this.cpur.pull16(r);
     _mmu.push16(this.cpur.SP - 2, val);
     this.cpur.SP -= 2;
@@ -1372,7 +1412,7 @@ class Z80 {
     return res;
   }
 
-  int _SWAP(Reg8 r){
+  int _SWAP(Reg8 r) {
     final int val = this.cpur.pull8(r);
     final int res = _SWAP_calculate(val);
     this.cpur.push8(r, res);
@@ -1380,7 +1420,7 @@ class Z80 {
     return 8;
   }
 
-  int _SWAP_HL(){
+  int _SWAP_HL() {
     final int val = _mmu.pull8(this.cpur.HL);
     final int res = _SWAP_calculate(val);
     _mmu.push8(this.cpur.HL, res);
