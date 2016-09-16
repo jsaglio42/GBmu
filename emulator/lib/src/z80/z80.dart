@@ -109,7 +109,7 @@ class Z80 {
     final op = _mmu.pull8(this.cpur.PC);
     switch (op) {
       case (0x00) : return _NOP();                             //  NOP
-      case (0x01) : this.cpur.PC += 1; return 1;               //  LD BC, d16
+      case (0x01) : this.cpur.PC += 1; return 1;               //  LD BC, nn
       case (0x02) : this.cpur.PC += 1; return 1;               //  LD (BC), A
       case (0x03) : this.cpur.PC += 1; return 1;               //  INC BC
       case (0x04) : this.cpur.PC += 1; return 1;               //  INC B
@@ -127,7 +127,7 @@ class Z80 {
       case (0x0F) : this.cpur.PC += 1; return 1;               //  RRCA
 
       case (0x10) : this.cpur.PC += 1; return 1;               //  STOP 0
-      case (0x11) : this.cpur.PC += 1; return 1;               //  LD DE, d16
+      case (0x11) : this.cpur.PC += 1; return 1;               //  LD DE, nn
       case (0x12) : this.cpur.PC += 1; return 1;               //  LD (DE), A
       case (0x13) : this.cpur.PC += 1; return 1;               //  INC DE
       case (0x14) : this.cpur.PC += 1; return 1;               //  INC D
@@ -145,7 +145,7 @@ class Z80 {
       case (0x1F) : this.cpur.PC += 1; return 1;               //  RRA
 
       case (0x20) : return _JR_NZ_e();                         //  JR NZ, e
-      case (0x21) : this.cpur.PC += 1; return 1;               //  LD HL, d16
+      case (0x21) : this.cpur.PC += 1; return 1;               //  LD HL, nn
       case (0x22) : this.cpur.PC += 1; return 1;               //  LD (HL+), A
       case (0x23) : this.cpur.PC += 1; return 1;               //  INC HL
       case (0x24) : this.cpur.PC += 1; return 1;               //  INC H
@@ -163,7 +163,7 @@ class Z80 {
       case (0x2F) : this.cpur.PC += 1; return 1;               //  CPL
 
       case (0x30) : return _JR_NC_e();                         //  JR NC, e
-      case (0x31) : this.cpur.PC += 1; return 1;               //  LD SP, d16
+      case (0x31) : this.cpur.PC += 1; return 1;               //  LD SP, nn
       case (0x32) : this.cpur.PC += 1; return 1;               //  LD (HL-), A
       case (0x33) : this.cpur.PC += 1; return 1;               //  INC SP
       case (0x34) : this.cpur.PC += 1; return 1;               //  INC (HL)
@@ -387,7 +387,7 @@ class Z80 {
       case (0xF6) : this.cpur.PC += 1; return 1;               //  OR d8
       case (0xF7) : return _RST_30H();                         //  RST 30H
 
-      case (0xF8) : this.cpur.PC += 1; return 1;               //  LD HL, SP+r8
+      case (0xF8) : this.cpur.PC += 1; return 1;               //  LD HL, SP+e
       case (0xF9) : this.cpur.PC += 1; return 1;               //  LD SP, HL
       case (0xFA) : this.cpur.PC += 1; return 1;               //  LD A, (a16)
       case (0xFB) : this.cpur.PC += 1; return 1;               //  EI
