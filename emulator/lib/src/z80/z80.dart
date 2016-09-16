@@ -830,7 +830,7 @@ class Z80 {
   /* Accu */
   int _RLCA() {
     final val = this.cpur.pull8(Reg8.A);
-    final newbit = this.cpur.cy;
+    final newbit = val >> 7;
     final res = _SL_calculate(val, newbit);
     this.cpur.push8(Reg8.A, res);
     this.cpur.z = 0;
@@ -840,7 +840,7 @@ class Z80 {
 
   int _RLA() {
     final val = this.cpur.pull8(Reg8.A);
-    final newbit = val >> 7;
+    final newbit = this.cpur.cy;
     final res = _SL_calculate(val, newbit);
     this.cpur.push8(Reg8.A, res);
     this.cpur.z = 0;
@@ -850,7 +850,7 @@ class Z80 {
 
   int _RRCA() {
     final val = this.cpur.pull8(Reg8.A);
-    final newbit = this.cpur.cy;
+    final newbit = val & 0x1;
     final res = _SR_calculate(val, newbit);
     this.cpur.push8(Reg8.A, res);
     this.cpur.z = 0;
@@ -860,7 +860,7 @@ class Z80 {
 
   int _RRA() {
     final val = this.cpur.pull8(Reg8.A);
-    final newbit = val & 0x1;
+    final newbit = this.cpur.cy;
     final res = _SR_calculate(val, newbit);
     this.cpur.push8(Reg8.A, res);
     this.cpur.z = 0;
@@ -871,38 +871,38 @@ class Z80 {
   /* Registers */
   int _RLC(Reg8 r) {
     final val = this.cpur.pull8(r);
-    final newbit = this.cpur.cy;
-    final res = _SL_calculate(val, newbit);
-    this.cpur.push8(r, res);
-    this.cpur.PC += 2;
-    return 4;
-  }
-
-  int _RL(Reg8 r) {
-    final val = this.cpur.pull8(r);
     final newbit = val >> 7;
     final res = _SL_calculate(val, newbit);
     this.cpur.push8(r, res);
     this.cpur.PC += 2;
-    return 4;
+    return 8;
+  }
+
+  int _RL(Reg8 r) {
+    final val = this.cpur.pull8(r);
+    final newbit = this.cpur.cy;
+    final res = _SL_calculate(val, newbit);
+    this.cpur.push8(r, res);
+    this.cpur.PC += 2;
+    return 8;
   }
 
   int _RRC(Reg8 r) {
-    final val = this.cpur.pull8(r);
-    final newbit = this.cpur.cy;
-    final res = _SR_calculate(val, newbit);
-    this.cpur.push8(r, res);
-    this.cpur.PC += 2;
-    return 4;
-  }
-
-  int _RR(Reg8 r) {
     final val = this.cpur.pull8(r);
     final newbit = val & 0x1;
     final res = _SR_calculate(val, newbit);
     this.cpur.push8(r, res);
     this.cpur.PC += 2;
-    return 4;
+    return 8;
+  }
+
+  int _RR(Reg8 r) {
+    final val = this.cpur.pull8(r);
+    final newbit = this.cpur.cy;
+    final res = _SR_calculate(val, newbit);
+    this.cpur.push8(r, res);
+    this.cpur.PC += 2;
+    return 8;
   }
 
   int _SLA(Reg8 r) { /* Shift Left: bit-0 is unset */
@@ -935,38 +935,38 @@ class Z80 {
   /* Memory */
   int _RLC_HL() {
     final val = _mmu.pull8(this.cpur.HL);
-    final newbit = this.cpur.cy;
-    final res = _SL_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
-    this.cpur.PC += 2;
-    return 4;
-  }
-
-  int _RL_HL() {
-    final val = _mmu.pull8(this.cpur.HL);
     final newbit = val >> 7;
     final res = _SL_calculate(val, newbit);
     _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 4;
+    return 16;
+  }
+
+  int _RL_HL() {
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = this.cpur.cy;
+    final res = _SL_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
+    this.cpur.PC += 2;
+    return 16;
   }
 
   int _RRC_HL() {
-    final val = _mmu.pull8(this.cpur.HL);
-    final newbit = this.cpur.cy;
-    final res = _SR_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
-    this.cpur.PC += 2;
-    return 4;
-  }
-
-  int _RR_HL() {
     final val = _mmu.pull8(this.cpur.HL);
     final newbit = val & 0x1;
     final res = _SR_calculate(val, newbit);
     _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 4;
+    return 16;
+  }
+
+  int _RR_HL() {
+    final val = _mmu.pull8(this.cpur.HL);
+    final newbit = this.cpur.cy;
+    final res = _SR_calculate(val, newbit);
+    _mmu.push8(this.cpur.HL, res);
+    this.cpur.PC += 2;
+    return 16;
   }
 
   int _SLA_HL() { /* Shift Left: bit-0 is unset */
@@ -975,7 +975,7 @@ class Z80 {
     final res = _SL_calculate(val, newbit);
     _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 8;
+    return 16;
   }
 
   int _SRL_HL() { /* Shift Right: bit-7 is unset */
@@ -984,7 +984,7 @@ class Z80 {
     final res = _SR_calculate(val, newbit);
     _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 8;
+    return 16;
   }
 
   int _SRA_HL() { /* Shift Right but bit-7 is not changed */
@@ -993,7 +993,7 @@ class Z80 {
     final res = _SR_calculate(val, newbit);
     _mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
-    return 8;
+    return 16;
   }
 
   /* SWAP */
