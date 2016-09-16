@@ -171,7 +171,7 @@ class Z80 {
       case (0x36) : this.cpur.PC += 1; return 1;               //  LD (HL), d8
       case (0x37) : this.cpur.PC += 1; return 1;               //  SCF
 
-      case (0x38) : return _JR_C_e();                           //  JR C, e
+      case (0x38) : return _JR_C_e();                          //  JR C, e
       case (0x39) : this.cpur.PC += 1; return 1;               //  ADD HL, SP
       case (0x3A) : this.cpur.PC += 1; return 1;               //  LD A, (HL-)
       case (0x3B) : this.cpur.PC += 1; return 1;               //  DEC SP
@@ -270,23 +270,23 @@ class Z80 {
       case (0x8E) : return _ADC_HL();                          //  ADC A, (HL)
       case (0x8F) : return _ADC_r(Reg8.A);                     //  ADC A, A
 
-      case (0x90) : this.cpur.PC += 1; return 1;               //  SUB B
-      case (0x91) : this.cpur.PC += 1; return 1;               //  SUB C
-      case (0x92) : this.cpur.PC += 1; return 1;               //  SUB D
-      case (0x93) : this.cpur.PC += 1; return 1;               //  SUB E
-      case (0x94) : this.cpur.PC += 1; return 1;               //  SUB H
-      case (0x95) : this.cpur.PC += 1; return 1;               //  SUB L
-      case (0x96) : this.cpur.PC += 1; return 1;               //  SUB (HL)
-      case (0x97) : this.cpur.PC += 1; return 1;               //  SUB A
+      case (0x90) : return _SUB_r(Reg8.B);                     //  SUB B
+      case (0x91) : return _SUB_r(Reg8.C);                     //  SUB C
+      case (0x92) : return _SUB_r(Reg8.D);                     //  SUB D
+      case (0x93) : return _SUB_r(Reg8.E);                     //  SUB E
+      case (0x94) : return _SUB_r(Reg8.H);                     //  SUB H
+      case (0x95) : return _SUB_r(Reg8.L);                     //  SUB L
+      case (0x96) : return _SUB_HL();                          //  SUB (HL)
+      case (0x97) : return _SUB_r(Reg8.A);                     //  SUB A
 
-      case (0x98) : this.cpur.PC += 1; return 1;               //  SBC A, B
-      case (0x99) : this.cpur.PC += 1; return 1;               //  SBC A, C
-      case (0x9A) : this.cpur.PC += 1; return 1;               //  SBC A, D
-      case (0x9B) : this.cpur.PC += 1; return 1;               //  SBC A, E
-      case (0x9C) : this.cpur.PC += 1; return 1;               //  SBC A, H
-      case (0x9D) : this.cpur.PC += 1; return 1;               //  SBC A, L
-      case (0x9E) : this.cpur.PC += 1; return 1;               //  SBC A, (HL)
-      case (0x9F) : this.cpur.PC += 1; return 1;               //  SBC A, A
+      case (0x98) : return _SBC_r(Reg8.B);                     //  SBC A, B
+      case (0x99) : return _SBC_r(Reg8.C);                     //  SBC A, C
+      case (0x9A) : return _SBC_r(Reg8.D);                     //  SBC A, D
+      case (0x9B) : return _SBC_r(Reg8.E);                     //  SBC A, E
+      case (0x9C) : return _SBC_r(Reg8.H);                     //  SBC A, H
+      case (0x9D) : return _SBC_r(Reg8.L);                     //  SBC A, L
+      case (0x9E) : return _SBC_HL();                          //  SBC A, (HL)
+      case (0x9F) : return _SBC_r(Reg8.A);                     //  SBC A, A
 
       case (0xA0) : return _AND_r(Reg8.B);                     //  AND B
       case (0xA1) : return _AND_r(Reg8.C);                     //  AND C
@@ -315,26 +315,26 @@ class Z80 {
       case (0xB6) : return _OR_HL();                           //  OR (HL)
       case (0xB7) : return _OR_r(Reg8.A);                      //  OR A
 
-      case (0xB8) : this.cpur.PC += 1; return 1;               //  CP B
-      case (0xB9) : this.cpur.PC += 1; return 1;               //  CP C
-      case (0xBA) : this.cpur.PC += 1; return 1;               //  CP D
-      case (0xBB) : this.cpur.PC += 1; return 1;               //  CP E
-      case (0xBC) : this.cpur.PC += 1; return 1;               //  CP H
-      case (0xBD) : this.cpur.PC += 1; return 1;               //  CP L
-      case (0xBE) : this.cpur.PC += 1; return 1;               //  CP (HL)
-      case (0xBF) : this.cpur.PC += 1; return 1;               //  CP A
+      case (0xB8) : return _CP_r(Reg8.B);                      //  CP B
+      case (0xB9) : return _CP_r(Reg8.C);                      //  CP C
+      case (0xBA) : return _CP_r(Reg8.D);                      //  CP D
+      case (0xBB) : return _CP_r(Reg8.E);                      //  CP E
+      case (0xBC) : return _CP_r(Reg8.H);                      //  CP H
+      case (0xBD) : return _CP_r(Reg8.L);                      //  CP L
+      case (0xBE) : return _CP_HL();                           //  CP (HL)
+      case (0xBF) : return _CP_r(Reg8.A);                      //  CP A
 
-      case (0xC0) : this.cpur.PC += 1; return 1;               //  RET NZ
-      case (0xC1) : this.cpur.PC += 1; return 1;               //  POP BC
+      case (0xC0) : return _RET_NZ();                          //  RET NZ
+      case (0xC1) : return _POP(Reg16.BC);                     //  POP BC
       case (0xC2) : return _JP_NZ_nn();                        //  JP NZ, nn
       case (0xC3) : return _JP_nn();                           //  JP nn
       case (0xC4) : return _CALL_NZ_nn();                      //  CALL NZ, nn
-      case (0xC5) : this.cpur.PC += 1; return 1;               //  PUSH BC
+      case (0xC5) : return _PUSH(Reg16.BC);                    //  PUSH BC
       case (0xC6) : this.cpur.PC += 1; return 1;               //  ADD A, d8
       case (0xC7) : return _RST_00H();                         //  RST 00H
 
-      case (0xC8) : this.cpur.PC += 1; return 1;               //  RET Z
-      case (0xC9) : this.cpur.PC += 1; return 1;               //  RET
+      case (0xC8) : return _RET_Z();                           //  RET Z
+      case (0xC9) : return _RET();                             //  RET
       case (0xCA) : return _JP_Z_nn();                         //  JP Z, nn
       case (0xCB) : return _execInst_CB();                     //  0xCB: PREFIX
       case (0xCC) : return _CALL_Z_nn();                       //  CALL Z, nn
@@ -342,17 +342,17 @@ class Z80 {
       case (0xCE) : this.cpur.PC += 1; return 1;               //  ADC A, d8
       case (0xCF) : return _RST_08H();                         //  RST 08H
 
-      case (0xD0) : this.cpur.PC += 1; return 1;               //  RET NC
-      case (0xD1) : this.cpur.PC += 1; return 1;               //  POP DE
+      case (0xD0) : return _RET_NC();                          //  RET NC
+      case (0xD1) : return _POP(Reg16.DE);                     //  POP DE
       case (0xD2) : return _JP_NC_nn();                        //  JP NC, nn
       case (0xD3) : return _NOP();                             //  0xD3: N/A
       case (0xD4) : return _CALL_NC_nn();                      //  CALL NC, nn
-      case (0xD5) : this.cpur.PC += 1; return 1;               //  PUSH DE
-      case (0xD6) : this.cpur.PC += 1; return 1;               //  SUB d8
+      case (0xD5) : return _PUSH(Reg16.DE);                    //  PUSH DE
+      case (0xD6) : return _SUB_n();                           //  SUB n
       case (0xD7) : return _RST_10H();                         //  RST 10H
 
-      case (0xD8) : this.cpur.PC += 1; return 1;               //  RET C
-      case (0xD9) : this.cpur.PC += 1; return 1;               //  RETI
+      case (0xD8) : return _RET_C();                           //  RET C
+      case (0xD9) : return _RETI();                            //  RETI
       case (0xDA) : return _JP_C_nn();                         //  JP C, nn
       case (0xDB) : return _NOP();                             //  0xDB: N/A
       case (0xDC) : return _CALL_C_nn();                       //  CALL C, nn
@@ -361,11 +361,11 @@ class Z80 {
       case (0xDF) : return _RST_18H();                         //  RST 18H
 
       case (0xE0) : this.cpur.PC += 1; return 1;               //  LDH (a8), A
-      case (0xE1) : this.cpur.PC += 1; return 1;               //  POP HL
+      case (0xE1) : return _POP(Reg16.HL);                     //  POP HL
       case (0xE2) : this.cpur.PC += 1; return 1;               //  LD (C), A
       case (0xE3) : return _NOP();                             //  0xE3: N/A
       case (0xE4) : return _NOP();                             //  0xE4: N/A
-      case (0xE5) : this.cpur.PC += 1; return 1;               //  PUSH HL
+      case (0xE5) : return _PUSH(Reg16.HL);                    //  PUSH HL
       case (0xE6) : this.cpur.PC += 1; return 1;               //  AND d8
       case (0xE7) : return _RST_20H();                         //  RST 20H
 
@@ -379,11 +379,11 @@ class Z80 {
       case (0xEF) : return _RST_28H();                         //  RST 28H
 
       case (0xF0) : this.cpur.PC += 1; return 1;               //  LDH A, (a8)
-      case (0xF1) : this.cpur.PC += 1; return 1;               //  POP AF
+      case (0xF1) : return _POP(Reg16.AF);                     //  POP AF
       case (0xF2) : this.cpur.PC += 1; return 1;               //  LD A, (C)
       case (0xF3) : this.cpur.PC += 1; return 1;               //  DI
       case (0xF4) : return _NOP();                             //  0xF4: N/A
-      case (0xF5) : this.cpur.PC += 1; return 1;               //  PUSH AF
+      case (0xF5) : return _PUSH(Reg16.AF);                    //  PUSH AF
       case (0xF6) : this.cpur.PC += 1; return 1;               //  OR d8
       case (0xF7) : return _RST_30H();                         //  RST 30H
 
@@ -698,6 +698,52 @@ class Z80 {
   }
 
   /* 8-bits Loads *************************************************************/
+  void _LD_r(Reg8 r, int val){
+    assert(val & ~0xFF == 0);
+    this.cpur.push8(r, val);
+  }
+
+  void _LD_n(int addr, int val){
+    assert(val & ~0xFF == 0);
+    _this.cpur.push8(r, val);
+  }
+
+  /* Registers */
+  int _LD_r_r(Reg8 r1, Reg8 r2){
+    final int val = this.cpur.pull8(r2);
+    _LD_r(r1, val);
+    this.cpur.PC += 1;
+    return 4;
+  }
+
+  int _LD_r_n(){
+    final int val = _mmu.pull8(this.cpur.PC + 1);
+    _LD_r(r1, val);
+    return 8;
+  }
+
+  int _LD_r_HL(){
+    final int val = _mmu.pull8(this.cpur.HL);
+    _LD_r(r1, val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  /* Memory */
+  // int _LD_n_r(Reg8 r){
+  //   final int val = this.cpur.pull8(r2);
+  //   _LD_n(r1, val);
+  //   this.cpur.PC += 1;
+  //   return 4;
+  // }
+
+  // int _LD_n_HL(){
+  //   final int val = _mmu.pull8(this.cpur.HL);
+  //   _LD_r(r1, val);
+  //   this.cpur.PC += 1;
+  //   return 8;
+  // }
+
   /* 16-bits Loads ************************************************************/
   int _LD_rr_nn(Reg16 r) {
     final int val = _mmu.pull16(this.cpur.PC + 1);
@@ -739,7 +785,7 @@ class Z80 {
     return 16;
   }
 
-  int _PULL(Reg16 r) {
+  int _POP(Reg16 r) {
     final int val = _mmu.pull16(this.cpur.SP);
     this.cpur.push16(r, val);
     this.cpur.SP += 2;
