@@ -697,14 +697,58 @@ class Z80 {
     throw new Exception('z80: CB Prefix: Opcode ${Ft.toAddressString(op, 4)} not suported');
   }
 
+  /* 8-bits Loads *************************************************************/
+  /* 16-bits Loads ************************************************************/
+
+
+
+  /* 16-bits ALU **************************************************************/
+  int _ADD16_calculate(int l, int r) {
+    assert((l & ~0xFFFF == 0) && (r & ~0xFFFF == 0));
+    final int calculated = l + r;
+    final int result = calculated & 0xFFFF;
+    this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xFF) + (r & 0xFF) > 0xFF) ? 1 : 0;
+    return result;
+  }
+
+  int _ADD_HL_r(Reg16 r) {
+    final int val = this.cpur.pull16(r);
+    this.cpur.HL = _ADD16_calculate(this.cpur.HL, val);
+    this.cpur.n = 0;
+    return 8;
+  }
+
+  int _ADD_SP_e() {
+    final int val = _mmu.pull8(this.cpur.PC + 1);
+    this.cpur.HL = _ADD16_calculate(this.cpur.HL, val);
+    this.cpur.n = 0;
+    this.cpur.z = 0;
+    return 16;
+  }
+
+  int _INC_rr(Reg16 r) {
+    final int val = this.cpur.pull16(r);
+    final int res = (val + 1) & 0xFFFF;
+    this.cpur.push16(r, res);
+    return 8;
+  }
+
+  int _DEC_rr(Reg16 r) {
+    final int val = this.cpur.pull16(r);
+    final int res = (val - 1) & 0xFFFF;
+    this.cpur.push16(r, res);
+    return 8;
+  }
+
   /* 8-bits ALU ***************************************************************/
-  /* ADD */
+  /* ADD **********************************************************************/
   int _ADD_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
     final int calculated = l + r;
     final int result = calculated & 0xFF;
-    this.cpur.cy = calculated >> 8;
-    this.cpur.h = (calculated >> 3) & 0x1;
+    this.cpur.cy = ((l + r) > 0xFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xF) + (r & 0xF) > 0xF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = result;
     return result;
@@ -774,11 +818,105 @@ class Z80 {
     return 12;
   }
 
-  /* SUB */
+  /* SUB **********************************************************************/
   int _SUB_calculate(int l, int r) {
+    assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
+    final int calculated = l - r;
+    final int result = calculated & 0xFF;
+    this.cpur.cy = (l < r) ? 1 : 0;
+    this.cpur.h = ((l & 0xF) < (r & 0xF)) ? 1 : 0;
+    this.cpur.n = 1;
+    this.cpur.z = result;
+    return result;
+  }
+
+  int _SUB_r(Reg8 r) {
+    final int val = this.cpur.pull8(r);
+    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 1;
+    return 4;
+  }
+
+  int _SUB_n() {
+    final int val = _mmu.pull8(this.cpur.PC + 1);
+    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _SUB_HL() {
+    final int val = _mmu.pull8(this.cpur.HL);
+    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  /* SBC */
+  int _SBC_r(Reg8 r) {
+    final int val = this.cpur.pull8(r) + this.cpur.cy;
+    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 1;
+    return 4;
+  }
+
+  int _SBC_n() {
+    final int val = _mmu.pull8(this.cpur.PC + 1) + this.cpur.cy;
+    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _SBC_HL() {
+    final int val = _mmu.pull8(this.cpur.HL) + this.cpur.cy;
+    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  /* DEC */
+  int _DEC_r(Reg8 r) {
+    final int cy_old = this.cpur.cy;
+    final int val = this.cpur.pull8(r);
+    final int res = _SUB_calculate(val, 1);
+    this.cpur.push8(r, res);
+    this.cpur.cy = cy_old;
+    this.cpur.PC += 1;
+    return 4;
+  }
+
+  int _DEC_HL() {
+    final int cy_old = this.cpur.cy;
+    final int val = _mmu.pull8(this.cpur.HL);
+    final int res = _SUB_calculate(val, 1);
+    _mmu.push8(this.cpur.HL, res);
+    this.cpur.cy = cy_old;
+    this.cpur.PC += 1;
     return 12;
   }
 
+  /* CP */
+  int _CP_r(Reg8 r) {
+    final int val = this.cpur.pull8(r);
+    _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 1;
+    return 4;
+  }
+
+  int _CP_n() {
+    final int val = _mmu.pull8(this.cpur.PC + 1);
+    _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 2;
+    return 8;
+  }
+
+  int _CP_HL() {
+    final int val = _mmu.pull8(this.cpur.HL);
+    _SUB_calculate(this.cpur.A, val);
+    this.cpur.PC += 1;
+    return 8;
+  }
+
+  /* Logic ********************************************************************/
   /* Logical AND */
   int _AND_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
