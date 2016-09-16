@@ -1187,11 +1187,14 @@ class Z80 {
   int _RET_cc(bool cc)
   {
     if (cc)
-      return _RET();
+    {
+      _RET();
+      return 20 ;
+    }
     else
     {
       this.cpur.PC += 3;
-      return 16;
+      return 8;
     }
   }
 
