@@ -896,7 +896,7 @@ class Z80 {
     this.cpur.cy = ((l + r) > 0xFF) ? 1 : 0;
     this.cpur.h = ((l & 0xF) + (r & 0xF) > 0xF) ? 1 : 0;
     this.cpur.n = 0;
-    this.cpur.z = result;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
   }
 
@@ -972,7 +972,7 @@ class Z80 {
     this.cpur.cy = (l < r) ? 1 : 0;
     this.cpur.h = ((l & 0xF) < (r & 0xF)) ? 1 : 0;
     this.cpur.n = 1;
-    this.cpur.z = result;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
   }
 
@@ -1071,7 +1071,7 @@ class Z80 {
     this.cpur.cy = 0;
     this.cpur.h = 1;
     this.cpur.n = 0;
-    this.cpur.z = result;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
   }
 
@@ -1104,7 +1104,7 @@ class Z80 {
     this.cpur.cy = 0;
     this.cpur.h = 0;
     this.cpur.n = 0;
-    this.cpur.z = result;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
   }
 
@@ -1137,7 +1137,7 @@ class Z80 {
     this.cpur.cy = 0;
     this.cpur.h = 0;
     this.cpur.n = 0;
-    this.cpur.z = result;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
   }
 
@@ -1257,24 +1257,24 @@ class Z80 {
     assert(val & ~0xFF == 0);
     assert(newbit & ~0x1 == 0);
     final int cy_new = val >> 7;
-    final int val_new = ((val << 1) | newbit) & 0xFF;
+    final int result = ((val << 1) | newbit) & 0xFF;
     this.cpur.cy = cy_new;
     this.cpur.h = 0;
     this.cpur.n = 0;
-    this.cpur.z = val_new;
-    return val_new;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
+    return result;
   }
 
   int _SR_calculate(int val, int newbit) {
     assert(val & ~0xFF == 0);
     assert(newbit & ~0x1 == 0);
     final int cy_new = val & 0x1;
-    final int val_new = (val >> 1) | (newbit << 7);
+    final int result = (val >> 1) | (newbit << 7);
     this.cpur.cy = cy_new;
     this.cpur.h = 0;
     this.cpur.n = 0;
-    this.cpur.z = val_new;
-    return val_new;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
+    return result;
   }
 
   /* Accu */
@@ -1451,11 +1451,11 @@ class Z80 {
     assert(val & ~0xFF == 0);
     final int h = (val >> 4);
     final int l = (val & 0xFF);
-    final int res = h | (l << 4);
+    final int result = h | (l << 4);
     this.cpur.cy = 0;
     this.cpur.h = 0;
     this.cpur.n = 0;
-    this.cpur.z = res;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return res;
   }
 

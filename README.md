@@ -9,8 +9,6 @@ pub serve
 
 # BUG
 
-- Zero flag is inversed (0 when null insted of 1)
-
 # Todos
 
 - Check operands where a signed byte 'e' is added
