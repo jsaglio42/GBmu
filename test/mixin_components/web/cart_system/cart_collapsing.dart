@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:26:43 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/17 18:08:49 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/17 19:39:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -81,12 +81,14 @@ class ClosableCartController {
     assert(that != _inGbOpt, "_onCartButtonClicked() that in gb");
     if (_openingOpt == null) {
       if (that == _openedOpt) {
+
         // Click to close
 
         that.cc_startClose();
         _setOpenedOpt(null);
       }
       else {
+
         // Click to open
 
         that.cc_startOpen();
@@ -109,6 +111,7 @@ class ClosableCartController {
 
   void _onCartInGbOpt(ClosableCart that) {
     if (that != null) {
+
       // that to GB
 
       assert(_openedOpt == that, '_onCartInGbOpt() a cart not opened');
@@ -119,6 +122,7 @@ class ClosableCartController {
       _inGbOpt = that;
     }
     else {
+
       // _inGbOpt out of GB
 
       assert(_inGbOpt != null, '_onCartInGbOpt() without one in');

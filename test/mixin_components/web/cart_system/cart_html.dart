@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:35:57 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/17 18:05:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/17 20:36:53 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -37,7 +37,6 @@ abstract class CartHtml {
   }
 
   // PUBLIC ***************************************************************** **
-
   Html.Element get elt => _elt;
   Js.JsObject get jsElt => new Js.JsObject.fromBrowserObject(_elt);
   Js.JsObject get jqElt => Js.context.callMethod(r'$', [this.jsElt]);
