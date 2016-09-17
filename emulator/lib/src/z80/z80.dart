@@ -62,8 +62,7 @@ class Z80 {
     _clockCount += nbClock;
     while (nbClock-- > 0)
     {
-      if (_clockWait <= 0)
-      {
+      if (_clockWait <= 0) {
         _clockWait = _execInst();
         _clockWait = 1; /* <- Used for debug */
       }
@@ -864,9 +863,9 @@ class Z80 {
 
   int _LD_HL_SP_e() {
     final int l = this.cpur.SP;
-    final int r = _mmu.pull8(this.cpur.PC + 1).toSigned(16);
+    final int r = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
     this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
-    this.cpur.h = ((l & 0xFF) + (r & 0xFF) > 0xF) ? 1 : 0;
+    this.cpur.h = ((l & 0xFF) + r > 0xFF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = 0;
     this.cpur.HL = (l + r) & 0xFFFF;
@@ -1184,10 +1183,13 @@ class Z80 {
   }
 
   int _ADD_SP_e() {
-    final int val = _mmu.pull8(this.cpur.PC + 1).toSigned(16);
-    this.cpur.HL = _ADD16_calculate(this.cpur.HL, val);
+    final int l = this.cpur.SP;
+    final int r = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
+    this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xFF) + r > 0xFF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = 0;
+    this.cpur.SP = (l + r) & 0xFFFF;
     this.cpur.PC += 2;
     return 16;
   }
@@ -1579,8 +1581,8 @@ class Z80 {
 
   /* 8 bit */
   int _JR_e() {
-    final int offset = _mmu.pull8(this.cpur.PC + 1).toSigned(16);
-    this.cpur.PC += offset;
+    final int offset = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
+    this.cpur.PC = (this.cpur.PC + 2 + offset) & 0xFFFF;
     return 12;
   }
 
