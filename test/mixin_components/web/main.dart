@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/17 18:19:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/18 17:46:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 // import './component_system.dart';
 // import './component_system_dom.dart';
 import './cart_system/mixin_assembly.dart';
-import './cart_system/cart_system_controller.dart' as Csc;
+import './cart_system/controller_cart_system.dart' as Csc;
 import './cart_system/globals.dart';
 // import './chip.dart';
 // import './toplevel_banks.dart';
@@ -117,7 +117,8 @@ Async.Future init(Emulator.Emulator emu) async {
 
   await g_csc.init();
 
-  Cart c = new Cart(cartHtml, _domCartValidator);
+  DomCart c = new DomCart(cartHtml, _domCartValidator);
+  // DomChipSocket c = new DomChipSocket();
 
 //   g_cartBank = new CartBank(cartHtml, _domCartValidator);
 //   g_dChipBank = new DetachedChipBank();

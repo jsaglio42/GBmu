@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   drop_zone.dart                                     :+:      :+:    :+:   //
+//   html_dropzone.dart                                 :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/17 18:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/17 20:47:36 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/18 17:26:29 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/18 17:36:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,60 +22,64 @@ import 'package:ft/ft.dart' as Ft;
 import './mixin_interfaces.dart';
 import './globals.dart';
 
-// DropZone to DropRegion? DropArea?
-abstract class DropZone implements HtmlElement_intf {
+// Holds HTML interactions
+abstract class HtmlDropZone implements HtmlElement_intf {
 
   // ATTRIBUTES ************************************************************* **
   List<bool> _activePairOpt = null;
+  bool _tooltipActive = false;
   Map<bool, Map<bool, String>> _classesOpt;
 
   // CONSTRUCTION *********************************************************** **
-  // Parameter format:
+  // `_classesOpt` parameter format:
   // {true:  {true:  hover&suitable, false:  hover&!suitable},
   //  false: {true: !hover&suitable, false: !hover&!suitable},}
-  void dz_init(Map<bool, Map<bool, String>> classesOpt) {
-    Ft.log('DropZone', 'dr_init');
-    _facesOpt = facesOpt;
+  void hdz_init(this._classesOpt) {
+    Ft.log('HtmlDropZone', 'hdz_init');
 
     this.jqElt.callMethod('droppable', [new Js.JsObject.jsify({
       'drop': _onDrop,
       'over': _onEnter,
       'out': _onLeave,
     })]);
-
+    this.jqElt.callMethod('droppable', ['disable']);
   }
 
   // PUBLIC ***************************************************************** **
-  void dz_enable() {
+  // `GameBoySocket` is disabled if full
+  // `DetachedCartBank` is never disabled
+  // `DetachedChipBank` is never disabled
+  // `ChipSocket` is disabled if `full` or `in closed cart`
+  void hdz_enable() {
+    assert(__stateChangeValid(true), "hdz_enable() invalid");
     this.jqElt.callMethod('droppable', ['enable']);
-    // TODO?: notify activation status as a DropZone
   }
 
-  void dz_disable() {
+  void hdz_disable() {
+    assert(__stateChangeValid(false), "hdz_disable() invalid");
     this.jqElt.callMethod('droppable', ['disable']);
-    // TODO?: notify activation status as a DropZone
   }
 
-  void dz_take(Draggable that); // ABSTRACT
-  void dz_lose(Draggable that); // ABSTRACT
-
-  void dz_setFace(bool hover, bool suitable) {
-    this.dz_unsetAllFace();
+  void hdz_setFace(bool hover, bool suitable) {
+    assert(__enabled, "hdz_setFace() invalid");
+    _cleanCurrentOptClass();
     if (_classesOpt[hover][suitable] != null) {
       this.elt.classes.add(_classesOpt[hover][suitable]);
       _activePairOpt = <bool>[hover, suitable];
     }
   }
 
-  void dz_unsetAllFace() {
-    if (_activePairOpt != null) {
-      this.elt.classes.remove(
-          _classesOpt[_activePairOpt[0]][_activePairOpt[1]]);
-      _activePairOpt = null;
-    }
+  void hdz_setTooltip(String msg) {
+    assert(__enabled, "hdz_setTooltip() invalid");
+    _cleanCurrentOptTooltip();
+    // TODO: set tooltip
+    _tooltipActive = true;
   }
 
-  void dz_setTooltip(String msg) { //TODO ?
+  void hdz_unsetAllStyles() {
+    assert(__enabled, "hdz_unsetAllStyles() invalid");
+    _cleanCurrentOptClass();
+    _cleanCurrentOptTooltip();
   }
 
   // CALLBACKS ************************************************************** **
@@ -92,5 +96,31 @@ abstract class DropZone implements HtmlElement_intf {
   }
 
   // PRIVATE **************************************************************** **
+  void _cleanCurrentOptClass() {
+    if (_activePairOpt != null) {
+      this.elt.classes.remove(
+          _classesOpt[_activePairOpt[0]][_activePairOpt[1]]);
+      _activePairOpt = null;
+    }
+  }
+
+  void _cleanCurrentOptTooltip() {
+    if (_tooltipActive) {
+      // TODO: remove tooltip
+      _tooltipActive = false;
+    }
+  }
+
+  // INVARIANTS ************************************************************* **
+  bool __enabled = false;
+
+  bool __stateChangeValid(bool state) {
+    if (state == __enabled)
+      return false;
+    else {
+      __enabled = state;
+      return true;
+    }
+  }
 
 }

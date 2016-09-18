@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/17 18:36:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/18 17:29:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,31 +19,44 @@ import 'dart:typed_data';
 
 import 'package:ft/ft.dart' as Ft;
 
-import './cart_html.dart';
-import './cart_collapsing.dart';
 import './mixin_interfaces.dart';
-import './draggable.dart';
-// import './cart.dart';
-// import './cart.dart';
-// import './cart.dart';
-// import './cart.dart';
-// import './cart.dart';
+import './html_cart_element.dart';
+import './html_cart_closable.dart';
+import './html_draggable.dart';
+import './html_chipsocket_element.dart';
+import './html_dropzone.dart';
+// import './.dart';
+// import './.dart';
+// import './.dart';
 
 // Caution: Mixins are partially ordered. Concerns imports/implements/init
-class Cart extends Object
-  with CartHtml
-  , ClosableCart
-  , Draggable
+class DomCart extends Object
+  with HtmlCartElement
+  , HtmlCartClosable
+  , HtmlDraggable
   implements HtmlElement_intf
 {
 
-  Cart(String cartHtml, Html.NodeValidator v)
-  {
-    Ft.log('cart', 'constructor');
-    this.ch_init(cartHtml, v);
-    this.cc_init();
-    this.dr_init(125, 143, 75, 99);
+  DomCart(String cartHtml, Html.NodeValidator v) {
+    Ft.log('Cart', 'constructor');
+    this.hce_init(cartHtml, v);
+    this.hcc_init();
+    this.hdr_init(125, 143, 75, 99);
   }
 
+}
+
+class DomChipSocket extends Object
+  with ChipSocketHtmlElement
+  , HtmlDropZone
+  implements HtmlElement_intf
+{
+
+  ChipSocket(Html.Element elt)
+  {
+    Ft.log('ChipSocket', 'constructor');
+    this.hcs_init(elt);
+    this.hdz_init();
+  }
 
 }

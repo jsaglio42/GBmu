@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   cart_collapsing.dart                               :+:      :+:    :+:   //
+//   controller_html_cart_closable.dart                 :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/17 16:26:43 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/17 19:39:43 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/18 17:38:12 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/18 17:38:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,88 +20,47 @@ import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
 
 import './globals.dart';
-import './cart_html.dart';
+import './html_cart_closable.dart';
 
-abstract class ClosableCart implements CartHtml {
-
-  // CONSTRUCTION *********************************************************** **
-  void cc_init() {
-    Ft.log('ClosableCart', 'cc_init');
-    this.btn.onClick.forEach(_onClick);
-    this.jqBody.callMethod('on', ['shown.bs.collapse', _onShown]);
-  }
-
-  // PUBLIC ***************************************************************** **
-  void cc_startClose() {
-    // this.jqBody.callMethod('slideUp', []);
-    this.jqBody.callMethod('collapse', ["hide"]);
- }
-
-  void cc_startOpen() {
-    // this.jqBody.callMethod('slideDown', []);
-    this.jqBody.callMethod('collapse', ["show"]);
-  }
-
-  void cc_showButton() {
-    this.btn.disabled = false; //TODO: make mouse ignore button
-  }
-
-  void cc_hideButton() {
-    this.btn.disabled = true;
-  }
-
-  // CALLBACKS ************************************************************** **
-  void _onClick(_) {
-    g_csc.cartButtonClicked(this);
-  }
-
-  void _onShown(_) {
-    g_csc.cartDoneOpening(this);
-  }
-
-}
-
-class ClosableCartController {
+class ControllerHtmlCartClosable {
 
   // ATTRIBUTES ************************************************************* **
-  ClosableCart _inGbOpt;
-  ClosableCart _openedOpt;
-  ClosableCart _openingOpt;
+  HtmlCartClosable _inGbOpt;
+  HtmlCartClosable _openedOpt;
+  HtmlCartClosable _openingOpt;
 
   // CONSTRUCTION *********************************************************** **
   void init() {
-    Ft.log('ClosableCartController', 'init');
+    Ft.log('ControllerHtmlCartClosable', 'init');
     g_csc.onCartButtonClicked.forEach(_onCartButtonClicked);
     g_csc.onCartDoneOpening.forEach(_onCartDoneOpening);
     g_csc.onCartNew.forEach(_onCartNew);
   }
 
   // CALLBACKS ************************************************************** **
-  void _onCartButtonClicked(ClosableCart that) {
+  void _onCartButtonClicked(HtmlCartClosable that) {
     assert(that != _inGbOpt, "_onCartButtonClicked() that in gb");
     if (_openingOpt == null) {
       if (that == _openedOpt) {
 
         // Click to close
-
-        that.cc_startClose();
+        that.hcc_startClose();
         _setOpenedOpt(null);
       }
       else {
 
         // Click to open
-
-        that.cc_startOpen();
+        that.hcc_startOpen();
         _openingOpt = that;
         if (_openedOpt != null) {
-          _openedOpt.cc_startClose();
+          _openedOpt.hcc_startClose();
           _setOpenedOpt(null);
         }
       }
     }
   }
 
-  void _onCartDoneOpening(ClosableCart that) {
+  void _onCartDoneOpening(HtmlCartClosable that) {
     assert(that != _inGbOpt, "_onCartDoneOpening() that in gb");
     assert(that == _openingOpt, "_onCartDoneOpening() that not opening");
     assert(_openedOpt == null, "_onCartDoneOpening() with one open");
@@ -109,24 +68,22 @@ class ClosableCartController {
     _setOpenedOpt(that);
   }
 
-  void _onCartInGbOpt(ClosableCart that) {
+  void _onCartInGbOpt(HtmlCartClosable that) {
     if (that != null) {
 
       // that to GB
-
       assert(_openedOpt == that, '_onCartInGbOpt() a cart not opened');
       assert(_inGbOpt == null, '_onCartInGbOpt() with one in');
       assert(_openingOpt == null, '_onCartInGbOpt() with one opening');
       _setOpenedOpt(null);
-      that.cc_hideButton();
+      that.hcc_hideButton();
       _inGbOpt = that;
     }
     else {
 
       // _inGbOpt out of GB
-
       assert(_inGbOpt != null, '_onCartInGbOpt() without one in');
-      _inGbOpt.cc_showButton();
+      _inGbOpt.hcc_showButton();
       if (_openingOpt != null || _openedOpt != null)
         _inGbOpt.startClose();
       else
@@ -135,19 +92,19 @@ class ClosableCartController {
     }
   }
 
-  void _onCartNew(ClosableCart that) {
+  void _onCartNew(HtmlCartClosable that) {
     if (_openingOpt == null) {
       if (_openedOpt != null) {
-        _openedOpt.cc_startClose();
+        _openedOpt.hcc_startClose();
         _setOpenedOpt(null);
       }
-      that.cc_startOpen();
+      that.hcc_startOpen();
       _openingOpt = that;
     }
   }
 
   // PRIVATE **************************************************************** **
-  void _setOpenedOpt(ClosableCart that) {
+  void _setOpenedOpt(HtmlCartClosable that) {
     _openedOpt = that;
     g_csc.cartOpenedOpt(that);
   }

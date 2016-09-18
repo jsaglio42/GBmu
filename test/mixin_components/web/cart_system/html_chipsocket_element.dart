@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   globals.dart                                       :+:      :+:    :+:   //
+//   html_chipsocket_element.dart                       :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/17 17:02:10 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/18 17:33:56 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/18 17:22:26 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/18 17:28:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,6 +19,19 @@ import 'dart:typed_data';
 
 import 'package:ft/ft.dart' as Ft;
 
-import './controller_cart_system.dart';
+abstract class HtmlChipSocketElement {
 
-ControllerCartSystem g_csc;
+  // ATTRIBUTES ************************************************************* **
+  Html.Element _elt;
+
+  // CONSTRUCTION *********************************************************** **
+  void csh_init(this._elt) {
+    Ft.log('HtmlChipSocketElement', 'csh_init');
+  }
+
+  // PUBLIC ***************************************************************** **
+  Html.Element get elt => _elt;
+  Js.JsObject get jsElt => new Js.JsObject.fromBrowserObject(_elt);
+  Js.JsObject get jqElt => Js.context.callMethod(r'$', [this.jsElt]);
+
+}
