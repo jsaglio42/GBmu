@@ -80,6 +80,12 @@ class Mmu {
     this.push8(addr, byte);
   }
 
+  /* Timers */
+  // NEED TO ACCESS setDIV without push8 (behaviour is different)
+  void setDIV (int v) {
+    assert(v & ~0xFF == 0);
+  }
+
   /* Memory API ***************************************************************/
 
   int pull8(int memAddr)
