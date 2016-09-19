@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:31:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/18 17:38:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/19 12:42:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -83,10 +83,10 @@ class ControllerCartSystem {
   void dropEntered(HtmlDropZone that) => _dropEntered.add(that);
   Async.Stream<HtmlDropZone> get onDropEntered => _dropEntered.stream;
 
-  final Async.StreamController<HtmlDropZone> _dropLeaved =
+  final Async.StreamController<HtmlDropZone> _dropLeft =
     new Async.StreamController<HtmlDropZone>.broadcast();
-  void dropLeaved(HtmlDropZone that) => _dropLeaved.add(that);
-  Async.Stream<HtmlDropZone> get onDropLeaved => _dropLeaved.stream;
+  void dropLeft(HtmlDropZone that) => _dropLeft.add(that);
+  Async.Stream<HtmlDropZone> get onDropLeft => _dropLeft.stream;
 
   // Notified by CartDragDropController
   // Notified by ????

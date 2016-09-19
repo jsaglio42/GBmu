@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/18 17:46:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/19 13:11:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -42,8 +42,8 @@ final Html.NodeValidatorBuilder _domCartValidator =
   ..allowHtml5()
   ..allowElement('button', attributes: ['href', 'data-parent', 'data-toggle'])
   ..allowElement('th', attributes: ['style'])
-  ..allowElement('tr', attributes: ['style'])
-  ;
+  ..allowElement('tr', attributes: ['style']);
+
 final tetrisHead = new Uint8List.fromList(<int>[
   0xc3, 0x8b, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc3, 0x8b, 0x02, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,

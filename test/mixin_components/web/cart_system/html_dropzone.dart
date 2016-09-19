@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:26:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/18 17:36:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/19 12:42:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -92,7 +92,7 @@ abstract class HtmlDropZone implements HtmlElement_intf {
   }
 
   void _onLeave(_, __){
-    g_csc.dropZoneLeaved(that);
+    g_csc.dropZoneLeft(that);
   }
 
   // PRIVATE **************************************************************** **
