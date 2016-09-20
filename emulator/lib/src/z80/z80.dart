@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 10:19:54 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/20 14:49:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -64,7 +64,7 @@ class Z80 {
     {
       if (_clockWait <= 0) {
         _clockWait = _execInst();
-        _clockWait = 1; /* <- Used for debug */
+        // _clockWait = 1; /* <- Used for debug */
       }
       _clockWait--;
     }

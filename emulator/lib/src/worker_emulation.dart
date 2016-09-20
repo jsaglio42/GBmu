@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:33:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/20 15:42:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,6 +33,8 @@ final List<List> _loopingGBCombos = [
 
 final List<List> _activeAutoBreakCombos = [
   [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+    PauseExternalMode.Ineffective, AutoBreakExternalMode.Clock],
+  [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Instruction],
   [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Frame],
@@ -40,10 +42,11 @@ final List<List> _activeAutoBreakCombos = [
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Second],
 ];
 
-final Map<AutoBreakExternalMode, int> _autoBreakClocks = {
-  AutoBreakExternalMode.Instruction: 1,
-  AutoBreakExternalMode.Frame: GB_FRAME_PER_CLOCK_INT,
-  AutoBreakExternalMode.Second: GB_CPU_FREQ_INT,
+final Map<AutoBreakExternalMode, dynamic> _autoBreakClocks = {
+  AutoBreakExternalMode.Clock: (_) => 1,
+  AutoBreakExternalMode.Instruction: (_) => 4,
+  AutoBreakExternalMode.Frame: (_) => GB_FRAME_PER_CLOCK_INT,
+  AutoBreakExternalMode.Second: (_) => GB_CPU_FREQ_INT,
 };
 
 abstract class Emulation implements Worker.AWorker {
@@ -284,7 +287,7 @@ abstract class Emulation implements Worker.AWorker {
   {
     Ft.log(Ft.typeStr(this), '_enableAutoBreak');
     assert(this.abMode != AutoBreakExternalMode.None, "_enableAutoBreak");
-    _autoBreakIn = _autoBreakClocks[this.abMode];
+    _autoBreakIn = _autoBreakClocks[this.abMode](this.gbOpt);
     _autoBreak = true;
   }
 
