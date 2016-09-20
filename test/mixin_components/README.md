@@ -6,7 +6,7 @@
 <!-- By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+       -->
 <!--                                              +#+#+#+#+#+   +#+          -->
 <!-- Created: 2016/09/19 11:54:15 by ngoguey           #+#    #+#            -->
-<!-- Updated: 2016/09/19 19:17:06 by ngoguey          ###   ########.fr      -->
+<!-- Updated: 2016/09/20 20:10:37 by ngoguey          ###   ########.fr      -->
 <!--                                                                         -->
 <!-- *********************************************************************** -->
 
@@ -141,78 +141,162 @@ class DraggableDismissalEvent extends Dismissal implements DraggableSlotEvent {
  - Async.StreamController<DraggableSlotEvent> _draggedController;
  - Async.Stream<DraggableSlotEvent> onDraggedChange;
 - ????cart
- - ????Iterable<Cart> get carts;
+ - Iterable<DomCart> get carts;
+ <!-- - Iterable<DomChipSocket> chipSocketsOfCart(DomCart); -->
+ <!-- - Iterable<DomChip> chipsOfCart(DomCart); -->
+ - Stream<DomCart> newClosedCart ;
  - ????delete dart
 - ????chips
  - ????Iterable<Chip> get chips;
+ - Stream<DomChip> newDetachedChip ;
  - ????delete chip
-- ????3 top-level banks
+<!-- - ????3 top-level banks -->
 <!-- - chip-sockets -->
 <!--  - chipSocketsOfCart(Cart c) -->
 
-### Controllers (partial ordering): Controllers' CONTENT DEPRECATED
-##### ControllerCartOpen
-- __**this**->**DomCart(HtmlCartClosable)(lower-level)** communication:__ HtmlCartClosable method(s)
-- __**lower-levels**->**this** communication:__ Listens stream(s)
-  - htmlEvent.cartButtonClicked<DomCart>
-  - htmlEvent.cartDoneOpening<DomCart>
-- __**higher-levels**->**this** communication:__ Listens stream(s)
-  - event.cartNew<DomCart>
-  - event.cartInGb<DomCart>
-- __to higher-levels:__ Notify variable-controller:
-  - cartOpenedOpt<DomCart>
+
+### Controllers:
+##### ControllerHtmlEvents
+- __from html-elements / exposed to higher-levels:__
+  - streams:
+     - htmlEvent.onCartButtonClicked<DomCart>
+     - htmlEvent.onCartDoneOpening<DomCart>
+     - htmlEvent.onDrop<DropZone>
+     - htmlEvent.dropZoneEntered<DropZone>
+     - htmlEvent.dropZoneLeft<DropZone>
+
+### Carts Controllers:
+##### ControllerCartOpened
+- __from ControllerHtmlEvent:__
+  - listens:
+     - htmlEvent.onCartButtonClicked<DomCart>
+     - htmlEvent.onCartDoneOpening<DomCart>
+- __from ControllerData:__
+  - subscriptions:
+     - data.onGbCartChange<DomCart>
+     - data.onNewClosedCart<DomCart>
+  - getters:
+     - data.gbCart
+     - data.openedCart
+- __to DomCart instances:__
+  - setters:
+     - HtmlCartClosable method(s)
+- __to ControllerData:__
+  - setters:
+     - data.openedCart{Arrival, Dismissal}()
 
 ##### ControllerCartsLocation
-- __**lower-levels**->**this** communication:__ Listens stream(s)
-  - htmlEvent.dragStart filtered<DomCart>
-  - htmlEvent.onDrop filtered<DomCartBank>
-  - event.cartOpenedOpt<DomCart>
-- __**this**->**higher-levels** communication:__ Broadcasts stream(s)
-  - event.cartInGbOpt<DomCart>
+- __from ControllerHtmlEvent:__
+  - subscriptions:
+	 - htmlEvent.onDrop filtered<CartBank>
+- __from ControllerData:__
+  - subscriptions:
+     - data.onDraggedChange filtered<DomCart>
+  - getters:
+     - data.dragged
+     - data.gbCart
+     - data.openedCart
+- __to ControllerData:__
+  - setters:
+     - data.gbCart{Arrival, Dismissal}()
 
 ##### ControllerCartsDragCapability
-- __**this**->**DomCart(Draggable)(lower-level)** communication:__ Draggable method(s)
-- __**lower-levels**->**this** communication:__ Listens stream(s)
-  - event.cartOpenedOpt<DomCart>
-  - event.cartInGbOpt<DomCart>
-- __**this**->**higher-levels** communication:__ NONE
+- __from ControllerData:__
+  - subscriptions:
+     - data.onOpenedCartChange<DomCart>
+     - data.onGbCartChange<DomCart>
+- __to DomCart instances:__
+  - setters:
+	 - HtmlDraggable method(s)
 
 ##### ControllerCartBanksStyle
-- __**this**->**DropZone(CartBank)(lower-level)** communication:__ DropZone method(s)
-- __**lower-levels**->**this** communication:__ Listens x stream(s)
-  - event.cartOpenedOpt<DomCart>
-  - event.cartInGbOpt<DomCart>
-  - htmlEvent.dragStart filtered<DomCart>
-  - htmlEvent.dragStop filtered<DomCart>
-  - htmlEvent.dropZoneEntered filtered<DomCartBank>
-  - htmlEvent.dropZoneLeft filtered<DomCartBank>
-- __**this**->**higher-levels** communication:__ NONE
+- __from ControllerHtmlEvent:__
+  - subscriptions:
+     - htmlEvent.dropZoneEntered filtered<CartBank>
+     - htmlEvent.dropZoneLeft filtered<CartBank>
+- __from ControllerData:__
+  - subscriptions:
+     - data.onDraggedChange filtered<DomCart>
+  - getters:
+     - data.dragged
+     - data.gbCart
+     - data.openedCart
+- __to CartBank instances:__
+  - setters:
+     - HtmlDropZone method(s)
 
+### Chips Controllers:
 ##### ControllerChipSocketsDropCapability
-- __**this**->**DropZone(DomChipSocket)(lower-level)** communication:__ DropZone method(s)
-- __**lower-levels**->**this** communication:__ Listens x stream(s)
-  - event.cartOpenedOpt<DomCart>
-  - event.cartInGbOpt<DomCart>
-- __**this**->**higher-levels** communication:__ NONE
+- __from ControllerData:__
+  - subscriptions:
+     - data.onOpenedCartChange<DomCart>
+- __from DomCart instances:__
+  - getters:
+     - ChipSocketContainer.iterChipSockets()
+- __to DomChipSocket instances:__
+  - setters:
+     - HtmlDropZone method(s)
 
 ##### ControllerChipsDragCapability
+- __from ControllerData:__
+  - subscriptions:
+     - data.onOpenedCartChange<DomCart>
+     - data.onNewDetachedChip<DomChip>
+- __from DomCart instances:__
+  - getters:
+     - ChipSocketContainer.iterChipSockets()
+- __from DomChipSocket instances:__
+  - getters:
+     - ChipBank.chipOpt()
+- __to DomChip instances:__
+  - setters:
+     - DomChip method(s)
+
 ##### ControllerChipsLocations
+- __from ControllerHtmlEvent:__
+  - subscriptions:
+	 - htmlEvent.onDrop filtered<DomChipBank>
+- __from ControllerData:__
+  - subscriptions:
+     - data.onDraggedChange filtered<DomChip>
+  - getters:
+     - data.dragged
+- __to ControllerData:__
+  - subscriptions:
+     - data.chipLocation(Chip, ChipBank)
+
 ##### ControllerChipBanksStyle
+- __from ControllerHtmlEvent:__
+  - subscriptions:
+     - htmlEvent.dropZoneEntered filtered<ChipBank>
+     - htmlEvent.dropZoneLeft filtered<ChipBank>
+- __from ControllerData:__
+  - subscriptions:
+     - data.onDraggedChange filtered<DomChip>
+  - getters:
+     - data.dragged
+     - data.openedCart
+- __from DomCart instances:__
+  - getters:
+     - ChipSocketContainer.iterChipSockets()
+- __to ChipBank instances:__
+  - setters:
+     - HtmlDropZone method(s)
 
-
-
-
-##### ControllerDatabase (is ControllerVariableData it's only out interlocutor?)
-- __**dom**->**this** communication:__ Exposes 9 method(s)
-  - startup()
-  - new{Rom, Ram, Ss}(SerializableComponent c)
-  - delete{Rom, Ram, Ss}(EntryProxy p)
-  - location{Ram, Ss}(EntryProxy p)
-- __**other-tabs**->**this** communication:__ Listens 1 idb stream(s)
-  - onVersionChange
-- __**this**->**other-tabs** communication:__ idb method(s)
-  - db.close(), dbf.open(version: ++)
-- __**this**->**Dom communication:__ Broadcasts 8 stream(s)
-  - dbEvent.new{Rom, Ram, Ss}Detached<EntryProxy>
-  - dbEvent.location{Ram, Ss}<EntryProxy>
-  - dbEvent.delete{Rom, Ram, Ss}<EntryProxy>
+### Db Controllers:
+##### ControllerDatabase
+- __from other-tabs:__
+  - idb.onVersionChange
+- __to other-tabs:__
+  - idb.close(), idbf.open(version: ++)
+- __to higher-levels:__
+  - streams:
+     - dbEvent.new{Rom, Ram, Ss}Detached<EntryProxy>
+     - dbEvent.location{Ram, Ss}<EntryProxy>
+     - dbEvent.delete{Rom, Ram, Ss}<EntryProxy>
+- __from higher-levels:__
+  - methods:
+     - startup()
+     - new{Rom, Ram, Ss}(SerializableComponent c)
+     - delete{Rom, Ram, Ss}(EntryProxy p)
+     - location{Ram, Ss}(EntryProxy p)
