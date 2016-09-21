@@ -23,8 +23,9 @@ export 'package:emulator/src/memory/mem_registers.dart'
   show MemReg;
 export 'package:emulator/src/memory/headerdecoder.dart'
   show RomHeaderField, CartridgeType;
+export 'package:emulator/src/z80/interruptmanager.dart'
+  show InterruptType ;
 
-// Still Used ???
 enum DebuggerModeRequest {
   Toggle, Disable, Enable
 }

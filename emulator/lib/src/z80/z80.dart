@@ -17,29 +17,24 @@ import "package:ft/ft.dart" as Ft;
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/gameboy.dart" as GameBoy;
-// import "package:emulator/src/z80/instructions.dart" as Instructions;
 import "package:emulator/src/z80/cpu_registers.dart" as Cpuregs;
+import "package:emulator/src/z80/interruptmanager.dart" as Interrupt;
 
 abstract class Z80
-  implements GameBoy.GameBoyMemory {
+  implements GameBoy.GameBoyMemory
+  , Interrupt.InterruptManager {
 
   final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
+  bool halt = false;
+  bool stop = false;
 
-  /*
-  ** API ***********************************************************************
-  */
+  /* API **********************************************************************/
 
   int executeInstruction() {
     return _execInst();
   }
 
-  void initZ80() {
-    this.cpur.init();
-    return ;
-  }
-
-  /* Private ******************************************************************/ 
-  /* Instructions */
+  /* Private ******************************************************************/
 
   int _execInst() {
     final op = this.mmu.pull8(this.cpur.PC);
@@ -1176,19 +1171,27 @@ abstract class Z80
   }
 
   int _HALT() {
-    assert(false, "HALT");
+    this.halt = true;
+    this.cpur.PC += 1;
+    return 4;
   }
 
   int _STOP() {
-    assert(false, "STOP");
+    this.stop = true;
+    this.cpur.PC += 1;
+    return 4;
   }
 
   int _DI() {
-    assert(false, "DI");
+    this.ime = false;
+    this.cpur.PC += 1;
+    return 4;
   }
 
   int _EI() {
-    assert(false, "EI");
+    this.ime = true;
+    this.cpur.PC += 1;
+    return 4;
   }
 
   /* Rotates and Shifts *******************************************************/

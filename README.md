@@ -12,6 +12,7 @@ pub serve
 # Todos
 
 - Check operands where a signed byte 'e' is added
+- Check loop if CPU halted or stopped
 
 # Useful links:
 

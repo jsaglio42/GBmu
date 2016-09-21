@@ -46,11 +46,9 @@ class CpuRegs {
   final Uint8List _data;
   final Uint16List _view16;
 
-  /*
-  ** Constructors **************************************************************
-  */
+  /* Constructors *************************************************************/
 
-  CpuRegs.buffer(Uint8List d)
+  CpuRegs.ofUint8List(Uint8List d)
     : _data = d
     , _view16 = d.buffer.asUint16List()
   {
@@ -62,17 +60,11 @@ class CpuRegs {
     this.PC = 0x0100;
   }
 
-  CpuRegs() : this.buffer(new Uint8List(6 * 2));
+  CpuRegs() : this.ofUint8List(new Uint8List(6 * 2));
 
-  CpuRegs.clone(CpuRegs src) :
-    this.buffer(new Uint8List.fromList(src._data.buffer.asUint8List()));
-
-  /*
-  ** API ***********************************************************************
-  */
+  /* API **********************************************************************/
 
   /* Get */
-
   int get AF => this.pull16(Reg16.AF);
   int get BC => this.pull16(Reg16.BC);
   int get DE => this.pull16(Reg16.DE);
@@ -97,7 +89,6 @@ class CpuRegs {
   int pull1(Reg1 r) => (this._data[0] >> (r.index + 4)) & 0x1;
 
   /* Set */
-
   void set AF(int v) {this.push16(Reg16.AF, v);}
   void set BC(int v) {this.push16(Reg16.BC, v);}
   void set DE(int v) {this.push16(Reg16.DE, v);}
@@ -135,75 +126,78 @@ class CpuRegs {
       this._data[0] = this._data[0] | mask;
    }
 
-  /*
-  ** Debug *********************************************************************
-  */
-
-  void assertCorrectness() {
-    for (int i = 0; i < 12 ; i++)
-      _data[i] = i;
-
-    assert(this.pull1(Reg1.cy) == 0);
-    assert(this.pull1(Reg1.n) == 0);
-    assert(this.pull1(Reg1.h) == 0);
-    assert(this.pull1(Reg1.zf) == 0);
-    assert(this.pull8(Reg8.A) == 0x1);
-    assert(this.pull16(Reg16.AF) == 0x0100);
-
-    assert(this.pull8(Reg8.C) == 0x2);
-    assert(this.pull8(Reg8.B) == 0x3);
-    assert(this.pull16(Reg16.BC) == 0x0302);
-
-    assert(this.pull8(Reg8.E) == 0x4);
-    assert(this.pull8(Reg8.D) == 0x5);
-    assert(this.pull16(Reg16.DE) == 0x0504);
-
-    assert(this.pull8(Reg8.L) == 0x6);
-    assert(this.pull8(Reg8.H) == 0x7);
-    assert(this.pull16(Reg16.HL) == 0x0706);
-
-    assert(this.pull16(Reg16.SP) == 0x0908);
-    assert(this.pull16(Reg16.PC) == 0x0B0A);
-
-    for (int i = 0; i < 12 ; i++)
-      _data[i] = 0;
-
-    this.push1(Reg1.cy, 1);
-    this.push1(Reg1.n, 0);
-    this.push1(Reg1.h, 0);
-    this.push1(Reg1.zf, 1);
-    this.push8(Reg8.A, 0x5);
-
-    this.push8(Reg8.C, 0x6);
-    this.push8(Reg8.B, 0x7);
-
-    this.push8(Reg8.E, 0x8);
-    this.push8(Reg8.D, 0x9);
-
-    this.push8(Reg8.L, 0xA);
-    this.push8(Reg8.H, 0xB);
-
-    this.push16(Reg16.SP, 0x0C0D);
-    this.push16(Reg16.PC, 0x0E0F);
-
-    assert(_data[0] == (1 << 7) | (1 << 4));
-    assert(_data[1] == 0x5);
-    assert(_view16[0] == (_data[0] << 0) | (_data[1] << 8));
-    assert(_data[2] == 0x6);
-    assert(_data[3] == 0x7);
-    assert(_view16[1] == _data[2] | (_data[3] << 8));
-    assert(_data[4] == 0x8);
-    assert(_data[5] == 0x9);
-    assert(_view16[2] == _data[4] | (_data[5] << 8));
-    assert(_data[6] == 0xA);
-    assert(_data[7] == 0xB);
-    assert(_view16[3] == _data[6] | (_data[7] << 8));
-    assert(_data[8] == 0xD);
-    assert(_data[9] == 0xC);
-    assert(_view16[4] == _data[8] | (_data[9] << 8));
-    assert(_data[10] == 0xF);
-    assert(_data[11] == 0xE);
-    assert(_view16[5] == _data[10] | (_data[11] << 8));
-    print('CpuRegs.assertCorrectness passed!');
-  }
 }
+
+/* Debug **********************************************************************/
+
+void assertCorrectness(CpuRegs cpu) {
+  for (int i = 0; i < 12 ; i++)
+    cpu._data[i] = i;
+
+  assert(cpu.pull1(Reg1.cy) == 0);
+  assert(cpu.pull1(Reg1.n) == 0);
+  assert(cpu.pull1(Reg1.h) == 0);
+  assert(cpu.pull1(Reg1.zf) == 0);
+  assert(cpu.pull8(Reg8.A) == 0x1);
+  assert(cpu.pull16(Reg16.AF) == 0x0100);
+
+  assert(cpu.pull8(Reg8.C) == 0x2);
+  assert(cpu.pull8(Reg8.B) == 0x3);
+  assert(cpu.pull16(Reg16.BC) == 0x0302);
+
+  assert(cpu.pull8(Reg8.E) == 0x4);
+  assert(cpu.pull8(Reg8.D) == 0x5);
+  assert(cpu.pull16(Reg16.DE) == 0x0504);
+
+  assert(cpu.pull8(Reg8.L) == 0x6);
+  assert(cpu.pull8(Reg8.H) == 0x7);
+  assert(cpu.pull16(Reg16.HL) == 0x0706);
+
+  assert(cpu.pull16(Reg16.SP) == 0x0908);
+  assert(cpu.pull16(Reg16.PC) == 0x0B0A);
+
+  for (int i = 0; i < 12 ; i++)
+    cpu._data[i] = 0;
+
+  cpu.push1(Reg1.cy, 1);
+  cpu.push1(Reg1.n, 0);
+  cpu.push1(Reg1.h, 0);
+  cpu.push1(Reg1.zf, 1);
+  cpu.push8(Reg8.A, 0x5);
+
+  cpu.push8(Reg8.C, 0x6);
+  cpu.push8(Reg8.B, 0x7);
+
+  cpu.push8(Reg8.E, 0x8);
+  cpu.push8(Reg8.D, 0x9);
+
+  cpu.push8(Reg8.L, 0xA);
+  cpu.push8(Reg8.H, 0xB);
+
+  cpu.push16(Reg16.SP, 0x0C0D);
+  cpu.push16(Reg16.PC, 0x0E0F);
+
+  assert(cpu._data[0] == (1 << 7) | (1 << 4));
+  assert(cpu._data[1] == 0x5);
+  assert(cpu._view16[0] == (cpu._data[0] << 0) | (cpu._data[1] << 8));
+  assert(cpu._data[2] == 0x6);
+  assert(cpu._data[3] == 0x7);
+  assert(cpu._view16[1] == cpu._data[2] | (cpu._data[3] << 8));
+  assert(cpu._data[4] == 0x8);
+  assert(cpu._data[5] == 0x9);
+  assert(cpu._view16[2] == cpu._data[4] | (cpu._data[5] << 8));
+  assert(cpu._data[6] == 0xA);
+  assert(cpu._data[7] == 0xB);
+  assert(cpu._view16[3] == cpu._data[6] | (cpu._data[7] << 8));
+  assert(cpu._data[8] == 0xD);
+  assert(cpu._data[9] == 0xC);
+  assert(cpu._view16[4] == cpu._data[8] | (cpu._data[9] << 8));
+  assert(cpu._data[10] == 0xF);
+  assert(cpu._data[11] == 0xE);
+  assert(cpu._view16[5] == cpu._data[10] | (cpu._data[11] << 8));
+  print('CpuRegs.assertCorrectness passed!');
+}
+
+// void main() {
+//   assertCorrectness(new CpuRegs());
+// }

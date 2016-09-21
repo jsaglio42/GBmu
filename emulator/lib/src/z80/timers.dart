@@ -17,26 +17,19 @@ import "package:ft/ft.dart" as Ft;
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/gameboy.dart" as GameBoy;
+import "package:emulator/src/z80/interruptmanager.dart" as Interrupt;
 
 abstract class Timers
-  implements GameBoy.GameBoyMemory {
+  implements GameBoy.GameBoyMemory
+  , Interrupt.InterruptManager {
 
   int _clockTotal = 0;
   int _counterTIMA = 0;
   int _counterDIV = 0;
 
-  /*
-  ** API ***********************************************************************
-  */
+  /* API **********************************************************************/
 
   int get clockCount => _clockTotal;
-
-  void initTimers() {
-    _clockTotal = 0;
-    _counterTIMA = 0;
-    _counterDIV = 0;
-    return ;
-  }
 
   void updateTimers(int nbClock) {
     _clockTotal += nbClock;
@@ -45,9 +38,7 @@ abstract class Timers
     return ;
   }
 
-  /*
-  ** Private *******************************************************************
-  */
+  /* Private ******************************************************************/
 
   void _updateDIV(int nbClock) {
     _counterDIV -= nbClock;
@@ -76,7 +67,7 @@ abstract class Timers
         }
         final int TMA = this.mmu.pullMemReg(MemReg.TIMA);
         this.mmu.pushMemReg(MemReg.TIMA, TMA);
-        // Request INTERRUPT
+        this.requestInterrupt(InterruptType.Timer);
       }
 
     }

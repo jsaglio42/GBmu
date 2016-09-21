@@ -13,19 +13,13 @@
 import 'package:emulator/src/enums.dart';
 import 'package:ft/ft.dart' as Ft;
 
-/* Classes */
-
 class Instruction
 {
   final int addr;
   final InstructionInfo info;
   final int data;
 
-  Instruction(
-    this.addr,
-    this.info,
-    this.data
-  );
+  Instruction(this.addr, this.info, this.data);
 
 }
 
@@ -64,7 +58,7 @@ class InstructionInfo
   }
 }
 
-/* Global */
+/* Globals ********************************************************************/
 
 final instInfos = new List<InstructionInfo>.unmodifiable([
   new InstructionInfo(0x00,   1,   0,   4,   4,   'NOP',             '- - - -'),

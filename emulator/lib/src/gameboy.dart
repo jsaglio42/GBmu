@@ -20,10 +20,14 @@ import "package:emulator/src/memory/cartridge.dart" as Cartridge;
 import "package:emulator/src/z80/instructionsdecoder.dart" as Instdecoder;
 import "package:emulator/src/z80/z80.dart" as Z80;
 import "package:emulator/src/z80/timers.dart" as Timers;
+import "package:emulator/src/z80/interruptmanager.dart" as Interrupt;
+
+/* Shared Interface ***********************************************************/
 
 abstract class GameBoyMemory {
-  
-  /* API */
+
+  Mmu.Mmu _mmu;
+
   Mmu.Mmu get mmu => _mmu;
 
   void initMemory(Cartridge.ACartridge c) {
@@ -31,18 +35,23 @@ abstract class GameBoyMemory {
     _mmu = new Mmu.Mmu(c);
   }
 
-  /* Private */
-  Mmu.Mmu _mmu;
-
 }
 
-class GameBoy extends Object
-  with GameBoyMemory, Instdecoder.InstructionsDecoder, Z80.Z80, Timers.Timers {
+/* Gameboy ********************************************************************/
 
+class GameBoy extends Object
+  with GameBoyMemory
+  , Instdecoder.InstructionsDecoder
+  , Z80.Z80
+  , Timers.Timers
+  , Interrupt.InterruptManager {
+
+  /* Constructor */
   GameBoy(Cartridge.ACartridge c) {
     this.initMemory(c);
   }
 
+  /* API */
   int exec(int nbClock) {
     int instructionDuration;
     int executedClocks = 0;

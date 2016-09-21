@@ -19,37 +19,40 @@ import "package:emulator/src/gameboy.dart" as GameBoy;
 import "package:emulator/src/z80/z80.dart" as Z80;
 
 abstract class InstructionsDecoder
-  implements GameBoy.GameBoyMemory, Z80.Z80 {
+  implements GameBoy.GameBoyMemory
+  , Z80.Z80 {
 
-    /* API */
-    List<Instructions.Instruction> pullInstructionList(int len) {
-      final lst = <Instructions.Instruction>[];
-      int pc_current = this.cpur.PC;
+  /* API **********************************************************************/
 
-      for (int i = 0; i < len; ++i) {
-        Instructions.Instruction inst;
-        try {
-          inst = _getInstruction(pc_current);
-          pc_current += inst.info.instSize;
-        } catch (e) { inst = null; }
-        lst.add(inst);
-      }
-      return lst;
+  List<Instructions.Instruction> pullInstructionList(int len) {
+    final lst = <Instructions.Instruction>[];
+    int pc_current = this.cpur.PC;
+
+    for (int i = 0; i < len; ++i) {
+      Instructions.Instruction inst;
+      try {
+        inst = _getInstruction(pc_current);
+        pc_current += inst.info.instSize;
+      } catch (e) { inst = null; }
+      lst.add(inst);
     }
+    return lst;
+  }
 
-    /* Private */
-    Instructions.InstructionInfo _getInstructionInfo(int addr) {
-      final op = this.mmu.pull8(addr);
-      if (op == 0xCB)
-      {
-        final opX = this.mmu.pull8(addr + 1);
-        return Instructions.instInfos_CB[opX];
-      }
-      else
-        return Instructions.instInfos[op];
-     }
+  /* Private ******************************************************************/
 
-    Instructions.Instruction _getInstruction(int addr) {
+  Instructions.InstructionInfo _getInstructionInfo(int addr) {
+    final op = this.mmu.pull8(addr);
+    if (op == 0xCB)
+    {
+      final opX = this.mmu.pull8(addr + 1);
+      return Instructions.instInfos_CB[opX];
+    }
+    else
+      return Instructions.instInfos[op];
+  }
+
+  Instructions.Instruction _getInstruction(int addr) {
     final info = _getInstructionInfo(addr);
     int data;
     switch (info.dataSize)
@@ -63,7 +66,6 @@ abstract class InstructionsDecoder
       default :
         assert(false, 'InstructionDecoder: switch(dataSize): failure');
     }
-    this.cpur.PC += info.instSize;
     return new Instructions.Instruction(addr, info, data);
   }
 
