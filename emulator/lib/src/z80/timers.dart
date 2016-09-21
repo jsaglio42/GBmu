@@ -16,31 +16,14 @@ import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
 
-import "package:emulator/src/memory/mmu.dart" as Mmu;
+import "package:emulator/src/gameboy.dart" as GameBoy;
 
-class Timers {
+abstract class Timers
+  implements GameBoy.GameBoyMemory {
 
-  final MMU.Mmu _mmu;
-
-  int _clockTotal;
-  int _counterTIMA;
-  int _counterDIV;
-
-  /*
-  ** Constructors **************************************************************
-  */
-
-  Timers(Mmu.Mmu m)
-    : _mmu = m
-    , _clockTotal = 0
-    , _counterTIMA = 0
-    , _counterDIV = 0;
-
-  Timers.clone(Timers src)
-    : _mmu = src._mmu,
-    , _clockTotal = src._clockTotal
-    , _counterTIMA = src._counterTIMA
-    , _counterDIV = src._counterDIV;
+  int _clockTotal = 0;
+  int _counterTIMA = 0;
+  int _counterDIV = 0;
 
   /*
   ** API ***********************************************************************
@@ -48,14 +31,14 @@ class Timers {
 
   int get clockCount => _clockTotal;
 
-  void reset() {
+  void initTimers() {
     _clockTotal = 0;
     _counterTIMA = 0;
     _counterDIV = 0;
     return ;
   }
 
-  void update(int nbClock) {
+  void updateTimers(int nbClock) {
     _clockTotal += nbClock;
     _updateDIV(nbClock);
     _updateTIMA(nbClock);
@@ -71,14 +54,14 @@ class Timers {
     if (_counterDIV < 0)
     {
       _counterDIV = 256;
-      final int div = _mmu.pullMemReg(MemReg.DIV);
-      // _mmu.setDIV((div + 1) & 0xFF);
+      final int div = this.mmu.pullMemReg(MemReg.DIV);
+      // this.mmu.setDIV((div + 1) & 0xFF);
     }
     return ;
   }
 
   void _updateTIMA(int nbClock) {
-    final int TAC = _mmu.pullMemReg(MemReg.TAC);
+    final int TAC = this.mmu.pullMemReg(MemReg.TAC);
     if (TAC & (0x1 << 2) != 0) {
       _counterTIMA -= nbClock;
       if (_counterTIMA < 0)
@@ -89,21 +72,15 @@ class Timers {
           case (1): _counterTIMA = 16; break;
           case (2): _counterTIMA = 64; break;
           case (3): _counterTIMA = 256; break;
-          default : assert(false, '_updateTIMA: switch failure')
+          default : assert(false, '_updateTIMA: switch failure');
         }
-        final int TMA = _mmu.pullMemReg(MemRef.TIMA);
-        _mmu.pushMemReg(MemReg.TIMA, TMA);
+        final int TMA = this.mmu.pullMemReg(MemReg.TIMA);
+        this.mmu.pushMemReg(MemReg.TIMA, TMA);
         // Request INTERRUPT
       }
 
     }
     return ;
   }
-
-
-
-
-
-
 
 }

@@ -17,8 +17,8 @@ import 'package:ft/ft.dart' as Ft;
 import "package:emulator/src/enums.dart";
 import 'package:emulator/src/constants.dart';
 
-import "package:emulator/src/memory/data.dart" as Data;
 import "package:emulator/src/memory/cartridge.dart" as Cartridge;
+import "package:emulator/src/memory/data.dart" as Data;
 import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 
 class Mmu {
@@ -28,12 +28,7 @@ class Mmu {
   final _wr = new Data.WorkingRam(new Uint8List(WORKING_RAM_SIZE));
   final _tr = new Data.TailRam(new Uint8List(TAIL_RAM_SIZE));
 
-  Mmu(this.c);
-
-  void reset() {
-    _vr.clear();
-    _wr.clear();
-    _tr.clear();
+  Mmu(this.c) { 
     this.push8(0xFF05, 0x00);
     this.push8(0xFF06, 0x00);
     this.push8(0xFF07, 0x00);
@@ -133,5 +128,20 @@ class Mmu {
     return ;
   }
 
+  List<int> pullMemoryList(int addr, int len) {
+    final lst = <int>[];
+    for (int i = 0; i < len; ++i) {
+      int data;
+      try { data = this.pull8(addr + i); }
+      catch (e) { data = null; }
+      lst.add(data);
+    }
+    return lst;
+  }
 
 }
+
+
+
+
+

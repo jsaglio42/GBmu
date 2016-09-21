@@ -236,7 +236,7 @@ abstract class Emulation implements Worker.AWorker {
     else if (clockDebt.isInfinite)
       return MAX_INT_LOLDART;
     else
-      return clockDebt.floor();
+      return clockDebt.floor(); 
   }
 
   int _emulate(final DateTime timeLimit, final int clockLimit)
@@ -255,8 +255,7 @@ abstract class Emulation implements Worker.AWorker {
       if (clockSum >= clockLimit)
         break ;
       clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
-      this.gbOpt.exec(clockExec);
-      clockSum += clockExec;
+      clockSum += this.gbOpt.exec(clockExec);
     }
     return clockSum;
   }

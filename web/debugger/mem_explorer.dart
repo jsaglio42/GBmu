@@ -67,22 +67,29 @@ class _Data {
 */
 
 void _onMemInfo(Map<String, dynamic> map) {
-  assert(map['addr'] != null && map['addr'] is int, "_onMemInfo($map)");
-  final addr = map['addr'];
-  assert(addr >= 0x0000 && addr <= 0xFFFF, "_onMemInfo($map)");
-  assert(map['data'] != null && map['data'] is List<int>);
-  final data = map['data'];
-  assert(data.length == _data.memCells.length, "_onMemInfo($map)");
-  for (var i = 0; i < _data.addrCells.length; ++i)
+  _updateAddrCells(map['addr']);
+  _updateMemCells(map['data']);
+  return ;
+}
+
+void _updateAddrCells(int addr) {
+  assert(addr != null , "_updateAddrCells($addr)");
+  assert(addr >= 0x0000 && addr <= 0xFFFF, "_updateAddrCells($addr)");
+  for (var i = 0; i < _data.addrCells.length; ++i) {
     _data.addrCells[i].elt.text = Ft.toAddressString(addr + i * 0x10, 4);
-  for (var i = 0; i < _data.memCells.length; ++i)
-  {
-    if (data[i] == null)
-      _data.memCells[i].elt.text = '--';
-    else
-      _data.memCells[i].elt.text = Ft.toHexaString(data[i], 2);
   }
   return ;
+}
+
+void _updateMemCells(List<int> data) {
+  assert(data != null, "_updateMemCells($data)");
+  assert(data.length == _data.memCells.length, "_updateMemCells($data)");
+  for (var i = 0; i < _data.memCells.length; ++i) {
+    _data.memCells[i].elt.text = (data[i] == null)
+      ? '--'
+      : Ft.toHexaString(data[i], 2);
+  }
+  return ; 
 }
 
 /*

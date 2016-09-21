@@ -16,99 +16,33 @@ import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
 
-import "package:emulator/src/memory/mmu.dart" as Mmu;
-import "package:emulator/src/z80/instructions.dart" as Instructions;
+import "package:emulator/src/gameboy.dart" as GameBoy;
+// import "package:emulator/src/z80/instructions.dart" as Instructions;
 import "package:emulator/src/z80/cpu_registers.dart" as Cpuregs;
 
-class Z80 {
+abstract class Z80
+  implements GameBoy.GameBoyMemory {
 
-  final Cpuregs.CpuRegs cpur;
-
-  final Mmu.Mmu _mmu;
-
-  int _clockCount;
-  int _clockWait;
-
-  /*
-  ** Constructors **************************************************************
-  */
-
-  Z80(Mmu.Mmu m) :
-    this.cpur = new Cpuregs.CpuRegs(),
-    this._mmu = m,
-    _clockCount = 0,
-    _clockWait = 0;
-
-  Z80.clone(Z80 src) :
-    this.cpur = new Cpuregs.CpuRegs.clone(src.cpur),
-    _mmu = src._mmu,
-    _clockCount = src._clockCount,
-    _clockWait = src._clockWait;
+  final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
 
   /*
   ** API ***********************************************************************
   */
 
-  int get clockCount => this._clockCount;
+  int executeInstruction() {
+    return _execInst();
+  }
 
-  void reset() {
-    this.cpur.reset();
-    _clockCount = 0;
-    _clockWait = 0;
+  void initZ80() {
+    this.cpur.init();
     return ;
   }
 
-  void exec(int nbClock) {
-    _clockCount += nbClock;
-    while (nbClock-- > 0)
-    {
-      if (_clockWait <= 0) {
-        _clockWait = _execInst();
-        // _clockWait = 1; /* <- Used for debug */
-      }
-      _clockWait--;
-    }
-    return ;
-  }
-
-  Instructions.Instruction pullInstruction() {
-    final addr = this.cpur.PC;
-    final info = _getInstructionInfo(addr);
-    int data;
-    switch (info.dataSize)
-    {
-      case (0):
-        data = 0; break;
-      case (1):
-        data = _mmu.pull8(this.cpur.PC + info.opCodeSize); break;
-      case (2):
-        data = _mmu.pull16(this.cpur.PC + info.opCodeSize); break;
-      default :
-        assert(false, 'InstructionDecoder: switch(dataSize): failure');
-    }
-    this.cpur.PC += info.instSize;
-    return new Instructions.Instruction(addr, info, data);
-  }
-
-  /*
-  ** Private *******************************************************************
-  */
-
-  Instructions.InstructionInfo _getInstructionInfo(int addr) {
-    final op = _mmu.pull8(addr);
-    if (op == 0xCB)
-    {
-      final opX = _mmu.pull8(addr + 1);
-      return Instructions.instInfos_CB[opX];
-    }
-    else
-      return Instructions.instInfos[op];
-  }
-
+  /* Private ******************************************************************/ 
   /* Instructions */
 
   int _execInst() {
-    final op = _mmu.pull8(this.cpur.PC);
+    final op = this.mmu.pull8(this.cpur.PC);
     switch (op) {
       case (0x00) : return _NOP();                      //  NOP
       case (0x01) : return _LD_rr_nn(Reg16.BC);         //  LD BC, nn
@@ -405,7 +339,7 @@ class Z80 {
   /* Extended Instructions */
 
   int _execInst_CB() {
-    final op = _mmu.pull8(this.cpur.PC + 1);
+    final op = this.mmu.pull8(this.cpur.PC + 1);
     switch (op) {
       case (0x00) : return _RLC(Reg8.B);                //  RLC B
       case (0x01) : return _RLC(Reg8.C);                //  RLC C
@@ -707,7 +641,7 @@ class Z80 {
 
   void _LD_n(int addr, int val) {
     assert(val & ~0xFF == 0);
-    _mmu.push8(addr, val);
+    this.mmu.push8(addr, val);
   }
 
   /* Registers */
@@ -719,14 +653,14 @@ class Z80 {
   }
 
   int _LD_r_n(Reg8 r) {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(this.cpur.PC + 1);
     _LD_r(r, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _LD_r_HL(Reg8 r) {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     _LD_r(r, val);
     this.cpur.PC += 1;
     return 8;
@@ -735,29 +669,29 @@ class Z80 {
   /* Register Accu */
   int _LD_A_rr(Reg16 r) {
     final int addr = this.cpur.pull16(r);
-    final int val = _mmu.pull8(addr);
+    final int val = this.mmu.pull8(addr);
     _LD_r(Reg8.A, val);
     this.cpur.PC += 1;
     return 8;
   }
 
   int _LD_A_nn() {
-    final int addr = _mmu.pull16(this.cpur.PC + 1);
-    final int val = _mmu.pull8(addr);
+    final int addr = this.mmu.pull16(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(addr);
     _LD_r(Reg8.A, val);
     this.cpur.PC += 3;
     return 16;
   }
 
   int _LD_A_C() {
-    final int val = _mmu.pull8(0xFF00 | this.cpur.C);
+    final int val = this.mmu.pull8(0xFF00 | this.cpur.C);
     _LD_r(Reg8.A, val);
     this.cpur.PC += 1;
     return 8;
   }
 
   int _LDI_A_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     _LD_r(Reg8.A, val);
     this.cpur.HL += 1;
     this.cpur.PC += 1;
@@ -765,7 +699,7 @@ class Z80 {
   }
 
   int _LDD_A_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     _LD_r(Reg8.A, val);
     this.cpur.HL -= 1;
     this.cpur.PC += 1;
@@ -773,8 +707,8 @@ class Z80 {
   }
 
   int _LD_A_n() {
-    final int addr = 0xFF00 | _mmu.pull8(this.cpur.PC + 1);
-    final int val = _mmu.pull8(addr);
+    final int addr = 0xFF00 | this.mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(addr);
     _LD_r(Reg8.A, val);
     this.cpur.PC += 2;
     return 12;
@@ -789,7 +723,7 @@ class Z80 {
   }
 
   int _LD_HL_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(this.cpur.PC + 1);
     _LD_n(this.cpur.HL, val);
     this.cpur.PC += 2;
     return 12;
@@ -804,7 +738,7 @@ class Z80 {
   }
 
   int _LD_nn_A() {
-    final int addr = _mmu.pull16(this.cpur.PC + 1);
+    final int addr = this.mmu.pull16(this.cpur.PC + 1);
     _LD_n(addr, this.cpur.A);
     this.cpur.PC += 3;
     return 16;
@@ -834,7 +768,7 @@ class Z80 {
   }
 
   int _LD_n_A() {
-    final int addr = 0xFF00 | _mmu.pull8(this.cpur.PC + 1);
+    final int addr = 0xFF00 | this.mmu.pull8(this.cpur.PC + 1);
     _LD_n(addr, this.cpur.A);
     this.cpur.PC += 2;
     return 12;
@@ -842,15 +776,15 @@ class Z80 {
 
   /* 16-bits Loads ************************************************************/
   int _LD_rr_nn(Reg16 r) {
-    final int val = _mmu.pull16(this.cpur.PC + 1);
+    final int val = this.mmu.pull16(this.cpur.PC + 1);
     this.cpur.push16(r, val);
     this.cpur.PC += 3;
     return 12;
   }
 
   int _LD_nn_SP() {
-    final int addr = _mmu.pull16(this.cpur.PC + 1);
-    _mmu.push16(addr, this.cpur.SP);
+    final int addr = this.mmu.pull16(this.cpur.PC + 1);
+    this.mmu.push16(addr, this.cpur.SP);
     this.cpur.PC += 3;
     return 20;
   }
@@ -863,7 +797,7 @@ class Z80 {
 
   int _LD_HL_SP_e() {
     final int l = this.cpur.SP;
-    final int r = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
+    final int r = this.mmu.pull8(this.cpur.PC + 1).toSigned(8);
     this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
     this.cpur.h = ((l & 0xFF) + r > 0xFF) ? 1 : 0;
     this.cpur.n = 0;
@@ -875,14 +809,14 @@ class Z80 {
 
   int _PUSH(Reg16 r) {
     final int val = this.cpur.pull16(r);
-    _mmu.push16(this.cpur.SP - 2, val);
+    this.mmu.push16(this.cpur.SP - 2, val);
     this.cpur.SP -= 2;
     this.cpur.PC += 1;
     return 16;
   }
 
   int _POP(Reg16 r) {
-    final int val = _mmu.pull16(this.cpur.SP);
+    final int val = this.mmu.pull16(this.cpur.SP);
     this.cpur.push16(r, val);
     this.cpur.SP += 2;
     this.cpur.PC += 1;
@@ -910,14 +844,14 @@ class Z80 {
   }
 
   int _ADD_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(this.cpur.PC + 1);
     this.cpur.A = _ADD_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _ADD_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     this.cpur.A = _ADD_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
@@ -932,14 +866,14 @@ class Z80 {
   }
 
   int _ADC_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1) + this.cpur.cy;
+    final int val = this.mmu.pull8(this.cpur.PC + 1) + this.cpur.cy;
     this.cpur.A = _ADD_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _ADC_HL() {
-    final int val = _mmu.pull8(this.cpur.HL) + this.cpur.cy;
+    final int val = this.mmu.pull8(this.cpur.HL) + this.cpur.cy;
     this.cpur.A = _ADD_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
@@ -958,9 +892,9 @@ class Z80 {
 
   int _INC_HL() {
     final int cy_old = this.cpur.cy;
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     final int res = _ADD_calculate(val, 1);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.cy = cy_old;
     this.cpur.PC += 1;
     return 12;
@@ -986,14 +920,14 @@ class Z80 {
   }
 
   int _SUB_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(this.cpur.PC + 1);
     this.cpur.A = _SUB_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _SUB_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     this.cpur.A = _SUB_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
@@ -1008,14 +942,14 @@ class Z80 {
   }
 
   int _SBC_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1) + this.cpur.cy;
+    final int val = this.mmu.pull8(this.cpur.PC + 1) + this.cpur.cy;
     this.cpur.A = _SUB_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _SBC_HL() {
-    final int val = _mmu.pull8(this.cpur.HL) + this.cpur.cy;
+    final int val = this.mmu.pull8(this.cpur.HL) + this.cpur.cy;
     this.cpur.A = _SUB_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
@@ -1034,9 +968,9 @@ class Z80 {
 
   int _DEC_HL() {
     final int cy_old = this.cpur.cy;
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     final int res = _SUB_calculate(val, 1);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.cy = cy_old;
     this.cpur.PC += 1;
     return 12;
@@ -1051,14 +985,14 @@ class Z80 {
   }
 
   int _CP_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(this.cpur.PC + 1);
     _SUB_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _CP_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     _SUB_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
@@ -1085,14 +1019,14 @@ class Z80 {
   }
 
   int _AND_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(this.cpur.PC + 1);
     this.cpur.A = _AND_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _AND_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     this.cpur.A = _AND_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
@@ -1118,14 +1052,14 @@ class Z80 {
   }
 
   int _OR_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(this.cpur.PC + 1);
     this.cpur.A = _OR_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _OR_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     this.cpur.A = _OR_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
@@ -1151,14 +1085,14 @@ class Z80 {
   }
 
   int _XOR_n() {
-    final int val = _mmu.pull8(this.cpur.PC + 1);
+    final int val = this.mmu.pull8(this.cpur.PC + 1);
     this.cpur.A = _XOR_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _XOR_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     this.cpur.A = _XOR_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
@@ -1184,7 +1118,7 @@ class Z80 {
 
   int _ADD_SP_e() {
     final int l = this.cpur.SP;
-    final int r = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
+    final int r = this.mmu.pull8(this.cpur.PC + 1).toSigned(8);
     this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
     this.cpur.h = ((l & 0xFF) + r > 0xFF) ? 1 : 0;
     this.cpur.n = 0;
@@ -1389,64 +1323,64 @@ class Z80 {
 
   /* Memory */
   int _RLC_HL() {
-    final val = _mmu.pull8(this.cpur.HL);
+    final val = this.mmu.pull8(this.cpur.HL);
     final newbit = val >> 7;
     final res = _SL_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
   int _RL_HL() {
-    final val = _mmu.pull8(this.cpur.HL);
+    final val = this.mmu.pull8(this.cpur.HL);
     final newbit = this.cpur.cy;
     final res = _SL_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
   int _RRC_HL() {
-    final val = _mmu.pull8(this.cpur.HL);
+    final val = this.mmu.pull8(this.cpur.HL);
     final newbit = val & 0x1;
     final res = _SR_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
   int _RR_HL() {
-    final val = _mmu.pull8(this.cpur.HL);
+    final val = this.mmu.pull8(this.cpur.HL);
     final newbit = this.cpur.cy;
     final res = _SR_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
   int _SLA_HL() { /* Shift Left: bit-0 is unset */
-    final val = _mmu.pull8(this.cpur.HL);
+    final val = this.mmu.pull8(this.cpur.HL);
     final newbit = 0;
     final res = _SL_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
   int _SRL_HL() { /* Shift Right: bit-7 is unset */
-    final val = _mmu.pull8(this.cpur.HL);
+    final val = this.mmu.pull8(this.cpur.HL);
     final newbit = 0;
     final res = _SR_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
 
   int _SRA_HL() { /* Shift Right but bit-7 is not changed */
-    final val = _mmu.pull8(this.cpur.HL);
+    final val = this.mmu.pull8(this.cpur.HL);
     final newbit = 0;
     final res = _SR_calculate(val, newbit);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
@@ -1473,9 +1407,9 @@ class Z80 {
   }
 
   int _SWAP_HL() {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     final int res = _SWAP_calculate(val);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
@@ -1500,7 +1434,7 @@ class Z80 {
   }
 
   int _BIT_HL(int index) {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     _BIT_calculate(index, val);
     this.cpur.PC += 2;
     return 12;
@@ -1522,9 +1456,9 @@ class Z80 {
   }
 
   int _SET_HL(int index) {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     final int res = _SET_calculate(val, index);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
@@ -1545,9 +1479,9 @@ class Z80 {
   }
 
   int _RES_HL(int index) {
-    final int val = _mmu.pull8(this.cpur.HL);
+    final int val = this.mmu.pull8(this.cpur.HL);
     final int res = _RES_calculate(val, index);
-    _mmu.push8(this.cpur.HL, res);
+    this.mmu.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
     return 16;
   }
@@ -1555,7 +1489,7 @@ class Z80 {
   /* Jumps ********************************************************************/
   /* 16 bit */
   int _JP_nn() {
-    this.cpur.PC = _mmu.pull16(this.cpur.PC + 1);
+    this.cpur.PC = this.mmu.pull16(this.cpur.PC + 1);
     return 16;
   }
 
@@ -1575,13 +1509,13 @@ class Z80 {
   int _JP_C_nn()  { return  _JP_cc_nn(this.cpur.cy == 1); }
 
   int _JP_HL() {
-    this.cpur.PC = _mmu.pull16(this.cpur.HL);
+    this.cpur.PC = this.mmu.pull16(this.cpur.HL);
     return 4;
   }
 
   /* 8 bit */
   int _JR_e() {
-    final int offset = _mmu.pull8(this.cpur.PC + 1).toSigned(8);
+    final int offset = this.mmu.pull8(this.cpur.PC + 1).toSigned(8);
     this.cpur.PC = (this.cpur.PC + 2 + offset) & 0xFFFF;
     return 12;
   }
@@ -1604,8 +1538,8 @@ class Z80 {
   /* Calls ********************************************************************/
   int _CALL_nn()
   {
-    final int addr = _mmu.pull16(this.cpur.PC + 1);
-    _mmu.push16(this.cpur.SP - 2, this.cpur.PC + 3);
+    final int addr = this.mmu.pull16(this.cpur.PC + 1);
+    this.mmu.push16(this.cpur.SP - 2, this.cpur.PC + 3);
     this.cpur.PC = addr;
     this.cpur.SP -= 2;
     return 24;
@@ -1630,7 +1564,7 @@ class Z80 {
   /* Returns ******************************************************************/
   int _RET()
   {
-    this.cpur.PC = _mmu.pull16(this.cpur.SP);
+    this.cpur.PC = this.mmu.pull16(this.cpur.SP);
     this.cpur.SP += 2;
     return 16;
   }
@@ -1662,7 +1596,7 @@ class Z80 {
   /* Resets */
   int _RST_f(int low) {
     assert(low & ~0xFF == 0);
-    _mmu.push16(this.cpur.SP - 2, this.cpur.PC + 1);
+    this.mmu.push16(this.cpur.SP - 2, this.cpur.PC + 1);
     this.cpur.SP -= 2;
     this.cpur.PC = low;
     return 16;

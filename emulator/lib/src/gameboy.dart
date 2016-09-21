@@ -14,41 +14,45 @@ import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';
 
-import "package:emulator/src/z80/z80.dart" as Z80;
-import "package:emulator/src/z80/cpu_registers.dart" as Cpuregs;
 import "package:emulator/src/memory/mmu.dart" as Mmu;
 import "package:emulator/src/memory/cartridge.dart" as Cartridge;
 
-class GameBoy {
+import "package:emulator/src/z80/instructionsdecoder.dart" as Instdecoder;
+import "package:emulator/src/z80/z80.dart" as Z80;
+import "package:emulator/src/z80/timers.dart" as Timers;
 
-  // final Cartridge.ACartridge cartridge; //<- Used ? can be accessed via mmu
-  final Z80.Z80 z80;
-  final Mmu.Mmu mmu;
+abstract class GameBoyMemory {
   
-  // final LCDScreen lcd;
-  // final Headset sound;
-  
-  GameBoy._fromMMU(Mmu.Mmu mmu) :
-    this.mmu = mmu,
-    this.z80 = new Z80.Z80(mmu)
-  {
-    z80.reset();
-    mmu.reset();
+  /* API */
+  Mmu.Mmu get mmu => _mmu;
+
+  void initMemory(Cartridge.ACartridge c) {
+    assert(_mmu == null, 'GameBoyMemory: initMMU: MMU already initialised');
+    _mmu = new Mmu.Mmu(c);
   }
 
-  GameBoy(Cartridge.ACartridge c) :  
-    this._fromMMU(new Mmu.Mmu(c));
+  /* Private */
+  Mmu.Mmu _mmu;
 
-  /* API */
+}
 
-  int get clockCount => this.z80.clockCount;
-  Cpuregs.CpuRegs get cpur => this.z80.cpur;
+class GameBoy extends Object
+  with GameBoyMemory, Instdecoder.InstructionsDecoder, Z80.Z80, Timers.Timers {
 
-  // Cartridge.Cartridge get cartridge => this.mmu.c;
+  GameBoy(Cartridge.ACartridge c) {
+    this.initMemory(c);
+  }
 
-  void exec(int nbClock) {
-    this.z80.exec(nbClock);
-    return ;
+  int exec(int nbClock) {
+    int instructionDuration;
+    int executedClocks = 0;
+    while(executedClocks < nbClock)
+    {
+      instructionDuration = this.executeInstruction();
+      this.updateTimers(instructionDuration);
+      executedClocks += instructionDuration;
+    }
+    return (executedClocks);
   }
 
 }

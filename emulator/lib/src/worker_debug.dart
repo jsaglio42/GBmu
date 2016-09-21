@@ -52,23 +52,6 @@ abstract class Debug implements Worker.AWorker {
         'data' : _buildMemoryList(_debuggerMemoryAddr, this.gbOpt)
       });
     }
-    // ---> Again, would rather check that gb is null
-    // Uint8List memList;
-    // if (this.gbOpt == null)
-    // {
-    //   print('onMemoryAddrChange: Cartridge not loaded');
-    //   _debuggerMemoryAddr = 0x0000;
-    //   memList = Uint8List(_debuggerMemoryLen);
-    // }
-    // else
-    // {
-    //   _debuggerMemoryAddr = addr;
-    //   memList = _buildMemoryList(_debuggerMemoryAddr, this.gbOpt);
-    // }
-    // this.ports.send('MemInfo',  <String, dynamic> {
-    //     'addr' : _debuggerMemoryAddr,
-    //     'data' : memList
-    //   });
     return ;
   }
 
@@ -115,23 +98,14 @@ abstract class Debug implements Worker.AWorker {
     Ft.log(Ft.typeStr(this), '_buildMemoryList', [addr, gb]);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_buildMemExplorerMap: addr not valid');
-    final memList = new List.generate(_debuggerMemoryLen,
-      (i) {
-        try { return gb.mmu.pull8(addr + i); }
-        catch (e) { return null; }
-      });
-    return memList;
+    return gb.mmu.pullMemoryList(addr, _debuggerMemoryLen);
+
   }
 
   List<Instructions.Instruction>   _buildInstList(Gameboy.GameBoy gb)
   {
     Ft.log(Ft.typeStr(this), '_buildInstList', [gb]);
-    final z80 = new Z80.Z80.clone(gb.z80);
-    final lst = <Instructions.Instruction>[];
-    for (var i = 0; i < _debuggerInstFlowLen; ++i) {
-      lst.add(z80.pullInstruction());
-    }
-    return lst;
+    return gb.pullInstructionList(_debuggerInstFlowLen);
   }
 
   // LOOPING ROUTINE ******************************************************** **
@@ -144,7 +118,6 @@ abstract class Debug implements Worker.AWorker {
     final l = new Uint8List(MemReg.values.length);
     final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
     final Gameboy.GameBoy gb = this.gbOpt;
-
     this.ports.send('RegInfo', gb.cpur);
     it.forEach((r, i) {
       l[r.index] = gb.mmu.pullMemReg(r);

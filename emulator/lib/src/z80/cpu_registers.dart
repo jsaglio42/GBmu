@@ -52,18 +52,7 @@ class CpuRegs {
 
   CpuRegs.buffer(Uint8List d)
     : _data = d
-    , _view16 = d.buffer.asUint16List();
-
-  CpuRegs() : this.buffer(new Uint8List(6 * 2));
-
-  CpuRegs.clone(CpuRegs src) :
-    this.buffer(new Uint8List.fromList(src._data.buffer.asUint8List()));
-
-  /*
-  ** API ***********************************************************************
-  */
-
-  void reset()
+    , _view16 = d.buffer.asUint16List()
   {
     this.AF = 0x01B0;
     this.BC = 0x0013;
@@ -73,12 +62,14 @@ class CpuRegs {
     this.PC = 0x0100;
   }
 
-  void load(CpuRegs src)
-  {
-    for (Reg16 r in Reg16.Value) {
-      this.push16(r, src.pull16(r));
-    }
-  }
+  CpuRegs() : this.buffer(new Uint8List(6 * 2));
+
+  CpuRegs.clone(CpuRegs src) :
+    this.buffer(new Uint8List.fromList(src._data.buffer.asUint8List()));
+
+  /*
+  ** API ***********************************************************************
+  */
 
   /* Get */
 
