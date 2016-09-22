@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:21:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/18 17:21:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/22 15:56:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,6 +26,7 @@ import './globals.dart';
 abstract class HtmlDraggable implements HtmlElement_intf {
 
   // ATTRIBUTES ************************************************************* **
+  bool _abort = false;
 
   // CONSTRUCTION *********************************************************** **
   void hdr_init(int left, int top, int distance, int zIndex) {
@@ -49,13 +50,18 @@ abstract class HtmlDraggable implements HtmlElement_intf {
   // `Cart` is never disabled
   // `Chip` in `GB` or in `a closed cart` is disabled
   void hdr_enable() {
-    assert(__stateChangeValid(true), "hdr_enable() invalid");
+    assert(__enabled.toggleTrueValid(), "hdr_enable() invalid");
     this.jqElt.callMethod('draggable', ['enable']);
   }
 
   void hdr_disable() {
-    assert(__stateChangeValid(false), "hdr_disable() invalid");
+    assert(__enabled.toggleFalseValid(), "hdr_disable() invalid");
     this.jqElt.callMethod('draggable', ['disable']);
+  }
+
+  void hdr_abort() {
+    assert(_abort == false && __enabled.state == true, "hdr_abort() invalid");
+    _abort = true;
   }
 
   // CALLBACKS ************************************************************** **
@@ -67,16 +73,15 @@ abstract class HtmlDraggable implements HtmlElement_intf {
     g_csc.dragStop(this);
   }
 
-  // INVARIANTS ************************************************************* **
-  bool __enabled = false;
-
-  bool __stateChangeValid(bool state) {
-    if (state == __enabled)
+  void _onDrag(_, __) {
+    if (_abort) {
+      _abort = false;
       return false;
-    else {
-      __enabled = state;
-      return true;
     }
+    return true;
   }
+
+  // INVARIANTS ************************************************************* **
+  final Ft.BinaryToggle __enabled = Ft.checkedOnlyBinaryToggle(false);
 
 }
