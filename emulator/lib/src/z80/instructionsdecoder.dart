@@ -16,11 +16,9 @@ import 'package:emulator/src/enums.dart';
 import "package:emulator/src/z80/instructions.dart" as Instructions;
 
 import "package:emulator/src/gameboy.dart" as GameBoy;
-import "package:emulator/src/z80/z80.dart" as Z80;
 
 abstract class InstructionsDecoder
-  implements GameBoy.GameBoyMemory
-  , Z80.Z80 {
+  implements GameBoy.Hardware {
 
   /* API **********************************************************************/
 

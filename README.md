@@ -9,10 +9,25 @@ pub serve
 
 # BUG
 
-# Todos
+- Lot of crash when playing with the debugger)
+- Debugger seem partly blocked when closed and re-opened
+
+# To DOs: Checks
 
 - Check operands where a signed byte 'e' is added
-- Check loop if CPU halted or stopped
+- Check timer loop if CPU halted or stopped
+- Check the write functions when writing to MemReg.DIV
+
+# To DOs: Features
+
+- Add the different flags in the debugger:
+	- ime
+	- halt
+	- stop
+- Reorganise Memory Registers per category (Mode/Port, Interrupt, LCD, Timers ...)
+- Add search for instructions (like memory explorer) ?
+- Add overlay for instructions (display extra info like duration, flag modified ...) ?
+
 
 # Useful links:
 

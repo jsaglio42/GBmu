@@ -20,7 +20,7 @@ import "package:emulator/src/gameboy.dart" as GameBoy;
 import "package:emulator/src/z80/interruptmanager.dart" as Interrupt;
 
 abstract class Timers
-  implements GameBoy.GameBoyMemory
+  implements GameBoy.Hardware
   , Interrupt.InterruptManager {
 
   int _clockTotal = 0;
@@ -42,11 +42,10 @@ abstract class Timers
 
   void _updateDIV(int nbClock) {
     _counterDIV -= nbClock;
-    if (_counterDIV < 0)
+    if (_counterDIV <= 0)
     {
-      _counterDIV = 256;
-      final int div = this.mmu.pullMemReg(MemReg.DIV);
-      // this.mmu.setDIV((div + 1) & 0xFF);
+      _counterDIV = 0xFF;
+      this.mmu.incDIV();
     }
     return ;
   }
@@ -55,7 +54,7 @@ abstract class Timers
     final int TAC = this.mmu.pullMemReg(MemReg.TAC);
     if (TAC & (0x1 << 2) != 0) {
       _counterTIMA -= nbClock;
-      if (_counterTIMA < 0)
+      if (_counterTIMA <= 0)
       {
         switch(TAC & 0x3)
         {

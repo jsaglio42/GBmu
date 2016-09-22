@@ -65,24 +65,30 @@ class Mmu {
 
   /* Mem Reg API **************************************************************/
 
+  /** TO CHANGE ** SHOULD NOT USE THE PUSH/PULL API AS SPECIFIC ACTIONS */
   int pullMemReg(MemReg reg) {
     final addr = Memregisters.memRegInfos[reg.index].address;
     return this.pull8(addr);
   }
 
+  /** TO CHANGE ** SHOULD NOT USE THE PUSH/PULL API AS SPECIFIC ACTIONS */
   void pushMemReg(MemReg reg, int byte) {
     final addr = Memregisters.memRegInfos[reg.index].address;
     this.push8(addr, byte);
+    return ;
   }
 
   /* Timers */
-  // NEED TO ACCESS setDIV without push8 (behaviour is different)
-  void setDIV (int v) {
-    assert(v & ~0xFF == 0);
+  void incDIV () {
+    final int DIV_old = this.pullMemReg(MemReg.DIV);
+    final int DIV_new = (DIV_old + 1) & 0xFF;
+    this.pushMemReg(MemReg.DIV, DIV_new);
+    return ;
   }
 
   /* Memory API ***************************************************************/
 
+  /* 8-bits */
   int pull8(int memAddr)
   {
     if (CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
@@ -115,6 +121,7 @@ class Mmu {
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
 
+  /* 16-bits */
   int pull16(int memAddr){
     final int l = this.pull8(memAddr);
     final int h = this.pull8(memAddr + 1);
@@ -128,6 +135,7 @@ class Mmu {
     return ;
   }
 
+  /* Misc */
   List<int> pullMemoryList(int addr, int len) {
     final lst = <int>[];
     for (int i = 0; i < len; ++i) {

@@ -17,21 +17,17 @@ import "package:ft/ft.dart" as Ft;
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/gameboy.dart" as GameBoy;
-import "package:emulator/src/z80/cpu_registers.dart" as Cpuregs;
-import "package:emulator/src/z80/interruptmanager.dart" as Interrupt;
 
 abstract class Z80
-  implements GameBoy.GameBoyMemory
-  , Interrupt.InterruptManager {
-
-  final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
-  bool halt = false;
-  bool stop = false;
+  implements GameBoy.Hardware {
 
   /* API **********************************************************************/
 
   int executeInstruction() {
-    return _execInst();
+    if (this.halt || this.stop)
+      return 4;
+    else
+      return _execInst();
   }
 
   /* Private ******************************************************************/
@@ -804,8 +800,7 @@ abstract class Z80
 
   int _PUSH(Reg16 r) {
     final int val = this.cpur.pull16(r);
-    this.mmu.push16(this.cpur.SP - 2, val);
-    this.cpur.SP -= 2;
+    this.pushOnStack16(val);
     this.cpur.PC += 1;
     return 16;
   }
@@ -1542,9 +1537,8 @@ abstract class Z80
   int _CALL_nn()
   {
     final int addr = this.mmu.pull16(this.cpur.PC + 1);
-    this.mmu.push16(this.cpur.SP - 2, this.cpur.PC + 3);
+    this.pushOnStack16(this.cpur.PC + 3);
     this.cpur.PC = addr;
-    this.cpur.SP -= 2;
     return 24;
   }
 
@@ -1593,14 +1587,14 @@ abstract class Z80
 
   int _RETI()
   {
-    assert(false, "RETI");
+    this.ime = true;
+    return _RET();
   }
 
   /* Resets */
   int _RST_f(int low) {
     assert(low & ~0xFF == 0);
-    this.mmu.push16(this.cpur.SP - 2, this.cpur.PC + 1);
-    this.cpur.SP -= 2;
+    this.pushOnStack16(this.cpur.PC + 1);
     this.cpur.PC = low;
     return 16;
   }

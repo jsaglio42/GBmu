@@ -58,17 +58,24 @@ category: ${reginfo.category}
 ${reginfo.description}''';
     switch (reginfo.category) {
       case 'Port/Mode':
-        tr.style.backgroundColor = 'DarkSeaGreen';
-        // tr.style.backgroundColor = 'SeaShell';
+        // tr.style.backgroundColor = 'DarkSeaGreen';
+        tr.style.backgroundColor = '#91cf91';
         break ;
       case 'Interrupt':
-        tr.style.backgroundColor = 'Thistle';
+        // tr.style.backgroundColor = 'Thistle';
+        tr.style.backgroundColor = '#e7908e';
         break ;
       case 'LCD Display':
-        tr.style.backgroundColor = 'Cornsilk';
+        // tr.style.backgroundColor = 'Cornsilk';
+        tr.style.backgroundColor = '#f6ce95';
         break ;
       case 'Bank Control':
-        tr.style.backgroundColor = 'LightBlue';
+        // tr.style.backgroundColor = 'LightBlue';
+        tr.style.backgroundColor = '#7eb0db';
+        break ;
+      case 'Timer':
+        // tr.style.backgroundColor = 'Thistle';
+        tr.style.backgroundColor = '#9bd8eb';
         break ;
       default:
         break ;
