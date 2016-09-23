@@ -7,7 +7,7 @@ environment:
   # browser: ^0.10.0
 transformers:
 - $dart2js:
-    checked: true
+    checked: false
+    # minify: true
     commandLineOptions: [--enable-diagnostic-colors, --show-package-warnings, --assert-message]
     # analyze-all: true
-    # minify: true

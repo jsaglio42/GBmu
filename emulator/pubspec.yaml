@@ -8,5 +8,7 @@ dependencies:
     path: ../ft
 transformers:
 - $dart2js:
-    checked: true
-    commandLineOptions: [--enable-diagnostic-colors]
+    checked: false
+    # minify: true
+    commandLineOptions: [--enable-diagnostic-colors, --show-package-warnings, --assert-message]
+    # analyze-all: true
