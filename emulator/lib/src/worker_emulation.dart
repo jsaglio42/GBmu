@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/20 15:42:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/23 16:21:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,8 +33,6 @@ final List<List> _loopingGBCombos = [
 
 final List<List> _activeAutoBreakCombos = [
   [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
-    PauseExternalMode.Ineffective, AutoBreakExternalMode.Clock],
-  [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Instruction],
   [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Frame],
@@ -42,11 +40,10 @@ final List<List> _activeAutoBreakCombos = [
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Second],
 ];
 
-final Map<AutoBreakExternalMode, dynamic> _autoBreakClocks = {
-  AutoBreakExternalMode.Clock: (_) => 1,
-  AutoBreakExternalMode.Instruction: (_) => 4,
-  AutoBreakExternalMode.Frame: (_) => GB_FRAME_PER_CLOCK_INT,
-  AutoBreakExternalMode.Second: (_) => GB_CPU_FREQ_INT,
+final Map<AutoBreakExternalMode, int> _autoBreakClocks = {
+  AutoBreakExternalMode.Instruction: 4,
+  AutoBreakExternalMode.Frame: GB_FRAME_PER_CLOCK_INT,
+  AutoBreakExternalMode.Second: GB_CPU_FREQ_INT,
 };
 
 abstract class Emulation implements Worker.AWorker {
@@ -220,7 +217,6 @@ abstract class Emulation implements Worker.AWorker {
     }
     else if (_autoBreak) {
       _autoBreakIn -= clockSum;
-      assert(_autoBreakIn >= 0, "_autoBreakIn == $_autoBreakIn");
       if (_autoBreakIn <= 0)
         _updatePauseMode(PauseExternalMode.Effective);
     }
@@ -236,7 +232,7 @@ abstract class Emulation implements Worker.AWorker {
     else if (clockDebt.isInfinite)
       return MAX_INT_LOLDART;
     else
-      return clockDebt.floor(); 
+      return clockDebt.floor();
   }
 
   int _emulate(final DateTime timeLimit, final int clockLimit)
@@ -286,7 +282,7 @@ abstract class Emulation implements Worker.AWorker {
   {
     Ft.log(Ft.typeStr(this), '_enableAutoBreak');
     assert(this.abMode != AutoBreakExternalMode.None, "_enableAutoBreak");
-    _autoBreakIn = _autoBreakClocks[this.abMode](this.gbOpt);
+    _autoBreakIn = _autoBreakClocks[this.abMode];
     _autoBreak = true;
   }
 
@@ -303,7 +299,7 @@ abstract class Emulation implements Worker.AWorker {
     Ft.log(Ft.typeStr(this), 'init_emulation');
     this.sc.setState(GameBoyExternalMode.Absent);
     this.sc.setState(PauseExternalMode.Ineffective);
-    this.sc.setState(AutoBreakExternalMode.None);
+    this.sc.setState(AutoBreakExternalMode.Instruction);
     this.sc.addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos);
     this.sc.addSideEffect(
         _enableAutoBreak, _disableAutoBreak, _activeAutoBreakCombos);
