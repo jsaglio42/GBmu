@@ -21,7 +21,8 @@ import "package:emulator/src/z80/interruptmanager.dart" as Interrupt;
 
 abstract class Timers
   implements GameBoy.Hardware
-  , Interrupt.InterruptManager {
+  , Interrupt.InterruptManager
+  , Mmu.Mmu {
 
   int _clockTotal = 0;
   int _counterTIMA = 0;

@@ -24,4 +24,6 @@ class TailRam extends AData
   int pull8(int addr) => this.pull8_unsafe(addr);
   void push8(int addr, int v) => this.push8_unsafe(addr, v);
 
+  /* DO SOME SPECIAL STUFFFFFF */
+
 }

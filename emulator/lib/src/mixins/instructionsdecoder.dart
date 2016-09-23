@@ -18,7 +18,8 @@ import "package:emulator/src/z80/instructions.dart" as Instructions;
 import "package:emulator/src/gameboy.dart" as GameBoy;
 
 abstract class InstructionsDecoder
-  implements GameBoy.Hardware {
+  implements GameBoy.Hardware
+  , Mmu.Mmu {
 
   /* API **********************************************************************/
 

@@ -54,7 +54,8 @@ enum KeyCode {
 
 abstract class Joypad
   implements GameBoy.Hardware
-  , Interrupt.InterruptManager {
+  , Interrupt.InterruptManager
+  , Mmu.Mmu {
 
     void keyRelease(KeyCode k) {
       final int bit_row = k.index % 4;

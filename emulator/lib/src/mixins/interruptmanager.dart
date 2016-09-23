@@ -27,15 +27,16 @@ enum InterruptType {
 }
 
 abstract class InterruptManager
-  implements GameBoy.Hardware {
+  implements GameBoy.Hardware
+  , Mmu.Mmu {
 
   /* API **********************************************************************/
 
   void handleInterrupts() {
     if (this.ime == false)
       return ;
-    final int IE = this.mmu.pullMemReg(MemReg.IE);
-    final int IF = this.mmu.pullMemReg(MemReg.IF);
+    final int IE = this.pullMemReg_unsafe(MemReg.IE);
+    final int IF = this.pullMemReg_unsafe(MemReg.IF);
     final int IFandIE = IF & IE;
     if (IFandIE == 0)
       return ;
@@ -49,9 +50,9 @@ abstract class InterruptManager
   }
 
   void requestInterrupt(InterruptType i) {
-    final int IF_old = this.mmu.pullMemReg(MemReg.IF);
+    final int IF_old = this.pullMemReg_unsafe(MemReg.IF);
     final int IF_new = IF_old | (1 << i.index);
-    this.mmu.pushMemReg(MemReg.IF, IF_new);
+    this.pushMemReg_unsafe(MemReg.IF, IF_new);
     return ;
   }
 
@@ -60,9 +61,9 @@ abstract class InterruptManager
     this.ime = false;
     this.halt = false;
     this.stop = false;
-    final int IF_old = this.mmu.pullMemReg(MemReg.IF);
+    final int IF_old = this.pullMemReg_unsafe(MemReg.IF);
     final int IF_new = (IF_old & ~(1 << i.index)) & 0xFF;
-    this.mmu.pushMemReg(MemReg.IF, IF_new);
+    this.pushMemReg_unsafe(MemReg.IF, IF_new);
     this.pushOnStack16(this.cpur.PC);
     switch(i) {
       case (InterruptType.VBlank) : this.cpur.PC = 0x0040 ; break ;
