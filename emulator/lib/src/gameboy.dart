@@ -27,28 +27,15 @@ import "package:emulator/src/z80/interruptmanager.dart" as Interrupt;
 
 abstract class Hardware {
 
-  Mmu.Mmu _mmu;
+  final Cartridge.ACartridge c;
   final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
-
-  /* API */
-
-  Mmu.Mmu get mmu => _mmu;
+  final internalRam = new Data.internalRam(INTERNAL_RAM_FIRST, new Uint8List(INTERNAL_RAM_SIZE));
+  final videoRam = new Data.VideoRam(VIDEO_RAM_FIRST, VIDEO_RAM_SIZE);
+  final tailRam = new Data.TailRam(TAIL_RAM_FIRST, TAIL_RAM_SIZE);
 
   bool ime = true;
   bool halt = false;
   bool stop = false;
-
-  void initMemory(Cartridge.ACartridge c) {
-    assert(_mmu == null, 'Hardware: initMMU: MMU already initialised');
-    _mmu = new Mmu.Mmu(c);
-  }
-
-  void pushOnStack16(int val) {
-    assert(val & 0xFFFF == 0);
-    this.mmu.push16(this.cpur.SP - 2, val);
-    this.cpur.SP -= 2;
-    return ;
-  }
 
 }
 
@@ -62,9 +49,7 @@ class GameBoy extends Object
   , Interrupt.InterruptManager {
 
   /* Constructor */
-  GameBoy(Cartridge.ACartridge c) {
-    this.initMemory(c);
-  }
+  GameBoy(Cartridge.ACartridge c) : this.c = c;
 
   /* API */
   int exec(int nbClock) {

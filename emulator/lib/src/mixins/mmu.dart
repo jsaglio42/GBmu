@@ -21,86 +21,50 @@ import "package:emulator/src/memory/cartridge.dart" as Cartridge;
 import "package:emulator/src/memory/data.dart" as Data;
 import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 
-class Mmu {
+bool _isInRange(int i, int s, int e) => (i >= s && i <= e);
 
-  final Cartridge.ACartridge c;
-  final _vr = new Data.VideoRam(new Uint8List(VIDEO_RAM_SIZE));
-  final _wr = new Data.WorkingRam(new Uint8List(WORKING_RAM_SIZE));
-  final _tr = new Data.TailRam(new Uint8List(TAIL_RAM_SIZE));
-
-  Mmu(this.c) { 
-    this.push8(0xFF05, 0x00);
-    this.push8(0xFF06, 0x00);
-    this.push8(0xFF07, 0x00);
-    this.push8(0xFF10, 0x80);
-    this.push8(0xFF11, 0xBF);
-    this.push8(0xFF12, 0xF3);
-    this.push8(0xFF14, 0xBF);
-    this.push8(0xFF16, 0x3F);
-    this.push8(0xFF17, 0x00);
-    this.push8(0xFF19, 0xBF);
-    this.push8(0xFF1A, 0x7F);
-    this.push8(0xFF1B, 0xFF);
-    this.push8(0xFF1C, 0x9F);
-    this.push8(0xFF1E, 0xBF);
-    this.push8(0xFF20, 0xFF);
-    this.push8(0xFF21, 0x00);
-    this.push8(0xFF22, 0x00);
-    this.push8(0xFF23, 0xBF);
-    this.push8(0xFF24, 0x77);
-    this.push8(0xFF25, 0xF3);
-    this.push8(0xFF26, 0xF1);
-    this.push8(0xFF40, 0x91);
-    this.push8(0xFF42, 0x00);
-    this.push8(0xFF43, 0x00);
-    this.push8(0xFF45, 0x00);
-    this.push8(0xFF47, 0xFC);
-    this.push8(0xFF48, 0xFF);
-    this.push8(0xFF49, 0xFF);
-    this.push8(0xFF4A, 0x00);
-    this.push8(0xFF4B, 0x00);
-    this.push8(0xFFFF, 0x00);
-    return ;
-  }
+class Mmu
+  implements GameBoy.Hardware {
 
   /* Mem Reg API **************************************************************/
-
-  /** TO CHANGE ** SHOULD NOT USE THE PUSH/PULL API AS SPECIFIC ACTIONS */
+  /* Safe */
   int pullMemReg(MemReg reg) {
     final addr = Memregisters.memRegInfos[reg.index].address;
-    return this.pull8(addr);
+    return this.tailRam.pull8(addr);
   }
 
-  /** TO CHANGE ** SHOULD NOT USE THE PUSH/PULL API AS SPECIFIC ACTIONS */
   void pushMemReg(MemReg reg, int byte) {
     final addr = Memregisters.memRegInfos[reg.index].address;
-    this.push8(addr, byte);
+    this.tailRam.push8(addr, byte);
     return ;
   }
 
-  /* Timers */
-  void incDIV () {
-    final int DIV_old = this.pullMemReg(MemReg.DIV);
-    final int DIV_new = (DIV_old + 1) & 0xFF;
-    this.pushMemReg(MemReg.DIV, DIV_new);
+  /* Unsafe */
+  int pullMemReg_unsafe(MemReg reg) {
+    final addr = Memregisters.memRegInfos[reg.index].address;
+    return this.tailRam.pull8_unsafe(addr);
+  }
+
+  void pushMemReg_unsafe(MemReg reg, int byte) {
+    final addr = Memregisters.memRegInfos[reg.index].address;
+    this.tailRam.push8_unsafe(addr, byte);
     return ;
   }
 
   /* Memory API ***************************************************************/
-
   /* 8-bits */
   int pull8(int memAddr)
   {
-    if (CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
+    if (_isInRange(memAddr, CARTRIDGE_ROM_FIRST, CARTRIDGE_ROM_LAST))
       return this.c.pull8_Rom(memAddr);
-    else if (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST)
+    else if (_isInRange(memAddr, CARTRIDGE_RAM_FIRST, CARTRIDGE_RAM_LAST))
       return this.c.pull8_Ram(memAddr);
-    else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
-      return _vr.pull8(memAddr - VIDEO_RAM_FIRST);
-    else if (WORKING_RAM_FIRST <= memAddr && memAddr <= WORKING_RAM_LAST)
-      return _wr.pull8(memAddr - WORKING_RAM_FIRST);
-    else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
-      return _tr.pull8(memAddr - TAIL_RAM_FIRST);
+    else if (_isInRange(memAddr, VIDEO_RAM_FIRST, VIDEO_RAM_LAST))
+      return this.videoRam.pull8(memAddr);
+    else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
+      return this.workingRam.pull8(memAddr);
+    else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
+      return this.trailingRam.pull8(memAddr);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
@@ -112,11 +76,11 @@ class Mmu {
     else if (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST)
       this.c.push8_Ram(memAddr, v);
     else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
-      _vr.push8(memAddr - VIDEO_RAM_FIRST);
-    else if (WORKING_RAM_FIRST <= memAddr && memAddr <= WORKING_RAM_LAST)
-      _wr.push8(memAddr - WORKING_RAM_FIRST, v);
+      this.videoRam.push8(memAddr - VIDEO_RAM_FIRST);
+    else if (INTERNAL_RAM_FIRST <= memAddr && memAddr <= INTERNAL_RAM_LAST)
+      this.workingRam.push8(memAddr - INTERNAL_RAM_FIRST, v);
     else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
-      _tr.push8(memAddr - TAIL_RAM_FIRST, v);
+      this.trailingRam.push8(memAddr, v);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
@@ -147,9 +111,14 @@ class Mmu {
     return lst;
   }
 
+  void pushOnStack16(int val) {
+    assert(val & 0xFFFF == 0);
+    this.push16(this.cpur.SP - 2, val);
+    this.cpur.SP -= 2;
+    return ;
+  }
+
 }
-
-
 
 
 

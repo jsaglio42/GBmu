@@ -20,13 +20,20 @@ import "package:emulator/src/memory/headerdecoder.dart" as Headerdecoder;
 
 abstract class AData {
 
+  final int start;
   final Uint8List _data;
 
-  AData(Uint8List d) : _data = d;
+  AData(int start, int len)
+    : this.startAddress = start
+    , _data = new Uint8List(len);
 
+  /* API */
   int get size => _data.length;
+  String toString() => '[${startAddress} - ${startAddress + this.size}]';
 
-  String toString() => '\{len: ${this.size}\}';
+  /* Virtual */
+  int pull8(int addr);
+  void push8(int addr, int v);
 
 }
 
@@ -34,18 +41,18 @@ abstract class AData {
 
 abstract class AReadOperation implements AData {
 
-  int pull8(int addr)
-  {
+  int pull8_unsafe(int addr) {
+    addr -= startAddress;
     if (addr < 0 || addr >= this.size)
-      throw new Exception("Read Operation: $addr out of [0 - ${this.size}[");
+      throw new Exception("Read Operation: $addr out of ${this.toString()}");
     else
       return _data[addr];
   }
 
-  Uint8List pull8View(int addr, int len)
-  {
+  Uint8List pull8View_unsafe(int addr, int len) {
+    addr -= startAddress;
     if (addr < 0 || addr + len >= this.size)
-      throw new Exception("Read Operation: ($addr + $len) out of [0 - ${this.size}[");
+      throw new Exception("Read Operation: $addr out of ${this.toString()}");
     else
       return new Uint8List.view(_data.buffer, addr, len);
   }
@@ -58,50 +65,11 @@ abstract class AWriteOperation implements AData  {
 
   void clear() { _data.fillRange(0, this.size, 0); }
 
-  void push8(int addr, int v)
-  {
+  void push8_unsafe(int addr, int v) {
     assert ((v & ~0xFF) == 0, "Write Operation: data limited to 1byte");
+    addr -= startAddress;
     if (addr < 0 || addr >= this.size)
-      throw new Exception("Write Operation: $addr out of [0 - ${this.size}[");
+      throw new Exception("Write Operation: $addr out of ${this.toString()}");
     else
       this._data[addr] = v;
-  }
-
-}
-
-/* Memory Classes *************************************************************/
-
-class Rom extends AData
-	with AReadOperation, Headerdecoder.AHeaderDecoder {
-
-  Rom(Uint8List d) : super(d);
-
-}
-
-class Ram extends AData
-	with AReadOperation, AWriteOperation {
-
-  Ram(Uint8List d) : super(d);
-
-}
-
-class VideoRam extends AData
-  with AReadOperation, AWriteOperation {
-
-  VideoRam(Uint8List d) : super(d);
-
-}
-
-class WorkingRam extends AData
-  with AReadOperation, AWriteOperation {
-
-  WorkingRam(Uint8List d) : super(d);
-
-}
-
-class TailRam extends AData
-  with AReadOperation, AWriteOperation {
-
-  TailRam(Uint8List d) : super(d);
-
 }

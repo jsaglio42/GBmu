@@ -45,13 +45,15 @@ abstract class Timers
     if (_counterDIV <= 0)
     {
       _counterDIV = 0xFF;
-      this.mmu.incDIV();
+      final DIV_old = this.pullMemReg_unsafe(MemReg.DIV);
+      final DIV_new = (DIV_old + 1) & 0xFF;
+      this.pushMemReg_unsafe(MemReg.DIV, DIV_old);
     }
     return ;
   }
 
   void _updateTIMA(int nbClock) {
-    final int TAC = this.mmu.pullMemReg(MemReg.TAC);
+    final int TAC = this.mmu.pullMemReg_unsafe(MemReg.TAC);
     if (TAC & (0x1 << 2) != 0) {
       _counterTIMA -= nbClock;
       if (_counterTIMA <= 0)
@@ -65,7 +67,7 @@ abstract class Timers
           default : assert(false, '_updateTIMA: switch failure');
         }
         final int TMA = this.mmu.pullMemReg(MemReg.TIMA);
-        this.mmu.pushMemReg(MemReg.TIMA, TMA);
+        this.pushMemReg_unsafe(MemReg.TIMA, TMA);
         this.requestInterrupt(InterruptType.Timer);
       }
 

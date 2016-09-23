@@ -19,6 +19,28 @@ import "package:emulator/src/memory/data.dart" as Data;
 import "package:emulator/src/memory/cart_romonly.dart" as C_RO;
 import "package:emulator/src/memory/cart_mbc1.dart" as C_MBC1;
 
+/* Cartridge ROM/RAM **********************************************************/
+
+class CartridgeRom extends AData
+  with AReadOperation, Headerdecoder.AHeaderDecoder {
+
+  CartridgeRom(Uint8List d) : super(0, d);
+
+  int pull8(int addr) => this.pull8_unsafe(addr);
+  void push8(int addr, int v) => this.push8_unsafe(addr, v);
+
+}
+
+class CartridgeRam extends AData
+  with AReadOperation, AWriteOperation {
+
+  CartridgeRam(Uint8List d) : super(0, d);
+
+  int pull8(int addr) => this.pull8_unsafe(addr);
+  void push8(int addr, int v) => this.push8_unsafe(addr, v);
+
+}
+
 /* Cartridge Implementation ****************************************************
 **
 ** Abstract that only offers a factory method:
@@ -30,8 +52,8 @@ import "package:emulator/src/memory/cart_mbc1.dart" as C_MBC1;
 
 abstract class ACartridge {
 
-  final Data.Rom rom;
-  final Data.Ram ram;
+  final CartridgeRom rom;
+  final CartridgeRam ram;
 
   ACartridge.internal(this.rom, this.ram);
 
