@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 12:33:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 16:05:40 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,6 +24,14 @@ class Arrival extends SlotEvent {
 class Dismissal extends SlotEvent {
   const Dismissal();
   static const Dismissal v = const Dismissal();
+}
+
+// Update event ************************************************************* **
+
+class Update<T> {
+  final T newValue;
+  final T oldValue;
+  Update(this.newValue, this.oldValue);
 }
 
 // Components *************************************************************** **
