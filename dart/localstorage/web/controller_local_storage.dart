@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 16:38:16 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 17:41:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 19:48:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -55,7 +55,7 @@ class ControllerLocalStorage {
   }
 
   // PUBLIC ***************************************************************** **
-  void write(LsEntry e) {
+  void write(LsEntry e) { //TODO create proper `delete()` function, NOT taking a dead element
     final String key = e.keyJson;
     final String oldValueOpt = Html.window.localStorage[key];
     String value;

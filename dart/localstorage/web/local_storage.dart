@@ -6,13 +6,19 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 10:56:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 17:42:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 19:31:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:convert';
 
+import 'package:ft/ft.dart' as Ft;
+
 import './variants.dart';
+
+// ************************************************************************** **
+// ************************************************************************** **
+// ************************************************************************** **
 
 abstract class LsEntry {
 
@@ -25,7 +31,7 @@ abstract class LsEntry {
       throw new Exception('Bad JSON $key');
     switch (key['type']) {
       case ('Rom') : return new LsRom.json_exn(key['uid'], valueJson);
-      // case ('Ram') : return new LsRam.json_exn(key['uid'], valueJson);
+      case ('Ram') : return new LsRam.json_exn(key['uid'], valueJson);
       // case ('Ss') : return new LsSs.json_exn(key['uid'], valueJson);
       default: throw new Exception('Bad JSON $key');
     }
@@ -37,10 +43,10 @@ abstract class LsEntry {
     assert(src.life is Alive, "LsEntry.kill dead parameter");
     if (src.type is Rom)
       return new LsRom.kill(src);
-    // else if (src.type is Ram)
-    //   return new RamEntry.kill(sc);
+    else if (src.type is Ram)
+      return new LsRam.kill(src);
     // else if (src.type is Ss)
-    //   return new SsEntry.kill(sc);
+    //   return new LsSs.kill(src);
     else
       assert(false, 'unreachable');
   }
@@ -54,12 +60,25 @@ abstract class LsEntry {
   final Life life;
   final int idbid;
 
+  String toString() =>
+    '$life $type uid#$uid idb#$idbid';
+
 }
 
+// ************************************************************************** **
+// ************************************************************************** **
+// ************************************************************************** **
+
 class _EntryInvalid<T> {
+
   bool call(Map<String, dynamic> map, String key) =>
     map[key] == null || !(map[key] is T);
+
 }
+
+// ************************************************************************** **
+// ************************************************************************** **
+// ************************************************************************** **
 
 class LsRom extends LsEntry {
 
@@ -76,9 +95,6 @@ class LsRom extends LsEntry {
   factory LsRom.json_exn(int uid, String valueJson) {
 
     final Map<String, dynamic> value = JSON.decode(valueJson);
-
-    bool entryValid(String name, Type valType) =>
-      value['name'] != null && valType == value['name'].runtimeType;
 
     if (new _EntryInvalid<int>()(value, 'idbid')
         || new _EntryInvalid<int>()(value, '_ramSize')
@@ -106,4 +122,86 @@ class LsRom extends LsEntry {
   int get ramSize => _ramSize;
   int get globalChecksum => _globalChecksum;
 
+  String toString() =>
+    '${super.toString()} rs:$_ramSize gc:$_globalChecksum';
+
 }
+
+// ************************************************************************** **
+// ************************************************************************** **
+// ************************************************************************** **
+
+abstract class LsChip extends LsEntry {
+
+  // ATTRIBUTES ************************************************************* **
+
+  // CONTRUCTION ************************************************************ **
+  LsChip.kill(int uid, Chip type, Life life, int idbid, this.romUid)
+    : super.kill(uid, type, life, idbid);
+
+  LsChip.unsafe(int uid, Chip type, Life life, int idbid, this.romUid)
+    : super.unsafe(uid, type, life, idbid);
+
+  // PUBLIC ***************************************************************** **
+  final Ft.Option<int> romUid;
+
+  String toString() =>
+    '${super.toString()} (rom ${romUid.isSome ? "#${romUid.v}" : "none"})';
+
+}
+
+// ************************************************************************** **
+// ************************************************************************** **
+// ************************************************************************** **
+
+class LsRam extends LsChip {
+
+  // ATTRIBUTES ************************************************************* **
+  final int _size;
+
+  // CONTRUCTION ************************************************************ **
+  LsRam.unsafe(int uid, Life life, int idbid, this._size, Ft.Option<int> romUid)
+    : super.unsafe(uid, Ram.v, life, idbid, romUid);
+
+  // A Json entry is always alive
+  factory LsRam.json_exn(int uid, String valueJson) {
+
+    final Map<String, dynamic> value = JSON.decode(valueJson);
+    final Ft.Option<int> romUid = new _EntryInvalid<int>()(value, 'romUid')
+      ? new Ft.Option<int>.none()
+      : new Ft.Option<int>.some(value['romUid']);
+
+    if (new _EntryInvalid<int>()(value, 'idbid')
+        || new _EntryInvalid<int>()(value, '_size'))
+      throw new Exception('Bad JSON $value');
+
+    return new LsRam.unsafe(uid, Alive.v, value['idbid'], value['_size'], romUid);
+  }
+
+  LsRam.kill(LsRam src)
+    : _size = src.size
+    , super.unsafe(src.uid, Ram.v, Dead.v, src.idbid, src.romUid);
+
+  // PUBLIC ***************************************************************** **
+  String get valueJson =>
+    JSON.encode(romUid.isNone
+        ? {
+          'idbid': idbid,
+          '_size': _size,
+        }
+        : {
+          'idbid': idbid,
+          '_size': _size,
+          'romUid': romUid.v,
+        });
+
+  int get size => _size;
+
+  String toString() =>
+    '${super.toString()} sz:$_size';
+
+}
+
+// ************************************************************************** **
+// ************************************************************************** **
+// ************************************************************************** **

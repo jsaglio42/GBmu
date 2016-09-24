@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 16:05:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 18:38:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -40,19 +40,23 @@ abstract class Component {
   const Component();
 }
 
+abstract class Chip extends Component {
+  const Chip();
+}
+
 class Rom extends Component {
   const Rom();
   static const Rom v = const Rom();
   String toString() => 'Rom';
 }
 
-class Ram extends Component {
+class Ram extends Chip {
   const Ram();
   static const Ram v = const Ram();
   String toString() => 'Ram';
 }
 
-class Ss extends Component {
+class Ss extends Chip {
   const Ss();
   static const Ss v = const Ss();
   String toString() => 'Ss';

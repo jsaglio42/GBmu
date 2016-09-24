@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 13:44:43 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 17:36:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 19:32:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,11 +26,13 @@ import './controller_storage.dart';
 main() {
   print('Hello World');
   LsRom lsrom;
+  LsRam lsram;
   ControllerLocalStorage cls;
   ControllerStorage cs;
 
   final rng = new Random.secure();
   final int maxint = pow(2, 32);
+  int romUid;
 
   try {
 
@@ -40,32 +42,34 @@ main() {
 
     cls.start();
     cs.start();
+    romUid = rng.nextInt(maxint);
 
     lsrom = new LsEntry.json_exn(
-        '{"uid":${rng.nextInt(maxint)},"type":"Rom"}',
+        '{"uid":${romUid},"type":"Rom"}',
         '{'
         '"life":"Alive",'
         '"idbid":72,'
         '"_ramSize":12,'
         '"_globalChecksum":5050'
         '}');
-    print(lsrom.keyJson);
-    print(lsrom.valueJson);
+
+    lsram = new LsEntry.json_exn(
+        '{"uid":${rng.nextInt(maxint)},"type":"Ram"}',
+        '{'
+        '"life":"Alive",'
+        '"idbid":72,'
+        '"romUid":0,'
+        '"_size":12'
+        '}');
 
     cls.write(lsrom);
+    cls.write(lsram);
+    // cls.write(new LsRom.unsafe(1507580930, Dead.v, 12, 12, 12));
+    // cls.write(new LsRom.unsafe(1507580930, Alive.v, 12, 12, 12));
 
   } catch (e, st) {
     print(e);
     print(st);
     return ;
   }
-
-  // cls.write(new LsRom.unsafe(4242, Dead.v, 12, 12, 12));
-
-
-  // Html.window.localStorage['lol'] = 'super';
-  // Html.window.localStorage['alol'] = 'super';
-  // Html.window.localStorage['blol'] = 'super';
-
-
 }

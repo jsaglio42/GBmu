@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 16:38:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 17:43:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 19:53:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,6 +23,18 @@ import 'package:ft/ft.dart' as Ft;
 import './variants.dart';
 import './local_storage.dart';
 import './controller_local_storage.dart';
+
+// TODO?: Filter `lsEntry*` streams multiple time
+//   1. LocalStorage Events, Unserialization    ControllerLocalStorage
+//   2. Event consistency, regarding AppStorage ControllerLocalStorageDataCheck
+//   3. Event consistency, regarding IndexedDb  ControllerLocalStorageEventIndexedDbCheck
+// TODO?:
+//  ControllerComponentStorage
+//  ControllerIndexedDb
+//  ControllerLocalStorage
+//  ControllerLSEUnserialization
+//  ControllerLSEDataCheck
+//  ControllerLSEIndexedDbCheck
 
 // Did my best to limit data races, couldn't find a bullet proof solution
 // This storage keeps track of all LsEntries, even the deleted one, to dampen
@@ -55,29 +67,36 @@ class ControllerStorage {
     cls.lsEntryUpdate.forEach(_onLsUpdate);
   }
 
+  // Does a duplicate id check, in addition of `_onLsNew()` checks
   void start() {
     Ft.log('ControllerS', 'start', []);
+    final Map<int, LsRom> romMap = <int, LsRom>{};
+    final Map<int, LsChip> chipMap = <int, LsChip>{};
+
     Html.window.localStorage.forEach((String k, String v){
       LsEntry e;
 
       try {
         e = new LsEntry.json_exn(k, v);
-        _entries[e.uid] = e;
+        if (romMap.containsKey(e.uid) || chipMap.containsKey(e.uid))
+          throw new Exception('Duplicate id');
+        if (e.type is Rom)
+          romMap[e.uid] = e;
+        else
+          chipMap[e.uid] = e;
       }
       catch (e, st) {
         Ft.log('ControllerS', 'start#unknown-entry', [k, v, e]);
         return ;
       }
     });
-    _entries.values
-      .where((LsEntry e) => e.type is Rom)
+    romMap.values
       .forEach((LsRom e){
-        _entryNew.add(e);
+        _onLsNew(e);
       });
-    _entries.values
-      .where((LsEntry e) => !(e.type is Rom))
-      .forEach((LsEntry e){
-        _entryNew.add(e);
+    chipMap.values
+      .forEach((LsChip e){
+        _onLsNew(e);
       });
   }
 
@@ -87,6 +106,8 @@ class ControllerStorage {
   Async.Stream<Update<LsEntry>> get entryUpdate => _entryUpdate.stream;
 
   // CALLBACKS ************************************************************** **
+
+  // Does data-race checks
   void _onLsDelete(LsEntry e) {
     final LsEntry current = _entries[e.uid];
 
@@ -103,18 +124,30 @@ class ControllerStorage {
     _entryDelete.add(e);
   }
 
+  // Does data-race checks
+  // Does `romUid` check
   void _onLsNew(LsEntry e) {
     final LsEntry current = _entries[e.uid];
+    LsChip c;
 
     Ft.log('ControllerS', '_onLsNew', [e]);
     if (current != null) {
       Ft.logerr('ControllerS', '_onLsNew#data-race-duplicate-entry');
       return ;
     }
+    if (e.type is Chip) {
+      c = e;
+      if (c.romUid.isSome && !_entries.containsKey(c.romUid.v)) {
+        Ft.logwarn('ControllerS', '_onLsNew#missing-rom');
+        return ;
+      }
+    }
     _entries[e.uid] = e;
     _entryNew.add(e);
   }
 
+  // Does data-race checks
+  // Does not allow update on roms
   void _onLsUpdate(Update<LsEntry> e) {
     final LsEntry current = _entries[e.newValue.uid];
 
@@ -127,6 +160,10 @@ class ControllerStorage {
     }
     if (current.life is Dead) {
       Ft.logwarn('ControllerS', '_onLsUpdate#data-race-deleted-entry');
+      return ;
+    }
+    if (current.type is Rom) {
+      Ft.logwarn('ControllerS', '_onLsUpdate#update-on-rom');
       return ;
     }
     _entries[e.newValue.uid] = e.newValue;
