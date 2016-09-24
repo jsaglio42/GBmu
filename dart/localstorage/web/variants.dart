@@ -1,0 +1,94 @@
+// ************************************************************************** //
+//                                                                            //
+//                                                        :::      ::::::::   //
+//   variants.dart                                      :+:      :+:    :+:   //
+//                                                    +:+ +:+         +:+     //
+//   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
+//                                                +#+#+#+#+#+   +#+           //
+//   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/24 12:33:55 by ngoguey          ###   ########.fr       //
+//                                                                            //
+// ************************************************************************** //
+
+// Slot event *************************************************************** **
+
+abstract class SlotEvent {
+  const SlotEvent();
+}
+
+class Arrival extends SlotEvent {
+  const Arrival();
+  static const Arrival v = const Arrival();
+}
+
+class Dismissal extends SlotEvent {
+  const Dismissal();
+  static const Dismissal v = const Dismissal();
+}
+
+// Components *************************************************************** **
+
+abstract class Component {
+  const Component();
+}
+
+class Rom extends Component {
+  const Rom();
+  static const Rom v = const Rom();
+  String toString() => 'Rom';
+}
+
+class Ram extends Component {
+  const Ram();
+  static const Ram v = const Ram();
+  String toString() => 'Ram';
+}
+
+class Ss extends Component {
+  const Ss();
+  static const Ss v = const Ss();
+  String toString() => 'Ss';
+}
+
+// Status ******************************************************************* **
+
+abstract class Status {
+  const Status();
+}
+
+class Enabled extends Status {
+  const Enabled();
+  static const Enabled v = const Enabled();
+  String toString() => 'Enabled';
+}
+
+class Disabled extends Status {
+  const Disabled();
+  static const Disabled v = const Disabled();
+  String toString() => 'Disabled';
+}
+
+// Life ********************************************************************* **
+
+abstract class Life {
+  const Life();
+  factory Life.ofString(String s) {
+    switch (s) {
+      case ('Alive'): return Alive.v;
+      case ('Dead'): return Dead.v;
+      default: throw new Exception('Life.ofString($s)');
+    }
+  }
+}
+
+class Alive extends Life {
+  const Alive();
+  static const Alive v = const Alive();
+  String toString() => 'Alive';
+}
+
+class Dead extends Life {
+  const Dead();
+  static const Dead v = const Dead();
+  String toString() => 'Dead';
+}
