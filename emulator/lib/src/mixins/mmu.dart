@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/25 17:04:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 10:27:11 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,7 @@ import "package:emulator/src/memory/cartridge.dart" as Cartridge;
 import "package:emulator/src/memory/data.dart" as Data;
 import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
 
-bool _isInRange(int i, int s, int e) => (i >= s && i <= e);
+bool _isInRange(int i, int f, int l) => (i >= f && i <= l);
 
 class Mmu
   implements GameBoy.Hardware {
@@ -53,7 +53,7 @@ class Mmu
 
   /* Memory API ***************************************************************/
   /* 8-bits */
-  int pull8(int memAddr)
+  int pullMem8(int memAddr)
   {
     if (_isInRange(memAddr, CARTRIDGE_ROM_FIRST, CARTRIDGE_ROM_LAST))
       return this.c.pull8_Rom(memAddr);

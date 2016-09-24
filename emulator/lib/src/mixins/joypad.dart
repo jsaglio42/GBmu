@@ -6,12 +6,16 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 10:19:54 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 10:27:14 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 /*
-* Implementation of Joypad input:
+* Joypad behaviour is strange, depending on value in b4 and b5, reading to  FF00
+* will return the states of either buttons or directions.
+* There is a private attribute _joypadState that stores the state of all 
+* and reading from FF00 will build the answer based on this _joypadState
+* Wiring of Joypad input:
 *                      
 *   FF00H
 *   +---+                          

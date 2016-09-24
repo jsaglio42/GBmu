@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:30:40 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:56:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 10:27:30 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,8 +26,10 @@ class CartridgeRom extends AData
 
   CartridgeRom(Uint8List d) : super(0, d);
 
-  int pull8(int addr) => this.pull8_unsafe(addr);
-  void push8(int addr, int v) => this.push8_unsafe(addr, v);
+  @override int pull8(int addr) => this.pull8_unsafe(addr);
+  @override void push8(int addr, int v) {
+    throw new Exception("CartridgeRom: Write Operation not supported");
+  }
 
 }
 
@@ -36,8 +38,8 @@ class CartridgeRam extends AData
 
   CartridgeRam(Uint8List d) : super(0, d);
 
-  int pull8(int addr) => this.pull8_unsafe(addr);
-  void push8(int addr, int v) => this.push8_unsafe(addr, v);
+  @override int pull8(int addr) => this.pull8_unsafe(addr);
+  @override void push8(int addr, int v) => this.push8_unsafe(addr, v);
 
 }
 
@@ -95,7 +97,6 @@ abstract class ACartridge {
   void push8_Ram(int memAddr, int v);
   void push8_Rom(int memAddr, int v);
 
-  String toString()
-    => '\{rom: $rom, ram: $ram\}';
+  String toString() => '\{rom: $rom, ram: $ram\}';
 
 }

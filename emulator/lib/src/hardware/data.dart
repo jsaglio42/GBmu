@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:56:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 10:27:26 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,10 +14,8 @@ import "dart:typed_data";
 import "package:ft/ft.dart" as Ft;
 
 import 'package:emulator/src/enums.dart';
-import "package:emulator/src/memory/headerdecoder.dart" as Headerdecoder;
 
-/* Rom Implementation *********************************************************/
-
+/* Data Implementation ********************************************************/
 abstract class AData {
 
   final int start;
@@ -38,7 +36,6 @@ abstract class AData {
 }
 
 /* ReadOperation **************************************************************/
-
 abstract class AReadOperation implements AData {
 
   int pull8_unsafe(int addr) {
@@ -60,7 +57,6 @@ abstract class AReadOperation implements AData {
 }
 
 /* WriteOperation *************************************************************/
-
 abstract class AWriteOperation implements AData  {
 
   void clear() { _data.fillRange(0, this.size, 0); }
