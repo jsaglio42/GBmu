@@ -1,14 +1,16 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   mem_registers.dart                                 :+:      :+:    :+:   //
+//   mem_registermapping.dart                           :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 15:32:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:13 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 11:05:58 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
+
+import "package:emulator/src/gameboy.dart" as GameBoy;
 
 /*
  * Byte Registers Mapped in Memory
@@ -55,7 +57,7 @@ enum MemReg {
   IE,
 }
 
-/* MemRegInfo *****************************************************************/
+/* Mem Registers Info *********************************************************/
 
 class MemRegInfo {
 
@@ -67,6 +69,38 @@ class MemRegInfo {
 
   MemRegInfo(
       this.address, this.cgb, this.name, this.category, this.description);
+}
+
+/* Mem Registers Info *********************************************************/
+
+abstract class MemRegisterMapping
+  implements GameBoy.Hardware {
+
+  /* Mem Reg API **************************************************************/
+  /* Safe */
+  int pullMemReg(MemReg reg) {
+    final addr = memRegInfos[reg.index].address;
+    return this.tailRam.pull8(addr);
+  }
+
+  void pushMemReg(MemReg reg, int byte) {
+    final addr = memRegInfos[reg.index].address;
+    this.tailRam.push8(addr, byte);
+    return ;
+  }
+
+  /* Unsafe */
+  int pullMemReg_unsafe(MemReg reg) {
+    final addr = memRegInfos[reg.index].address;
+    return this.tailRam.pull8_unsafe(addr);
+  }
+
+  void pushMemReg_unsafe(MemReg reg, int byte) {
+    final addr = memRegInfos[reg.index].address;
+    this.tailRam.push8_unsafe(addr, byte);
+    return ;
+  }
+
 }
 
 /* Global *********************************************************************/

@@ -6,12 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:18 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 11:05:18 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'package:emulator/src/enums.dart';
 import 'package:ft/ft.dart' as Ft;
+
+import 'package:emulator/src/enums.dart';
 
 class Instruction
 {

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:26:56 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 11:08:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,12 +18,10 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 
-import 'package:emulator/src/memory/data.dart' as Data;
-import 'package:emulator/src/memory/cartridge.dart' as Cartridge;
-// import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
-
-import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
+import 'package:emulator/src/gameboy.dart' as Gameboy;
+import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
+
 
 final List<List> _loopingGBCombos = [
   [GameBoyExternalMode.Emulating, DebuggerExternalMode.Dismissed],
@@ -175,8 +173,8 @@ abstract class Emulation implements Worker.AWorker {
   {
     final drom = l; //TODO: Retrieve from indexedDB
     final dram = new Uint8List.fromList([42, 43]); //TODO: Retrieve from indexedDB
-    final irom = new Data.Rom(drom);
-    final iram = new Data.Ram(dram);
+    final irom = new Cartridge.CartridgeRom(drom);
+    final iram = new Cartridge.CartridgeRam(dram);
     final c = new Cartridge.ACartridge(irom); //TODO: Take iram as parameter
     return new Gameboy.GameBoy(c);
   }

@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   mem_explorer.dart                                  :+:      :+:    :+:   //
+//   instruction_flow.dart                              :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 11:58:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:13:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/24 11:27:39 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,7 +17,6 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 
 import 'package:emulator/emulator.dart' as Emulator;
-import 'package:emulator/src/z80/instructions.dart' as Instructions;
 
 /*
 ** Classes
@@ -87,7 +86,7 @@ class _Data {
 ** Update Cells according to Event
 */
 
-void _onInstInfo(List<Instructions.Instruction> instList) {
+void _onInstInfo(List<Emulator.Instruction> instList) {
   assert(instList != null && instList.length == INST_ROWS, "_onInstInfo($instList)");
   for (var i = 0; i < INST_ROWS; ++i) {
     if (instList[i] == null)
@@ -135,7 +134,7 @@ void init(Emulator.Emulator emu) {
   Ft.log('instruction_flow.dart', 'init');
   _emu = emu;
   _data.toString(); /* Tips to instanciate _cells */
-  _onInstInfo(new List<Instructions.Instruction>(INST_ROWS));
+  _onInstInfo(new List<Emulator.Instruction>(INST_ROWS));
   _emu.listener('InstInfo').forEach(_onInstInfo);
   return ;
 }

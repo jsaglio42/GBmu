@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:15 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 12:51:30 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,6 +17,8 @@ import "package:ft/ft.dart" as Ft;
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/gameboy.dart" as GameBoy;
+import "package:emulator/src/mixins/mem_mmu.dart" as Mmu;
+import "package:emulator/src/mixins/mem_registermapping.dart" as Memregmapping;
 
 enum InterruptType {
   VBlank,
@@ -28,7 +30,8 @@ enum InterruptType {
 
 abstract class InterruptManager
   implements GameBoy.Hardware
-  , Mmu.Mmu {
+  , Mmu.Mmu
+  , Memregmapping.MemRegisterMapping {
 
   /* API **********************************************************************/
 

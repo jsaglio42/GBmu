@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:20 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 11:45:47 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,8 +15,10 @@ import "package:ft/ft.dart" as Ft;
 
 import 'package:emulator/src/enums.dart';
 
-class TailRam extends AData
-  with AReadOperation, AWriteOperation {
+import "package:emulator/src/hardware/data.dart" as Data;
+
+class TailRam extends Data.AData
+  with Data.AReadOperation, Data.AWriteOperation {
 
   TailRam(int start, Uint8List d) : super(start, d);
 

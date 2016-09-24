@@ -6,16 +6,17 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:17 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 12:35:06 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/src/enums.dart';
-import "package:emulator/src/z80/instructions.dart" as Instructions;
 
 import "package:emulator/src/gameboy.dart" as GameBoy;
+import "package:emulator/src/mixins/mem_mmu.dart" as Mmu;
+import "package:emulator/src/mixins/instructions.dart" as Instructions;
 
 abstract class InstructionsDecoder
   implements GameBoy.Hardware
@@ -41,10 +42,10 @@ abstract class InstructionsDecoder
   /* Private ******************************************************************/
 
   Instructions.InstructionInfo _getInstructionInfo(int addr) {
-    final op = this.mmu.pull8(addr);
+    final op = this.pull8(addr);
     if (op == 0xCB)
     {
-      final opX = this.mmu.pull8(addr + 1);
+      final opX = this.pull8(addr + 1);
       return Instructions.instInfos_CB[opX];
     }
     else
@@ -59,9 +60,9 @@ abstract class InstructionsDecoder
       case (0):
         data = 0; break;
       case (1):
-        data = this.mmu.pull8(addr + info.opCodeSize); break;
+        data = this.pull8(addr + info.opCodeSize); break;
       case (2):
-        data = this.mmu.pull16(addr + info.opCodeSize); break;
+        data = this.pull16(addr + info.opCodeSize); break;
       default :
         assert(false, 'InstructionDecoder: switch(dataSize): failure');
     }

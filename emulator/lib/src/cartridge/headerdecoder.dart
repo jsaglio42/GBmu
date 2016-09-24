@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 17:06:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:29 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 12:46:17 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,7 +14,8 @@ import 'dart:typed_data';
 import 'dart:convert' as Convert;
 
 import 'package:emulator/src/enums.dart';
-import 'package:emulator/src/memory/data.dart' as Data;
+
+import 'package:emulator/src/hardware/data.dart' as Data;
 
 /* Enums **********************************************************************/
 
@@ -86,7 +87,7 @@ class RomHeaderFieldInfo {
 
 /* Rom Header Decoder *********************************************************/
 
-abstract class AHeaderDecoder
+abstract class HeaderDecoder
   implements Data.AReadOperation {
 
   dynamic pullHeaderValue(RomHeaderField f)
@@ -232,9 +233,9 @@ final headerFieldInfos = <RomHeaderField, RomHeaderFieldInfo>{
 
 /* To value functions *********************************************************/
 
-typedef dynamic _toValueFunc(AHeaderDecoder rom);
+typedef dynamic _toValueFunc(HeaderDecoder rom);
 
-bool _fieldOutOfBound(AHeaderDecoder rom, RomHeaderFieldInfo info)
+bool _fieldOutOfBound(HeaderDecoder rom, RomHeaderFieldInfo info)
 {
   if (info.address + info.size > rom.size)
     return true;
@@ -244,12 +245,12 @@ bool _fieldOutOfBound(AHeaderDecoder rom, RomHeaderFieldInfo info)
 
 _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
 {
-  return (AHeaderDecoder rom) {
+  return (HeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
     else {
-      final v = rom.pull8(info.address);
+      final v = rom.pull8_unsafe(info.address);
       if (map.containsKey(v) == false)
         throw new Exception('Rom Header: ${info.name}: Unknown id');
       return map[v];
@@ -259,64 +260,64 @@ _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
 
 _toValueFunc _makeByteGetterFunction(RomHeaderField f)
 {
-  return (AHeaderDecoder rom) {
+  return (HeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull8(info.address);
+      return rom.pull8_unsafe(info.address);
   };
 }
 
 _toValueFunc _makeWordGetterFunction(RomHeaderField f)
 {
-  return (AHeaderDecoder rom) {
+  return (HeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull8(info.address)
-        | rom.pull8(info.address + 1) << 8;
+      return rom.pull8_unsafe(info.address)
+        | rom.pull8_unsafe(info.address + 1) << 8;
   };
 }
 _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
 {
-  return (AHeaderDecoder rom) {
+  return (HeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull8(info.address)
-        | rom.pull8(info.address + 1) << 8
-        | rom.pull8(info.address + 2) << 16
-        | rom.pull8(info.address + 3) << 24;
+      return rom.pull8_unsafe(info.address)
+        | rom.pull8_unsafe(info.address + 1) << 8
+        | rom.pull8_unsafe(info.address + 2) << 16
+        | rom.pull8_unsafe(info.address + 3) << 24;
   };
 }
 _toValueFunc _makeByteListGetterFunction(RomHeaderField f)
 {
-  return (AHeaderDecoder rom) {
+  return (HeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
     else
-      return rom.pull8View(info.address, info.size);
+      return rom.pull8View_unsafe(info.address, info.size);
   };
 }
 
 _toValueFunc _makeStringGetterFunction(RomHeaderField f)
 {
-  return (AHeaderDecoder rom) {
+  return (HeaderDecoder rom) {
     final info = headerFieldInfos[f];
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
-    final l = rom.pull8View(info.address, info.size);
+    final l = rom.pull8View_unsafe(info.address, info.size);
     return Convert.ASCII.decode(l);
   };
 }
 
 /* Custom functions */
 
-bool _isNintendoLogoValid(AHeaderDecoder rom)
+bool _isNintendoLogoValid(HeaderDecoder rom)
 {
   const ref = const <int>[
     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83,
@@ -326,7 +327,7 @@ bool _isNintendoLogoValid(AHeaderDecoder rom)
   final info = headerFieldInfos[RomHeaderField.Nintendo_Logo];
   if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
-  final logo = rom.pull8View(info.address, info.size);
+  final logo = rom.pull8View_unsafe(info.address, info.size);
   if (logo.length != ref.length)
     return false;
   for (int i = 0; i < ref.length; i++)
@@ -409,7 +410,7 @@ bool _isNintendoLogoValid(AHeaderDecoder rom)
 // main(){
 //   Rom rom = new Rom(new Uint8List(10));
 //   Ram ram = new Ram(new Uint8List(10));
-//   print(rom.pull8(2));
+//   print(rom.pull8_unsafe(2));
 //   ram.push8(2,2);
 //   debugRomHeader();
 //   return ;

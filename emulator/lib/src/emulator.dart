@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:04 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 11:18:01 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,8 +18,8 @@ import 'package:emulator/enums.dart';
 import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 import 'package:emulator/src/worker.dart' as Worker;
-import "package:emulator/src/z80/instructions.dart" as Instructions;
-import "package:emulator/src/z80/cpu_registers.dart" as Cpuregs;
+import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
+import "package:emulator/src/mixins/instructions.dart" as Instructions;
 
 /*
  * ************************************************************************** **

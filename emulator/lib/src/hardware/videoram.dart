@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:19 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 11:45:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,12 +15,16 @@ import "package:ft/ft.dart" as Ft;
 
 import 'package:emulator/src/enums.dart';
 
-class VideoRam extends AData
-  with AReadOperation, AWriteOperation {
+import "package:emulator/src/hardware/data.dart" as Data;
+
+class VideoRam extends Data.AData
+  with Data.AReadOperation, Data.AWriteOperation {
 
   VideoRam(int start, Uint8List d) : super(start, d);
 
   @override int pull8(int addr) => this.pull8_unsafe(addr);
   @override void push8(int addr, int v) => this.push8_unsafe(addr, v);
+
+	/* DO SOME SPECIAL STUFFFFFF */
 
 }

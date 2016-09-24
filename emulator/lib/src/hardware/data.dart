@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:26 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 11:57:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,16 +18,14 @@ import 'package:emulator/src/enums.dart';
 /* Data Implementation ********************************************************/
 abstract class AData {
 
-  final int start;
+  final int memOffset;
   final Uint8List _data;
 
-  AData(int start, int len)
-    : this.startAddress = start
-    , _data = new Uint8List(len);
+  AData(this.memOffset, this._data);
 
   /* API */
   int get size => _data.length;
-  String toString() => '[${startAddress} - ${startAddress + this.size}]';
+  String toString() => '[${memOffset} - ${memOffset + this.size}]';
 
   /* Virtual */
   int pull8(int addr);
@@ -39,7 +37,7 @@ abstract class AData {
 abstract class AReadOperation implements AData {
 
   int pull8_unsafe(int addr) {
-    addr -= startAddress;
+    addr -= memOffset;
     if (addr < 0 || addr >= this.size)
       throw new Exception("Read Operation: $addr out of ${this.toString()}");
     else
@@ -47,7 +45,7 @@ abstract class AReadOperation implements AData {
   }
 
   Uint8List pull8View_unsafe(int addr, int len) {
-    addr -= startAddress;
+    addr -= memOffset;
     if (addr < 0 || addr + len >= this.size)
       throw new Exception("Read Operation: $addr out of ${this.toString()}");
     else
@@ -63,9 +61,11 @@ abstract class AWriteOperation implements AData  {
 
   void push8_unsafe(int addr, int v) {
     assert ((v & ~0xFF) == 0, "Write Operation: data limited to 1byte");
-    addr -= startAddress;
+    addr -= memOffset;
     if (addr < 0 || addr >= this.size)
       throw new Exception("Write Operation: $addr out of ${this.toString()}");
     else
       this._data[addr] = v;
+  }
+
 }

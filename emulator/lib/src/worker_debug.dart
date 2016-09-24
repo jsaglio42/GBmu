@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:26:58 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 11:28:50 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,13 +19,12 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 
-import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker.dart' as Worker;
+import 'package:emulator/src/gameboy.dart' as Gameboy;
 
-import 'package:emulator/src/memory/mem_registers.dart' as Memregisters;
+import 'package:emulator/src/mixins/instructions.dart' as Instructions;
+import 'package:emulator/src/mixins/mem_registermapping.dart' as Memregisters;
 
-import 'package:emulator/src/z80/instructions.dart' as Instructions;
-import 'package:emulator/src/z80/z80.dart' as Z80;
 
 abstract class Debug implements Worker.AWorker {
 
@@ -98,7 +97,7 @@ abstract class Debug implements Worker.AWorker {
     Ft.log(Ft.typeStr(this), '_buildMemoryList', [addr, gb]);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_buildMemExplorerMap: addr not valid');
-    return gb.mmu.pullMemoryList(addr, _debuggerMemoryLen);
+    return gb.pullMemoryList(addr, _debuggerMemoryLen);
 
   }
 
@@ -120,7 +119,7 @@ abstract class Debug implements Worker.AWorker {
     final Gameboy.GameBoy gb = this.gbOpt;
     this.ports.send('RegInfo', gb.cpur);
     it.forEach((r, i) {
-      l[r.index] = gb.mmu.pullMemReg(r);
+      l[r.index] = gb.pullMemReg(r);
     });
     this.ports.send('MemInfo',  <String, dynamic> {
       'addr' : _debuggerMemoryAddr,

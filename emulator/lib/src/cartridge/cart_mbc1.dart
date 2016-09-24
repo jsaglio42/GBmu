@@ -6,19 +6,19 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:33 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/24 12:43:27 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import "package:emulator/src/enums.dart";
 import "package:emulator/src/constants.dart";
 
-import "package:emulator/src/memory/data.dart" as Data;
-import "package:emulator/src/memory/cartridge.dart" as Cartridge;
+import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 
 class CartMBC1 extends Cartridge.ACartridge  {
 
-  CartMBC1.internal(Data.Rom rom, Data.Ram ram) : super.internal(rom, ram);
+  CartMBC1.internal(Cartridge.CartridgeRom rom, Cartridge.CartridgeRam ram)
+    : super.internal(rom, ram);
 
   @override int pull8_Rom(int memAddr) {
     assert (memAddr >= CARTRIDGE_ROM_FIRST && memAddr <= CARTRIDGE_ROM_LAST);
