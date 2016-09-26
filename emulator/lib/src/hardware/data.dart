@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 11:57:41 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/26 18:37:46 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,7 @@ import "dart:typed_data";
 import "package:ft/ft.dart" as Ft;
 
 import 'package:emulator/src/enums.dart';
+import "package:emulator/src/hardware/headerdecoder.dart" as Headerdecoder;
 
 /* Data Implementation ********************************************************/
 abstract class AData {
@@ -26,10 +27,6 @@ abstract class AData {
   /* API */
   int get size => _data.length;
   String toString() => '[${memOffset} - ${memOffset + this.size}]';
-
-  /* Virtual */
-  int pull8(int addr);
-  void push8(int addr, int v);
 
 }
 
@@ -67,5 +64,29 @@ abstract class AWriteOperation implements AData  {
     else
       this._data[addr] = v;
   }
+
+}
+
+/* Rom ************************************************************************/
+class Rom extends AData
+  with AReadOperation, Headerdecoder.HeaderDecoder{
+
+  Rom.ofUint8List(int memOffset, Uint8List l)
+    : super(memOffset, l);
+
+  Rom(int memOffset, int size)
+    : super(memOffset, new Uint8List(size));
+
+}
+
+/* Ram ************************************************************************/
+class Ram extends AData
+  with AReadOperation, AWriteOperation {
+
+  Ram.ofUint8List(int memOffset, Uint8List l)
+    : super(memOffset, l);
+
+  Ram(int memOffset, int size)
+    : super(memOffset, new Uint8List(size));
 
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 11:08:41 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/26 19:04:59 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,6 +21,7 @@ import 'package:emulator/constants.dart';
 import 'package:emulator/src/worker.dart' as Worker;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
+import 'package:emulator/src/hardware/data.dart' as Data;
 
 
 final List<List> _loopingGBCombos = [
@@ -173,8 +174,8 @@ abstract class Emulation implements Worker.AWorker {
   {
     final drom = l; //TODO: Retrieve from indexedDB
     final dram = new Uint8List.fromList([42, 43]); //TODO: Retrieve from indexedDB
-    final irom = new Cartridge.CartridgeRom(drom);
-    final iram = new Cartridge.CartridgeRam(dram);
+    final irom = new Data.Rom.ofUint8List(0, drom);
+    final iram = new Data.Ram.ofUint8List(0, dram);
     final c = new Cartridge.ACartridge(irom); //TODO: Take iram as parameter
     return new Gameboy.GameBoy(c);
   }

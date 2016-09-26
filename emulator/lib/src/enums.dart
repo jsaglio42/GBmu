@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 11:17:10 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/26 19:01:56 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,7 @@ export 'package:emulator/src/hardware/cpu_registers.dart'
   show Reg16
   , Reg8
   , Reg1;
-export 'package:emulator/src/cartridge/headerdecoder.dart'
+export 'package:emulator/src/hardware/headerdecoder.dart'
   show RomHeaderField
   , CartridgeType;
 export 'package:emulator/src/mixins/mem_registermapping.dart'

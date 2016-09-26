@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 12:55:07 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/26 20:35:53 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,12 +17,13 @@ import 'package:ft/ft.dart' as Ft;
 import "package:emulator/src/enums.dart";
 import 'package:emulator/src/constants.dart';
 
-import "package:emulator/src/gameboy.dart" as GameBoy;
+import "package:emulator/src/hardware/hardware.dart" as Hardware;
+import "package:emulator/src/mixins/mem_registermapping.dart" as Memregisters;
 
 bool _isInRange(int i, int f, int l) => (i >= f && i <= l);
 
 abstract class Mmu
-  implements GameBoy.Hardware {
+  implements Hardware.Hardware {
 
   /* 8-bits *******************************************************************/
   int pull8(int memAddr)
@@ -32,11 +33,11 @@ abstract class Mmu
     else if (_isInRange(memAddr, CARTRIDGE_RAM_FIRST, CARTRIDGE_RAM_LAST))
       return this.c.pull8_Ram(memAddr);
     else if (_isInRange(memAddr, VIDEO_RAM_FIRST, VIDEO_RAM_LAST))
-      return this.videoRam.pull8(memAddr);
+      return this.videoRam.pull8_unsafe(memAddr);
     else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
-      return this.internalRam.pull8(memAddr);
+      return this.internalRam.pull8_unsafe(memAddr);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
-      return this.tailRam.pull8(memAddr);
+      return _pull8_IO(memAddr);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
@@ -48,11 +49,11 @@ abstract class Mmu
     else if (_isInRange(memAddr, CARTRIDGE_RAM_FIRST, CARTRIDGE_RAM_LAST))
       this.c.push8_Ram(memAddr, v);
     else if (_isInRange(memAddr, VIDEO_RAM_FIRST, VIDEO_RAM_LAST))
-      this.videoRam.push8(memAddr, v);
+      this.videoRam.push8_unsafe(memAddr, v);
     else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
-      this.internalRam.push8(memAddr, v);
+      this.internalRam.push8_unsafe(memAddr, v);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
-      this.tailRam.push8(memAddr, v);
+      _push8_IO(memAddr, v);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
     return ;
@@ -72,13 +73,6 @@ abstract class Mmu
     return ;
   }
 
-  void pushOnStack16(int val) {
-    assert(val & 0xFFFF == 0);
-    this.push16(this.cpur.SP - 2, val);
-    this.cpur.SP -= 2;
-    return ;
-  }
-
   /* Misc *********************************************************************/
   List<int> pullMemoryList(int addr, int len) {
     final lst = <int>[];
@@ -91,7 +85,53 @@ abstract class Mmu
     return lst;
   }
 
+  int pullMemReg(Memregisters.MemReg reg) {
+    final rinfo = Memregisters.memRegInfos[reg.index];
+    return _pullMemReg(rinfo);
+  }
+
+  void pushOnStack16(int v) {
+    this.push16(this.cpur.SP - 2, v);
+    this.cpur.SP -= 2;
+    return ;
+  }
+
+
+  /* IO trapping routine ******************************************************/
+  /* pull */
+  int _pull8_IO(int memAddr) {
+    for (Memregisters.MemRegInfo rinfo in Memregisters.memRegInfos) {
+      if (rinfo.address == memAddr) {
+        return _pullMemReg(rinfo);
+      }
+    }
+    return this.tailRam.pull8_unsafe(memAddr);
+  }
+
+  int _pullMemReg(Memregisters.MemRegInfo rinfo) {
+    switch (rinfo.reg) {
+      default : break ;
+    }
+    return this.tailRam.pull8_unsafe(rinfo.address);
+  }
+
+  /* push */
+  void _push8_IO(int memAddr, int v) {
+    for (Memregisters.MemRegInfo rinfo in Memregisters.memRegInfos) {
+      if (rinfo.address == memAddr) {
+        _pushMemReg(rinfo, v);
+        return ;
+      }
+    }
+    return this.tailRam.push8_unsafe(memAddr, v);
+  }
+
+  void _pushMemReg(Memregisters.MemRegInfo rinfo, int v) {
+    switch (rinfo.reg) {
+      default :
+        this.tailRam.push8_unsafe(rinfo.address, v);
+        return ;
+    }
+  }
+
 }
-
-
-

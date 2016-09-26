@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:51:49 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/26 18:58:57 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,11 +16,11 @@ import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
 
-import "package:emulator/src/gameboy.dart" as GameBoy;
+import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/mem_mmu.dart" as Mmu;
 
 abstract class Z80
-  implements GameBoy.Hardware
+  implements Hardware.Hardware
   , Mmu.Mmu {
 
   /* API **********************************************************************/

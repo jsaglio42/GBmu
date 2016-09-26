@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 12:56:50 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/26 20:32:42 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,16 +16,19 @@ import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
 
-import "package:emulator/src/gameboy.dart" as GameBoy;
+import "package:emulator/src/mixins/mem_registermapping.dart" as Memregisters;
+
+import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
-import "package:emulator/src/mixins/mem_mmu.dart" as Mmu;
-import "package:emulator/src/mixins/mem_registermapping.dart" as Memregmapping;
+
+final int _DIV = Memregisters.memRegInfos[MemReg.DIV.index].address;
+final int _TIMA = Memregisters.memRegInfos[MemReg.TIMA.index].address;
+final int _TMA = Memregisters.memRegInfos[MemReg.TMA.index].address;
+final int _TAC = Memregisters.memRegInfos[MemReg.TAC.index].address;
 
 abstract class Timers
-  implements GameBoy.Hardware
-  , Interrupt.InterruptManager
-  , Memregmapping.MemRegisterMapping
-  , Mmu.Mmu {
+  implements Hardware.Hardware
+  , Interrupt.InterruptManager {
 
   int _clockTotal = 0;
   int _counterTIMA = 0;
@@ -49,15 +52,15 @@ abstract class Timers
     if (_counterDIV <= 0)
     {
       _counterDIV = 0xFF;
-      final DIV_old = this.pullMemReg_unsafe(MemReg.DIV);
+      final DIV_old = this.tailRam.pull8_unsafe(_DIV);
       final DIV_new = (DIV_old + 1) & 0xFF;
-      this.pushMemReg_unsafe(MemReg.DIV, DIV_new);
+      this.tailRam.push8_unsafe(_DIV, DIV_new);
     }
     return ;
   }
 
   void _updateTIMA(int nbClock) {
-    final int TAC = this.pullMemReg_unsafe(MemReg.TAC);
+    final int TAC = this.tailRam.pull8_unsafe(_TAC);
     if (TAC & (0x1 << 2) != 0) {
       _counterTIMA -= nbClock;
       if (_counterTIMA <= 0)
@@ -70,11 +73,10 @@ abstract class Timers
           case (3): _counterTIMA = 256; break;
           default : assert(false, '_updateTIMA: switch failure');
         }
-        final int TMA = this.pullMemReg_unsafe(MemReg.TIMA);
-        this.pushMemReg_unsafe(MemReg.TIMA, TMA);
+        final int TMA = this.tailRam.pull8_unsafe(_TMA);
+        this.tailRam.push8_unsafe(_TIMA, TMA);
         this.requestInterrupt(InterruptType.Timer);
       }
-
     }
     return ;
   }

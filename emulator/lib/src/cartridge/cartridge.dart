@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:30:40 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 12:40:28 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/26 18:36:12 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,36 +15,10 @@ import "dart:typed_data";
 import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
+
 import "package:emulator/src/hardware/data.dart" as Data;
-import "package:emulator/src/cartridge/headerdecoder.dart" as Headerdecoder;
 import "package:emulator/src/cartridge/cart_romonly.dart" as C_RO;
 import "package:emulator/src/cartridge/cart_mbc1.dart" as C_MBC1;
-
-/* Cartridge ROM/RAM **********************************************************/
-
-class CartridgeRom extends Data.AData
-  with Data.AReadOperation
-  , Headerdecoder.HeaderDecoder {
-
-  CartridgeRom(Uint8List d) : super(0, d);
-
-  @override int pull8(int addr) => this.pull8_unsafe(addr);
-  @override void push8(int addr, int v) {
-    throw new Exception("CartridgeRom: Write Operation not supported");
-  }
-
-}
-
-class CartridgeRam extends Data.AData
-  with Data.AReadOperation
-  , Data.AWriteOperation {
-
-  CartridgeRam(Uint8List d) : super(0, d);
-
-  @override int pull8(int addr) => this.pull8_unsafe(addr);
-  @override void push8(int addr, int v) => this.push8_unsafe(addr, v);
-
-}
 
 /* Cartridge Implementation ****************************************************
 **
@@ -57,18 +31,18 @@ class CartridgeRam extends Data.AData
 
 abstract class ACartridge {
 
-  final CartridgeRom rom;
-  final CartridgeRam ram;
+  final Data.Rom rom;
+  final Data.Ram ram;
 
   ACartridge.internal(this.rom, this.ram);
 
-  factory ACartridge(CartridgeRom rom, {CartridgeRam optionalRam : null})
+  factory ACartridge(Data.Rom rom, {Data.Ram optionalRam : null})
   {
     final expectedRomSize = rom.pullHeaderValue(RomHeaderField.ROM_Size);
     final expectedRamSize = rom.pullHeaderValue(RomHeaderField.RAM_Size);
     final isLogoValid = rom.pullHeaderValue(RomHeaderField.Nintendo_Logo);
-    final CartridgeRam ram = (optionalRam == null)
-      ? new CartridgeRam(new Uint8List(expectedRamSize))
+    final Data.Ram ram = (optionalRam == null)
+      ? new Data.Ram(0, expectedRamSize)
       : optionalRam;
     if (expectedRomSize != rom.size)
       throw new Exception('Cartridge: ROM Size is not matching header info');
