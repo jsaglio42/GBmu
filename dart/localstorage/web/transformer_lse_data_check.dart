@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:01:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 17:57:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:59:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -94,6 +94,8 @@ class TransformerLseDataCheck {
 
   // Does data-race checks
   // Disallow update on roms
+  // Checks old/current match
+  // Disallow impossible bind
   bool _handleUpdate(Update<LsEntry> e) {
     final LsEntry current = _pcs.entryOptOfUid(e.newValue.uid);
     LsChip cold, cnew, ccur;

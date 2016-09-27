@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 13:44:43 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 17:13:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 19:29:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,8 +50,9 @@ main() async {
     pcs = new PlatformComponentStorage(pls, pidb);
     tu = new TransformerLseUnserializer(pls);
     tdc = new TransformerLseDataCheck(pcs, tu);
-    tic = new TransformerLseIdbCheck(tdc);
+    tic = new TransformerLseIdbCheck(pidb, tdc);
 
+    await pidb.start(Html.window.indexedDB);
     pls.start();
     pcs.start(tic);
 
@@ -63,12 +64,19 @@ main() async {
 
     pcs.bind(lsram, lsrom);
 
-    lsram = (await pcs.entryUpdate.first).newValue;
-    await new Async.Future.delayed(new Duration(seconds: 3));
-    print('go!');
+    // lsram = (await pcs.entryUpdate.first).newValue;
+    // await new Async.Future.delayed(new Duration(seconds: 2));
+    // print('go!');
+    // pcs.unbind(lsram);
 
-    pcs.unbind(lsram);
+    // lsram = (await pcs.entryUpdate.first).newValue;
+    // await new Async.Future.delayed(new Duration(seconds: 2));
+    // print('go!');
+    // pcs.delete(lsram);
 
+    var v = await pidb.fetch(lsrom.type, lsrom.idbid);
+    print(v);
+    print(v.runtimeType);
 
   } catch (e, st) {
     print(e);

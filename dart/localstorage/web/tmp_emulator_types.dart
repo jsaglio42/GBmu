@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:48:07 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 17:56:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 19:29:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,11 +14,22 @@ import 'dart:typed_data';
 import "package:ft/ft.dart" as Ft;
 
 import './tmp_emulator_enums.dart';
+import './local_storage.dart';
+import './variants.dart' as V;
 // import 'package:emulator/src/enums.dart';
 // import "package:emulator/src/hardware/headerdecoder.dart" as Headerdecoder;
 
 abstract class Serializable {
   dynamic serialize();
+
+  factory Serializable.unserialize(V.Component c, v) {
+    if (c is V.Rom)
+      return new Rom.unserialize(v);
+    else if (c is V.Ram)
+      return new Ram.unserialize(v);
+    // TODO: unserialize Ss
+  }
+
 }
 
 abstract class SerializableData implements AData {
@@ -92,6 +103,9 @@ class Rom extends AData
   Rom(int memOffset, int size)
     : super(memOffset, new Uint8List(size));
 
+  Rom.unserialize(Map<String, dynamic> map)
+    : super(0, map['data']);
+
   dynamic pullHeaderValue(RomHeaderField f) {
     if (f == RomHeaderField.RAM_Size)
       return this.size;
@@ -112,5 +126,8 @@ class Ram extends AData
 
   Ram(int memOffset, int size)
     : super(memOffset, new Uint8List(size));
+
+  Ram.unserialize(Map<String, dynamic> map)
+    : super(0, map['data']);
 
 }
