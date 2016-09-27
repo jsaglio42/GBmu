@@ -77,7 +77,6 @@ run() async
   var debButtonToggle = Html.querySelector('#debButtonToggle');
   var debBody = Js.context.callMethod(r'$', ['#debBody']);
 
-
   debButtonToggle.onClick.listen((_){
         Ft.log('main.dart', 'debToggle#onClick');
         emu.send('DebStatusRequest', DebuggerModeRequest.Toggle);
@@ -96,6 +95,14 @@ run() async
       debBody.callMethod('slideUp', ['fast']);
     }
   });
+
+  var body = Html.querySelector('body');
+  var streamKeyDown = Html.KeyEvent.keyDownEvent.forTarget(body);
+  var streamKeyUp = Html.KeyEvent.keyUpEvent.forTarget(body);
+  streamKeyDown.listen((keyEvent) =>
+    print('KeyDown event detected ${keyEvent.charCode}'));
+  streamKeyUp.listen((keyEvent) =>
+    print('KeyUp event detected ${keyEvent.charCode}'));
 
   Debregisters.init(emu);
   Debmregisters.init(emu);

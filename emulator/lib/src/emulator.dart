@@ -47,6 +47,8 @@ final _mainReceivers = <String, Type>{
 };
 
 final _workerReceivers = <String, Type>{
+  'KeyDownEvent' : KeyCode,
+  'KeyUpEvent' : KeyCode,
   'DebStatusRequest' : DebuggerModeRequest,
   'EmulationStart' : Uint8List,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,

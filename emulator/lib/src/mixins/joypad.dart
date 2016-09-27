@@ -41,11 +41,6 @@
 * 
 */
 
-enum KeyStatus {
-  KeyDown,
-  KeyUp
-}
-
 enum KeyCode {
   A,
   B,

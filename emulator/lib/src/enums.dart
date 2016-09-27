@@ -31,6 +31,8 @@ export 'package:emulator/src/hardware/registermapping.dart'
   show MemReg;
 export 'package:emulator/src/mixins/interruptmanager.dart'
   show InterruptType ;
+export 'package:emulator/src/mixins/joypad.dart'
+  show KeyCode ;
 
 enum DebuggerModeRequest {
   Toggle,

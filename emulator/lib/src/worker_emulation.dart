@@ -135,6 +135,18 @@ abstract class Emulation implements Worker.AWorker {
     });
   }
 
+  void _onKeyDown(KeyCode kc){
+    print('Key Down');
+    print(kc.toString());
+    return ;
+  }
+
+  void _onKeyUp(KeyCode kc){
+    print('Key Up');
+    print(kc.toString());
+    return ;
+  }
+
   // SECONDARY ROUTINES ***************************************************** **
 
   void _updateEmulationSpeed(double speed)
@@ -322,6 +334,10 @@ abstract class Emulation implements Worker.AWorker {
       .listen(_onPauseReq);
     this.ports.listener('EmulationResume')
       .listen(_onResumeReq);
+    this.ports.listener('KeyDownEvent')
+      .listen(_onKeyDown);
+    this.ports.listener('KeyUpEvent')
+      .listen(_onKeyUp);
   }
 
 }
