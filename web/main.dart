@@ -17,6 +17,8 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
+import './main_space/keyboard.dart' as Keyboard;
+
 import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
 import './debugger/mem_explorer.dart' as Debmexplorer;
@@ -106,7 +108,7 @@ run() async
   Mainbottompanel.init(emu);
   Mainalerts.init(emu);
   
-  initKeyboard(emu);
+  Keyboard.init(emu);
 
   var mainGameBoyState = Html.querySelector('#mainGameBoyState');
   emu.listener('EmulationStatus').forEach((mode){
