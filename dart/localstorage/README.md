@@ -6,7 +6,7 @@
 <!-- By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+       -->
 <!--                                              +#+#+#+#+#+   +#+          -->
 <!-- Created: 2016/09/24 10:13:08 by ngoguey           #+#    #+#            -->
-<!-- Updated: 2016/09/24 12:11:19 by ngoguey          ###   ########.fr      -->
+<!-- Updated: 2016/09/27 13:06:03 by ngoguey          ###   ########.fr      -->
 <!--                                                                         -->
 <!-- *********************************************************************** -->
 
@@ -40,6 +40,11 @@ abstract class LsValue {
 - entryType: one of {Rom | Ram | Ss}
 - lsKey: String of the form '$ramdomInt$entryType'
 - lsValue: Lightweight stringified object of type LsEntry
+
+#### Controllers:
+- A `class Handler* {...}` is a singleton class that does not expose public methods, other than construction ones.
+- A `class Platform* {...}` is a singleton class that exposes many attributes and methods, but does not hold complex code.
+- A `class Transformer* {...}` is a singleton class that exposes streams, filtered and/or mapped from an other controller.
 
 ### DbController external input interactions:
 - New rom request

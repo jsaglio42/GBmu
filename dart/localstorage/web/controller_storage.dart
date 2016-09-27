@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 16:38:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 19:53:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 14:20:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,17 +24,19 @@ import './variants.dart';
 import './local_storage.dart';
 import './controller_local_storage.dart';
 
+// TODO: REMOVE FILE
+
 // TODO?: Filter `lsEntry*` streams multiple time
 //   1. LocalStorage Events, Unserialization    ControllerLocalStorage
 //   2. Event consistency, regarding AppStorage ControllerLocalStorageDataCheck
 //   3. Event consistency, regarding IndexedDb  ControllerLocalStorageEventIndexedDbCheck
 // TODO?:
-//  ControllerComponentStorage
-//  ControllerIndexedDb
-//  ControllerLocalStorage
-//  ControllerLSEUnserialization
-//  ControllerLSEDataCheck
-//  ControllerLSEIndexedDbCheck
+//  PlatformComponentStorage
+//  PlatformIndexedDb
+//  PlatformLocalStorage
+//  TransformerLSEUnserialization
+//  TransformerLSEDataCheck
+//  TransformerLSEIndexedDbCheck
 
 // Did my best to limit data races, couldn't find a bullet proof solution
 // This storage keeps track of all LsEntries, even the deleted one, to dampen
