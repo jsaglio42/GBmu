@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 10:56:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 17:12:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:26:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,6 +35,9 @@ class LsEvent {
 
 abstract class LsEntry {
 
+  // ATTRIBUTES ************************************************************* **
+  Life _life;
+
   // CONTRUCTION ************************************************************ **
   factory LsEntry.json_exn(String keyJson, String valueJson) {
 
@@ -50,19 +53,19 @@ abstract class LsEntry {
     }
   }
 
-  LsEntry.unsafe(this.uid, this.type, this.life, this.idbid);
+  LsEntry.unsafe(this.uid, this.type, this._life, this.idbid);
 
-  factory LsEntry.kill(LsEntry src) {
-    assert(src.life is Alive, "LsEntry.kill dead parameter");
-    if (src.type is Rom)
-      return new LsRom.kill(src);
-    else if (src.type is Ram)
-      return new LsRam.kill(src);
-    // else if (src.type is Ss)
-    //   return new LsSs.kill(src);
-    else
-      assert(false, 'unreachable');
-  }
+  // factory LsEntry.kill(LsEntry src) {
+  //   assert(src.life is Alive, "LsEntry.kill dead parameter");
+  //   if (src.type is Rom)
+  //     return new LsRom.kill(src);
+  //   else if (src.type is Ram)
+  //     return new LsRam.kill(src);
+  //   // else if (src.type is Ss)
+  //   //   return new LsSs.kill(src);
+  //   else
+  //     assert(false, 'unreachable');
+  // }
 
   // PUBLIC ***************************************************************** **
   String get keyJson => JSON.encode({'uid': this.uid, 'type': '$type'});
@@ -70,8 +73,13 @@ abstract class LsEntry {
   final Component type;
 
   String get valueJson;
-  final Life life;
+  Life get life => _life;
   final int idbid;
+
+  void kill() {
+    assert(_life is Alive, "$runtimeType.kill()");
+    _life = Dead.v;
+  }
 
   String toString() =>
     '$life $type uid#$uid idb#$idbid';
@@ -119,10 +127,10 @@ class LsRom extends LsEntry {
         value['_globalChecksum']);
   }
 
-  LsRom.kill(LsRom src)
-    : _ramSize = src.ramSize
-    , _globalChecksum = src.globalChecksum
-    , super.unsafe(src.uid, Rom.v, Dead.v, src.idbid);
+  // LsRom.kill(LsRom src)
+  //   : _ramSize = src.ramSize
+  //   , _globalChecksum = src.globalChecksum
+  //   , super.unsafe(src.uid, Rom.v, Dead.v, src.idbid);
 
   // PUBLIC ***************************************************************** **
   String get valueJson =>
@@ -149,8 +157,8 @@ abstract class LsChip extends LsEntry {
   // ATTRIBUTES ************************************************************* **
 
   // CONTRUCTION ************************************************************ **
-  LsChip.kill(int uid, Chip type, Life life, int idbid, this.romUid)
-    : super.kill(uid, type, life, idbid);
+  // LsChip.kill(int uid, Chip type, Life life, int idbid, this.romUid)
+  //   : super.kill(uid, type, life, idbid);
 
   LsChip.unsafe(int uid, Chip type, Life life, int idbid, this.romUid)
     : super.unsafe(uid, type, life, idbid);
@@ -211,9 +219,9 @@ class LsRam extends LsChip {
     return new LsRam.unsafe(uid, Alive.v, value['idbid'], value['_size'], romUid);
   }
 
-  LsRam.kill(LsRam src)
-    : _size = src.size
-    , super.unsafe(src.uid, Ram.v, Dead.v, src.idbid, src.romUid);
+  // LsRam.kill(LsRam src)
+  //   : _size = src.size
+  //   , super.unsafe(src.uid, Ram.v, Dead.v, src.idbid, src.romUid);
 
   LsRam.unbind(LsRam src)
     : _size = src.size

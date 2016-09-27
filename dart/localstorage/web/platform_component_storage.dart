@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 16:59:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:30:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -97,7 +97,7 @@ class PlatformComponentStorage {
 
   bool romHasRam(LsRom dst) =>
     _entries.values
-    .where((LsEntry e) => e.type is Ram)
+    .where((LsEntry e) => e.life is Alive && e.type is Ram)
     .where((LsRam r) => r.romUid.isSome && r.romUid.v == dst.uid)
     .isNotEmpty;
 
@@ -176,9 +176,12 @@ class PlatformComponentStorage {
 
   // CALLBACKS ************************************************************** **
   void _handleDelete(LsEntry e) {
+    LsEntry old;
+
     Ft.log('PlatformCS', '_handleDelete', [e]);
-    _entries.remove(e.uid);
-    _entryDelete.add(e);
+    old = _entries[e.uid];
+    old.kill();
+    _entryDelete.add(old);
   }
 
   void _handleNew(LsEntry e) {
@@ -188,9 +191,12 @@ class PlatformComponentStorage {
   }
 
   void _handleUpdate(Update<LsEntry> u) {
+    LsEntry old;
+
     Ft.log('PlatformCS', '_handleUpdate', [u]);
+    old = _entries[u.newValue.uid];
     _entries[u.newValue.uid] = u.newValue;
-    _entryUpdate.add(u);
+    _entryUpdate.add(new Update<LsEntry>(oldValue: old, newValue: u.newValue));
   }
 
   // PRIVATE **************************************************************** **
