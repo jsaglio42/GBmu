@@ -29,7 +29,7 @@ abstract class Hardware {
   bool ime = true;
   bool halt = false;
   bool stop = false;
-  int joypadState = 0x0FFFF;
+  int joypadState = 0x0;
 
   void initHardware(Cartridge.ACartridge c) {
     assert(_c == null, "Hardware: Cartridge already initialised");

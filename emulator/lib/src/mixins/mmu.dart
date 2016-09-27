@@ -16,9 +16,10 @@ import 'package:ft/ft.dart' as Ft;
 
 import "package:emulator/src/enums.dart";
 import 'package:emulator/src/constants.dart';
+import 'package:emulator/src/globals.dart';
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/mem_registermapping.dart" as Memregisters;
+import "package:emulator/src/hardware/registermapping.dart" as Memregisters;
 
 bool _isInRange(int i, int f, int l) => (i >= f && i <= l);
 
@@ -85,9 +86,9 @@ abstract class Mmu
     return lst;
   }
 
-  int pullMemReg(Memregisters.MemReg reg) {
-    final rinfo = Memregisters.memRegInfos[reg.index];
-    return _pullMemReg(rinfo);
+  int pullMemReg(MemReg reg) {
+    final rinfo = g_memRegInfos[reg.index];
+    return _pull8_IO(rinfo.address);
   }
 
   void pushOnStack16(int v) {
@@ -98,40 +99,45 @@ abstract class Mmu
 
 
   /* IO trapping routine ******************************************************/
-  /* pull */
-  int _pull8_IO(int memAddr) {
-    for (Memregisters.MemRegInfo rinfo in Memregisters.memRegInfos) {
-      if (rinfo.address == memAddr) {
-        return _pullMemReg(rinfo);
-      }
+  int _pull8_IO(int memAddr)
+  {
+    Memregisters.MemRegInfo rinfo = g_memRegInfosByAddress[memAddr];
+    switch(rinfo?.reg)
+    {
+      case (MemReg.P1) : return getJoypadRegister();
+      default: return this.tailRam.pull8_unsafe(memAddr);
     }
-    return this.tailRam.pull8_unsafe(memAddr);
   }
 
-  int _pullMemReg(Memregisters.MemRegInfo rinfo) {
-    switch (rinfo.reg) {
-      default : break ;
+  void _push8_IO(int memAddr, int v)
+  {
+    Memregisters.MemRegInfo rinfo = g_memRegInfosByAddress[memAddr];
+    switch(rinfo?.reg)
+    {
+      case (MemReg.P1) : return setJoypadRegister(v);
+      case (MemReg.DIV) : return setDIVRegister();
+      default: return this.tailRam.push8_unsafe(memAddr, v);
     }
-    return this.tailRam.pull8_unsafe(rinfo.address);
   }
 
-  /* push */
-  void _push8_IO(int memAddr, int v) {
-    for (Memregisters.MemRegInfo rinfo in Memregisters.memRegInfos) {
-      if (rinfo.address == memAddr) {
-        _pushMemReg(rinfo, v);
-        return ;
-      }
-    }
-    return this.tailRam.push8_unsafe(memAddr, v);
+  /* Joypad */
+  int getJoypadRegister() {
+    if (this.joypadState >> 8 == 0) // b8 = 0: return buttons
+      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0xFF;
+    else // return directions
+      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0xFF;
+  }
+  void setJoypadRegister(int v) {
+    this.joypadState &= 0xFF; // Reset b8: buttons are selected
+    if (v >> 4 != 0) // Directions: b8 = 1
+      this.joypadState |= (1 << 8);
+    return ;
   }
 
-  void _pushMemReg(Memregisters.MemRegInfo rinfo, int v) {
-    switch (rinfo.reg) {
-      default :
-        this.tailRam.push8_unsafe(rinfo.address, v);
-        return ;
-    }
+  /* Timers */
+  void setDIVRegister() {
+    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.DIV.index].address, 0x00);
+    return ;
   }
 
 }

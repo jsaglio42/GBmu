@@ -13,9 +13,10 @@
 import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/src/enums.dart';
+import 'package:emulator/src/globals.dart';
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/mem_mmu.dart" as Mmu;
+import "package:emulator/src/mixins/mmu.dart" as Mmu;
 import "package:emulator/src/mixins/instructions.dart" as Instructions;
 
 abstract class InstructionsDecoder
@@ -46,10 +47,10 @@ abstract class InstructionsDecoder
     if (op == 0xCB)
     {
       final opX = this.pull8(addr + 1);
-      return Instructions.instInfos_CB[opX];
+      return g_instInfos_CB[opX];
     }
     else
-      return Instructions.instInfos[op];
+      return g_instInfos[op];
   }
 
   Instructions.Instruction _getInstruction(int addr) {

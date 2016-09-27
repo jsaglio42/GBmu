@@ -89,7 +89,7 @@ ${reginfo.description}''';
       ..addAll(trListOfTbodyId('#debTbody0MemRegisters'))
       ..addAll(trListOfTbodyId('#debTbody1MemRegisters'));
     final it = new Ft.TripleIterable(
-        MemReg.values, Emulator.memRegInfos, rowList);
+        MemReg.values, Emulator.g_memRegInfos, rowList);
     Html.TableCellElement cell;
 
     it.forEach((MemReg reg, Emulator.MemRegInfo reginfo

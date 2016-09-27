@@ -10,7 +10,6 @@
 //                                                                            //
 // ************************************************************************** //
 
-// import 'dart:math' as Math;
 import 'dart:async' as Async;
 import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
@@ -18,13 +17,12 @@ import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
+import 'package:emulator/src/globals.dart';
 
 import 'package:emulator/src/worker.dart' as Worker;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 
 import 'package:emulator/src/mixins/instructions.dart' as Instructions;
-import 'package:emulator/src/mixins/mem_registermapping.dart' as Memregisters;
-
 
 abstract class Debug implements Worker.AWorker {
 
@@ -115,7 +113,7 @@ abstract class Debug implements Worker.AWorker {
         "_onDebug with no gameboy");
 
     final l = new Uint8List(MemReg.values.length);
-    final it = new Ft.DoubleIterable(MemReg.values, Memregisters.memRegInfos);
+    final it = new Ft.DoubleIterable(MemReg.values, g_memRegInfos);
     final Gameboy.GameBoy gb = this.gbOpt;
     this.ports.send('RegInfo', gb.cpur);
     it.forEach((r, i) {

@@ -17,7 +17,7 @@ import "package:ft/ft.dart" as Ft;
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/mem_mmu.dart" as Mmu;
+import "package:emulator/src/mixins/mmu.dart" as Mmu;
 
 abstract class Z80
   implements Hardware.Hardware

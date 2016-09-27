@@ -15,16 +15,15 @@ import 'dart:typed_data';
 import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
-
-import "package:emulator/src/mixins/mem_registermapping.dart" as Memregisters;
+import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
 
-final int _DIV = Memregisters.memRegInfos[MemReg.DIV.index].address;
-final int _TIMA = Memregisters.memRegInfos[MemReg.TIMA.index].address;
-final int _TMA = Memregisters.memRegInfos[MemReg.TMA.index].address;
-final int _TAC = Memregisters.memRegInfos[MemReg.TAC.index].address;
+final int _addrDIV = g_memRegInfos[MemReg.DIV.index].address;
+final int _addrTIMA = g_memRegInfos[MemReg.TIMA.index].address;
+final int _addrTMA = g_memRegInfos[MemReg.TMA.index].address;
+final int _addrTAC = g_memRegInfos[MemReg.TAC.index].address;
 
 abstract class Timers
   implements Hardware.Hardware
@@ -52,15 +51,15 @@ abstract class Timers
     if (_counterDIV <= 0)
     {
       _counterDIV = 0xFF;
-      final DIV_old = this.tailRam.pull8_unsafe(_DIV);
+      final DIV_old = this.tailRam.pull8_unsafe(_addrDIV);
       final DIV_new = (DIV_old + 1) & 0xFF;
-      this.tailRam.push8_unsafe(_DIV, DIV_new);
+      this.tailRam.push8_unsafe(_addrDIV, DIV_new);
     }
     return ;
   }
 
   void _updateTIMA(int nbClock) {
-    final int TAC = this.tailRam.pull8_unsafe(_TAC);
+    final int TAC = this.tailRam.pull8_unsafe(_addrTAC);
     if (TAC & (0x1 << 2) != 0) {
       _counterTIMA -= nbClock;
       if (_counterTIMA <= 0)
@@ -73,8 +72,8 @@ abstract class Timers
           case (3): _counterTIMA = 256; break;
           default : assert(false, '_updateTIMA: switch failure');
         }
-        final int TMA = this.tailRam.pull8_unsafe(_TMA);
-        this.tailRam.push8_unsafe(_TIMA, TMA);
+        final int TMA = this.tailRam.pull8_unsafe(_addrTMA);
+        this.tailRam.push8_unsafe(_addrTIMA, TMA);
         this.requestInterrupt(InterruptType.Timer);
       }
     }

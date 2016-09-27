@@ -20,7 +20,7 @@ import 'package:emulator/constants.dart';
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 
-import "package:emulator/src/mixins/mem_mmu.dart" as Mmu;
+import "package:emulator/src/mixins/mmu.dart" as Mmu;
 import "package:emulator/src/mixins/instructionsdecoder.dart" as Instdecoder;
 import "package:emulator/src/mixins/z80.dart" as Z80;
 import "package:emulator/src/mixins/timers.dart" as Timers;

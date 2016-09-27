@@ -15,12 +15,10 @@ import 'dart:typed_data';
 import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
-
-import "package:emulator/src/mixins/mem_registermapping.dart" as Memregisters;
+import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/mem_mmu.dart" as Mmu;
-
+import "package:emulator/src/mixins/mmu.dart" as Mmu;
 
 enum InterruptType {
   VBlank,
@@ -30,8 +28,8 @@ enum InterruptType {
   Joypad
 }
 
-final int _IE = Memregisters.memRegInfos[MemReg.IE.index].address;
-final int _IF = Memregisters.memRegInfos[MemReg.IF.index].address;
+final int _addrIE = g_memRegInfos[MemReg.IE.index].address;
+final int _addrIF = g_memRegInfos[MemReg.IF.index].address;
 
 abstract class InterruptManager
   implements Hardware.Hardware
@@ -42,8 +40,8 @@ abstract class InterruptManager
   void handleInterrupts() {
     if (this.ime == false)
       return ;
-    final int IE = this.tailRam.pull8_unsafe(_IE);
-    final int IF = this.tailRam.pull8_unsafe(_IF);
+    final int IE = this.tailRam.pull8_unsafe(_addrIE);
+    final int IF = this.tailRam.pull8_unsafe(_addrIF);
     final int IFandIE = IF & IE;
     if (IFandIE == 0)
       return ;
@@ -57,9 +55,9 @@ abstract class InterruptManager
   }
 
   void requestInterrupt(InterruptType i) {
-    final int IF_old = this.tailRam.pull8_unsafe(_IF);
+    final int IF_old = this.tailRam.pull8_unsafe(_addrIF);
     final int IF_new = IF_old | (1 << i.index);
-    this.tailRam.push8_unsafe(_IF, IF_new);
+    this.tailRam.push8_unsafe(_addrIF, IF_new);
     return ;
   }
 
@@ -68,9 +66,9 @@ abstract class InterruptManager
     this.ime = false;
     this.halt = false;
     this.stop = false;
-    final int IF_old = this.tailRam.pull8_unsafe(_IF);
+    final int IF_old = this.tailRam.pull8_unsafe(_addrIF);
     final int IF_new = (IF_old & ~(1 << i.index)) & 0xFF;
-    this.tailRam.push8_unsafe(_IF, IF_new);
+    this.tailRam.push8_unsafe(_addrIF, IF_new);
     this.pushOnStack16(this.cpur.PC);
     switch(i) {
       case (InterruptType.VBlank) : this.cpur.PC = 0x0040 ; break ;

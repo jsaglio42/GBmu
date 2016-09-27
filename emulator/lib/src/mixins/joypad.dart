@@ -15,13 +15,13 @@
 * will return the states of either buttons or directions.
 * There is a private attribute _joypadState that stores the state of all 
 * and reading from FF00 will build the answer based on this _joypadState
-* 
+*
 * Wiring of Joypad input:              Implementation via joypadState:
 *                      
 *                                         joypadState
 *   FF00H                                   +---+
 *   +---+                                   | 8 +--- Button = 0 | Direction = 1
-*   | 7 |                                   |   |
+*   | 7 |                                   |---|
 *   |   |                                   | 7 +--- Down
 *   | 6 |                                   |   |
 *   |   |                                   | 6 +--- Up
@@ -61,22 +61,20 @@ abstract class Joypad
   implements GameBoy.Hardware
   , Interrupt.InterruptManager {
 
-    void keyRelease(KeyCode k) {
-      // final int bit_row = k.index % 4;
-      // final int bit_column = (k.index < 4) ? 0x4 : 0x5;
-      // final int mask = (1 << bit_position) | (1 << bit_row);
-      // final int P1_old = this.mmu.pullMemReg(MemReg.P1);
-      // final int P1_new = P1_old | mask;
-      // return ;
+    void keyPress(KeyCode k) {
+      final int bit = this.joypadState & (1 << k.index);
+      if (bit == 0)
+        this.requestInterrupt(InterruptType.Joypad);
+      this.joypadState |= bit;
+      return ;
     }
 
     void keyRelease(KeyCode k) {
-      // final int bit_row = k.index % 4;
-      // final int bit_column = (k.index < 4) ? 0x4 : 0x5;
-      // final int mask = (1 << bit_position) | (1 << bit_row);
-      // final int P1_old = this.mmu.pullMemReg(MemReg.P1);
-      // final int P1_new = P1_old | mask;
-      // return ;
+      final int state = 0x300 & this.joypadState;
+      final int bit = this.joypadState & (1 << k.index);
+      final int mask = ~bit & 0xFF
+      this.joypadState = (this.joypadState & mask) | state;
+      return;
     }
 
 }
