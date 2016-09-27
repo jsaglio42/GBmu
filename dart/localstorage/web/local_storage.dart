@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 10:56:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 13:30:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:12:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,9 @@ class LsEvent {
   final String key;
   final String oldValue;
   final String newValue;
-  const LsEvent(this.key, this.oldValue, this.newValue);
+  const LsEvent(this.key, {String oldValue, String newValue})
+      : oldValue = oldValue
+      , newValue = newValue;
 }
 
 // ************************************************************************** **
@@ -153,6 +155,26 @@ abstract class LsChip extends LsEntry {
   LsChip.unsafe(int uid, Chip type, Life life, int idbid, this.romUid)
     : super.unsafe(uid, type, life, idbid);
 
+  factory LsChip.unbind(LsChip c) {
+    assert(c.romUid.isSome, "LsChip.unbind($c)");
+    assert(c.life is Alive, "LsChip.unbind($c)");
+
+    if (c.type is Ram)
+      return new LsRam.unbind(c);
+    // else if (c.type is Ss)
+    // return new LsSs.unbind(c);
+  }
+
+  factory LsChip.bind(LsChip c, int romUid) {
+    assert(c.romUid.isNone, "LsChip.bind($c)");
+    assert(c.life is Alive, "LsChip.bind($c)");
+
+    if (c.type is Ram)
+      return new LsRam.bind(c, romUid);
+    // else if (c.type is Ss)
+      // return new LsSs.bind(c);
+  }
+
   // PUBLIC ***************************************************************** **
   final Ft.Option<int> romUid;
 
@@ -192,6 +214,16 @@ class LsRam extends LsChip {
   LsRam.kill(LsRam src)
     : _size = src.size
     , super.unsafe(src.uid, Ram.v, Dead.v, src.idbid, src.romUid);
+
+  LsRam.unbind(LsRam src)
+    : _size = src.size
+    , super.unsafe(src.uid, Ram.v, src.life, src.idbid,
+        new Ft.Option<int>.none());
+
+  LsRam.bind(LsRam src, int romUid)
+    : _size = src.size
+    , super.unsafe(src.uid, Ram.v, src.life, src.idbid,
+        new Ft.Option<int>.some(romUid));
 
   // PUBLIC ***************************************************************** **
   String get valueJson =>

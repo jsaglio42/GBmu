@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 14:21:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 16:59:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,6 +22,13 @@ import 'package:ft/ft.dart' as Ft;
 
 import './variants.dart';
 import './local_storage.dart';
+import './transformer_lse_idb_check.dart';
+import './platform_indexeddb.dart';
+import './platform_local_storage.dart';
+
+import './tmp_emulator_enums.dart';
+import './tmp_emulator_types.dart' as Emulator;
+
 // import './controller_local_storage.dart';
 
 // TODO?: Filter `lsEntry*` streams multiple time
@@ -44,25 +51,156 @@ class PlatformComponentStorage {
 
   // ATTRIBUTES ************************************************************* **
   final Map<int, LsEntry> _entries = <int, LsEntry>{};
+  final PlatformIndexedDb _pidb;
+  final PlatformLocalStorage _pls;
+
+  final _rng = new Random.secure();
+  static final int _maxint = pow(2, 32);
+
+  final Async.StreamController<LsEntry> _entryDelete =
+    new Async.StreamController<LsEntry>.broadcast();
+  final Async.StreamController<LsEntry> _entryNew =
+    new Async.StreamController<LsEntry>.broadcast();
+  final Async.StreamController<Update<LsEntry>> _entryUpdate =
+    new Async.StreamController<Update<LsEntry>>.broadcast();
 
   // CONTRUCTION ************************************************************ **
   static PlatformComponentStorage _instance;
 
-  factory PlatformComponentStorage() {
+  factory PlatformComponentStorage(
+      PlatformLocalStorage pls, PlatformIndexedDb pidb) {
     if (_instance == null)
-      _instance = new PlatformComponentStorage._();
+      _instance = new PlatformComponentStorage._(pls, pidb);
     return _instance;
   }
 
-  PlatformComponentStorage._() {
+  PlatformComponentStorage._(this._pls, this._pidb) {
     Ft.log('PlatformCS', 'contructor', []);
   }
 
+  void start(TransformerLseIdbCheck tic) {
+    Ft.log('PlatformCS', 'start', [tic]);
+
+    tic.lsEntryDelete.forEach(_handleDelete);
+    tic.lsEntryNew.forEach(_handleNew);
+    tic.lsEntryUpdate.forEach(_handleUpdate);
+  }
+
   // PUBLIC ***************************************************************** **
+
+  Async.Stream<LsEntry> get entryDelete => _entryDelete.stream;
+  Async.Stream<LsEntry> get entryNew => _entryNew.stream;
+  Async.Stream<Update<LsEntry>> get entryUpdate => _entryUpdate.stream;
+
   LsEntry entryOptOfUid(int uid) =>
     _entries[uid];
 
-  // CALLBACKS ************************************************************** **
+  bool romHasRam(LsRom dst) =>
+    _entries.values
+    .where((LsEntry e) => e.type is Ram)
+    .where((LsRam r) => r.romUid.isSome && r.romUid.v == dst.uid)
+    .isNotEmpty;
 
+  Async.Future newRom(Emulator.Rom r) async {
+    final int uid = _makeUid();
+    final int idbid = await _pidb.add(Rom.v, r);
+    final int rs = r.pullHeaderValue(RomHeaderField.RAM_Size);
+    final int gcs = r.pullHeaderValue(RomHeaderField.Global_Checksum);
+    final LsRom e =
+      new LsRom.unsafe(uid, Alive.v, idbid, rs, gcs);
+
+    _pls.add(e);
+  }
+
+  Async.Future newRam(Emulator.Ram r) async {
+    final int uid = _makeUid();
+    final int idbid = await _pidb.add(Ram.v, r);
+    final int s = r.size;
+    final LsRam e =
+      new LsRam.unsafe(uid, Alive.v, idbid, s, new Ft.Option<int>.none());
+
+    _pls.add(e);
+  }
+
+  // TODO: PlatformComponentStorage.addSs
+
+  void bind(LsChip c, LsRom dst) {
+    if (_entries[c.uid] == null) {
+      Ft.logerr('PlatformCS', 'bind#missing-element', [c]);
+      return ;
+    }
+    if (c.romUid.isSome) {
+      Ft.logerr('PlatformCS', 'bind#bound', [c]);
+      return ;
+    }
+    if (c.life is Dead) {
+      Ft.logerr('PlatformCS', 'bind#dead-chip', [c]);
+      return ;
+    }
+    if (dst.life is Dead) {
+      Ft.logerr('PlatformCS', 'bind#dead-rom', [c, dst]);
+      return ;
+    }
+    if (c.type is Ram && this.romHasRam(dst)) {
+      Ft.logerr('PlatformCS', 'bind#full-rom', [c, dst]);
+      return ;
+    }
+    // TODO: Check Ss slot availability
+    _pls.update(new LsChip.bind(c, dst.uid));
+  }
+
+  void unbind(LsChip c) {
+    if (_entries[c.uid] == null) {
+      Ft.logerr('PlatformCS', 'unbind#missing-element', [c]);
+      return ;
+    }
+    if (c.romUid.isNone) {
+      Ft.logerr('PlatformCS', 'unbind#not-bound', [c]);
+      return ;
+    }
+    if (c.life is Dead) {
+      Ft.logerr('PlatformCS', 'unbind#dead', [c]);
+      return ;
+    }
+    _pls.update(new LsChip.unbind(c));
+  }
+
+  Async.Future delete(LsEntry e) async {
+    if (_entries[e.uid] == null) {
+      Ft.logerr('PlatformCS', 'delete#missing-element', [e]);
+      return ;
+    }
+    await _pidb.delete(e.type, e.idbid);
+    _pls.delete(e);
+  }
+
+  // CALLBACKS ************************************************************** **
+  void _handleDelete(LsEntry e) {
+    Ft.log('PlatformCS', '_handleDelete', [e]);
+    _entries.remove(e.uid);
+    _entryDelete.add(e);
+  }
+
+  void _handleNew(LsEntry e) {
+    Ft.log('PlatformCS', '_handleNew', [e]);
+    _entries[e.uid] = e;
+    _entryNew.add(e);
+  }
+
+  void _handleUpdate(Update<LsEntry> u) {
+    Ft.log('PlatformCS', '_handleUpdate', [u]);
+    _entries[u.newValue.uid] = u.newValue;
+    _entryUpdate.add(u);
+  }
+
+  // PRIVATE **************************************************************** **
+  int _makeUid() {
+    int uid;
+
+    do {
+      uid = _rng.nextInt(_maxint);
+    } while (_entries[uid] != null);
+    return uid;
+  }
 
 }

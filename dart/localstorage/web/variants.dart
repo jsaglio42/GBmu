@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 18:38:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:12:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,9 @@ class Dismissal extends SlotEvent {
 class Update<T> {
   final T newValue;
   final T oldValue;
-  Update(this.newValue, this.oldValue);
+  Update({T oldValue, T newValue})
+    : oldValue = oldValue
+    , newValue = newValue;
 }
 
 // Components *************************************************************** **

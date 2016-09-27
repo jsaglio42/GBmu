@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 13:44:43 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 14:33:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:13:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,69 +22,53 @@ import './variants.dart';
 import './local_storage.dart';
 import './platform_local_storage.dart';
 import './platform_component_storage.dart';
+import './platform_indexeddb.dart';
 import './transformer_lse_unserializer.dart';
 import './transformer_lse_data_check.dart';
 import './transformer_lse_idb_check.dart';
 
-main() {
+import './tmp_emulator_enums.dart';
+import './tmp_emulator_types.dart' as Emulator;
+
+main() async {
   print('Hello World');
-  LsRom lsrom;
-  LsRam lsram;
-  PlatformLocalStorage cls;
+  PlatformLocalStorage pls;
   PlatformComponentStorage pcs;
+  PlatformIndexedDb pidb;
   TransformerLseUnserializer tu;
   TransformerLseDataCheck tdc;
   TransformerLseIdbCheck tic;
 
-  final rng = new Random.secure();
-  final int maxint = pow(2, 32);
-  int romUid;
+  final Emulator.Rom rom = new Emulator.Rom(0, 400);
+  final Emulator.Ram ram = new Emulator.Ram(0, 400);
+  LsRom lsrom;
+  LsRam lsram;
 
   try {
-    pcs = new PlatformComponentStorage();
-    cls = new PlatformLocalStorage();
-    tu = new TransformerLseUnserializer(cls);
+    pidb = new PlatformIndexedDb();
+    pls = new PlatformLocalStorage();
+    pcs = new PlatformComponentStorage(pls, pidb);
+    tu = new TransformerLseUnserializer(pls);
     tdc = new TransformerLseDataCheck(pcs, tu);
     tic = new TransformerLseIdbCheck(tdc);
 
-    cls.start();
-    romUid = rng.nextInt(maxint);
+    pls.start();
+    pcs.start(tic);
 
-    tic.lsEntryDelete.forEach((_){
-          print('main#test-delete');
-        });
-    tic.lsEntryNew.forEach((_){
-          print('main#test-new');
-        });
-    tic.lsEntryUpdate.forEach((_){
-          print('main#test-update');
-        });
+    pcs.newRom(rom);
+    pcs.newRam(ram);
 
-    lsrom = new LsEntry.json_exn(
-        '{"uid":${romUid},"type":"Rom"}',
-        '{'
-        '"life":"Alive",'
-        '"idbid":72,'
-        '"_ramSize":12,'
-        '"_globalChecksum":5050'
-        '}');
+    lsrom = await pcs.entryNew.where((LsEntry e) => e.type is Rom).first;
+    lsram = await pcs.entryNew.where((LsEntry e) => e.type is Ram).first;
 
-    lsram = new LsEntry.json_exn(
-        '{"uid":${rng.nextInt(maxint)},"type":"Ram"}',
-        '{'
-        '"life":"Alive",'
-        '"idbid":72,'
-        '"romUid":$romUid,'
-        // '"romUid":0,'
-        '"_size":12'
-        '}');
+    pcs.bind(lsram, lsrom);
 
-    cls.add(lsrom);
-    cls.add(lsram);
-    cls.update(lsram);
-    cls.delete(lsram);
-    // cls.write(new LsRom.unsafe(1507580930, Dead.v, 12, 12, 12));
-    // cls.write(new LsRom.unsafe(1507580930, Alive.v, 12, 12, 12));
+    lsram = (await pcs.entryUpdate.first).newValue;
+    await new Async.Future.delayed(new Duration(seconds: 3));
+    print('go!');
+
+    pcs.unbind(lsram);
+
 
   } catch (e, st) {
     print(e);

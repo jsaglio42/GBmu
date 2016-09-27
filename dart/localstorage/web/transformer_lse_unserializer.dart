@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:10:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 14:05:54 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:12:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -87,7 +87,7 @@ class TransformerLseUnserializer {
   void _handleUpdate(LsEvent ev, Async.EventSink<Update<LsEntry>> sink) {
     LsEntry newEntry, oldEntry;
 
-    Ft.log('TLSEUnserializer','_handleNew', [ev.key]);
+    Ft.log('TLSEUnserializer','_handleNew', [ev.key, ev.newValue]);
     try {
       newEntry = new LsEntry.json_exn(ev.key, ev.newValue);
       oldEntry = new LsEntry.json_exn(ev.key, ev.oldValue);
@@ -96,7 +96,7 @@ class TransformerLseUnserializer {
       Ft.logwarn('TLSEUnserializer', '_handleNew#error', [e, st]);
       return ;
     }
-    sink.add(new Update<LsEntry>(oldEntry, newEntry));
+    sink.add(new Update<LsEntry>(oldValue: oldEntry, newValue: newEntry));
   }
 
 }

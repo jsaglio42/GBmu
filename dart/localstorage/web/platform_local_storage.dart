@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:08:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 13:56:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:10:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,9 +52,29 @@ class PlatformLocalStorage {
     Html.Window.storageEvent.forTarget(Html.window)
       .where((Html.StorageEvent e) => e.storageArea == Html.window.localStorage)
       .forEach(_onEvent);
+    Html.window.localStorage.forEach((String k, String v) {
+      _lsEntryNew.add(new LsEvent(k, oldValue: null, newValue: v));
+    });
   }
 
   // PUBLIC ***************************************************************** **
+  void delete(LsEntry e) {
+    final String key = e.keyJson;
+    String oldValue;
+
+    Ft.log('PlatformLS','delete', [e]);
+    assert(e.life is Alive, "PlatformLS.delete()");
+    if (!Html.window.localStorage.containsKey(key)) {
+      Ft.logerr('PlatformLS', 'delete#missing-key');
+      return ;
+    }
+    oldValue = Html.window.localStorage[key];
+    Html.window.localStorage.remove(key);
+    Async.Timer.run(() {
+      _lsEntryDelete.add(new LsEvent(key, oldValue: oldValue, newValue: null));
+    });
+  }
+
   void add(LsEntry e) {
     final String key = e.keyJson;
     String value;
@@ -68,7 +88,7 @@ class PlatformLocalStorage {
     value = e.valueJson;
     Html.window.localStorage[key] = value;
     Async.Timer.run(() {
-      _lsEntryNew.add(new LsEvent(key, Html.window.localStorage[key], value));
+      _lsEntryNew.add(new LsEvent(key, oldValue: null, newValue: value));
     });
 
   }
@@ -87,24 +107,7 @@ class PlatformLocalStorage {
     oldValue = Html.window.localStorage[key];
     Html.window.localStorage[key] = value;
     Async.Timer.run(() {
-      _lsEntryUpdate.add(new LsEvent(key, oldValue, value));
-    });
-  }
-
-  void delete(LsEntry e) {
-    final String key = e.keyJson;
-    String oldValue;
-
-    Ft.log('PlatformLS','delete', [e]);
-    assert(e.life is Alive, "PlatformLS.delete()");
-    if (!Html.window.localStorage.containsKey(key)) {
-      Ft.logerr('PlatformLS', 'delete#missing-key');
-      return ;
-    }
-    oldValue = Html.window.localStorage[key];
-    Html.window.localStorage.remove(key);
-    Async.Timer.run(() {
-      _lsEntryDelete.add(new LsEvent(key, oldValue, null));
+      _lsEntryUpdate.add(new LsEvent(key, oldValue: oldValue, newValue: value));
     });
   }
 
@@ -114,7 +117,8 @@ class PlatformLocalStorage {
 
   // CALLBACKS ************************************************************** **
   void _onEvent(Html.StorageEvent ev) {
-    final LsEvent lse = new LsEvent(ev.key, ev.oldValue, ev.newValue);
+    final LsEvent lse = new LsEvent(
+        ev.key, oldValue: ev.oldValue, newValue: ev.newValue);
 
     Ft.log('PlatformLS','_onEvent', [ev]);
     if (ev.key == null || (ev.oldValue == null && ev.newValue == null)) {
