@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:48:07 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 16:06:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:56:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -92,8 +92,11 @@ class Rom extends AData
   Rom(int memOffset, int size)
     : super(memOffset, new Uint8List(size));
 
-  dynamic pullHeaderValue(RomHeaderField _) {
-    return 42;
+  dynamic pullHeaderValue(RomHeaderField f) {
+    if (f == RomHeaderField.RAM_Size)
+      return this.size;
+    else
+      return 8173;
   }
 
 }

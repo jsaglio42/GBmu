@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 16:25:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:54:50 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,7 @@ class PlatformIndexedDb {
 
   Async.Future<int> add(Component c, Emulator.Serializable s) async {
 
-    return 42;
+    return 72;
   }
 
   Async.Future delete(Component c, int id) async {

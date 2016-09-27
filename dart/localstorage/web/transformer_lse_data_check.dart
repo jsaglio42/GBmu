@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:01:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 17:04:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/27 17:57:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -96,6 +96,8 @@ class TransformerLseDataCheck {
   // Disallow update on roms
   bool _handleUpdate(Update<LsEntry> e) {
     final LsEntry current = _pcs.entryOptOfUid(e.newValue.uid);
+    LsChip cold, cnew, ccur;
+    LsRom r;
 
     Ft.log('TLSEDataCheck','_handleUpdate', [e.newValue]);
     if (current == null) {
@@ -109,6 +111,38 @@ class TransformerLseDataCheck {
     if (current.type is Rom) {
       Ft.logwarn('TLSEDataCheck', '_handleUpdate#update-on-rom');
       return false;
+    }
+    ccur = current;
+    cold = e.oldValue;
+    cnew = e.newValue;
+    if (ccur.romUid.v != cold.romUid.v) {
+      Ft.logwarn('TLSEDataCheck', '_handleUpdate#unsound-old');
+      return false;
+    }
+    if (cold.romUid.isNone == cnew.romUid.isNone) {
+      Ft.logwarn('TLSEDataCheck', '_handleUpdate#unsound-update');
+      return false;
+    }
+    if (cnew.romUid.isSome) {
+      r = _pcs.entryOptOfUid(cnew.romUid.v);
+      if (r == null) {
+        Ft.logwarn('TLSEDataCheck', '_handleUpdate#unknown-rom');
+        return false;
+      }
+      if (_pcs.romHasRam(r)) {
+        Ft.logwarn('TLSEDataCheck', '_handleUpdate#rom-busy');
+        return false;
+      }
+      if (ccur.type is Ram && (ccur as LsRam).size != r.ramSize) {
+        Ft.logwarn('TLSEDataCheck', '_handleUpdate#ram-doesnt-fit');
+        return false;
+      }
+      // TODO: uncomment for Ss
+      // if (ccur.type is Ss
+          // && (ccur as LsSs).romGlobalChecksum != r.globalChecksum) {
+        // Ft.logwarn('TLSEDataCheck', '_handleUpdate#ss-doesnt-fit');
+        // return false;
+      // }
     }
     return true;
   }
