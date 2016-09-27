@@ -32,7 +32,7 @@ export 'package:emulator/src/hardware/registermapping.dart'
 export 'package:emulator/src/mixins/interruptmanager.dart'
   show InterruptType ;
 export 'package:emulator/src/mixins/joypad.dart'
-  show KeyCode ;
+  show JoypadKey ;
 
 enum DebuggerModeRequest {
   Toggle,

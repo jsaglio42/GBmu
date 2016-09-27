@@ -135,15 +135,21 @@ abstract class Emulation implements Worker.AWorker {
     });
   }
 
-  void _onKeyDown(KeyCode kc){
-    print('Key Down');
-    print(kc.toString());
+  void _onKeyDown(JoypadKey kc){
+    kc = JoypadKey.values[kc.index];
+    if (this.gbOpt == null)
+      return ;
+    else
+      gbOpt.keyPress(kc);
     return ;
   }
 
-  void _onKeyUp(KeyCode kc){
-    print('Key Up');
-    print(kc.toString());
+  void _onKeyUp(JoypadKey kc){
+    kc = JoypadKey.values[kc.index];
+    if (this.gbOpt == null)
+      return ;
+    else
+      gbOpt.keyRelease(kc);
     return ;
   }
 

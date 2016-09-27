@@ -92,7 +92,6 @@ abstract class Debug implements Worker.AWorker {
 
   List<int>   _buildMemoryList(int addr, Gameboy.GameBoy gb)
   {
-    Ft.log(Ft.typeStr(this), '_buildMemoryList', [addr, gb]);
     assert((addr >= 0) && (addr <= 0x10000 - _debuggerMemoryLen)
         , '_buildMemExplorerMap: addr not valid');
     return gb.pullMemoryList(addr, _debuggerMemoryLen);
@@ -101,7 +100,7 @@ abstract class Debug implements Worker.AWorker {
 
   List<Instructions.Instruction>   _buildInstList(Gameboy.GameBoy gb)
   {
-    Ft.log(Ft.typeStr(this), '_buildInstList', [gb]);
+    // Ft.log(Ft.typeStr(this), '_buildInstList', [gb]);
     return gb.pullInstructionList(_debuggerInstFlowLen);
   }
 

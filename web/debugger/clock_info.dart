@@ -31,7 +31,7 @@ void _onClockInfo(int clock) {
   final double tMs = clock.toDouble() / GB_CPU_FREQ_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE;
   final double f = clock.toDouble() / GB_FRAME_PER_CLOCK_DOUBLE;
 
-  Ft.log('clock_info.dart', '_onClockInfo', [clock]);
+  // Ft.log('clock_info.dart', '_onClockInfo', [clock]);
   _clock.text = clock.toStringAsPrecision(9);
   _time.text = new Duration(microseconds: tMs.round()).toString();
   _frames.text = f.toStringAsPrecision(6);

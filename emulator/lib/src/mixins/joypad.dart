@@ -10,6 +10,13 @@
 //                                                                            //
 // ************************************************************************** //
 
+import 'package:ft/ft.dart' as Ft;
+
+import 'package:emulator/src/enums.dart';
+
+import "package:emulator/src/hardware/hardware.dart" as Hardware;
+import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
+
 /*
 * Joypad behaviour is strange, depending on value in b4 and b5, reading to  FF00
 * will return the states of either buttons or directions.
@@ -41,7 +48,7 @@
 * 
 */
 
-enum KeyCode {
+enum JoypadKey {
   A,
   B,
   Select,
@@ -53,21 +60,21 @@ enum KeyCode {
 }
 
 abstract class Joypad
-  implements GameBoy.Hardware
+  implements Hardware.Hardware
   , Interrupt.InterruptManager {
 
-    void keyPress(KeyCode k) {
-      final int bit = this.joypadState & (1 << k.index);
-      if (bit == 0)
+    void keyPress(JoypadKey k) {
+      final int bit = (1 << k.index);
+      if (this.joypadState & bit == 0)
         this.requestInterrupt(InterruptType.Joypad);
       this.joypadState |= bit;
       return ;
     }
 
-    void keyRelease(KeyCode k) {
-      final int state = 0x300 & this.joypadState;
-      final int bit = this.joypadState & (1 << k.index);
-      final int mask = ~bit & 0xFF
+    void keyRelease(JoypadKey k) {
+      final int state = 0x100 & this.joypadState;
+      final int bit = (1 << k.index);
+      final int mask = ~bit & 0xFF;
       this.joypadState = (this.joypadState & mask) | state;
       return;
     }
