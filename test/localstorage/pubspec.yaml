@@ -6,7 +6,7 @@ environment:
 dependencies:
   browser: ^0.10.0
   ft:
-    path: ./ft
+    path: ../../ft
 transformers:
 - $dart2js:
     checked: true
