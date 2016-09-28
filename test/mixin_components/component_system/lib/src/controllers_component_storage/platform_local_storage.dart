@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:08:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:39:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 12:53:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -48,13 +48,21 @@ class PlatformLocalStorage {
   }
 
   void start() {
+    final List<LsEvent> chips = <LsEvent>[];
+
     Ft.log('PlatformLS', 'start', []);
     Html.Window.storageEvent.forTarget(Html.window)
       .where((Html.StorageEvent e) => e.storageArea == Html.window.localStorage)
       .forEach(_onEvent);
     Html.window.localStorage.forEach((String k, String v) {
-      _lsEntryNew.add(new LsEvent(k, oldValue: null, newValue: v));
+      if (k.contains('Rom'))
+        _lsEntryNew.add(new LsEvent(k, oldValue: null, newValue: v));
+      else
+        chips.add(new LsEvent(k, oldValue: null, newValue: v));
     });
+    for (var c in chips) {
+      _lsEntryNew.add(c);
+    }
   }
 
   // PUBLIC ***************************************************************** **
@@ -88,6 +96,7 @@ class PlatformLocalStorage {
     value = e.valueJson;
     Html.window.localStorage[key] = value;
     Async.Timer.run(() {
+      print('pls, truc added');
       _lsEntryNew.add(new LsEvent(key, oldValue: null, newValue: value));
     });
 

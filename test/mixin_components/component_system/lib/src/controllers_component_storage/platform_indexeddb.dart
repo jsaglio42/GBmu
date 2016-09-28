@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:43:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 11:48:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -95,18 +95,6 @@ class PlatformIndexedDb {
       found = true;
     });
     return tra.completed.then((_) => found);
-  }
-
-  Async.Future<Emulator.Serializable> fetch(Component c, int id) async {
-    Idb.Transaction tra;
-    dynamic serialized;
-
-    Ft.log('PlatformIDB', 'fetch', [c, id]);
-    tra = _db.transaction(c.toString(), 'readonly');
-    serialized = await tra.objectStore(c.toString())
-    .getObject(id);
-    return tra.completed.then((_) =>
-        new Emulator.Serializable.unserialize(c, serialized));
   }
 
   // PRIVATE **************************************************************** **

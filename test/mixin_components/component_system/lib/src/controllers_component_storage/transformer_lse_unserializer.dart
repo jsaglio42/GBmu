@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:10:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:39:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 13:16:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,7 +28,9 @@ import './platform_local_storage.dart';
 class TransformerLseUnserializer {
 
   // ATTRIBUTES ************************************************************* **
-  final PlatformLocalStorage _pls;
+  Async.Stream<LsEntry> _lsEntryDelete;
+  Async.Stream<LsEntry> _lsEntryNew;
+  Async.Stream<Update<LsEntry>> _lsEntryUpdate;
 
   // CONTRUCTION ************************************************************ **
   static TransformerLseUnserializer _instance;
@@ -39,27 +41,30 @@ class TransformerLseUnserializer {
     return _instance;
   }
 
-  TransformerLseUnserializer._(this._pls) {
-    Ft.log('TLSEUnserializer','contructor');
-  }
-
-  // PUBLIC ***************************************************************** **
-  Async.Stream<LsEntry> get lsEntryDelete => _pls.lsEntryDelete.transform(
+  TransformerLseUnserializer._(PlatformLocalStorage pls)
+  {
+    Ft.log('TLSEUnserializer', 'contructor');
+    _lsEntryDelete = pls.lsEntryDelete.transform(
       new Async.StreamTransformer<LsEvent, LsEntry>.fromHandlers(
           handleData: _handleDelete));
-  Async.Stream<LsEntry> get lsEntryNew => _pls.lsEntryNew.transform(
+    _lsEntryNew = pls.lsEntryNew.transform(
       new Async.StreamTransformer<LsEvent, LsEntry>.fromHandlers(
           handleData: _handleNew));
-  Async.Stream<Update<LsEntry>> get lsEntryUpdate =>
-    _pls.lsEntryUpdate.transform(
+    _lsEntryUpdate = pls.lsEntryUpdate.transform(
         new Async.StreamTransformer<LsEvent, Update<LsEntry>>.fromHandlers(
             handleData: _handleUpdate));
+  }
+
+  // PUBLIC ATTRIBUTES ****************************************************** **
+  Async.Stream<LsEntry> get lsEntryDelete => _lsEntryDelete;
+  Async.Stream<LsEntry> get lsEntryNew => _lsEntryNew;
+  Async.Stream<Update<LsEntry>> get lsEntryUpdate => _lsEntryUpdate;
 
   // CALLBACKS ************************************************************** **
   void _handleDelete(LsEvent ev, Async.EventSink<LsEntry> sink) {
     LsEntry oldEntry;
 
-    Ft.log('TLSEUnserializer','_handleDelete', [ev.key]);
+    Ft.log('TLSEUnserializer', '_handleDelete', [ev.key]);
     try {
       oldEntry = new LsEntry.json_exn(ev.key, ev.oldValue);
     }

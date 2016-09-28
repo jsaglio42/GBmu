@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:01:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:39:59 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 13:16:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,11 +26,14 @@ import './platform_component_storage.dart';
 import './transformer_lse_unserializer.dart';
 
 // Transformer Local Storage Event, Data Check part
+// The `Ft.log{warn|err}` instruction indicated the gravity of the data-race.
 class TransformerLseDataCheck {
 
   // ATTRIBUTES ************************************************************* **
   final PlatformComponentStorage _pcs;
-  final TransformerLseUnserializer _tu;
+  Async.Stream<LsEntry> _lsEntryDelete;
+  Async.Stream<LsEntry> _lsEntryNew;
+  Async.Stream<Update<LsEntry>> _lsEntryUpdate;
 
   // CONTRUCTION ************************************************************ **
   static TransformerLseDataCheck _instance;
@@ -42,17 +45,17 @@ class TransformerLseDataCheck {
     return _instance;
   }
 
-  TransformerLseDataCheck._(this._pcs, this._tu) {
-    Ft.log('TLSEDataCheck','contructor');
+  TransformerLseDataCheck._(this._pcs, TransformerLseUnserializer tu) {
+    Ft.log('TLSEDataCheck', 'contructor');
+    _lsEntryDelete = tu.lsEntryDelete.where(_handleDelete);
+    _lsEntryNew = tu.lsEntryNew.where(_handleNew);
+    _lsEntryUpdate = tu.lsEntryUpdate.where(_handleUpdate);
   }
 
   // PUBLIC ***************************************************************** **
-  Async.Stream<LsEntry> get lsEntryDelete =>
-    _tu.lsEntryDelete.where(_handleDelete);
-  Async.Stream<LsEntry> get lsEntryNew =>
-    _tu.lsEntryNew.where(_handleNew);
-  Async.Stream<Update<LsEntry>> get lsEntryUpdate =>
-    _tu.lsEntryUpdate.where(_handleUpdate);
+  Async.Stream<LsEntry> get lsEntryDelete => _lsEntryDelete;
+  Async.Stream<LsEntry> get lsEntryNew => _lsEntryNew;
+  Async.Stream<Update<LsEntry>> get lsEntryUpdate => _lsEntryUpdate;
 
   // CALLBACKS ************************************************************** **
   // Does data-race checks

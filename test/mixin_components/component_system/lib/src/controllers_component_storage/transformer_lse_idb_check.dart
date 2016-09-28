@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:29:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:43:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 13:18:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,12 +31,9 @@ class TransformerLseIdbCheck {
 
   // ATTRIBUTES ************************************************************* **
   final PlatformIndexedDb _pidb;
-  final TransformerLseDataCheck _tdc;
-
-  final Async.StreamController<LsEntry> _entryNew =
-    new Async.StreamController<LsEntry>();
-  final Async.StreamController<Update<LsEntry>> _entryUpdate =
-    new Async.StreamController<Update<LsEntry>>();
+  Async.Stream<LsEntry> _lsEntryDelete;
+  Async.Stream<LsEntry> _lsEntryNew;
+  Async.Stream<Update<LsEntry>> _lsEntryUpdate;
 
   // CONTRUCTION ************************************************************ **
   static TransformerLseIdbCheck _instance;
@@ -48,17 +45,18 @@ class TransformerLseIdbCheck {
     return _instance;
   }
 
-  TransformerLseIdbCheck._(this._pidb, this._tdc) {
+  TransformerLseIdbCheck._(this._pidb, TransformerLseDataCheck tdc) {
     Ft.log('TLSEIdbCheck','contructor');
-    _tdc.lsEntryNew.forEach(_handleNew);
-    _tdc.lsEntryUpdate.forEach(_handleUpdate);
+    _lsEntryDelete = tdc.lsEntryDelete.where(_handleDelete);
+    _lsEntryNew = tdc.lsEntryNew.asyncMap(_handleNew).where((v) => v != null);
+    _lsEntryUpdate =
+      tdc.lsEntryUpdate.asyncMap(_handleUpdate).where((v) => v != null);
   }
 
   // PUBLIC ***************************************************************** **
-  Async.Stream<LsEntry> get lsEntryDelete =>
-    _tdc.lsEntryDelete.where(_handleDelete);
-  Async.Stream<LsEntry> get lsEntryNew => _entryNew.stream;
-  Async.Stream<Update<LsEntry>> get lsEntryUpdate => _entryUpdate.stream;
+  Async.Stream<LsEntry> get lsEntryDelete => _lsEntryDelete;
+  Async.Stream<LsEntry> get lsEntryNew => _lsEntryNew;
+  Async.Stream<Update<LsEntry>> get lsEntryUpdate => _lsEntryUpdate;
 
   // CALLBACKS ************************************************************** **
   bool _handleDelete(LsEntry e) {
@@ -66,23 +64,26 @@ class TransformerLseIdbCheck {
     return true;
   }
 
-  Async.Future _handleNew(LsEntry e) async {
+  Async.Future<LsEntry> _handleNew(LsEntry e) async {
     Ft.log('TLSEIdbCheck','_handleNew', [e]);
 
     if (await _pidb.contains(e.type, e.idbid))
-      _entryNew.add(e);
-    else
+      return e;
+    else {
       Ft.logwarn('TLSEIdbCheck','_handleNew#missing-from-db');
-    return ;
+      return null;
+    }
   }
 
-  Async.Future _handleUpdate(Update<LsEntry> u) async {
+  Async.Future<Update<LsEntry>> _handleUpdate(Update<LsEntry> u) async {
     Ft.log('TLSEIdbCheck','_handleUpdate', [u.newValue]);
 
     if (await _pidb.contains(u.newValue.type, u.newValue.idbid))
-      _entryUpdate.add(u);
-    else
+      return u;
+    else {
       Ft.logwarn('TLSEIdbCheck','_handleUpdate#missing-from-db');
+      return null;
+    }
     return ;
   }
 

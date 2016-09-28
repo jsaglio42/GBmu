@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:42:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 12:31:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,25 +28,9 @@ import './transformer_lse_idb_check.dart';
 import './platform_indexeddb.dart';
 import './platform_local_storage.dart';
 
-
-// import './controller_local_storage.dart';
-
-// TODO?: Filter `lsEntry*` streams multiple time
-//   1. LocalStorage Events, Unserialization    ControllerLocalStorage
-//   2. Event consistency, regarding AppStorage ControllerLocalStorageDataCheck
-//   3. Event consistency, regarding IndexedDb  ControllerLocalStorageEventIndexedDbCheck
-// TODO?:
-//  PlatformComponentStorage
-//  PlatformIndexedDb
-//  PlatformLocalStorage
-//  TransformerLSEUnserialization
-//  TransformerLSEDataCheck
-//  TransformerLSEIndexedDbCheck
-
 // Did my best to limit data races, couldn't find a bullet proof solution
 // This storage keeps track of all LsEntries, even the deleted one, to dampen
 //  data-races effects.
-// The `Ft.log{warn|err}` instruction indicated the gravity of the data-race.
 class PlatformComponentStorage {
 
   // ATTRIBUTES ************************************************************* **
@@ -57,12 +41,9 @@ class PlatformComponentStorage {
   final _rng = new Random.secure();
   static final int _maxint = pow(2, 32);
 
-  final Async.StreamController<LsEntry> _entryDelete =
-    new Async.StreamController<LsEntry>.broadcast();
-  final Async.StreamController<LsEntry> _entryNew =
-    new Async.StreamController<LsEntry>.broadcast();
-  final Async.StreamController<Update<LsEntry>> _entryUpdate =
-    new Async.StreamController<Update<LsEntry>>.broadcast();
+  Async.Stream<LsEntry> _entryDelete;
+  Async.Stream<LsEntry> _entryNew;
+  Async.Stream<Update<LsEntry>> _entryUpdate;
 
   // CONTRUCTION ************************************************************ **
   static PlatformComponentStorage _instance;
@@ -81,16 +62,27 @@ class PlatformComponentStorage {
   void start(TransformerLseIdbCheck tic) {
     Ft.log('PlatformCS', 'start', [tic]);
 
-    tic.lsEntryDelete.forEach(_handleDelete);
-    tic.lsEntryNew.forEach(_handleNew);
-    tic.lsEntryUpdate.forEach(_handleUpdate);
+    _entryDelete = tic.lsEntryDelete.map(_handleDelete).asBroadcastStream();
+    _entryNew = tic.lsEntryNew.map(_handleNew).asBroadcastStream();
+    _entryUpdate = tic.lsEntryUpdate.map(_handleUpdate).asBroadcastStream();
   }
 
   // PUBLIC ***************************************************************** **
 
-  Async.Stream<LsEntry> get entryDelete => _entryDelete.stream;
-  Async.Stream<LsEntry> get entryNew => _entryNew.stream;
-  Async.Stream<Update<LsEntry>> get entryUpdate => _entryUpdate.stream;
+  Async.Stream<LsEntry> get entryDelete {
+    assert(_entryDelete != null, 'from: PlatformCS.entryDelete');
+    return _entryDelete;
+  }
+
+  Async.Stream<LsEntry> get entryNew {
+    assert(_entryNew != null, 'from: PlatformCS.entryNew');
+    return _entryNew;
+  }
+
+  Async.Stream<Update<LsEntry>> get entryUpdate {
+    assert(_entryUpdate != null, 'from: PlatformCS.entryUpdate');
+    return _entryUpdate;
+  }
 
   LsEntry entryOptOfUid(int uid) =>
     _entries[uid];
@@ -102,6 +94,8 @@ class PlatformComponentStorage {
     .isNotEmpty;
 
   Async.Future newRom(Emulator.Rom r) async {
+    Ft.log('PlatformCS', 'newRom', [r]);
+
     final int uid = _makeUid();
     final int idbid = await _pidb.add(Rom.v, r);
     final int rs = r.pullHeaderValue(RomHeaderField.RAM_Size);
@@ -113,6 +107,8 @@ class PlatformComponentStorage {
   }
 
   Async.Future newRam(Emulator.Ram r) async {
+    Ft.log('PlatformCS', 'newRam', [r]);
+
     final int uid = _makeUid();
     final int idbid = await _pidb.add(Ram.v, r);
     final int s = r.size;
@@ -125,6 +121,7 @@ class PlatformComponentStorage {
   // TODO: PlatformComponentStorage.addSs
 
   void bind(LsChip c, LsRom dst) {
+    Ft.log('PlatformCS', 'bind', [c, dst]);
     if (_entries[c.uid] == null) {
       Ft.logerr('PlatformCS', 'bind#missing-element', [c]);
       return ;
@@ -150,6 +147,7 @@ class PlatformComponentStorage {
   }
 
   void unbind(LsChip c) {
+    Ft.log('PlatformCS', 'unbind', [c]);
     if (_entries[c.uid] == null) {
       Ft.logerr('PlatformCS', 'unbind#missing-element', [c]);
       return ;
@@ -166,6 +164,7 @@ class PlatformComponentStorage {
   }
 
   Async.Future delete(LsEntry e) async {
+    Ft.log('PlatformCS', 'delete', [e]);
     if (_entries[e.uid] == null) {
       Ft.logerr('PlatformCS', 'delete#missing-element', [e]);
       return ;
@@ -175,28 +174,28 @@ class PlatformComponentStorage {
   }
 
   // CALLBACKS ************************************************************** **
-  void _handleDelete(LsEntry e) {
+  LsEntry _handleDelete(LsEntry e) {
     LsEntry old;
 
     Ft.log('PlatformCS', '_handleDelete', [e]);
     old = _entries[e.uid];
     old.kill();
-    _entryDelete.add(old);
+    return old;
   }
 
-  void _handleNew(LsEntry e) {
+  LsEntry _handleNew(LsEntry e) {
     Ft.log('PlatformCS', '_handleNew', [e]);
     _entries[e.uid] = e;
-    _entryNew.add(e);
+    return e;
   }
 
-  void _handleUpdate(Update<LsEntry> u) {
+  Update<LsEntry> _handleUpdate(Update<LsEntry> u) {
     LsEntry old;
 
     Ft.log('PlatformCS', '_handleUpdate', [u]);
     old = _entries[u.newValue.uid];
     _entries[u.newValue.uid] = u.newValue;
-    _entryUpdate.add(new Update<LsEntry>(oldValue: old, newValue: u.newValue));
+    return new Update<LsEntry>(oldValue: old, newValue: u.newValue);
   }
 
   // PRIVATE **************************************************************** **
