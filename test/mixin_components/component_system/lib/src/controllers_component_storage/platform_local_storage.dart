@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:08:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 18:12:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 11:39:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,8 +20,8 @@ import 'dart:convert';
 
 import 'package:ft/ft.dart' as Ft;
 
-import './variants.dart';
-import './local_storage.dart';
+import 'package:component_system/src/variants.dart';
+import 'package:component_system/src/local_storage.dart';
 
 // Did my best to limit data races, couldn't find a bullet proof solution
 class PlatformLocalStorage {

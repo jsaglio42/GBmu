@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:22:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 11:43:11 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,12 +20,13 @@ import 'dart:convert';
 
 import './variants.dart';
 import './local_storage.dart';
-import './platform_local_storage.dart';
-import './platform_component_storage.dart';
-import './platform_indexeddb.dart';
-import './transformer_lse_unserializer.dart';
-import './transformer_lse_data_check.dart';
-import './transformer_lse_idb_check.dart';
+
+import './controllers_component_storage/platform_local_storage.dart';
+import './controllers_component_storage/platform_component_storage.dart';
+import './controllers_component_storage/platform_indexeddb.dart';
+import './controllers_component_storage/transformer_lse_unserializer.dart';
+import './controllers_component_storage/transformer_lse_data_check.dart';
+import './controllers_component_storage/transformer_lse_idb_check.dart';
 
 import './tmp_emulator_enums.dart';
 import './tmp_emulator_types.dart' as Emulator;
