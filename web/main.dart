@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:47:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/28 12:01:56 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,6 +18,7 @@ import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
 import './main_space/keyboard.dart' as Keyboard;
+import './main_space/canvas.dart' as Canvas;
 
 import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
@@ -109,6 +110,7 @@ run() async
   Mainalerts.init(emu);
   
   Keyboard.init(emu);
+  Canvas.init(emu);
 
   var mainGameBoyState = Html.querySelector('#mainGameBoyState');
   emu.listener('EmulationStatus').forEach((mode){
