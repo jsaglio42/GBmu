@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   main.dart                                          :+:      :+:    :+:   //
+//   init.dart                                          :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/24 13:44:43 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 19:29:36 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/28 11:22:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,7 +30,7 @@ import './transformer_lse_idb_check.dart';
 import './tmp_emulator_enums.dart';
 import './tmp_emulator_types.dart' as Emulator;
 
-main() async {
+Async.Future init(_) async {
   print('Hello World');
   PlatformLocalStorage pls;
   PlatformComponentStorage pcs;

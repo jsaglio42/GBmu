@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/19 13:11:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 11:22:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,11 +26,13 @@ import 'package:emulator/emulator.dart' as Emulator;
 
 // import './component_system.dart';
 // import './component_system_dom.dart';
-import './cart_system/mixin_assembly.dart';
-import './cart_system/controller_cart_system.dart' as Csc;
-import './cart_system/globals.dart';
+// import './cart_system/mixin_assembly.dart';
+// import './cart_system/controller_cart_system.dart' as Csc;
+// import './cart_system/globals.dart';
 // import './chip.dart';
 // import './toplevel_banks.dart';
+
+import 'package:component_system/cs.dart' as Cs;
 
 /*
  * Global Variable
@@ -105,19 +107,20 @@ final tetrisHead = new Uint8List.fromList(<int>[
 Async.Future init(Emulator.Emulator emu) async {
   Ft.log('main', 'init', [emu]);
 
-  // g_csc = await Csc.make();
+  await Cs.init(emu);
 
-  final cscFut = Csc.make();
-//   final filedbFut = Emufiledb.make(Html.window.indexedDB);
-  final cartHtmlFut = Html.HttpRequest.getString("cart_table.html");
+  // final cscFut = Csc.make();
+  // final cartHtmlFut = Html.HttpRequest.getString("cart_table.html");
 
-//   g_dbProxy = await filedbFut;
-  final cartHtml = await cartHtmlFut;
-  g_csc = await cscFut;
+  // final cartHtml = await cartHtmlFut;
+  // g_csc = await cscFut;
 
-  await g_csc.init();
+  // await g_csc.init();
 
-  DomCart c = new DomCart(cartHtml, _domCartValidator);
+  // DomCart c = new DomCart(cartHtml, _domCartValidator);
+
+
+
   // DomChipSocket c = new DomChipSocket();
 
 //   g_cartBank = new CartBank(cartHtml, _domCartValidator);

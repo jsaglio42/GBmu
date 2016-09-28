@@ -1,0 +1,12 @@
+name: component_system
+description: Component system part of the DOM
+version: 0.0.1
+environment:
+  sdk: '>=1.13.0 <2.0.0'
+dependencies:
+  ft:
+    path: ../../../ft
+transformers:
+- $dart2js:
+    checked: true
+    commandLineOptions: [--enable-diagnostic-colors]
