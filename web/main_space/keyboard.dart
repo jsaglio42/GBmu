@@ -1,17 +1,45 @@
+// ************************************************************************** //
+//                                                                            //
+//                                                        :::      ::::::::   //
+//   keyboard.dart                                      :+:      :+:    :+:   //
+//                                                    +:+ +:+         +:+     //
+//   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
+//                                                +#+#+#+#+#+   +#+           //
+//   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
+//   Updated: 2016/09/28 11:50:31 by jsaglio          ###   ########.fr       //
+//                                                                            //
+// ************************************************************************** //
 
-/* Keyboard events */
+import 'dart:html' as Html;
 
-Emulator emu;
+import 'package:emulator/enums.dart';
+
+import 'package:emulator/emulator.dart' as Emulator;
+
+Emulator.Emulator _emu;
 
 void init(Emulator.Emulator emu) {
-  emu = emu
+  _emu = emu;
   Html.window.onKeyDown
-    .listen((keyEvent) => _onKeyDown(emu, keyEvent.keyCode));
+    .listen((keyEvent) => _onKeyDown(keyEvent.keyCode));
   Html.window.onKeyUp
-    .listen((keyEvent) => _onKeyUp(emu, keyEvent.keyCode));
+    .listen((keyEvent) => _onKeyUp(keyEvent.keyCode));
   return ;
 }
 
+Map<int, JoypadKey> keySettings = <int, JoypadKey>{
+  75 : JoypadKey.A,
+  76 : JoypadKey.B,
+  16 : JoypadKey.Select,
+  13 : JoypadKey.Start,
+  68 : JoypadKey.Right,
+  65 : JoypadKey.Left,
+  87 : JoypadKey.Up,
+  83 : JoypadKey.Down
+};
+
+/* Private ********************************************************************/
+/* Store the status of button: (false = released, true = pressed) */
 Map<JoypadKey, bool> _keyState = <JoypadKey, bool>{
   JoypadKey.A : false,
   JoypadKey.B : false,
@@ -23,34 +51,20 @@ Map<JoypadKey, bool> _keyState = <JoypadKey, bool>{
   JoypadKey.Down : false
 };
 
-JoypadKey _getJoypadKey(int JSJoypadKey) {
-  switch (JSJoypadKey) {
-    case (75) : return JoypadKey.A;
-    case (76) : return JoypadKey.B;
-    case (16) : return JoypadKey.Select;
-    case (13) : return JoypadKey.Start;
-    case (68) : return JoypadKey.Right;
-    case (65) : return JoypadKey.Left;
-    case (87) : return JoypadKey.Up;
-    case (83) : return JoypadKey.Down;
-    default : return null;
-  }
-}
-
-void _onKeyDown(Emulator.Emulator emu, int JSJoypadKey){
-  JoypadKey key = _getJoypadKey(JSJoypadKey);
+void _onKeyDown(int eventKeyCode){
+  JoypadKey key = keySettings[eventKeyCode];
   if (key == null || _keyState[key] == true)
     return ;
-  _keyState[key] = !_keyState[key]
-  emu.send('KeyDownEvent', key);
+  _keyState[key] = true;
+  _emu.send('KeyDownEvent', key);
   return ;
 }
 
-void _onKeyUp(Emulator.Emulator emu, int JSJoypadKey){
-  JoypadKey key = _getJoypadKey(JSJoypadKey);
+void _onKeyUp(int eventKeyCode){
+  JoypadKey key = keySettings[eventKeyCode];
   if (key == null || _keyState[key] == false)
     return ;
-  _keyState[key] = !_keyState[key]
-  emu.send('KeyUpEvent', key);
+  _keyState[key] = false;
+  _emu.send('KeyUpEvent', key);
   return ;
 }
