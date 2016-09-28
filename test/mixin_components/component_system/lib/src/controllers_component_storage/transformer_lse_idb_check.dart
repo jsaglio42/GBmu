@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:29:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 13:18:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 14:52:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,8 @@ import 'dart:convert';
 import 'package:ft/ft.dart' as Ft;
 
 import 'package:component_system/src/variants.dart';
-import 'package:component_system/src/local_storage.dart';
+// import 'package:component_system/src/local_storage_components_intf.dart';
+import 'package:component_system/src/local_storage_components.dart';
 import './platform_component_storage.dart';
 import './platform_indexeddb.dart';
 import './transformer_lse_data_check.dart';

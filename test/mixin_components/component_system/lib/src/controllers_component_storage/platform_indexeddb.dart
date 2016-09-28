@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:48:34 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 16:16:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,8 @@ import 'package:component_system/src/tmp_emulator_enums.dart';
 import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
 
 import 'package:component_system/src/variants.dart';
-import 'package:component_system/src/local_storage.dart';
+// import 'package:component_system/src/local_storage_components_intf.dart';
+import 'package:component_system/src/local_storage_components.dart';
 
 const String _DBNAME = 'GBmu_db';
 
@@ -81,7 +82,7 @@ class PlatformIndexedDb {
     return tra.completed;
   }
 
-  //TODO: openKeyCursor
+  //TODO: openKeyCursor when dart version 1.19.1
   Async.Future<bool> contains(Component c, int id) async {
     Idb.Transaction tra;
     bool found = false;

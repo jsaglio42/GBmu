@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 12:48:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 16:18:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,8 @@ import './tmp_emulator_enums.dart';
 import './tmp_emulator_types.dart' as Emulator;
 
 import './variants.dart';
-import './local_storage.dart';
+// import './local_storage_components_intf.dart';
+import './local_storage_components.dart';
 import './controllers_component_storage/platform_local_storage.dart';
 import './controllers_component_storage/platform_component_storage.dart';
 import './controllers_component_storage/platform_indexeddb.dart';
@@ -43,8 +44,12 @@ Async.Future init(p) async {
 
   final Emulator.Rom rom = new Emulator.Rom(0, 400);
   final Emulator.Ram ram = new Emulator.Ram(0, 400);
+  final Emulator.Ss ss = new Emulator.Ss.dummy();
   LsRom lsrom;
   LsRam lsram;
+  LsSs lsss;
+  List<Async.Future> futs;
+  List comps;
 
   await pidb.start(Html.window.indexedDB);
   pcs.start(tic);
@@ -59,15 +64,27 @@ Async.Future init(p) async {
         print('main#updateEntry');
       });
 
+  futs = [
+    pcs.entryNew.where((LsEntry e) => e.type is Rom).first,
+    pcs.entryNew.where((LsEntry e) => e.type is Ram).first,
+    pcs.entryNew.where((LsEntry e) => e.type is Ss).first,
+  ];
+
   /* await */ pls.start();
 
   // await pcs.newRom(rom);
   // await pcs.newRam(ram);
+  // await pcs.newSs(ss);
 
-  // lsrom = await pcs.entryNew.where((LsEntry e) => e.type is Rom).first;
-  // lsram = await pcs.entryNew.where((LsEntry e) => e.type is Ram).first;
+  comps = await Async.Future.wait(futs);
 
-  // pcs.bind(lsram, lsrom);
+  lsrom = comps[0];
+  lsram = comps[1];
+  lsss = comps[2];
+
+  // pcs.bindRam(lsram, lsrom);
+  // pcs.bindSs(lsss, lsrom, 2);
+  // pcs.unbind(lsss);
 
   // lsram = (await pcs.entryUpdate.first).newValue;
   // await new Async.Future.delayed(new Duration(seconds: 2));

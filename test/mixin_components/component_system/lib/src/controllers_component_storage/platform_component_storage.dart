@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 12:31:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 16:10:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,8 @@ import 'package:component_system/src/tmp_emulator_enums.dart';
 import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
 
 import 'package:component_system/src/variants.dart';
-import 'package:component_system/src/local_storage.dart';
+// import 'package:component_system/src/local_storage_components_intf.dart';
+import 'package:component_system/src/local_storage_components.dart';
 import './transformer_lse_idb_check.dart';
 import './platform_indexeddb.dart';
 import './platform_local_storage.dart';
@@ -68,7 +69,6 @@ class PlatformComponentStorage {
   }
 
   // PUBLIC ***************************************************************** **
-
   Async.Stream<LsEntry> get entryDelete {
     assert(_entryDelete != null, 'from: PlatformCS.entryDelete');
     return _entryDelete;
@@ -90,7 +90,20 @@ class PlatformComponentStorage {
   bool romHasRam(LsRom dst) =>
     _entries.values
     .where((LsEntry e) => e.life is Alive && e.type is Ram)
-    .where((LsRam r) => r.romUid.isSome && r.romUid.v == dst.uid)
+    .where((LsRam r) => r.isBound && r.romUid.v == dst.uid)
+    .isNotEmpty;
+
+  bool romSlotBusy(LsRom dst, int slot) =>
+    _entries.values
+    .where((LsEntry e) => e.life is Alive && e.type is Ss)
+    .where((LsSs ss) =>
+        ss.isBound && ss.romUid.v == dst.uid && ss.slot.v == slot)
+    .isNotEmpty;
+
+  bool romHasAnyChip(LsRom dst) =>
+    _entries.values
+    .where((LsEntry e) => e.life is Alive && e.type is Chip)
+    .where((LsChip c) => c.isBound && c.romUid.v == dst.uid)
     .isNotEmpty;
 
   Async.Future newRom(Emulator.Rom r) async {
@@ -118,32 +131,67 @@ class PlatformComponentStorage {
     _pls.add(e);
   }
 
-  // TODO: PlatformComponentStorage.addSs
+  Async.Future newSs(Emulator.Ss ss) async {
+    Ft.log('PlatformCS', 'newSs', [ss]);
 
-  void bind(LsChip c, LsRom dst) {
-    Ft.log('PlatformCS', 'bind', [c, dst]);
+    final int uid = _makeUid();
+    final int idbid = await _pidb.add(Ss.v, ss);
+    final int rgcs = ss.romGlobalChecksum;
+    final LsSs e =
+      new LsSs.unsafe(uid, Alive.v, idbid, rgcs, new Ft.Option<int>.none(),
+          new Ft.Option<int>.none());
+
+    _pls.add(e);
+  }
+
+  void bindRam(LsRam c, LsRom dst) {
+    Ft.log('PlatformCS', 'bindRam', [c, dst]);
     if (_entries[c.uid] == null) {
-      Ft.logerr('PlatformCS', 'bind#missing-element', [c]);
+      Ft.logerr('PlatformCS', 'bindRam#missing-element', [c]);
       return ;
     }
-    if (c.romUid.isSome) {
-      Ft.logerr('PlatformCS', 'bind#bound', [c]);
+    if (c.isBound) {
+      Ft.logerr('PlatformCS', 'bindRam#bound', [c]);
       return ;
     }
     if (c.life is Dead) {
-      Ft.logerr('PlatformCS', 'bind#dead-chip', [c]);
+      Ft.logerr('PlatformCS', 'bindRam#dead-chip', [c]);
       return ;
     }
     if (dst.life is Dead) {
-      Ft.logerr('PlatformCS', 'bind#dead-rom', [c, dst]);
+      Ft.logerr('PlatformCS', 'bindRam#dead-rom', [c, dst]);
       return ;
     }
-    if (c.type is Ram && this.romHasRam(dst)) {
-      Ft.logerr('PlatformCS', 'bind#full-rom', [c, dst]);
+    if (this.romHasRam(dst)) {
+      Ft.logerr('PlatformCS', 'bindRam#full-rom', [c, dst]);
       return ;
     }
-    // TODO: Check Ss slot availability
     _pls.update(new LsChip.bind(c, dst.uid));
+  }
+
+  void bindSs(LsSs c, LsRom dst, int slot) {
+    Ft.log('PlatformCS', 'bindSs', [c, dst, slot]);
+    if (_entries[c.uid] == null) {
+      Ft.logerr('PlatformCS', 'bindSs#missing-element', [c]);
+      return ;
+    }
+    if (c.isBound) {
+      Ft.logerr('PlatformCS', 'bindSs#bound', [c]);
+      return ;
+    }
+    if (c.life is Dead) {
+      Ft.logerr('PlatformCS', 'bindSs#dead-chip', [c]);
+      return ;
+    }
+    if (dst.life is Dead) {
+      Ft.logerr('PlatformCS', 'bindSs#dead-rom', [c, dst]);
+      return ;
+    }
+    if (this.romSlotBusy(dst, slot)) {
+      Ft.logerr('PlatformCS', 'bindSs#full-rom', [c, dst]);
+      return ;
+    }
+    _pls.update(new LsChip.bind(c, dst.uid, slot));
   }
 
   void unbind(LsChip c) {
@@ -152,7 +200,7 @@ class PlatformComponentStorage {
       Ft.logerr('PlatformCS', 'unbind#missing-element', [c]);
       return ;
     }
-    if (c.romUid.isNone) {
+    if (c.isBound) {
       Ft.logerr('PlatformCS', 'unbind#not-bound', [c]);
       return ;
     }
@@ -167,6 +215,10 @@ class PlatformComponentStorage {
     Ft.log('PlatformCS', 'delete', [e]);
     if (_entries[e.uid] == null) {
       Ft.logerr('PlatformCS', 'delete#missing-element', [e]);
+      return ;
+    }
+    if (e.type is Rom && romHasAnyChip(e)) {
+      Ft.logerr('PlatformCS', 'delete#busy-rom', [e]);
       return ;
     }
     await _pidb.delete(e.type, e.idbid);

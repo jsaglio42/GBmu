@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:48:07 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 19:29:09 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 15:07:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,7 +14,9 @@ import 'dart:typed_data';
 import "package:ft/ft.dart" as Ft;
 
 import './tmp_emulator_enums.dart';
-import './local_storage.dart';
+
+// import 'package:component_system/src/local_storage_components_intf.dart';
+import 'package:component_system/src/local_storage_components.dart';
 import './variants.dart' as V;
 // import 'package:emulator/src/enums.dart';
 // import "package:emulator/src/hardware/headerdecoder.dart" as Headerdecoder;
@@ -27,7 +29,8 @@ abstract class Serializable {
       return new Rom.unserialize(v);
     else if (c is V.Ram)
       return new Ram.unserialize(v);
-    // TODO: unserialize Ss
+    else
+      return new Ss.unserialize(v);
   }
 
 }
@@ -39,6 +42,25 @@ abstract class SerializableData implements AData {
       // TODO: filename
     };
 }
+
+class Ss implements Serializable {
+
+  int i = 42;
+
+  Ss.dummy();
+
+  Ss.unserialize(Map<String, dynamic> map)
+    : i = map['int_i'];
+
+  dynamic serialize() =>
+    <String, dynamic>{
+      'int_i': i,
+    };
+
+  int get romGlobalChecksum => 8173;
+
+}
+
 
 /* Data Implementation ********************************************************/
 abstract class AData {
