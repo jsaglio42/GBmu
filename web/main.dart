@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:13:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 11:47:31 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,6 +16,8 @@ import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
+
+import './main_space/keyboard.dart' as Keyboard;
 
 import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
@@ -106,7 +108,7 @@ run() async
   Mainbottompanel.init(emu);
   Mainalerts.init(emu);
   
-  initKeyboard(emu);
+  Keyboard.init(emu);
 
   var mainGameBoyState = Html.querySelector('#mainGameBoyState');
   emu.listener('EmulationStatus').forEach((mode){
@@ -137,57 +139,5 @@ main()
   // Emulator.debugRomHeader();
   // test_endianess();
   run().catchError((e) => print('main:\tError:\n$e'));
-  return ;
-}
-
-/* Keyboard events */
-void initKeyboard(Emulator.Emulator emu) {
-  Html.window.onKeyDown
-    .listen((keyEvent) => _onKeyDown(emu, keyEvent.keyCode));
-  Html.window.onKeyUp
-    .listen((keyEvent) => _onKeyUp(emu, keyEvent.keyCode));
-  return ;
-}
-
-Map<JoypadKey, bool> _keyState = <JoypadKey, bool>{
-  JoypadKey.A : false,
-  JoypadKey.B : false,
-  JoypadKey.Select : false,
-  JoypadKey.Start : false,
-  JoypadKey.Right : false,
-  JoypadKey.Left : false,
-  JoypadKey.Up : false,
-  JoypadKey.Down : false
-};
-
-JoypadKey _getJoypadKey(int JSJoypadKey) {
-  switch (JSJoypadKey) {
-    case (75) : return JoypadKey.A;
-    case (76) : return JoypadKey.B;
-    case (16) : return JoypadKey.Select;
-    case (13) : return JoypadKey.Start;
-    case (68) : return JoypadKey.Right;
-    case (65) : return JoypadKey.Left;
-    case (87) : return JoypadKey.Up;
-    case (83) : return JoypadKey.Down;
-    default : return null;
-  }
-}
-
-void _onKeyDown(Emulator.Emulator emu, int JSJoypadKey){
-  JoypadKey key = _getJoypadKey(JSJoypadKey);
-  if (key == null || _keyState[key] == true)
-    return ;
-  _keyState[key] = true;
-  emu.send('KeyDownEvent', key);
-  return ;
-}
-
-void _onKeyUp(Emulator.Emulator emu, int JSJoypadKey){
-  JoypadKey key = _getJoypadKey(JSJoypadKey);
-  if (key == null || _keyState[key] == false)
-    return ;
-  _keyState[key] = false;
-  emu.send('KeyUpEvent', key);
   return ;
 }
