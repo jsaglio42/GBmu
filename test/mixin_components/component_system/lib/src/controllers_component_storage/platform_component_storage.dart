@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 17:11:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 18:21:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -62,9 +62,9 @@ class PlatformComponentStorage {
   void start(TransformerLseIdbCheck tic) {
     Ft.log('PlatformCS', 'start', [tic]);
 
-    _entryDelete = tic.lsEntryDelete.map(_handleDelete).asBroadcastStream();
-    _entryNew = tic.lsEntryNew.map(_handleNew).asBroadcastStream();
-    _entryUpdate = tic.lsEntryUpdate.map(_handleUpdate).asBroadcastStream();
+    _entryDelete = tic.lsEntryDelete.map(_handleDelete);
+    _entryNew = tic.lsEntryNew.map(_handleNew);
+    _entryUpdate = tic.lsEntryUpdate.map(_handleUpdate);
   }
 
   // PUBLIC ***************************************************************** **

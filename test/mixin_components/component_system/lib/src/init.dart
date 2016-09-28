@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 17:11:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/28 18:17:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,6 +30,8 @@ import './controllers_component_storage/platform_indexeddb.dart';
 import './controllers_component_storage/transformer_lse_unserializer.dart';
 import './controllers_component_storage/transformer_lse_data_check.dart';
 import './controllers_component_storage/transformer_lse_idb_check.dart';
+import './controllers_dom_components/platform_dom_component_storage.dart';
+import './controllers_dom_components/platform_dom_events.dart';
 
 Async.Future init(p) async {
   Ft.log('Component_System', 'init', [p]);
@@ -41,33 +43,38 @@ Async.Future init(p) async {
   final TransformerLseDataCheck tdc = new TransformerLseDataCheck(pcs, tu);
   final TransformerLseIdbCheck tic = new TransformerLseIdbCheck(pidb, tdc);
 
+  final PlatformDomEvents pde = new PlatformDomEvents();
+  final PlatformDomComponentStorage pdcs =
+    new PlatformDomComponentStorage(pcs, pde);
+
   final Emulator.Rom rom = new Emulator.Rom(0, 400);
   final Emulator.Ram ram = new Emulator.Ram(0, 400);
   final Emulator.Ss ss = new Emulator.Ss.dummy();
-  LsRom lsrom;
-  LsRam lsram;
-  LsSs lsss;
-  List<Async.Future> futs;
-  List comps;
+  // LsRom lsrom;
+  // LsRam lsram;
+  // LsSs lsss;
+  // List<Async.Future> futs;
+  // List comps;
 
   await pidb.start(Html.window.indexedDB);
   pcs.start(tic);
+  await pdcs.start();
 
-  pcs.entryDelete.forEach((_){
-        print('main#deleteEntry');
-      });
-  pcs.entryNew.forEach((_){
-        print('main#newEntry');
-      });
-  pcs.entryUpdate.forEach((_){
-        print('main#updateEntry');
-      });
+  // pcs.entryDelete.forEach((_){
+  //       print('main#deleteEntry');
+  //     });
+  // pcs.entryNew.forEach((_){
+  //       print('main#newEntry');
+  //     });
+  // pcs.entryUpdate.forEach((_){
+  //       print('main#updateEntry');
+  //     });
 
-  futs = [
-    pcs.entryNew.where((LsEntry e) => e.type is Rom).first,
-    pcs.entryNew.where((LsEntry e) => e.type is Ram).first,
-    pcs.entryNew.where((LsEntry e) => e.type is Ss).first,
-  ];
+  // futs = [
+  //   pcs.entryNew.where((LsEntry e) => e.type is Rom).first,
+  //   pcs.entryNew.where((LsEntry e) => e.type is Ram).first,
+  //   pcs.entryNew.where((LsEntry e) => e.type is Ss).first,
+  // ];
 
   /* await */ pls.start();
 
@@ -75,11 +82,11 @@ Async.Future init(p) async {
   // await pcs.newRam(ram);
   // await pcs.newSs(ss);
 
-  comps = await Async.Future.wait(futs);
+  // comps = await Async.Future.wait(futs);
 
-  lsrom = comps[0];
-  lsram = comps[1];
-  lsss = comps[2];
+  // lsrom = comps[0];
+  // lsram = comps[1];
+  // lsss = comps[2];
 
   // pcs.bindRam(lsram, lsrom);
   // pcs.bindSs(lsss, lsrom, 2);
