@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:16:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:16:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:00:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,6 +24,7 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
+// Holds HTML interactions
 abstract class HtmlCartClosable implements HtmlCartElement, DomElement {
 
   // ATTRIBUTES ************************************************************* **
@@ -67,7 +68,7 @@ abstract class HtmlCartClosable implements HtmlCartElement, DomElement {
 
   // CALLBACKS ************************************************************** **
   void _onClick(_) {
-    de_pde.cartButtonClicked(this);
+    this.pde.cartButtonClicked(this);
   }
 
   void _onShown(_) {
@@ -76,7 +77,7 @@ abstract class HtmlCartClosable implements HtmlCartElement, DomElement {
       this.hcc_startClose();
     }
     else
-      de_pde.cartDoneOpening(this);
+      this.pde.cartDoneOpening(this);
   }
 
   // INVARIANTS ************************************************************* **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:26:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:16:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:00:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,7 @@ import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
 // Holds HTML interactions
-abstract class HtmlDropZone implements HtmlElement_intf, DomElement {
+abstract class HtmlDropZone implements DomElement {
 
   // ATTRIBUTES ************************************************************* **
   List<bool> _activePairOpt = null;
@@ -85,15 +85,15 @@ abstract class HtmlDropZone implements HtmlElement_intf, DomElement {
 
   // CALLBACKS ************************************************************** **
   void _onDrop(_, __) {
-    de_pde.dropReceived(that);
+    this.pde.dropReceived(that);
   }
 
   void _onEnter(_, __){
-    de_pde.dropZoneEntered(that);
+    this.pde.dropZoneEntered(that);
   }
 
   void _onLeave(_, __){
-    de_pde.dropZoneLeft(that);
+    this.pde.dropZoneLeft(that);
   }
 
   // PRIVATE **************************************************************** **

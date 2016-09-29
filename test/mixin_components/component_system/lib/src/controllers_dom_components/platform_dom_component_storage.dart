@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:59:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 12:59:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,7 +50,7 @@ class PlatformDomComponentStorage extends _super
     ..allowElement('tr', attributes: ['style']);
   String _cartHtml;
 
-  final Map<int, DomElement> _components = <int, DomElement>{};
+  final Map<int, DomComponent> _components = <int, DomComponent>{};
 
 
   // CONTRUCTION ************************************************************ **
@@ -82,18 +82,18 @@ class PlatformDomComponentStorage extends _super
 
   // CALLBACKS ************************************************************** **
   void _handleNew(LsEntry e) {
-    DomElement de;
+    DomComponent de;
 
     Ft.log('PlatformDCS', '_handleNew', [e]);
     if (e.type is Rom) {
-      de = new DomCart(_pde, _cartHtml, _domCartValidator);
+      de = new DomCart(_pde, e, _cartHtml, _domCartValidator);
       _components[e.uid] = de;
       _pde.cartNew(de);
     }
   }
 
   void _handleDelete(LsEntry e) {
-    DomElement de;
+    DomComponent de;
 
     Ft.log('PlatformDCS', '_handleDetele', [e]);
     if (e.type is Rom) {
@@ -104,7 +104,7 @@ class PlatformDomComponentStorage extends _super
   }
 
   void _handleUpdate(Update<LsEntry> u) {
-    DomElement de;
+    DomComponent de;
 
     Ft.log('PlatformDCS', '_handleUpdate', [u]);
   }

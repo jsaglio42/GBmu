@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 18:19:17 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:14:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 12:57:11 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import 'dart:convert';
 
 import 'package:ft/ft.dart' as Ft;
 
+import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
@@ -29,17 +30,30 @@ abstract class DomElement {
   PlatformDomEvents _pde;
 
   // CONSTRUCTION *********************************************************** **
-  void de_init(PlatformDomEvents pde) {
-    Ft.log('DomElement', 'de_init', [pde]);
-    _pde = pde;
-  }
+  DomElement(this._pde);
 
   // PUBLIC ***************************************************************** **
-  PlatformDomEvents get de_pde => _pde;
-}
+  PlatformDomEvents get pde => _pde;
 
-abstract class HtmlElement_intf {
   Html.Element get elt;
   Js.JsObject get jsElt;
   Js.JsObject get jqElt;
+
 }
+
+abstract class DomComponent extends DomElement {
+
+  // ATTRIBUTES ************************************************************* **
+  LsEntry _data;
+
+  // CONSTRUCTION *********************************************************** **
+  DomComponent(PlatformDomEvents pde, this._data)
+    : super(pde);
+
+  // PUBLIC ***************************************************************** **
+  LsEntry get data => _data;
+
+}
+
+// abstract class HtmlElement_intf {
+// }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:46:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:58:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 12:51:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -99,15 +99,25 @@ class PlatformDomEvents {
   void openedCartChange(SlotEvent<DomCart> that) => _openedCartChange.add(that);
   Async.Stream<SlotEvent<DomCart>> get onOpenedCartChange => _openedCartChange.stream;
 
+  final Async.StreamController<SlotEvent<DomCart>> _gbCartChange =
+    new Async.StreamController<SlotEvent<DomCart>>.broadcast();
+  void gbCartChange(SlotEvent<DomCart> that) => _gbCartChange.add(that);
+  Async.Stream<SlotEvent<DomCart>> get onGbCartChange => _gbCartChange.stream;
+
+  final Async.StreamController<SlotEvent<DomComponent>> _draggedChange =
+    new Async.StreamController<SlotEvent<DomComponent>>.broadcast();
+  void draggedChange(SlotEvent<DomComponent> that) => _draggedChange.add(that);
+  Async.Stream<SlotEvent<DomComponent>> get onDraggedChange => _draggedChange.stream;
+
 
 
   // Notified by CartDragDropController
   // Notified by ????
 
-  final Async.StreamController<DomCart> _cartInGbOpt =
-    new Async.StreamController<DomCart>.broadcast();
-  void cartInGbOpt(DomCart that) => _cartInGbOpt.add(that);
-  Async.Stream<DomCart> get onCartInGbOpt => _cartInGbOpt.stream;
+  // final Async.StreamController<DomCart> _cartInGbOpt =
+  //   new Async.StreamController<DomCart>.broadcast();
+  // void cartInGbOpt(DomCart that) => _cartInGbOpt.add(that);
+  // Async.Stream<DomCart> get onCartInGbOpt => _cartInGbOpt.stream;
 
   // Async.Stream<LsEntry> get entryDelete {
   //   assert(_entryDelete != null, 'from: PlatformDE.entryDelete');

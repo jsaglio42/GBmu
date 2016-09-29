@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:21:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:16:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:00:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,7 @@ import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
 // Holds HTML interactions
-abstract class HtmlDraggable implements HtmlElement_intf, DomElement {
+abstract class HtmlDraggable implements DomElement {
 
   // ATTRIBUTES ************************************************************* **
   bool _abort = false;
@@ -67,11 +67,11 @@ abstract class HtmlDraggable implements HtmlElement_intf, DomElement {
 
   // CALLBACKS ************************************************************** **
   void _onDragStart(_, __) {
-    de_pde.dragStart(this);
+    this.pde.dragStart(this);
   }
 
   void _onDragStop(_, __) {
-    de_pde.dragStop(this);
+    this.pde.dragStop(this);
   }
 
   void _onDrag(_, __) {
