@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 12:59:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:42:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,10 @@ abstract class _super {
 }
 
 class PlatformDomComponentStorage extends _super
-  with _OpenedCartStorage {
+  with _TopLevelBankStorage
+  , _OpenedCartStorage
+  , _GbCartStorage
+  , _DraggedStorage {
 
   // ATTRIBUTES ************************************************************* **
   final static Html.NodeValidatorBuilder _domCartValidator =
@@ -67,6 +70,7 @@ class PlatformDomComponentStorage extends _super
       PlatformComponentStorage pcs, PlatformDomEvents pde)
     : super(pcs, pde){
     Ft.log('PlatformDCS', 'contructor', [_pcs, _pde]);
+    this._tlbs_init();
   }
 
   Async.Future start() async {

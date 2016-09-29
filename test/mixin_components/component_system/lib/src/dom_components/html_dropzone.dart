@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:26:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:00:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:50:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,9 +35,17 @@ abstract class HtmlDropZone implements DomElement {
   // `_classesOpt` parameter format:
   // {true:  {true:  hover&suitable, false:  hover&!suitable},
   //  false: {true: !hover&suitable, false: !hover&!suitable},}
-  void hdz_init(this._classesOpt) {
+  static Map<bool, Map<bool, String>> makeClassesMap(
+      String hs, String hns, String nhs, String nhns) =>
+    <bool, Map<bool, String>>{
+      true: <bool, String>{true: hs, false: hns},
+      false: <bool, String>{true: nhs, false: nhns},
+    };
+
+  void hdz_init(Map<bool, Map<bool, String>> classesOpt) {
     Ft.log('HtmlDropZone', 'hdz_init');
 
+    _classesOpt = classesOpt;
     this.jqElt.callMethod('droppable', [new Js.JsObject.jsify({
       'drop': _onDrop,
       'over': _onEnter,
@@ -85,15 +93,15 @@ abstract class HtmlDropZone implements DomElement {
 
   // CALLBACKS ************************************************************** **
   void _onDrop(_, __) {
-    this.pde.dropReceived(that);
+    this.pde.dropReceived(this);
   }
 
   void _onEnter(_, __){
-    this.pde.dropZoneEntered(that);
+    this.pde.dropEntered(this);
   }
 
   void _onLeave(_, __){
-    this.pde.dropZoneLeft(that);
+    this.pde.dropLeft(this);
   }
 
   // PRIVATE **************************************************************** **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:34:38 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:51:12 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,7 @@ class DomCart extends DomComponent
   DomCart(
       PlatformDomEvents pde, LsRom data, String cartHtml, Html.NodeValidator v)
     : super(pde, data) {
-    Ft.log('DomCart', 'constructor');
+    Ft.log('DomCart', 'constructor', [pde, data, v]);
     this.hec_init(cartHtml, v);
     this.hcc_init();
     this.hdr_init(125, 143, 75, 99);
@@ -57,9 +57,9 @@ class DomGameBoySocket extends DomElement
 
   DomGameBoySocket(PlatformDomEvents pde, Html.Element elt)
     : super(pde) {
-    Ft.log('DomGameBoySocket', 'constructor');
+    Ft.log('DomGameBoySocket', 'constructor', [pde, elt]);
     this.hes_init(elt);
-    this.hdz_init();
+    this.hdz_init(HtmlDropZone.makeClassesMap(null, null, null, null));
   }
 
 }

@@ -6,11 +6,23 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 11:54:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 12:51:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:51:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 part of platform_dom_component_storage;
+
+abstract class _TopLevelBankStorage implements _super {
+
+  DomGameBoySocket _dgbs;
+
+  void _tlbs_init() {
+    _dgbs = new DomGameBoySocket(_pde, Html.querySelector('#gb-slot'));
+  }
+
+  DomGameBoySocket get dgbs => _dgbs;
+
+}
 
 abstract class _OpenedCartStorage implements _super {
 
