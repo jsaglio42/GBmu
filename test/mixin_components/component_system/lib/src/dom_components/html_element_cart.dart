@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   html_cart_element.dart                             :+:      :+:    :+:   //
+//   html_element_cart.dart                             :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/18 17:15:02 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:14:19 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/29 13:35:13 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/29 13:37:08 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,7 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-abstract class HtmlCartElement {
+abstract class HtmlElementCart {
 
   // ATTRIBUTES ************************************************************* **
   Html.Element _elt;
@@ -31,8 +31,8 @@ abstract class HtmlCartElement {
   Html.Element _body;
 
   // CONSTRUCTION *********************************************************** **
-  void hce_init(String cartHtml, Html.NodeValidator v) {
-    Ft.log('CartHtml', 'hce_init');
+  void hec_init(String cartHtml, Html.NodeValidator v) {
+    Ft.log('HtmlElementCart', 'hec_init');
     _elt = new Html.Element.html(cartHtml, validator: v);
     _btn = _elt.querySelector('.bg-head-btn');
     _body = _elt.querySelector('.panel-collapse');

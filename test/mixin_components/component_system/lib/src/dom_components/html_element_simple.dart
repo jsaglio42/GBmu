@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   html_chipsocket_element.dart                       :+:      :+:    :+:   //
+//   html_element_simple.dart                           :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/18 17:22:26 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:14:23 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/29 13:28:04 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/29 13:29:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,14 +23,14 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-abstract class HtmlChipSocketElement {
+abstract class HtmlElementSimple {
 
   // ATTRIBUTES ************************************************************* **
   Html.Element _elt;
 
   // CONSTRUCTION *********************************************************** **
-  void csh_init(this._elt) {
-    Ft.log('HtmlChipSocketElement', 'csh_init');
+  void hes_init(this._elt) {
+    Ft.log('HtmlElementSimple', 'hes_init');
   }
 
   // PUBLIC ***************************************************************** **

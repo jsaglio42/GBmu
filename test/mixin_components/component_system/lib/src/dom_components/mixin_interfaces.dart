@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 18:19:17 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 12:57:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:25:54 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -55,5 +55,18 @@ abstract class DomComponent extends DomElement {
 
 }
 
-// abstract class HtmlElement_intf {
-// }
+abstract class Bank {
+
+}
+
+abstract class CartBank implements Bank {
+
+}
+
+abstract class ChipBank implements Bank {
+
+}
+
+abstract class TopLevelBank implements Bank {
+
+}

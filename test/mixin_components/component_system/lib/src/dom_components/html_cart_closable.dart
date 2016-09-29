@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:16:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:00:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:36:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,7 +25,7 @@ import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
 // Holds HTML interactions
-abstract class HtmlCartClosable implements HtmlCartElement, DomElement {
+abstract class HtmlCartClosable implements HtmlElementCart, DomElement {
 
   // ATTRIBUTES ************************************************************* **
   bool _abort = false;
