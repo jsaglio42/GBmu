@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 13:58:47 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 14:17:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 16:23:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -62,7 +62,7 @@ abstract class ListBank<T> implements Bank {
 abstract class SingleElementBank<T> implements Bank {
 
   // ATTRIBUTES ************************************************************* **
-  Ft.Option<T> _component = Ft.Option<T>.none();
+  Ft.Option<T> _component = new Ft.Option<T>.none();
 
   // CONSTRUCTION *********************************************************** **
   void seb_init() {

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 15:52:34 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 16:12:52 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 16:24:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,6 +32,7 @@ class HandlerTopLevelBanks {
   final PlatformDomEvents _pde;
 
   final DomGameBoySocket _dgbs;
+  final DomDetachedCartBank _ddcb;
 
   // CONTRUCTION ************************************************************ **
   static HandlerTopLevelBanks _instance;
@@ -42,13 +43,29 @@ class HandlerTopLevelBanks {
     return _instance;
   }
 
-  HandlerTopLevelBanks._(pde, pce) {
+  HandlerTopLevelBanks._(pde, this._pce)
+    : _pde = pde
+    , _dgbs = new DomGameBoySocket(pde)
+    , _ddcb = new DomDetachedCartBank(pde) {
     Ft.log('HandlerTLB', 'contructor');
+
+    _pce.onCartNew.forEach(_handleCartNew);
+    _pce.onCartDelete.forEach(_handleCartNew);
+    _pce.onGbCartChange.forEach(_handleGbCartChange);
   }
 
   // PUBLIC ***************************************************************** **
   DomGameBoySocket get dgbs => _dgbs;
 
   // CALLBACKS ************************************************************** **
+  void _handleCartNew(DomCart c) {
+    Ft.log('HandlerTLB', '_handleCartNew', [c]);
+    _ddcb.elt.nodes.add(c.elt);
+
+  }
+  void _handleCartDelete(DomCart c) {
+  }
+  void _handleGbCartChange(SlotEvent<DomCart> ev) {
+  }
 
 }
