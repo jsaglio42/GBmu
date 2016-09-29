@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:46:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 12:51:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 15:56:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,12 +50,6 @@ class PlatformDomEvents {
   void cartDoneOpening(DomCart that) => _cartDoneOpening.add(that);
   Async.Stream<DomCart> get onCartDoneOpening => _cartDoneOpening.stream;
 
-  // Notified by ControllerHtmlCartClosable
-  final Async.StreamController<DomCart> _cartOpenedOpt =
-    new Async.StreamController<DomCart>.broadcast();
-  void cartOpenedOpt(DomCart that) => _cartOpenedOpt.add(that);
-  Async.Stream<DomCart> get onCartOpenedOpt => _cartOpenedOpt.stream;
-
   // Notified by HtmlDraggable
   final Async.StreamController<HtmlDraggable> _dragStart =
     new Async.StreamController<HtmlDraggable>.broadcast();
@@ -82,61 +76,5 @@ class PlatformDomEvents {
     new Async.StreamController<HtmlDropZone>.broadcast();
   void dropLeft(HtmlDropZone that) => _dropLeft.add(that);
   Async.Stream<HtmlDropZone> get onDropLeft => _dropLeft.stream;
-
-  // Notified by PlatformDomComponentStorage
-  final Async.StreamController<DomCart> _cartNew =
-    new Async.StreamController<DomCart>.broadcast();
-  void cartNew(DomCart that) => _cartNew.add(that);
-  Async.Stream<DomCart> get onCartNew => _cartNew.stream;
-
-  final Async.StreamController<DomCart> _cartDelete =
-    new Async.StreamController<DomCart>.broadcast();
-  void cartDelete(DomCart that) => _cartDelete.add(that);
-  Async.Stream<DomCart> get onCartDelete => _cartDelete.stream;
-
-  final Async.StreamController<SlotEvent<DomCart>> _openedCartChange =
-    new Async.StreamController<SlotEvent<DomCart>>.broadcast();
-  void openedCartChange(SlotEvent<DomCart> that) => _openedCartChange.add(that);
-  Async.Stream<SlotEvent<DomCart>> get onOpenedCartChange => _openedCartChange.stream;
-
-  final Async.StreamController<SlotEvent<DomCart>> _gbCartChange =
-    new Async.StreamController<SlotEvent<DomCart>>.broadcast();
-  void gbCartChange(SlotEvent<DomCart> that) => _gbCartChange.add(that);
-  Async.Stream<SlotEvent<DomCart>> get onGbCartChange => _gbCartChange.stream;
-
-  final Async.StreamController<SlotEvent<DomComponent>> _draggedChange =
-    new Async.StreamController<SlotEvent<DomComponent>>.broadcast();
-  void draggedChange(SlotEvent<DomComponent> that) => _draggedChange.add(that);
-  Async.Stream<SlotEvent<DomComponent>> get onDraggedChange => _draggedChange.stream;
-
-
-
-  // Notified by CartDragDropController
-  // Notified by ????
-
-  // final Async.StreamController<DomCart> _cartInGbOpt =
-  //   new Async.StreamController<DomCart>.broadcast();
-  // void cartInGbOpt(DomCart that) => _cartInGbOpt.add(that);
-  // Async.Stream<DomCart> get onCartInGbOpt => _cartInGbOpt.stream;
-
-  // Async.Stream<LsEntry> get entryDelete {
-  //   assert(_entryDelete != null, 'from: PlatformDE.entryDelete');
-  //   return _entryDelete;
-  // }
-
-  // Async.Stream<LsEntry> get entryNew {
-  //   assert(_entryNew != null, 'from: PlatformDE.entryNew');
-  //   return _entryNew;
-  // }
-
-  // Async.Stream<Update<LsEntry>> get entryUpdate {
-  //   assert(_entryUpdate != null, 'from: PlatformDE.entryUpdate');
-  //   return _entryUpdate;
-  // }
-
-
-  // CALLBACKS ************************************************************** **
-
-  // PRIVATE **************************************************************** **
 
 }

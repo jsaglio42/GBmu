@@ -6,25 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 11:54:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:51:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 16:04:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 part of platform_dom_component_storage;
 
-abstract class _TopLevelBankStorage implements _super {
-
-  DomGameBoySocket _dgbs;
-
-  void _tlbs_init() {
-    _dgbs = new DomGameBoySocket(_pde, Html.querySelector('#gb-slot'));
-  }
-
-  DomGameBoySocket get dgbs => _dgbs;
-
-}
-
-abstract class _OpenedCartStorage implements _super {
+abstract class _OpenedCartStorage implements _Super {
 
   Ft.Option<DomCart> _openedCart;
 
@@ -33,13 +21,13 @@ abstract class _OpenedCartStorage implements _super {
 
     assert(_openedCart.isSome, "from: openedCartDismissal");
     _openedCart = new Ft.Option<DomCart>.none();
-    _pde.openedCartChange(new SlotEvent<DomCart>.dismissal(c));
+    _pce.openedCartChange(new SlotEvent<DomCart>.dismissal(c));
   }
 
   void openedCartArrival(DomCart c) {
     assert(_openedCart.isNone, "from: openedCartArrival");
     _openedCart = new Ft.Option<DomCart>.some(c);
-    _pde.openedCartChange(new SlotEvent<DomCart>.arrival(c));
+    _pce.openedCartChange(new SlotEvent<DomCart>.arrival(c));
 
   }
 
@@ -47,7 +35,7 @@ abstract class _OpenedCartStorage implements _super {
 
 }
 
-abstract class _GbCartStorage implements _super {
+abstract class _GbCartStorage implements _Super {
 
   Ft.Option<DomCart> _gbCart;
 
@@ -56,13 +44,13 @@ abstract class _GbCartStorage implements _super {
 
     assert(_gbCart.isSome, "from: gbCartDismissal");
     _gbCart = new Ft.Option<DomCart>.none();
-    _pde.gbCartChange(new SlotEvent<DomCart>.dismissal(c));
+    _pce.gbCartChange(new SlotEvent<DomCart>.dismissal(c));
   }
 
   void gbCartArrival(DomCart c) {
     assert(_gbCart.isNone, "from: gbCartArrival");
     _gbCart = new Ft.Option<DomCart>.some(c);
-    _pde.gbCartChange(new SlotEvent<DomCart>.arrival(c));
+    _pce.gbCartChange(new SlotEvent<DomCart>.arrival(c));
 
   }
 
@@ -70,7 +58,7 @@ abstract class _GbCartStorage implements _super {
 
 }
 
-abstract class _DraggedStorage implements _super {
+abstract class _DraggedStorage implements _Super {
 
   Ft.Option<DomComponent> _dragged;
 
@@ -79,13 +67,13 @@ abstract class _DraggedStorage implements _super {
 
     assert(_dragged.isSome, "from: draggedDismissal");
     _dragged = new Ft.Option<DomComponent>.none();
-    _pde.draggedChange(new SlotEvent<DomComponent>.dismissal(c));
+    _pce.draggedChange(new SlotEvent<DomComponent>.dismissal(c));
   }
 
   void draggedArrival(DomComponent c) {
     assert(_dragged.isNone, "from: draggedArrival");
     _dragged = new Ft.Option<DomComponent>.some(c);
-    _pde.draggedChange(new SlotEvent<DomComponent>.arrival(c));
+    _pce.draggedChange(new SlotEvent<DomComponent>.arrival(c));
 
   }
 

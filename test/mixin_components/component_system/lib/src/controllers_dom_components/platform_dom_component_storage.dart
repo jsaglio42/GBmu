@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:42:10 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 16:13:20 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,18 +29,18 @@ import 'package:component_system/src/include_cdc.dart';
 
 part './platform_dom_component_storage_parts.dart';
 
-abstract class _super {
+abstract class _Super {
 
   final PlatformComponentStorage _pcs;
   final PlatformDomEvents _pde;
+  final PlatformComponentEvents _pce;
 
-  _super(this._pcs, this._pde);
+  _Super(this._pcs, this._pde, this._pce);
 
 }
 
-class PlatformDomComponentStorage extends _super
-  with _TopLevelBankStorage
-  , _OpenedCartStorage
+class PlatformDomComponentStorage extends _Super
+  with _OpenedCartStorage
   , _GbCartStorage
   , _DraggedStorage {
 
@@ -55,22 +55,18 @@ class PlatformDomComponentStorage extends _super
 
   final Map<int, DomComponent> _components = <int, DomComponent>{};
 
-
   // CONTRUCTION ************************************************************ **
   static PlatformDomComponentStorage _instance;
 
-  factory PlatformDomComponentStorage(
-      PlatformComponentStorage pcs, PlatformDomEvents pde) {
+  factory PlatformDomComponentStorage(pcs, pde, pce) {
     if (_instance == null)
-      _instance = new PlatformDomComponentStorage._(pcs, pde);
+      _instance = new PlatformDomComponentStorage._(pcs, pde, pce);
     return _instance;
   }
 
-  PlatformDomComponentStorage._(
-      PlatformComponentStorage pcs, PlatformDomEvents pde)
-    : super(pcs, pde){
-    Ft.log('PlatformDCS', 'contructor', [_pcs, _pde]);
-    this._tlbs_init();
+  PlatformDomComponentStorage._(pcs, pde, pce)
+    : super(pcs, pde, pce){
+    Ft.log('PlatformDCS', 'contructor');
   }
 
   Async.Future start() async {
@@ -92,7 +88,7 @@ class PlatformDomComponentStorage extends _super
     if (e.type is Rom) {
       de = new DomCart(_pde, e, _cartHtml, _domCartValidator);
       _components[e.uid] = de;
-      _pde.cartNew(de);
+      _pce.cartNew(de);
     }
   }
 
@@ -103,7 +99,7 @@ class PlatformDomComponentStorage extends _super
     if (e.type is Rom) {
       de = _components[e.uid];
       _components.remove(e.uid);
-      _pde.cartDelete(de);
+      _pce.cartDelete(de);
     }
   }
 

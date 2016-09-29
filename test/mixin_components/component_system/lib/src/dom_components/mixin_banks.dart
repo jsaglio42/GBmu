@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   mixin_interfaces.dart                              :+:      :+:    :+:   //
+//   mixin_banks.dart                                   :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/17 18:19:17 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 14:06:02 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/29 13:58:47 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/29 14:17:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,33 +24,54 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-abstract class DomElement {
-
-  // ATTRIBUTES ************************************************************* **
-  PlatformDomEvents _pde;
-
-  // CONSTRUCTION *********************************************************** **
-  DomElement(this._pde);
+abstract class Bank {
 
   // PUBLIC ***************************************************************** **
-  PlatformDomEvents get pde => _pde;
-
-  Html.Element get elt;
-  Js.JsObject get jsElt;
-  Js.JsObject get jqElt;
+  bool get full;
+  bool get empty;
 
 }
 
-abstract class DomComponent extends DomElement {
+// abstract class CartBank implements Bank {
+// }
+
+// abstract class ChipBank implements Bank {
+// }
+
+// abstract class TopLevelBank implements Bank {
+
+// }
+
+abstract class ListBank<T> implements Bank {
 
   // ATTRIBUTES ************************************************************* **
-  LsEntry _data;
+  final List<T> _components = <DomComponent>[];
 
   // CONSTRUCTION *********************************************************** **
-  DomComponent(PlatformDomEvents pde, this._data)
-    : super(pde);
+  void lb_init(Async.Stream<T> onArrive, Async.Stream<T> onLeave) {
+    Ft.log('ListBank<$T>', 'lb_init');
+    // this.pde..forEach(_handleDrop);
+  }
 
   // PUBLIC ***************************************************************** **
-  LsEntry get data => _data;
+  bool get full => false;
+  bool get empty => _components.isEmpty;
+
+}
+
+abstract class SingleElementBank<T> implements Bank {
+
+  // ATTRIBUTES ************************************************************* **
+  Ft.Option<T> _component = Ft.Option<T>.none();
+
+  // CONSTRUCTION *********************************************************** **
+  void seb_init() {
+    Ft.log('SingleElementBank<$T>', 'seb_init');
+    // this.pde..forEach(_handleDrop);
+  }
+
+  // PUBLIC ***************************************************************** **
+  bool get full => _component.isSome;
+  bool get empty => _components.isNone;
 
 }

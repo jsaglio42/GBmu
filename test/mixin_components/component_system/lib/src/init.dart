@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 18:17:26 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 16:11:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,19 +19,14 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:ft/ft.dart' as Ft;
-import './tmp_emulator_enums.dart';
-import './tmp_emulator_types.dart' as Emulator;
 
-import './variants.dart';
-import './local_storage_components.dart';
-import './controllers_component_storage/platform_local_storage.dart';
-import './controllers_component_storage/platform_component_storage.dart';
-import './controllers_component_storage/platform_indexeddb.dart';
-import './controllers_component_storage/transformer_lse_unserializer.dart';
-import './controllers_component_storage/transformer_lse_data_check.dart';
-import './controllers_component_storage/transformer_lse_idb_check.dart';
-import './controllers_dom_components/platform_dom_component_storage.dart';
-import './controllers_dom_components/platform_dom_events.dart';
+import 'package:component_system/src/include_cs.dart';
+import 'package:component_system/src/include_ccs.dart';
+import 'package:component_system/src/include_dc.dart';
+import 'package:component_system/src/include_cdc.dart';
+
+import 'package:component_system/src/tmp_emulator_enums.dart';
+import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
 
 Async.Future init(p) async {
   Ft.log('Component_System', 'init', [p]);
@@ -44,8 +39,10 @@ Async.Future init(p) async {
   final TransformerLseIdbCheck tic = new TransformerLseIdbCheck(pidb, tdc);
 
   final PlatformDomEvents pde = new PlatformDomEvents();
+  final PlatformComponentEvents pce = new PlatformComponentEvents();
   final PlatformDomComponentStorage pdcs =
-    new PlatformDomComponentStorage(pcs, pde);
+    new PlatformDomComponentStorage(pcs, pde, pce);
+  final HandlerTopLevelBanks htlb = new HandlerTopLevelBanks(pde, pce);
 
   final Emulator.Rom rom = new Emulator.Rom(0, 400);
   final Emulator.Ram ram = new Emulator.Ram(0, 400);

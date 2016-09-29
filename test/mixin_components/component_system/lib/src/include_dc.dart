@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 10:56:41 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:35:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 13:59:08 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,3 +17,4 @@ export './dom_components/html_draggable.dart';
 export './dom_components/html_dropzone.dart';
 export './dom_components/mixin_assembly.dart';
 export './dom_components/mixin_interfaces.dart';
+export './dom_components/mixin_banks.dart';

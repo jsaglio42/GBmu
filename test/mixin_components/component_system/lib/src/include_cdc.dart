@@ -6,9 +6,11 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 10:56:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:04:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 16:08:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 export './controllers_dom_components/platform_dom_component_storage.dart';
 export './controllers_dom_components/platform_dom_events.dart';
+export './controllers_dom_components/platform_component_events.dart';
+export './controllers_dom_components/handler_top_level_banks.dart';

@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   mixin_interfaces.dart                              :+:      :+:    :+:   //
+//   handler_top_level_banks.dart                       :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/17 18:19:17 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 14:06:02 by ngoguey          ###   ########.fr       //
+//   Created: 2016/09/29 15:52:34 by ngoguey           #+#    #+#             //
+//   Updated: 2016/09/29 16:12:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,36 +21,34 @@ import 'dart:convert';
 import 'package:ft/ft.dart' as Ft;
 
 import 'package:component_system/src/include_cs.dart';
+import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-abstract class DomElement {
+class HandlerTopLevelBanks {
 
   // ATTRIBUTES ************************************************************* **
-  PlatformDomEvents _pde;
+  final PlatformComponentEvents _pce;
+  final PlatformDomEvents _pde;
 
-  // CONSTRUCTION *********************************************************** **
-  DomElement(this._pde);
+  final DomGameBoySocket _dgbs;
 
-  // PUBLIC ***************************************************************** **
-  PlatformDomEvents get pde => _pde;
+  // CONTRUCTION ************************************************************ **
+  static HandlerTopLevelBanks _instance;
 
-  Html.Element get elt;
-  Js.JsObject get jsElt;
-  Js.JsObject get jqElt;
+  factory HandlerTopLevelBanks(pde, pce) {
+    if (_instance == null)
+      _instance = new HandlerTopLevelBanks._(pde, pce);
+    return _instance;
+  }
 
-}
-
-abstract class DomComponent extends DomElement {
-
-  // ATTRIBUTES ************************************************************* **
-  LsEntry _data;
-
-  // CONSTRUCTION *********************************************************** **
-  DomComponent(PlatformDomEvents pde, this._data)
-    : super(pde);
+  HandlerTopLevelBanks._(pde, pce) {
+    Ft.log('HandlerTLB', 'contructor');
+  }
 
   // PUBLIC ***************************************************************** **
-  LsEntry get data => _data;
+  DomGameBoySocket get dgbs => _dgbs;
+
+  // CALLBACKS ************************************************************** **
 
 }
