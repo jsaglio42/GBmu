@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 11:54:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 16:04:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 17:12:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,7 +14,7 @@ part of platform_dom_component_storage;
 
 abstract class _OpenedCartStorage implements _Super {
 
-  Ft.Option<DomCart> _openedCart;
+  Ft.Option<DomCart> _openedCart = new Ft.Option<DomCart>.none();
 
   void openedCartDismissal() {
     final DomCart c = _openedCart.v;
@@ -37,7 +37,7 @@ abstract class _OpenedCartStorage implements _Super {
 
 abstract class _GbCartStorage implements _Super {
 
-  Ft.Option<DomCart> _gbCart;
+  Ft.Option<DomCart> _gbCart = new Ft.Option<DomCart>.none();
 
   void gbCartDismissal() {
     final DomCart c = _gbCart.v;
@@ -60,7 +60,7 @@ abstract class _GbCartStorage implements _Super {
 
 abstract class _DraggedStorage implements _Super {
 
-  Ft.Option<DomComponent> _dragged;
+  Ft.Option<DomComponent> _dragged = new Ft.Option<DomComponent>.none();
 
   void draggedDismissal() {
     final DomComponent c = _dragged.v;

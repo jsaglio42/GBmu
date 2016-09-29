@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 15:52:34 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 16:24:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 17:31:31 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,7 @@ import 'dart:convert';
 import 'package:ft/ft.dart' as Ft;
 
 import 'package:component_system/src/include_cs.dart';
-import 'package:component_system/src/include_ccs.dart';
+// import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
@@ -61,9 +61,10 @@ class HandlerTopLevelBanks {
   void _handleCartNew(DomCart c) {
     Ft.log('HandlerTLB', '_handleCartNew', [c]);
     _ddcb.elt.nodes.add(c.elt);
-
   }
   void _handleCartDelete(DomCart c) {
+    Ft.log('HandlerTLB', '_handleCartDelete', [c]);
+    _ddcb.elt.nodes.remove(c.elt);
   }
   void _handleGbCartChange(SlotEvent<DomCart> ev) {
   }

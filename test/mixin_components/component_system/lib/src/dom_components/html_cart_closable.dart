@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:16:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:36:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 17:25:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -41,11 +41,13 @@ abstract class HtmlCartClosable implements HtmlElementCart, DomElement {
   void hcc_startClose() {
     assert(__opened.toggleFalseValid(), 'hcc_startClose() invalid');
     this.jqBody.callMethod('collapse', ["hide"]);
+    this.btn.classes.add('collapsed');
   }
 
   void hcc_startOpen() {
     assert(__opened.toggleTrueValid(), 'hcc_startOpen() invalid');
     this.jqBody.callMethod('collapse', ["show"]);
+    this.btn.classes.remove('collapsed');
   }
 
   void hcc_showButton() {

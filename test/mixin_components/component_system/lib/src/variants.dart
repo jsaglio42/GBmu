@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:52:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 17:00:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -113,9 +113,9 @@ class SlotEvent<T> {
   final SlotAction type;
   final T value;
 
-  SlotEvent.arrival(this._value)
+  SlotEvent.arrival(this.value)
     : type = Arrival.v;
 
-  SlotEvent.dismissal(this._value)
+  SlotEvent.dismissal(this.value)
     : type = Dismissal.v;
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 11:22:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 17:07:54 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -107,7 +107,11 @@ final tetrisHead = new Uint8List.fromList(<int>[
 Async.Future init(Emulator.Emulator emu) async {
   Ft.log('main', 'init', [emu]);
 
-  await Cs.init(emu);
+  await (Cs.init(emu)
+  ..catchError((e, st) {
+    print(e);
+    print(st);
+  }));
 
   // final cscFut = Csc.make();
   // final cartHtmlFut = Html.HttpRequest.getString("cart_table.html");
