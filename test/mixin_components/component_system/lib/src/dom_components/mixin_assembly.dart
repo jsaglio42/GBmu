@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 16:27:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 18:33:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,7 +52,7 @@ class DomCart extends DomComponent
 class DomGameBoySocket extends DomElement
   with HtmlElementSimple
   , HtmlDropZone
-  // , CartBank
+  , CartBank
   // , TopLevelBank
   // , SingleElementBank<DomCart>
 {
@@ -69,7 +69,7 @@ class DomGameBoySocket extends DomElement
 class DomDetachedCartBank extends DomElement
   with HtmlElementSimple
   , HtmlDropZone
-  // , CartBank
+  , CartBank
   // , TopLevelBank
   // , ListBank<DomCart>
 {

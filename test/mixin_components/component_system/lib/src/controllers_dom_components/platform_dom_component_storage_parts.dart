@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 11:54:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 17:12:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 18:38:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,12 +19,14 @@ abstract class _OpenedCartStorage implements _Super {
   void openedCartDismissal() {
     final DomCart c = _openedCart.v;
 
+    Ft.log('_OpenedCartStorage', 'openedCartDismissal');
     assert(_openedCart.isSome, "from: openedCartDismissal");
     _openedCart = new Ft.Option<DomCart>.none();
     _pce.openedCartChange(new SlotEvent<DomCart>.dismissal(c));
   }
 
   void openedCartArrival(DomCart c) {
+    Ft.log('_OpenedCartStorage', 'openedCartArrival', [c]);
     assert(_openedCart.isNone, "from: openedCartArrival");
     _openedCart = new Ft.Option<DomCart>.some(c);
     _pce.openedCartChange(new SlotEvent<DomCart>.arrival(c));
@@ -42,12 +44,14 @@ abstract class _GbCartStorage implements _Super {
   void gbCartDismissal() {
     final DomCart c = _gbCart.v;
 
+    Ft.log('_GbCartStorage', 'gbCartDismissal');
     assert(_gbCart.isSome, "from: gbCartDismissal");
     _gbCart = new Ft.Option<DomCart>.none();
     _pce.gbCartChange(new SlotEvent<DomCart>.dismissal(c));
   }
 
   void gbCartArrival(DomCart c) {
+    Ft.log('_GbCartStorage', 'gbCartArrival', [c]);
     assert(_gbCart.isNone, "from: gbCartArrival");
     _gbCart = new Ft.Option<DomCart>.some(c);
     _pce.gbCartChange(new SlotEvent<DomCart>.arrival(c));
@@ -65,12 +69,14 @@ abstract class _DraggedStorage implements _Super {
   void draggedDismissal() {
     final DomComponent c = _dragged.v;
 
+    Ft.log('_OpenedCartStorage', 'draggedDismissal');
     assert(_dragged.isSome, "from: draggedDismissal");
     _dragged = new Ft.Option<DomComponent>.none();
     _pce.draggedChange(new SlotEvent<DomComponent>.dismissal(c));
   }
 
   void draggedArrival(DomComponent c) {
+    Ft.log('_DraggedStorage', 'draggedArrival', [c]);
     assert(_dragged.isNone, "from: draggedArrival");
     _dragged = new Ft.Option<DomComponent>.some(c);
     _pce.draggedChange(new SlotEvent<DomComponent>.arrival(c));

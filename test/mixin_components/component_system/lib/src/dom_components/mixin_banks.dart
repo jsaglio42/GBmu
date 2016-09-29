@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 13:58:47 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 16:23:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 18:35:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,16 +27,16 @@ import 'package:component_system/src/include_cdc.dart';
 abstract class Bank {
 
   // PUBLIC ***************************************************************** **
-  bool get full;
-  bool get empty;
+  // bool get full;
+  // bool get empty;
 
 }
 
-// abstract class CartBank implements Bank {
-// }
+abstract class CartBank implements Bank {
+}
 
-// abstract class ChipBank implements Bank {
-// }
+abstract class ChipBank implements Bank {
+}
 
 // abstract class TopLevelBank implements Bank {
 

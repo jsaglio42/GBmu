@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 15:52:34 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 17:31:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 18:08:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,23 +50,32 @@ class HandlerTopLevelBanks {
     Ft.log('HandlerTLB', 'contructor');
 
     _pce.onCartNew.forEach(_handleCartNew);
-    _pce.onCartDelete.forEach(_handleCartNew);
+    _pce.onCartDelete.forEach(_handleCartDelete);
     _pce.onGbCartChange.forEach(_handleGbCartChange);
   }
 
   // PUBLIC ***************************************************************** **
-  DomGameBoySocket get dgbs => _dgbs;
+  // DomGameBoySocket get dgbs => _dgbs;
 
   // CALLBACKS ************************************************************** **
   void _handleCartNew(DomCart c) {
     Ft.log('HandlerTLB', '_handleCartNew', [c]);
     _ddcb.elt.nodes.add(c.elt);
   }
+
   void _handleCartDelete(DomCart c) {
     Ft.log('HandlerTLB', '_handleCartDelete', [c]);
-    _ddcb.elt.nodes.remove(c.elt);
+    if (_ddcb.elt.nodes.contains(c.elt))
+      _ddcb.elt.nodes.remove(c.elt);
   }
+
   void _handleGbCartChange(SlotEvent<DomCart> ev) {
+    final DomCart that = ev.value;
+
+    if (ev.type is Dismissal)
+      _ddcb.elt.nodes.add(that.elt);
+    else
+      _dgbs.elt.nodes = [that.elt];
   }
 
 }

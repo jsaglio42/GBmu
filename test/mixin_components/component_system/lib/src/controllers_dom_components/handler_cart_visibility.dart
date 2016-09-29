@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 16:58:26 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 17:51:22 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 18:09:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,8 +32,6 @@ class HandlerCartVisibility {
   final PlatformComponentEvents _pce;
   final PlatformDomEvents _pde;
 
-  // HtmlCartClosable _inGbOpt;
-  // HtmlCartClosable _openedOpt;
   HtmlCartClosable _openingOpt;
 
   // CONSTRUCTION *********************************************************** **

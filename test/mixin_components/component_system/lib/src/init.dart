@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 17:06:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 18:49:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,8 +31,6 @@ import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
 Async.Future init(p) async {
   Ft.log('Component_System', 'init', [p]);
 
-  try {
-
   final PlatformIndexedDb pidb = new PlatformIndexedDb();
   final PlatformLocalStorage pls = new PlatformLocalStorage();
   final PlatformComponentStorage pcs = new PlatformComponentStorage(pls, pidb);
@@ -45,9 +43,8 @@ Async.Future init(p) async {
   final PlatformDomComponentStorage pdcs =
     new PlatformDomComponentStorage(pcs, pde, pce);
   final HandlerTopLevelBanks htlb = new HandlerTopLevelBanks(pde, pce);
-  print('a');
   final HandlerCartVisibility hcv = new HandlerCartVisibility(pdcs, pde, pce);
-  print('b');
+  final HandlerDragDrop hdd = new HandlerDragDrop(pdcs, pde, pce);
 
   final Emulator.Rom rom = new Emulator.Rom(0, 400);
   final Emulator.Ram ram = new Emulator.Ram(0, 400);
@@ -79,9 +76,6 @@ Async.Future init(p) async {
   // ];
 
   /* await */ pls.start();
-  } catch (e) {
-    print(e);
-  }
 
   // await pcs.newRom(rom);
   // await pcs.newRam(ram);

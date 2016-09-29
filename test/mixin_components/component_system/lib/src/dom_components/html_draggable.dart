@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:21:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:00:26 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 18:40:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,6 +45,7 @@ abstract class HtmlDraggable implements DomElement {
       'start': _onDragStart,
       'stop': _onDragStop,
     })]);
+    this.jqElt.callMethod('draggable', ['disable']);
   }
 
   // PUBLIC ***************************************************************** **
