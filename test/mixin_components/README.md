@@ -6,113 +6,67 @@
 <!-- By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+       -->
 <!--                                              +#+#+#+#+#+   +#+          -->
 <!-- Created: 2016/09/19 11:54:15 by ngoguey           #+#    #+#            -->
-<!-- Updated: 2016/09/22 15:51:50 by ngoguey          ###   ########.fr      -->
+<!-- Updated: 2016/09/29 13:18:21 by ngoguey          ###   ########.fr      -->
 <!--                                                                         -->
 <!-- *********************************************************************** -->
 
-### Dynamic quantity elements with html repr:
-- DomCart(HtmlElementCart, HtmlCartClosable, HtmlDraggable, ChipSocketContainer, DataHolder)
-- DomChip(HtmlElementChip, HtmlDraggable, DataHolder)
-- DomChipSocket(HtmlElementChipSocket, HtmlDropZone, ChipBank)
+# Glossary
+- Component: Data entity, `class LsEntry`
+- Dom Element: Entity visible in the Dom, `class DomElement`
+- Dom Component: DomElement holding a single Data, `class DomComponent`
+- A `class Handler* {...}` is a singleton class that does not expose public methods, other than construction ones.
+- A `class Platform* {...}` is a singleton class that exposes many attributes and methods, but does not hold complex code.
+- A `class Transformer* {...}` is a singleton class that exposes streams, filtered and/or mapped from an other controller.
 
-### Fixed quantity elements with html repr:
-- DomGameBoySocket(HtmlElementGameBoySocket, HtmlDropZone, CartBank)
-- DomDetachedCartBank(HtmlElementDetachedCartBank, HtmlDropZone, CartBank)
-- DomDetachedChipBank(HtmlElementDetachedChipBank, HtmlDropZone, ChipBank)
+# List of classes
 
-### Level ordering:
-- lower - Html < Controllers < IndexedDatabase - high
+### Components
+##### Glossary
+- ramdomInt: ramdomly generated int
+- entryType: one of {Rom | Ram | Ss}
+- lsKey: String of the form '$ramdomInt$entryType'
+- lsValue: Lightweight stringified object of type LsEntry
 
-### Events:
-- htmlEvents:
-  - Unprocessed event triggered by html, broadcasted by HtmlElement
-- event:
-  - Intermediate level events
-- dbEvent
-  - From Database Controller
-- domDataEvent
+### Dom Element mixin list
+- HtmlElementCart
+- HtmlElementChip
+- HtmlElementChipSocket
+- HtmlElementGameBoySocket
+- HtmlElementDetachedCartBank
+- HtmlElementDetachedChipBank
+- HtmlCartClosable
+- HtmlDraggable
+- HtmlDropZone
+- ChipSocketContainer
+- ChipBank
+- CartBank
 
-```dart
-// Polymorphic variants pleeeeeease
-abstract class SlotEventEnum {
-  const SlotEventEnum();
-}
+### Dom Components `Class(->Super->SuperSuper, mixin1, mixin2)`
+##### Dynamic quantity
+- DomCart(->DomComponent->DomElement, HtmlElementCart, HtmlCartClosable, HtmlDraggable, ChipSocketContainer)
+- DomChip(->DomComponent->DomElement, HtmlElementChip, HtmlDraggable)
+- DomChipSocket(->DomElement, HtmlElementChipSocket, HtmlDropZone, ChipBank)
 
-class Arrival extends SlotEventEnum {
-  const Arrival();
-  static const Arrival v = const Arrival();
-}
+##### Singletons
+- DomGameBoySocket(->DomElement, HtmlElementGameBoySocket, HtmlDropZone, CartBank)
+- DomDetachedCartBank(->DomElement, HtmlElementDetachedCartBank, HtmlDropZone, CartBank)
+- DomDetachedChipBank(->DomElement, HtmlElementDetachedChipBank, HtmlDropZone, ChipBank)
 
-class Dismissal extends SlotEventEnum {
-  const Dismissal();
-  static const Dismissal v = const Dismissal();
-}
+### Controllers for Dom Components
+- PlatformDomComponentStorage
+- PlatformDomEvents
 
-class CartSlotEvent<Event extends SlotEventEnum> {
-  final Event event;
-  final DomCart cart;
-  CartSlotEvent._dismissal(this.cart) : event = Dismissal.v {
-    assert(Event != dynamic && event is Event, "CartSlotEvent.constructor");
-  }
-  CartSlotEvent._arrival(this.cart) : event = Arrival.v {
-    assert(Event != dynamic && event is Event, "CartSlotEvent.constructor");
-  }
-}
+### Controllers for Components
+- PlatformIndexedDb
+- PlatformLocalStorage
+- PlatformComponentStorage
+- TransformerLseUnserializer
+- TransformerLseDataCheck
+- TransformerLseIdbCheck
 
-CartSlotEvent<Arrival> makeCartSlotArrival(DomCart cart) =>
-  new CartSlotEvent<Arrival>._arrival(cart);
+# Detail of Dom controllers (Mostly deprecated or not yet implemented)
 
-CartSlotEvent<Dismissal> makeCartSlotDismissal(DomCart cart) =>
-  new CartSlotEvent<Dismissal>._dismissal(cart);
-
-```
-
-```dart
-// Polymorphic variants pleeeeeease
-
-// Slot Event
-abstract class SlotEvent {
-  const SlotEvent();
-}
-
-class Arrival extends SlotEvent {
-  const Arrival();
-  Arrival get event => const Arrival();
-}
-
-class Dismissal extends SlotEvent {
-  const Dismissal();
-  Dismissal get event => const Dismissal();
-}
-
-// Slot Event for Cart
-abstract class CartSlotEvent {}
-
-class CartArrivalEvent extends Arrival implements CartSlotEvent {
-  final int cart;
-  CartArrivalEvent(this.cart);
-}
-
-class CartDismissalEvent extends Dismissal implements CartSlotEvent {
-  final int cart;
-  CartDismissalEvent(this.cart);
-}
-
-// Slot Event for Draggable
-abstract class DraggableSlotEvent {}
-
-class DraggableArrivalEvent extends Arrival implements DraggableSlotEvent {
-  final int draggable;
-  DraggableArrivalEvent(this.draggable);
-}
-
-class DraggableDismissalEvent extends Dismissal implements DraggableSlotEvent {
-  final int draggable;
-  DraggableDismissalEvent(this.draggable);
-}
-```
-
-### ControllerData:
+##### ControllerData:
 - Wraps some combersome tasks
 - Ensures correct mutation of variable
  - e.g.: Two successive openedCartDismissal() is an error
@@ -154,8 +108,6 @@ class DraggableDismissalEvent extends Dismissal implements DraggableSlotEvent {
 <!-- - chip-sockets -->
 <!--  - chipSocketsOfCart(Cart c) -->
 
-
-### Controllers:
 ##### ControllerHtmlEvents
 - __from html-elements / exposed to higher-levels:__
   - streams:
