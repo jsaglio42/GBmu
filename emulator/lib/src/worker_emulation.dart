@@ -6,13 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 19:04:59 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 10:39:34 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
+import 'dart:typed_data';
 import 'dart:math' as Math;
 import 'dart:async' as Async;
-import 'dart:typed_data';
+
 import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';

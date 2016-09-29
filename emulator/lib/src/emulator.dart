@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 11:18:01 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 10:38:17 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -44,6 +44,7 @@ final _mainReceivers = <String, Type>{
   'MemInfo' : <String, dynamic>{}.runtimeType,
   'InstInfo' : <Instructions.Instruction>[].runtimeType,
   'Events': <String, dynamic>{}.runtimeType,
+  'FrameUpdate': Uint8List,
 };
 
 final _workerReceivers = <String, Type>{

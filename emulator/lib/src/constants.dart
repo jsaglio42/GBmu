@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:27:06 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 10:46:20 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,7 +50,6 @@ final Duration SPEEDPOLL_PERIOD_DURATION = new Duration(microseconds:
 final Duration EMULATION_START_DELAY = new Duration(milliseconds: 100);
 
 /* Memory Constant */
-
 const int TAIL_RAM_LAST = 0xFFFF;
 const int TAIL_RAM_FIRST = 0xFE00;
 const int TAIL_RAM_SIZE = TAIL_RAM_LAST - TAIL_RAM_FIRST + 1;
@@ -73,3 +72,9 @@ const int VIDEO_RAM_SIZE = VIDEO_RAM_LAST - VIDEO_RAM_FIRST + 1;
 const int CARTRIDGE_ROM_LAST = VIDEO_RAM_FIRST - 1;
 const int CARTRIDGE_ROM_FIRST = 0x0000;
 const int CARTRIDGE_ROM_SIZE = CARTRIDGE_ROM_LAST - CARTRIDGE_ROM_FIRST + 1;
+
+
+/* Memory Constant */
+const int LCD_WIDTH = 160;
+const int LCD_HEIGHT = 140;
+const int LCD_DATA_SIZE = LCD_HEIGHT * LCD_WIDTH * 4;
