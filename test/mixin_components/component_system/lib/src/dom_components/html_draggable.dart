@@ -6,20 +6,22 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:21:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 17:56:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 11:16:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:js' as Js;
-import 'dart:math' as Math;
 import 'dart:async' as Async;
 import 'dart:html' as Html;
 import 'dart:indexed_db' as Idb;
+import 'dart:math';
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:ft/ft.dart' as Ft;
 
-import './mixin_interfaces.dart';
+import 'package:component_system/src/include_dc.dart';
+import 'package:component_system/src/include_cdc.dart';
 
 // Holds HTML interactions
 abstract class HtmlDraggable implements HtmlElement_intf, DomElement {

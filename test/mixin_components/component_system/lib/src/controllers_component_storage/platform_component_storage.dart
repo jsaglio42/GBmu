@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 18:21:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 11:07:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,11 +22,8 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:component_system/src/tmp_emulator_enums.dart';
 import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
 
-import 'package:component_system/src/variants.dart';
-import 'package:component_system/src/local_storage_components.dart';
-import './transformer_lse_idb_check.dart';
-import './platform_indexeddb.dart';
-import './platform_local_storage.dart';
+import 'package:component_system/src/include_cs.dart';
+import 'package:component_system/src/include_ccs.dart';
 
 // Did my best to limit data races, couldn't find a bullet proof solution
 // This storage keeps track of all LsEntries, even the deleted one, to dampen

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 17:11:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 11:07:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,8 +22,8 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:component_system/src/tmp_emulator_enums.dart';
 import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
 
-import 'package:component_system/src/variants.dart';
-import 'package:component_system/src/local_storage_components.dart';
+import 'package:component_system/src/include_cs.dart';
+import 'package:component_system/src/include_ccs.dart';
 
 const String _DBNAME = 'GBmu_db';
 

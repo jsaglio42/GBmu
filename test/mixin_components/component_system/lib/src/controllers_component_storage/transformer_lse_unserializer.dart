@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:10:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 17:11:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 11:11:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,9 +20,8 @@ import 'dart:convert';
 
 import 'package:ft/ft.dart' as Ft;
 
-import 'package:component_system/src/variants.dart';
-import 'package:component_system/src/local_storage_components.dart';
-import './platform_local_storage.dart';
+import 'package:component_system/src/include_cs.dart';
+import 'package:component_system/src/include_ccs.dart';
 
 // Transformer Local Storage Event, Unserialize part
 class TransformerLseUnserializer {
