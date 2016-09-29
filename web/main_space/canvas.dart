@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/09/28 22:47:19 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 11:04:11 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,8 +23,10 @@ import 'package:emulator/emulator.dart' as Emulator;
 Emulator.Emulator _emu;
 
 Html.CanvasElement _screen = Html.querySelector('#gameboyScreen');
-Html.CanvasElement _unscaledScreen = new Html.CanvasElement(width: LCD_WIDTH, height: LCD_HEIGHT);
-Html.ImageData _unscaledImageData = _unscaledScreen.context2D.createImageData(LCD_WIDTH, LCD_HEIGHT);
+Html.CanvasElement _unscaledScreen =
+  new Html.CanvasElement(width: LCD_WIDTH, height: LCD_HEIGHT);
+Html.ImageData _unscaledImageData =
+  _unscaledScreen.context2D.createImageData(LCD_WIDTH, LCD_HEIGHT);
 
 /* Can be used to change the size of the screen */
 int _screenScale = 1;
@@ -40,24 +42,19 @@ void set screenScale(int s) {
 /* Init */
 void init(Emulator.Emulator emu) {
   _emu = emu;
-  _drawListToScreen(new List.filled(LCD_WIDTH * LCD_HEIGHT, 0));
+  _turnOffScreen();
   screenScale = 2;
-
-  /* Tests */
-  var striped = new List.generate(LCD_WIDTH * LCD_HEIGHT, (i) => (i % 2 == 0) ? 0xFF0000 : 0x0000FF);
-  _drawListToScreen(striped);
+  _emu.listener('FrameUpdate').forEach(_updateScreen);
   return ;
 }
 
 /* Private ********************************************************************/
-void _drawListToScreen(List<int> l) {
+void _updateScreen(Uint8List l) {
   var data = _unscaledImageData.data;
-  assert(l.length * 4 == data.length, "_drawListToScreen: Length difference");
-  for (int i = 0; i < LCD_WIDTH * LCD_HEIGHT; i++) {
-    data[4 * i + 0] = (l[i] >> 16) & 0xFF; //red
-    data[4 * i + 1] = (l[i] >> 8) & 0xFF; //green
-    data[4 * i + 2] = (l[i] >> 0) & 0xFF; //blue
-    data[4 * i + 3] = 0xFF; //alpha
+  assert(data.length == LCD_DATA_SIZE, "_updateScreen: Invalid Data");
+  assert(l.length == data.length, "_updateScreen: Invalid Data");
+  for (int i = 0; i < data.length; i++) {
+    data[i] = l[i];
   }
   _unscaledScreen.context2D.putImageData(_unscaledImageData, 0, 0);
   _refreshScreen();
@@ -67,5 +64,14 @@ void _drawListToScreen(List<int> l) {
 void _refreshScreen() {
   _screen.context2D.drawImageScaled(_unscaledScreen, 0, 0
     , _screen.width, _screen.height);
+  return ;
+}
+
+void _turnOffScreen() {
+  Uint8List black = new Uint8List(LCD_DATA_SIZE);
+  for (int i = 0; i < black.length; i++) {
+    if (i % 4 == 3) { black[i] = 0xFF; }
+  }
+  _updateScreen(black);
   return ;
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 15:39:01 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 10:46:20 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -77,3 +77,4 @@ const int CARTRIDGE_ROM_SIZE = CARTRIDGE_ROM_LAST - CARTRIDGE_ROM_FIRST + 1;
 /* Memory Constant */
 const int LCD_WIDTH = 160;
 const int LCD_HEIGHT = 140;
+const int LCD_DATA_SIZE = LCD_HEIGHT * LCD_WIDTH * 4;

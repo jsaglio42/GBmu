@@ -6,10 +6,11 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/09/26 20:47:02 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 11:00:16 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
+import "dart:typed_data";
 import "package:emulator/src/constants.dart";
 
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
@@ -25,6 +26,7 @@ abstract class Hardware {
   final internalRam = new Data.Ram(INTERNAL_RAM_FIRST, INTERNAL_RAM_SIZE);
   final videoRam = new Data.Ram(VIDEO_RAM_FIRST, VIDEO_RAM_SIZE);
   final tailRam = new Data.Ram(TAIL_RAM_FIRST, TAIL_RAM_SIZE);
+  Uint8List lcdScreen = new Uint8List(LCD_DATA_SIZE);
 
   bool ime = true;
   bool halt = false;
@@ -32,6 +34,18 @@ abstract class Hardware {
   int joypadState = 0x0;
 
   void initHardware(Cartridge.ACartridge c) {
+    /* FOR LCD TEST ONLY */
+    /* vvvvvvvvvvvvvvvvv */
+    for (int i = 0; i < LCD_DATA_SIZE; ++i) {
+      switch (i % 4) {
+        case (0) : this.lcdScreen[i] = 0xFF; break;//red
+        case (1) : this.lcdScreen[i] = 0x00; break; //green;
+        case (2) : this.lcdScreen[i] = 0x00; break; //green;
+        default : this.lcdScreen[i] = 0xFF; break; //alpha;
+      }
+    }
+    /* ^^^^^^^^^^^^^^^^^ */
+
     assert(_c == null, "Hardware: Cartridge already initialised");
     _c = c;
     this.tailRam.push8_unsafe(0xFF05, 0x00);
