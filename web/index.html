@@ -70,7 +70,12 @@
               left
             </div>
             <div class="col-sm-6" >
-                <canvas id="gameboyScreen" />
+              <div id="screenSizeRadioButtons">
+                <label class="radio-inline"><input type="radio" name="optradio" value='1'>x1</label>
+                <label class="radio-inline"><input type="radio" name="optradio" value='2' checked>x2</label>
+                <label class="radio-inline"><input type="radio" name="optradio" value='3'>x3</label>
+              </div>
+              <div><canvas id="gameboyScreen" /></div>
             </div>
             <div class="col-sm-3" id="mainAlertBox">
             </div>

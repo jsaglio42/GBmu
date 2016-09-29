@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/09/29 11:04:11 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 11:40:44 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,14 +21,15 @@ import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
 Emulator.Emulator _emu;
-
 Html.CanvasElement _screen = Html.querySelector('#gameboyScreen');
+Html.DivElement _screenSize = Html.querySelector('#screenSizeRadioButtons');
+
 Html.CanvasElement _unscaledScreen =
   new Html.CanvasElement(width: LCD_WIDTH, height: LCD_HEIGHT);
 Html.ImageData _unscaledImageData =
   _unscaledScreen.context2D.createImageData(LCD_WIDTH, LCD_HEIGHT);
 
-/* Can be used to change the size of the screen */
+/* Ued to change the size of the screen */
 int _screenScale = 1;
 int get screenScale => _screenScale;
 void set screenScale(int s) {
@@ -45,10 +46,22 @@ void init(Emulator.Emulator emu) {
   _turnOffScreen();
   screenScale = 2;
   _emu.listener('FrameUpdate').forEach(_updateScreen);
+  _screenSize.onChange.forEach(_onRadioUpdate);
   return ;
 }
 
 /* Private ********************************************************************/
+/* Screen Size */
+void _onRadioUpdate(_) {
+    _screenSize.children.forEach(
+      (l) {
+        var input = l.children[0];
+        if (input.checked)
+          screenScale = int.parse(input.value);
+      });
+}
+
+/* Screen content */
 void _updateScreen(Uint8List l) {
   var data = _unscaledImageData.data;
   assert(data.length == LCD_DATA_SIZE, "_updateScreen: Invalid Data");
