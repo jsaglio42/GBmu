@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 15:33:17 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 18:33:56 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -54,6 +54,7 @@ class GameBoy extends Object
     {
       instructionDuration = this.executeInstruction();
       this.updateTimers(instructionDuration);
+      this.updateGraphics(instructionDuration);
       executedClocks += instructionDuration;
       this.handleInterrupts();
     }

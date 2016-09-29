@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 10:46:20 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/29 22:27:07 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,7 +17,7 @@ final int MAX_INT_LOLDART = 9007199254740992;
 // Number should be close to (GB_CPU_FREQ_INT / EMULATION_PER_SEC_INT)
 const int MAXIMUM_CLOCK_PER_EXEC_INT = 100000;
 
-const int GB_FRAME_PER_CLOCK_INT = 70000; // clock
+const int GB_FRAME_PER_CLOCK_INT = 70224; // clock
 final double GB_FRAME_PER_CLOCK_DOUBLE = GB_FRAME_PER_CLOCK_INT.toDouble();
 
 const int GB_CPU_FREQ_INT = 4194304; // clock / second
@@ -74,7 +74,22 @@ const int CARTRIDGE_ROM_FIRST = 0x0000;
 const int CARTRIDGE_ROM_SIZE = CARTRIDGE_ROM_LAST - CARTRIDGE_ROM_FIRST + 1;
 
 
-/* Memory Constant */
+/* LCD Constant */
 const int LCD_WIDTH = 160;
-const int LCD_HEIGHT = 140;
+const int LCD_HEIGHT = 144;
 const int LCD_DATA_SIZE = LCD_HEIGHT * LCD_WIDTH * 4;
+
+/* LCD Mode constants */
+const int CLOCK_PER_OAM_ACCESS = 80;
+const int CLOCK_PER_VRAM_ACCESS = 172;
+const int CLOCK_PER_HBLANK = 204;
+const int CLOCK_PER_SCANLINE = CLOCK_PER_OAM_ACCESS 
+  + CLOCK_PER_VRAM_ACCESS
+  + CLOCK_PER_HBLANK;
+
+const int VRAM_THRESHOLD = CLOCK_PER_OAM_ACCESS;
+const int HBLANK_THRESHOLD = OAM_ACCESS_THRESHOLD + CLOCK_PER_VRAM_ACCESS
+const int NEWLINE_THRESHOLD = HBLANK_THRESHOLD + CLOCK_PER_HBLANK;
+
+const int VBLANK_THESHOLD = LCD_HEIGHT;
+const int FRAME_THESHOLD = LCD_HEIGHT + 10;
