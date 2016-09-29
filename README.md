@@ -16,7 +16,6 @@ pub serve
 
 - Check operands where a signed byte 'e' is added
 - Check timer loop if CPU halted or stopped
-- Check the write functions when writing to MemReg.DIV
 
 # To DOs: Features
 
@@ -24,8 +23,8 @@ pub serve
 	- ime
 	- halt
 	- stop
+	- joypadState ?
 - Reorganise Memory Registers per category (Mode/Port, Interrupt, LCD, Timers ...)
-- Add search for instructions (like memory explorer) ?
 - Add overlay for instructions (display extra info like duration, flag modified ...) ?
 
 
