@@ -6,25 +6,9 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/27 17:12:34 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 11:52:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
-
-// Slot event *************************************************************** **
-
-abstract class SlotEvent {
-  const SlotEvent();
-}
-
-class Arrival extends SlotEvent {
-  const Arrival();
-  static const Arrival v = const Arrival();
-}
-
-class Dismissal extends SlotEvent {
-  const Dismissal();
-  static const Dismissal v = const Dismissal();
-}
 
 // Update event ************************************************************* **
 
@@ -105,4 +89,33 @@ class Dead extends Life {
   const Dead();
   static const Dead v = const Dead();
   String toString() => 'Dead';
+}
+
+// Slot ********************************************************************* **
+abstract class SlotAction {
+  const SlotAction();
+}
+
+class Arrival extends SlotAction {
+  const Arrival();
+  static const Arrival v = const Arrival();
+  String toString() => 'Arrival';
+}
+
+class Dismissal extends SlotAction {
+  const Dismissal();
+  static const Dismissal v = const Dismissal();
+  String toString() => 'Dismissal';
+}
+
+// SlotAction event *************************************************************** **
+class SlotEvent<T> {
+  final SlotAction type;
+  final T value;
+
+  SlotEvent.arrival(this._value)
+    : type = Arrival.v;
+
+  SlotEvent.dismissal(this._value)
+    : type = Dismissal.v;
 }

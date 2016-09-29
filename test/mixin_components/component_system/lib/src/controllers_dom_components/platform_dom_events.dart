@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:46:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 18:24:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/29 11:58:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,16 +19,9 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:ft/ft.dart' as Ft;
-import 'package:component_system/src/tmp_emulator_enums.dart';
-import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
 
-import 'package:component_system/src/dom_components/html_cart_closable.dart';
-import 'package:component_system/src/dom_components/html_cart_element.dart';
-import 'package:component_system/src/dom_components/html_chipsocket_element.dart';
-import 'package:component_system/src/dom_components/html_draggable.dart';
-import 'package:component_system/src/dom_components/html_dropzone.dart';
-import 'package:component_system/src/dom_components/mixin_assembly.dart';
-import 'package:component_system/src/dom_components/mixin_interfaces.dart';
+import 'package:component_system/src/include_cs.dart';
+import 'package:component_system/src/include_dc.dart';
 
 class PlatformDomEvents {
 
@@ -90,12 +83,26 @@ class PlatformDomEvents {
   void dropLeft(HtmlDropZone that) => _dropLeft.add(that);
   Async.Stream<HtmlDropZone> get onDropLeft => _dropLeft.stream;
 
-  // Notified by CartDragDropController
-  // Notified by ????
+  // Notified by PlatformDomComponentStorage
   final Async.StreamController<DomCart> _cartNew =
     new Async.StreamController<DomCart>.broadcast();
   void cartNew(DomCart that) => _cartNew.add(that);
   Async.Stream<DomCart> get onCartNew => _cartNew.stream;
+
+  final Async.StreamController<DomCart> _cartDelete =
+    new Async.StreamController<DomCart>.broadcast();
+  void cartDelete(DomCart that) => _cartDelete.add(that);
+  Async.Stream<DomCart> get onCartDelete => _cartDelete.stream;
+
+  final Async.StreamController<SlotEvent<DomCart>> _openedCartChange =
+    new Async.StreamController<SlotEvent<DomCart>>.broadcast();
+  void openedCartChange(SlotEvent<DomCart> that) => _openedCartChange.add(that);
+  Async.Stream<SlotEvent<DomCart>> get onOpenedCartChange => _openedCartChange.stream;
+
+
+
+  // Notified by CartDragDropController
+  // Notified by ????
 
   final Async.StreamController<DomCart> _cartInGbOpt =
     new Async.StreamController<DomCart>.broadcast();
