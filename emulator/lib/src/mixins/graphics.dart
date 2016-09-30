@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/30 12:05:04 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 17:15:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -55,10 +55,10 @@ abstract class Graphics
   /* API **********************************************************************/
   void updateGraphics(int nbClock) {
     _updateCurrentStatus();
-    if (_current_STAT & (1 << 7) != 0) {
+    // if (_current_STAT & (1 << 7) != 0) {
       _updateGraphicMode(nbClock);
       _updateLCDStatus();
-    }
+    // }
     /* Not sure what to do, should probably trap in mmu */
     // else
     //   _resetScreen(); 
@@ -105,6 +105,8 @@ abstract class Graphics
         _updated_mode = GraphicMode.OAM_ACCESS;
         interruptMonitored = (_current_STAT & (1 << 5) != 0) ? true : false;
       }
+
+      /* FOR DEBUG */
       assert(_updated_LY != null, "LY: Condition Failure");
       assert(_updated_mode != null, "Mode: Condition Failure");
       assert(interruptMonitored != null, "interrupt: Condition Failure");
@@ -113,6 +115,7 @@ abstract class Graphics
       //   Current mode: ${_current_mode.toString()}
       //   Update mode: ${_updated_mode.toString()}
       //   ''');
+
       if (interruptMonitored && (_current_mode != _updated_mode))
         this.requestInterrupt(InterruptType.LCDStat);
     }
@@ -144,6 +147,8 @@ abstract class Graphics
       _updated_mode = GraphicMode.VBLANK;
       interruptMonitored = (_current_STAT & (1 << 4) != 0) ? true : false;
     }
+
+    /* FOR DEBUG */
     assert(_updated_LY != null, "LY: Condition Failure");
     assert(_updated_mode != null, "Mode: Condition Failure");
     assert(interruptMonitored != null, "interrupt: Condition Failure");
@@ -153,6 +158,7 @@ abstract class Graphics
       Current mode: ${_current_mode.toString()}
       Update mode: ${_updated_mode.toString()}
       ''');
+
     if (interruptMonitored && (_current_mode != _updated_mode))
         this.requestInterrupt(InterruptType.LCDStat);
     this.tailRam.push8_unsafe(_addrLY, _updated_LY);
@@ -178,7 +184,7 @@ abstract class Graphics
 
   /* Swap the buffer and the LCD Screen */
   void _updateScreen() {
-    print('**************************************** Update Screen');
+    print('******** Update Screen *********');
     Uint8List tmp;
     tmp = _buffer;
     _buffer = this.lcdScreen;

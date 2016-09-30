@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 18:58:57 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 17:09:57 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -1145,6 +1145,7 @@ abstract class Z80
     this.cpur.A = (~this.cpur.A & 0xFF);
     this.cpur.h = 1;
     this.cpur.n = 1;
+    this.cpur.PC += 1;
     return 4;
   }
 
@@ -1152,6 +1153,7 @@ abstract class Z80
     this.cpur.cy = 1 - this.cpur.cy;
     this.cpur.n = 0;
     this.cpur.h = 0;
+    this.cpur.PC += 1;
     return 4;
   }
 
@@ -1159,6 +1161,7 @@ abstract class Z80
     this.cpur.cy = 1;
     this.cpur.n = 0;
     this.cpur.h = 0;
+    this.cpur.PC += 1;
     return 4;
   }
 
