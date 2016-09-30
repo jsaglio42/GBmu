@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/30 11:20:52 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 12:05:04 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -55,10 +55,10 @@ abstract class Graphics
   /* API **********************************************************************/
   void updateGraphics(int nbClock) {
     _updateCurrentStatus();
-    // if (_current_STAT & (1 << 7) != 0) {
+    if (_current_STAT & (1 << 7) != 0) {
       _updateGraphicMode(nbClock);
       _updateLCDStatus();
-    // }
+    }
     /* Not sure what to do, should probably trap in mmu */
     // else
     //   _resetScreen(); 

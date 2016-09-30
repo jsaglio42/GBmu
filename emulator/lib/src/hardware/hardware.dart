@@ -6,12 +6,14 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/09/30 11:45:52 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 15:25:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import "dart:typed_data";
 import "package:emulator/src/constants.dart";
+import "package:emulator/src/globals.dart";
+import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
@@ -38,7 +40,7 @@ abstract class Hardware {
     /* vvvvvvvvvvvvvvvvv */
     for (int i = 0; i < LCD_DATA_SIZE; ++i) {
       switch (i % 4) {
-        case (0) : this.lcdScreen[i] = 0xFF; break;//red
+        case (0) : this.lcdScreen[i] = 0xFF; break; //red
         case (1) : this.lcdScreen[i] = 0x00; break; //green;
         case (2) : this.lcdScreen[i] = 0x00; break; //green;
         default : this.lcdScreen[i] = 0xFF; break; //alpha;

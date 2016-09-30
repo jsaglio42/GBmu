@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 10:46:02 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 15:06:54 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -38,7 +38,7 @@ enum Reg8 {
   F, A, C, B, E, D, L, H,
 }
 enum Reg1 {
-  cy, n, h, zf
+  cy, h, n, zf
 }
 
 class CpuRegs {
@@ -80,8 +80,8 @@ class CpuRegs {
   int get L => this.pull8(Reg8.L);
   int get H => this.pull8(Reg8.H);
   int get cy => this.pull1(Reg1.cy);
-  int get n => this.pull1(Reg1.n);
   int get h => this.pull1(Reg1.h);
+  int get n => this.pull1(Reg1.n);
   int get z => this.pull1(Reg1.zf);
 
   int pull16(Reg16 r) => this._view16[r.index];
