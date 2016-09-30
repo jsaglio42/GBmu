@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 10:40:03 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 18:14:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -61,7 +61,7 @@ abstract class Observer implements Worker.AWorker {
 
   void _makeLooping()
   {
-    Ft.log(Ft.typeStr(this), '_makeLooping');
+    Ft.log("WorkerObs", '_makeLooping');
     assert(_sub.isPaused, "worker_obs: _makeLooping while not paused");
     _gbClockPoll = 0;
     _pollTime = Ft.now();
@@ -70,7 +70,7 @@ abstract class Observer implements Worker.AWorker {
 
   void _makeDormant()
   {
-    Ft.log(Ft.typeStr(this), '_makeDormant');
+    Ft.log("WorkerObs", '_makeDormant');
     assert(!_sub.isPaused, "worker_obs: _makeDormant while paused");
     _sub.pause();
     this.ports.send('EmulationSpeed', <String, dynamic>{
@@ -82,7 +82,7 @@ abstract class Observer implements Worker.AWorker {
 
   void init_observer()
   {
-    Ft.log(Ft.typeStr(this), 'init_observer');
+    Ft.log("WorkerObs", 'init_observer');
     _periodic = new Async.Stream.periodic(SPEEDPOLL_PERIOD_DURATION);
     _sub = _periodic.listen(_onSpeedPoll);
     _sub.pause();
