@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 23:59:23 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 11:09:16 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -54,11 +54,11 @@ abstract class Graphics
 
   /* API **********************************************************************/
   void updateGraphics(int nbClock) {
-    updateCurrentStatus();
-    if (_current_STAT & (1 << 7) != 0) {
+    _updateCurrentStatus();
+    // if (_current_STAT & (1 << 7) != 0) {
       _updateGraphicMode(nbClock);
       _updateLCDStatus();
-    }
+    // }
     /* Not sure what to do, should probably trap in mmu */
     // else
     //   _resetScreen(); 
@@ -80,10 +80,12 @@ abstract class Graphics
     bool interruptMonitored;
 
     _counterScanline += nbClock;
-    if (_counterScanLine >= NEWLINE_THRESHOLD)
+    if (_counterScanline >= NEWLINE_THRESHOLD)
     {
       _counterScanline = 0;
-      _updateScanLine();
+      if (_current_LY < VBLANK_THRESHOLD)
+        _drawLine();
+      _updateScanline();
     }
     else
     {
@@ -103,14 +105,14 @@ abstract class Graphics
         _updated_mode = GraphicMode.OAM_ACCESS;
         interruptMonitored = (_current_STAT & (1 << 5) != 0) ? true : false;
       }
-      assert(interruptMonitored != null, "interrupt: Condition Failure");
       assert(_updated_LY != null, "LY: Condition Failure");
       assert(_updated_mode != null, "Mode: Condition Failure");
-      print('''
-        counterScanline: $_counterScanline
-        Current mode: ${_current_mode.toString()}
-        Update mode: ${_updated_mode.toString()}
-        ''');
+      assert(interruptMonitored != null, "interrupt: Condition Failure");
+      // print('''
+      //   counterScanline: $_counterScanline
+      //   Current mode: ${_current_mode.toString()}
+      //   Update mode: ${_updated_mode.toString()}
+      //   ''');
       if (interruptMonitored && (_current_mode != _updated_mode))
         this.requestInterrupt(InterruptType.LCDStat);
     }
@@ -122,39 +124,46 @@ abstract class Graphics
   void _updateScanline() {
     bool interruptMonitored;
 
-    _drawLine();
-    _updated_LY = _current_LY + 1;
-    if (_updated_LY >= FRAME_THRESHOLD || _updated_LY < VBLANK_THRESHOLD)
+    final int incLY = _current_LY + 1;
+    if (incLY >= NEWFRAME_THRESHOLD || incLY < VBLANK_THRESHOLD)
     {
-      if (_updated_LY >= FRAME_THRESHOLD) {
+      if (incLY >= NEWFRAME_THRESHOLD) {
         _updated_LY = 0;
         _updateScreen();
+      }
+      else
+      {
+        _updated_LY = incLY;
+        _drawLine();
       }
       _updated_mode = GraphicMode.OAM_ACCESS;
       interruptMonitored = (_current_STAT & (1 << 5) != 0) ? true : false;
     }
     else {
+      _updated_LY = incLY;
       _updated_mode = GraphicMode.VBLANK;
       interruptMonitored = (_current_STAT & (1 << 4) != 0) ? true : false;
     }
-    assert(interruptMonitored != null, "interrupt: Condition Failure");
     assert(_updated_LY != null, "LY: Condition Failure");
     assert(_updated_mode != null, "Mode: Condition Failure");
+    assert(interruptMonitored != null, "interrupt: Condition Failure");
     print('''
       *** Update Line ***
+      LY = $_updated_LY
       Current mode: ${_current_mode.toString()}
       Update mode: ${_updated_mode.toString()}
       ''');
     if (interruptMonitored && (_current_mode != _updated_mode))
         this.requestInterrupt(InterruptType.LCDStat);
+    this.tailRam.push8_unsafe(_addrLY, _updated_LY);
     return ;
   }
 
   /* MUST trigger LYC interrupt and push new STAT register */
   void _updateLCDStatus() {
     int coincidence_bit = 0;
-    int mode_bits = _updated_mode && 0x3;
-    int interrupt_bits = _current_STAT && 0xF8;
+    int mode_bits = _updated_mode.index;
+    int interrupt_bits = _current_STAT & 0xF8;
 
     if (_current_LYC == _updated_LY)
     {
@@ -169,7 +178,7 @@ abstract class Graphics
 
   /* Swap the buffer and the LCD Screen */
   void _updateScreen() {
-    print('Update Screen');
+    print('**************************************** Update Screen');
     Uint8List tmp;
     tmp = _buffer;
     _buffer = this.lcdScreen;

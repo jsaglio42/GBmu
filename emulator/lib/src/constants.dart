@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 22:27:07 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 10:34:54 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -83,13 +83,10 @@ const int LCD_DATA_SIZE = LCD_HEIGHT * LCD_WIDTH * 4;
 const int CLOCK_PER_OAM_ACCESS = 80;
 const int CLOCK_PER_VRAM_ACCESS = 172;
 const int CLOCK_PER_HBLANK = 204;
-const int CLOCK_PER_SCANLINE = CLOCK_PER_OAM_ACCESS 
-  + CLOCK_PER_VRAM_ACCESS
-  + CLOCK_PER_HBLANK;
 
 const int VRAM_THRESHOLD = CLOCK_PER_OAM_ACCESS;
-const int HBLANK_THRESHOLD = OAM_ACCESS_THRESHOLD + CLOCK_PER_VRAM_ACCESS
+const int HBLANK_THRESHOLD = VRAM_THRESHOLD + CLOCK_PER_VRAM_ACCESS;
 const int NEWLINE_THRESHOLD = HBLANK_THRESHOLD + CLOCK_PER_HBLANK;
 
-const int VBLANK_THESHOLD = LCD_HEIGHT;
-const int FRAME_THESHOLD = LCD_HEIGHT + 10;
+const int VBLANK_THRESHOLD = LCD_HEIGHT;
+const int NEWFRAME_THRESHOLD = VBLANK_THRESHOLD + 10;
