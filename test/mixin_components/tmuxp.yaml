@@ -1,0 +1,48 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    tmuxp.yaml                                         :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
+#    Updated: 2016/09/30 13:51:27 by ngoguey          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+session_name: 'GBmu'
+shell_command_before: "cd ${PWD}"
+global_options:
+  automatic-rename: false
+environment:
+  WEB: ./web
+  CS: ./component_system/lib/src
+  CCS: ./component_system/lib/src/controllers_component_storage
+  DC: ./component_system/lib/src/dom_components
+  CDC: ./component_system/lib/src/controllers_dom_components
+windows:
+- window_index: 0
+  layout: main-vertical
+  panes:
+    - ps -W | ack -i 'dart.exe' | sed -e 's/^[ \t]*//' | cut -d' ' -f1 | xargs kill -f ; pub get ; pub serve
+    - emacs $CS/init.dart README.md
+- window_index: 1
+  panes: [e $CS/include_*.dart]
+- window_index: 2
+  panes: ['e $CS/*{variants,local_storage_compo}*.dart']
+
+- window_index: 3
+  panes: ['e $CDC/platform_dom_compo*.dart']
+- window_index: 6
+  panes: ['e $CDC/platform_*events*.dart']
+
+- window_index: 4
+  panes: ['e $CDC/handler_*{visib,drag_drop,top_level}*.dart']
+
+
+- window_index: 7
+  panes: [e $DC/mixin_*.dart]
+- window_index: 8
+  panes: ['e $DC/html_{dropzone,draggable}*.dart']
+- window_index: 9
+  panes: ['e $DC/html_*{cart,simple}*.dart']
