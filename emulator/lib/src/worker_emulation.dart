@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 10:39:34 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 14:16:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -48,7 +48,9 @@ final Map<AutoBreakExternalMode, int> _autoBreakClocks = {
 
 abstract class Emulation implements Worker.AWorker {
 
-  Async.Timer _timerOrNull = null;
+  Async.Stream _fut;
+  Async.StreamSubscription _sub;
+  // Async.Timer _timerOrNull = null;
 
   bool _simulateCrash = false;
 
@@ -201,7 +203,7 @@ abstract class Emulation implements Worker.AWorker {
 
   // LOOPING ROUTINE ******************************************************** **
 
-  void _onEmulation()
+  void _onEmulation(_)
   {
     int clockSum;
     var error, stacktrace;
@@ -222,9 +224,9 @@ abstract class Emulation implements Worker.AWorker {
     _emulationCount++;
     _rescheduleTime = _emulationStartTime.add(
         EMULATION_PERIOD_DURATION * _emulationCount);
-    _timerOrNull = null;
-    _timerOrNull = new Async.Timer(
-        _rescheduleTime.difference(Ft.now()), _onEmulation);
+    _fut = new Async.Future.delayed(_makeRescheduleDelay())
+      .asStream();
+    _sub = _fut.listen(_onEmulation);
     if (error != null) {
       _updateGBMode(GameBoyExternalMode.Crashed);
       this.ports.send('Events', <String, dynamic>{
@@ -239,6 +241,16 @@ abstract class Emulation implements Worker.AWorker {
         _updatePauseMode(PauseExternalMode.Effective);
     }
     return ;
+  }
+
+  Duration _makeRescheduleDelay() {
+    final DateTime now = Ft.now();
+    final Duration delta = _rescheduleTime.difference(now);
+
+    if (delta < EMULATION_RESCHEDULE_MIN_DELAY)
+      return EMULATION_RESCHEDULE_MIN_DELAY;
+    else
+      return delta;
   }
 
   int _clockLimitOfClockDebt(double clockDebt)
@@ -279,21 +291,22 @@ abstract class Emulation implements Worker.AWorker {
   void _makeLooping()
   {
     Ft.log(Ft.typeStr(this), '_makeLooping');
-    assert(_timerOrNull == null, "_makeLooping() with some timer");
+    assert(_sub == null, "_makeLooping() with some timer");
     _clockDeficit = 0.0;
     _emulationStartTime = Ft.now().add(EMULATION_START_DELAY);
     _rescheduleTime = _emulationStartTime;
     _emulationCount = 0;
-    _timerOrNull = new Async.Timer(EMULATION_START_DELAY, _onEmulation);
+    _fut = new Async.Future.delayed(EMULATION_START_DELAY).asStream();
+    _sub = _fut.listen(_onEmulation);
   }
 
   void _makeDormant()
   {
     Ft.log(Ft.typeStr(this), '_makeDormant');
-    assert(_timerOrNull != null && _timerOrNull.isActive,
-        "_makeDormant with no timer");
-    _timerOrNull.cancel();
-    _timerOrNull = null;
+    assert(_sub != null, "_makeDormant with no timer");
+    _sub.pause();
+    _fut = null;
+    _sub = null;
   }
 
   void _enableAutoBreak()
