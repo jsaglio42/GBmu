@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   mem_mmu.dart                                       :+:      :+:    :+:   //
+//   mmu.dart                                           :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 20:35:53 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 23:13:01 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -122,14 +122,16 @@ abstract class Mmu
 
   /* Joypad */
   int getJoypadRegister() {
-    if (this.joypadState >> 8 == 0) // b8 = 0: return buttons
-      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0xFF;
-    else // return directions
-      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0xFF;
+    if (this.joypadState & 0x100 == 0) // b8 = 0: return directions
+      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0x3F;
+    else // b8 = 1: return buttons
+      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0x3F;
   }
+
   void setJoypadRegister(int v) {
-    this.joypadState &= 0xFF; // Reset b8: buttons are selected
-    if (v >> 4 != 0) // Directions: b8 = 1
+    if (v & 0x10 == 0) // Directions: b8 <- 1
+      this.joypadState &= 0xFF;
+    else if (v & 0x20 == 0) // Buttons: b8 <- 1
       this.joypadState |= (1 << 8);
     return ;
   }
