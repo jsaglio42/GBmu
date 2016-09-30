@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 10:50:25 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 18:15:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,24 +36,25 @@ abstract class FrameScheduler implements Worker.AWorker {
   // SIDE EFFECTS CONTROLS ************************************************** **
   void _makeLooping()
   {
-    Ft.log(Ft.typeStr(this), '_makeLooping');
+    Ft.log("WorkerFrame", '_makeLooping');
     assert(_sub.isPaused, "FrameScheduler: _makeLooping while not paused");
     _sub.resume();
   }
 
   void _makeDormant()
   {
-    Ft.log(Ft.typeStr(this), '_makeDormant');
+    Ft.log("WorkerFrame", '_makeDormant');
     assert(!_sub.isPaused, "FrameScheduler: _makeDormant while paused");
     _sub.pause();
-    this.ports.send('FrameUpdate', this.gbOpt.lcdScreen);
+    if (this.gbMode != GameBoyExternalMode.Absent)
+      this.ports.send('FrameUpdate', this.gbOpt.lcdScreen);
   }
 
   // CONSTRUCTION *********************************************************** **
 
   void init_framescheduler()
   {
-    Ft.log(Ft.typeStr(this), 'init_FrameScheduler');
+    Ft.log("WorkerFrame", 'init_FrameScheduler');
     _periodic = new Async.Stream.periodic(FRAME_PERIOD_DURATION);
     _sub = _periodic.listen(_onFrameUpdate);
     _sub.pause();
