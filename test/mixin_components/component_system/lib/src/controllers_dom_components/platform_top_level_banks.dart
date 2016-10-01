@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   handler_top_level_banks.dart                       :+:      :+:    :+:   //
+//   platform_top_level_banks.dart                      :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/29 15:52:34 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 18:08:43 by ngoguey          ###   ########.fr       //
+//   Created: 2016/10/01 16:51:13 by ngoguey           #+#    #+#             //
+//   Updated: 2016/10/01 17:03:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,7 +25,7 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-class HandlerTopLevelBanks {
+class PlatformTopLevelBanks {
 
   // ATTRIBUTES ************************************************************* **
   final PlatformComponentEvents _pce;
@@ -35,19 +35,19 @@ class HandlerTopLevelBanks {
   final DomDetachedCartBank _ddcb;
 
   // CONTRUCTION ************************************************************ **
-  static HandlerTopLevelBanks _instance;
+  static PlatformTopLevelBanks _instance;
 
-  factory HandlerTopLevelBanks(pde, pce) {
+  factory PlatformTopLevelBanks(pde, pce) {
     if (_instance == null)
-      _instance = new HandlerTopLevelBanks._(pde, pce);
+      _instance = new PlatformTopLevelBanks._(pde, pce);
     return _instance;
   }
 
-  HandlerTopLevelBanks._(pde, this._pce)
+  PlatformTopLevelBanks._(pde, this._pce)
     : _pde = pde
     , _dgbs = new DomGameBoySocket(pde)
     , _ddcb = new DomDetachedCartBank(pde) {
-    Ft.log('HandlerTLB', 'contructor');
+    Ft.log('PlatformTLB', 'contructor');
 
     _pce.onCartNew.forEach(_handleCartNew);
     _pce.onCartDelete.forEach(_handleCartDelete);
@@ -55,16 +55,17 @@ class HandlerTopLevelBanks {
   }
 
   // PUBLIC ***************************************************************** **
-  // DomGameBoySocket get dgbs => _dgbs;
+  DomGameBoySocket get gbSocket => _dgbs;
+  DomDetachedCartBank get cartBank => _ddcb;
 
   // CALLBACKS ************************************************************** **
   void _handleCartNew(DomCart c) {
-    Ft.log('HandlerTLB', '_handleCartNew', [c]);
+    Ft.log('PlatformTLB', '_handleCartNew', [c]);
     _ddcb.elt.nodes.add(c.elt);
   }
 
   void _handleCartDelete(DomCart c) {
-    Ft.log('HandlerTLB', '_handleCartDelete', [c]);
+    Ft.log('PlatformTLB', '_handleCartDelete', [c]);
     if (_ddcb.elt.nodes.contains(c.elt))
       _ddcb.elt.nodes.remove(c.elt);
   }

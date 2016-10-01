@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 16:02:24 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/01 17:56:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -46,9 +46,11 @@ Async.Future init(p) async {
   final PlatformComponentEvents pce = new PlatformComponentEvents();
   final PlatformDomComponentStorage pdcs =
     new PlatformDomComponentStorage(pcs, pde, pce);
-  final HandlerTopLevelBanks htlb = new HandlerTopLevelBanks(pde, pce);
+  final PlatformTopLevelBanks ptlb = new PlatformTopLevelBanks(pde, pce);
   final HandlerCartVisibility hcv = new HandlerCartVisibility(pdcs, pde, pce);
   final HandlerDragDrop hdd = new HandlerDragDrop(pdcs, pde, pce);
+  final HandlerDropZoneCatalyst hdzc = new HandlerDropZoneCatalyst(pdcs, ptlb, pce);
+  final HandlerDraggableCatalyst hdc = new HandlerDraggableCatalyst(pdcs, pce);
 
   final Emulator.Rom rom = new Emulator.Rom(0, 400);
   final Emulator.Ram ram = new Emulator.Ram(0, 400);

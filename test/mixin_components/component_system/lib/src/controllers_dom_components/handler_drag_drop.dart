@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 18:08:03 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 18:35:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/01 17:48:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -58,20 +58,17 @@ class HandlerDragDrop {
     _pdcs.draggedDismissal();
   }
 
-  // Filtering impossible drops such as:
-  //  - stacked drop-zone of different types
-  //  - chip dropped on incompatible chip-socket
   void _onDropReceived(HtmlDropZone that) {
     assert(_pdcs.dragged.isSome, '_onDropReceived() with none dragged');
-    if (_pdcs.dragged.v is DomCart && that is CartBank) {
-      if (that is DomGameBoySocket)
+    if (_pdcs.dragged.v is DomCart) {
+      assert(that is CartBank, '_onDropReceived() on bad zone');
+      if (that is DomGameBoySocket) {
         _pdcs.gbCartArrival(_pdcs.dragged.v);
+      }
       else
         _pdcs.gbCartDismissal();
     }
-    // else if (_pdcs.dragged.v is DomChip && that is ChipBank) {
-    //   //TODO implement
-    // }
+    //   //TODO implement chip drop
   }
 
 }
