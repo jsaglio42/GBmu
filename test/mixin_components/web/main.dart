@@ -6,10 +6,11 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 17:07:54 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/01 17:55:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
+import 'dart:isolate';
 import 'dart:js' as Js;
 import 'dart:math' as Math;
 import 'dart:async' as Async;
@@ -159,10 +160,12 @@ Async.Future init(Emulator.Emulator emu) async {
 
 main () {
   print('Hello World');
-
-  init(null)
-    ..catchError((e, st) {
-          print(e);
-          print(st);
+  Async.runZoned((){
+    init(null);
+      // ..catchError((_, st) {
+        // Ft.logerr('main', 'init-err', [st]);
+      // });
+  }, onError: (_, st) {
+    Ft.logerr('main.dart', 'main#uncaught', [st]);
   });
 }
