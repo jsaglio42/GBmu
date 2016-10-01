@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/01 15:22:54 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/01 16:25:34 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,22 @@ environment:
   DC: ./component_system/lib/src/dom_components
   CDC: ./component_system/lib/src/controllers_dom_components
 windows:
+- window_index: '998'
+  window_name: commit
+  layout: even-horizontal
+  panes:
+    - clear
+    - clear
+    - clear
+
+- window_index: 999
+  window_name: tmux edit
+  panes: [e ./tmuxp.yaml]
+
+- window_index: 500
+  window_name: compilation
+  panes: [e ./pubspec.yaml ./component_system/pubspec.yaml]
+
 - window_index: 0
   window_name: main
   layout: main-vertical
@@ -58,3 +74,12 @@ windows:
 - window_index: 9
   window_name: html elements
   panes: ['e $DC/html_*{cart,simple}*.dart']
+
+
+# CCS
+- window_index: 41
+  window_name: ccs platforms
+  panes: ['e $CCS/platform*.dart']
+- window_index: 42
+  window_name: ccs transformers
+  panes: ['e $CCS/transf*.dart']
