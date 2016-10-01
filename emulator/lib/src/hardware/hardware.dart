@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/09/30 15:25:35 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/01 18:24:07 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,20 +36,13 @@ abstract class Hardware {
   int joypadState = 0x0;
 
   void initHardware(Cartridge.ACartridge c) {
-    /* FOR LCD TEST ONLY */
-    /* vvvvvvvvvvvvvvvvv */
-    for (int i = 0; i < LCD_DATA_SIZE; ++i) {
-      switch (i % 4) {
-        case (0) : this.lcdScreen[i] = 0xFF; break; //red
-        case (1) : this.lcdScreen[i] = 0x00; break; //green;
-        case (2) : this.lcdScreen[i] = 0x00; break; //green;
-        default : this.lcdScreen[i] = 0xFF; break; //alpha;
-      }
-    }
-    /* ^^^^^^^^^^^^^^^^^ */
-
     assert(_c == null, "Hardware: Cartridge already initialised");
     _c = c;
+    /* Init Screen */
+    for (int i = 0; i < LCD_DATA_SIZE; ++i) {
+      this.lcdScreen[i] = 0xFF;
+    }
+    /* Init Memory */
     this.tailRam.push8_unsafe(0xFF05, 0x00); // TIMA
     this.tailRam.push8_unsafe(0xFF06, 0x00); // TMA
     this.tailRam.push8_unsafe(0xFF07, 0x00); // TAC
