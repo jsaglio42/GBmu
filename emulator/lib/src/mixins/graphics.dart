@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 18:23:12 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/01 19:11:42 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -59,12 +59,20 @@ abstract class Graphics
   /* API **********************************************************************/
   void updateGraphics(int nbClock) {
     _updateCurrentStatus();
-    _updateGraphicMode(nbClock);
-    if (_requestDrawLine)
-      _drawLine();
-    if (_requestUpdateScreen)
-      _updateScreen();
-    _updateLCDStatus();
+    if (_current_LCDC & (1 << 7) == 0)
+    {
+      _updated_LY = 0;
+      _updated_mode = GraphicMode.VBLANK;
+    }
+    else
+    {
+      _updateGraphicMode(nbClock);
+      if (_requestDrawLine)
+        _drawLine();
+      if (_requestUpdateScreen)
+        _updateScreen();
+    }
+    _updateGraphicRegisters();
   }
   
   /* Private ******************************************************************/
@@ -127,7 +135,6 @@ abstract class Graphics
   }
 
   /* MUST UPDATE _updated_LY and _updated_mode, LCD Routine and interrupt */
-  /* MUST UPDATE LY register (in memory) */
   void _updateScanline() {
     bool interruptMonitored;
 
@@ -166,12 +173,11 @@ abstract class Graphics
 
     if (interruptMonitored && (_current_mode != _updated_mode))
         this.requestInterrupt(InterruptType.LCDStat);
-    this.tailRam.push8_unsafe(_addrLY, _updated_LY);
     return ;
   }
 
   /* MUST trigger LYC interrupt and push new STAT register */
-  void _updateLCDStatus() {
+  void _updateGraphicRegisters() {
     int coincidence_bit = 0;
     int mode_bits = _updated_mode.index;
     int interrupt_bits = _current_STAT & 0xF8;
@@ -184,6 +190,7 @@ abstract class Graphics
     }
     final int updated_STAT = coincidence_bit | mode_bits | interrupt_bits;
     this.tailRam.push8_unsafe(_addrSTAT, updated_STAT);
+    this.tailRam.push8_unsafe(_addrLY, _updated_LY);
     return ;
   }
 
