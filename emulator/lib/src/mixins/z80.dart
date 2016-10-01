@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/30 17:09:57 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/01 16:59:04 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -1512,7 +1512,7 @@ abstract class Z80
   int _JP_C_nn()  { return  _JP_cc_nn(this.cpur.cy == 1); }
 
   int _JP_HL() {
-    this.cpur.PC = this.pull16(this.cpur.HL);
+    this.cpur.PC = this.cpur.HL;
     return 4;
   }
 
