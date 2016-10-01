@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 17:00:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/01 15:58:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,6 +24,7 @@ class Update<T> {
 
 abstract class Component {
   const Component();
+  static Iterable<Component> values = [Rom.v, Ram.v, Ss.v];
 }
 
 abstract class Chip extends Component {

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 18:49:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/01 16:02:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,6 +27,10 @@ import 'package:component_system/src/include_cdc.dart';
 
 import 'package:component_system/src/tmp_emulator_enums.dart';
 import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
+
+/* {"uid":2927093936,"type":"Rom"}
+ *   {"idbid":1,"_ramSize":400,"_globalChecksum":8173}
+ */
 
 Async.Future init(p) async {
   Ft.log('Component_System', 'init', [p]);

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:07:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/01 16:01:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -47,9 +47,19 @@ class PlatformIndexedDb {
   }
 
   Async.Future start(Idb.IdbFactory dbf) async {
+    final Iterable<String> storeNames =
+      Component.values.map((v) => v.toString());
+    openDb() =>
+      dbf.open(_DBNAME, version: 1, onUpgradeNeeded:_initialUpgrade);
+
     Ft.log('PlatformIDB', 'start', [dbf]);
-    // dbf.deleteDatabase(_DBNAME); //debug
-    _db = await dbf.open(_DBNAME, version: 1, onUpgradeNeeded:_initialUpgrade);
+    _db = await openDb();
+    if (!_db.objectStoreNames.toSet().containsAll(storeNames)) {
+      Ft.log('PlatformIDB', 'start#reset-db');
+      _db.close();
+      dbf.deleteDatabase(_DBNAME);
+      _db = await openDb();
+    }
   }
 
   void _initialUpgrade(Idb.VersionChangeEvent ev) {
