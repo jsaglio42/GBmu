@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/03 18:29:14 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/03 21:24:02 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -67,7 +67,7 @@ class GRegisterCurrentInfo {
     this.SCY = tr.pull8_unsafe(g_memRegInfos[MemReg.SCY.index].address);
     this.SCX = tr.pull8_unsafe(g_memRegInfos[MemReg.SCX.index].address);
     this.WY = tr.pull8_unsafe(g_memRegInfos[MemReg.WY.index].address);
-    this.WX = tr.pull8_unsafe(g_memRegInfos[MemReg.WX.index].address);
+    this.WX = tr.pull8_unsafe(g_memRegInfos[MemReg.WX.index].address) - 7;
     this.BGP = tr.pull8_unsafe(g_memRegInfos[MemReg.BGP.index].address);
     return ;
   }
@@ -310,11 +310,27 @@ abstract class Graphics
   }
 
   Color _getWindowPixel(int x) {
-    return Color.White;
+    final int posY = _current.LY - _current.WY;
+    final int posX =  x - _current.WY;
+    final int tileY = posY ~/ 8;
+    final int tileX = posX ~/ 8;
+    final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_WIN + tileY * 32 + tileX);
+    final int tileAddress = _current.getTileAddress(tileID);
+    final int relativeY = posY % 8;
+    final int relativeX = posX % 8;
+    final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
+    final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
+    final int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
+    final int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
+    // return _current.getColor(colorId_l | colorId_h);
+    return Color.Black;
   }
 
   Color _getSpritePixel(int x, Color c) {
-    return Color.White;
+    // for (int spriteno = 0; spriteno < 40; ++spriteno) {
+      //
+    // }
+    return c;
   }
 
   void _drawPixel(int x, Color c) {
