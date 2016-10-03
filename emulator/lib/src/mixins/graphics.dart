@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 19:11:42 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/03 17:37:14 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,13 +19,9 @@ import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
+import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
-
-final int _addrLCDC = g_memRegInfos[MemReg.LCDC.index].address;
-final int _addrSTAT = g_memRegInfos[MemReg.STAT.index].address;
-final int _addrLY = g_memRegInfos[MemReg.LY.index].address;
-final int _addrLYC = g_memRegInfos[MemReg.LYC.index].address;
 
 enum GraphicMode {
   HBLANK,
@@ -34,6 +30,103 @@ enum GraphicMode {
   VRAM_ACCESS
 }
 
+enum Color {
+  White,
+  LightGrey,
+  DarkGrey,
+  Black
+}
+
+final Map<Color, List<int>> _colorMap = new Map.unmodifiable({
+  Color.White : [0xFF, 0xFF, 0xFF, 0xFF],
+  Color.LightGrey : [0xAA, 0xAA, 0xAA, 0xFF],
+  Color.DarkGrey : [0x55, 0x55, 0x55, 0x55],
+  Color.Black : [0x00, 0x00, 0x00, 0xFF]
+});
+
+/* Small classes used to save data/store info *********************************/
+class GRegisterCurrentInfo {
+
+  int LCDC;
+  int STAT;
+  int LYC;
+  int LY;
+  int SCY;
+  int SCX;
+  int WY;
+  int WX;
+  int BGP;
+
+  GRegisterCurrentInfo();
+
+  void init(Data.Ram tr) {
+    this.LCDC = tr.pull8_unsafe(g_memRegInfos[MemReg.LCDC.index].address);
+    this.STAT = tr.pull8_unsafe(g_memRegInfos[MemReg.STAT.index].address);
+    this.LYC = tr.pull8_unsafe(g_memRegInfos[MemReg.LYC.index].address);
+    this.LY = tr.pull8_unsafe(g_memRegInfos[MemReg.LY.index].address);
+    this.SCY = tr.pull8_unsafe(g_memRegInfos[MemReg.SCY.index].address);
+    this.SCX = tr.pull8_unsafe(g_memRegInfos[MemReg.SCX.index].address);
+    this.WY = tr.pull8_unsafe(g_memRegInfos[MemReg.WY.index].address);
+    this.WX = tr.pull8_unsafe(g_memRegInfos[MemReg.WX.index].address);
+    this.BGP = tr.pull8_unsafe(g_memRegInfos[MemReg.BGP.index].address);
+    return ;
+  }
+
+  bool get isLCDEnabled => (this.LCDC & (1 << 7) != 0);
+  GraphicMode get mode => GraphicMode.values[this.STAT & 0x3];
+  bool isInterruptMonitored(int intID) => (this.STAT & (1 << intID) != 0);
+
+  bool get isWindowDisplayEnabled => (this.LCDC & (1 << 5) != 0);
+  bool get isSpriteDisplayEnabled => (this.LCDC & (1 << 2) != 0);
+  bool get isBackgroundDisplayEnabled => (this.LCDC & (1 << 0) != 0);
+  int  get tileMapAddress_BG => (this.LCDC & (1 << 3) == 0) ? 0x9800 : 0x9C00;
+  int  get tileMapAddress_WIN => (this.LCDC & (1 << 6) == 0) ? 0x9800 : 0x9C00;
+
+  int getTileAddress(int tileID) {
+    assert(tileID & ~0xFF == 0, 'Invalid tileID');
+    if (this.LCDC & (1 << 4) == 0)
+      return 0x8800 + tileID.toSigned(2) * 16;
+    else
+      return 0x8000 + tileID * 16;
+  }
+
+  Color getColor(int colorID) {
+    assert(colorID & ~0x3 == 0, 'Invalid colorID');
+    switch (colorID) {
+      case (0) : return Color.values[(this.BGP >> 0) & 0x3];
+      case (1) : return Color.values[(this.BGP >> 2) & 0x3];
+      case (2) : return Color.values[(this.BGP >> 4) & 0x3];
+      case (3) : return Color.values[(this.BGP >> 6) & 0x3];
+      default : assert(false, 'getColor: switch failure');
+    }
+  }
+
+}
+
+/* Small classes used to save updated info ************************************/
+class GRegisterUpdatedInfo {
+
+    bool drawLine = false;
+    bool updateScreen = false;
+
+    int LY = null;
+    GraphicMode mode = null;
+    int STAT = null;
+
+    GRegisterUpdatedInfo();
+
+    void init() {
+      this.drawLine = false;
+      this.updateScreen = false;
+      this.mode = null;
+      this.STAT = null;
+      this.LY = null;
+      return ;
+    }
+
+}
+
+/* Mixins that handle graphics ************************************************/
 abstract class Graphics
   implements Hardware.Hardware
   , Mmu.Mmu
@@ -44,51 +137,32 @@ abstract class Graphics
   
   /* Used to update LCDStatus */
   int _counterScanline = 0;
-
-  int _current_LCDC;
-  int _current_STAT;
-  int _current_LYC;
-  int _current_LY;
-  GraphicMode _current_mode;
-  
-  int _updated_LY;
-  GraphicMode _updated_mode;
-  bool _requestDrawLine;
-  bool _requestUpdateScreen;
+  GRegisterCurrentInfo _current = new GRegisterCurrentInfo();
+  GRegisterUpdatedInfo _updated = new GRegisterUpdatedInfo();
 
   /* API **********************************************************************/
   void updateGraphics(int nbClock) {
-    _updateCurrentStatus();
-    if (_current_LCDC & (1 << 7) == 0)
+    _current.init(this.tailRam);
+    _updated.init();
+
+    if (!_current.isLCDEnabled)
     {
-      _updated_LY = 0;
-      _updated_mode = GraphicMode.VBLANK;
+      _updated.LY = 0;
+      _updated.mode = GraphicMode.VBLANK;
     }
     else
     {
       _updateGraphicMode(nbClock);
-      if (_requestDrawLine)
+      if (_updated.drawLine)
         _drawLine();
-      if (_requestUpdateScreen)
+      if (_updated.updateScreen)
         _updateScreen();
     }
     _updateGraphicRegisters();
+    return ;
   }
   
   /* Private ******************************************************************/
-  void _updateCurrentStatus() {
-    _current_LCDC = this.tailRam.pull8_unsafe(_addrLCDC);
-    _current_STAT = this.tailRam.pull8_unsafe(_addrSTAT);
-    _current_LYC = this.tailRam.pull8_unsafe(_addrLYC);
-    _current_LY = this.tailRam.pull8_unsafe(_addrLY);
-    _current_mode = GraphicMode.values[_current_STAT & 0x3];
-    _requestDrawLine = false;
-    _requestUpdateScreen = false;
-    _updated_LY = null;
-    _updated_mode = null;
-    return ;
-  }
-
   /* MUST UPDATE _updated_LY and _updated_mode, and request interrupt */
   void _updateGraphicMode(int nbClock) {
     bool interruptMonitored;
@@ -101,24 +175,24 @@ abstract class Graphics
     }
     else
     {
-      _updated_LY = _current_LY;
+      _updated.LY = _current.LY;
       if (_counterScanline >= HBLANK_THRESHOLD)
       {
-        _updated_mode = GraphicMode.HBLANK;
-        interruptMonitored = (_current_STAT & (1 << 3) != 0) ? true : false;
+        _updated.mode = GraphicMode.HBLANK;
+        interruptMonitored = _current.isInterruptMonitored(3);
       }
       else if (_counterScanline >= VRAM_THRESHOLD)
       {
-        _updated_mode = GraphicMode.VRAM_ACCESS;
+        _updated.mode = GraphicMode.VRAM_ACCESS;
         interruptMonitored = false;
       }
       else
       {
-        _updated_mode = GraphicMode.OAM_ACCESS;
-        interruptMonitored = (_current_STAT & (1 << 5) != 0) ? true : false;
+        _updated.mode = GraphicMode.OAM_ACCESS;
+        interruptMonitored = _current.isInterruptMonitored(5);
       }
-      assert(_updated_LY != null, "LY: Condition Failure");
-      assert(_updated_mode != null, "Mode: Condition Failure");
+      assert(_updated.LY != null, "LY: Condition Failure");
+      assert(_updated.mode != null, "Mode: Condition Failure");
       assert(interruptMonitored != null, "interrupt: Condition Failure");
 
       /* FOR DEBUG */
@@ -128,7 +202,7 @@ abstract class Graphics
       //   Update mode: ${_updated_mode.toString()}
       //   ''');
 
-      if (interruptMonitored && (_current_mode != _updated_mode))
+      if (interruptMonitored && (_updated.mode != _current.mode))
         this.requestInterrupt(InterruptType.LCDStat);
     }
     return ;
@@ -136,31 +210,31 @@ abstract class Graphics
 
   /* MUST UPDATE _updated_LY and _updated_mode, LCD Routine and interrupt */
   void _updateScanline() {
+    final int incLY = _current.LY + 1;
     bool interruptMonitored;
 
-    final int incLY = _current_LY + 1;
-    _requestDrawLine = true;
+    _updated.drawLine = true;
     if (incLY >= NEWFRAME_THRESHOLD)
     {
-      _updated_LY = 0;
-      _updated_mode = GraphicMode.OAM_ACCESS;
-      interruptMonitored = (_current_STAT & (1 << 5) != 0) ? true : false;
-      _requestUpdateScreen = true;
+      _updated.LY = 0;
+      _updated.mode = GraphicMode.OAM_ACCESS;
+      _updated.updateScreen = true;
+      interruptMonitored = _current.isInterruptMonitored(5);
     }
     else if (incLY >= VBLANK_THRESHOLD)
     {
-      _updated_LY = incLY;
-      _updated_mode = GraphicMode.VBLANK;
-      interruptMonitored = (_current_STAT & (1 << 4) != 0) ? true : false;
+      _updated.LY = incLY;
+      _updated.mode = GraphicMode.VBLANK;
+      interruptMonitored = _current.isInterruptMonitored(4);
     }
     else
     {
-      _updated_LY = incLY;
-      _updated_mode = GraphicMode.OAM_ACCESS;
-      interruptMonitored = (_current_STAT & (1 << 5) != 0) ? true : false;
+      _updated.LY = incLY;
+      _updated.mode = GraphicMode.OAM_ACCESS;
+      interruptMonitored = _current.isInterruptMonitored(5);
     }
-    assert(_updated_LY != null, "LY: Condition Failure");
-    assert(_updated_mode != null, "Mode: Condition Failure");
+    assert(_updated.LY != null, "LY: Condition Failure");
+    assert(_updated.mode != null, "Mode: Condition Failure");
     assert(interruptMonitored != null, "interrupt: Condition Failure");
 
     /* FOR DEBUG */
@@ -171,66 +245,79 @@ abstract class Graphics
     //   Update mode: ${_updated_mode.toString()}
     //   ''');
 
-    if (interruptMonitored && (_current_mode != _updated_mode))
+    if (interruptMonitored && (_updated.mode != _current.mode))
         this.requestInterrupt(InterruptType.LCDStat);
     return ;
   }
 
-  /* MUST trigger LYC interrupt and push new STAT register */
+  /* MUST trigger LYC interrupt and push new STAT/LY register */
   void _updateGraphicRegisters() {
-    int coincidence_bit = 0;
-    int mode_bits = _updated_mode.index;
-    int interrupt_bits = _current_STAT & 0xF8;
-
-    if (_current_LYC == _updated_LY)
-    {
-      coincidence_bit = (1 << 2);
-      if (_current_STAT & (1 << 6) != 0)
+    final int interrupt_bits = _current.STAT & 0xF8;
+    final int mode_bits = _updated.mode.index;
+    final int coincidence_bit = (_current.LYC == _updated.LY) ? (1 << 2) : 0;
+    if (coincidence_bit != 0 && _current.isInterruptMonitored(6))
         this.requestInterrupt(InterruptType.LCDStat);
-    }
-    final int updated_STAT = coincidence_bit | mode_bits | interrupt_bits;
-    this.tailRam.push8_unsafe(_addrSTAT, updated_STAT);
-    this.tailRam.push8_unsafe(_addrLY, _updated_LY);
+    _updated.STAT = coincidence_bit | mode_bits | interrupt_bits;
+    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.STAT.index].address
+      , _updated.STAT);
+    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.LY.index].address
+      , _updated.LY);
     return ;
   }
 
   /* Drawing functions ********************************************************/
   void _updateScreen() {
     Uint8List tmp;
+
     tmp = _buffer;
     _buffer = this.lcdScreen;
     this.lcdScreen = tmp;
     return ;
   }
 
-  void _clearLine() {
-    final int lineOffset = 4 * _current_LY * LCD_WIDTH;
-    int i;
-    for (i = 0; i < 4 * LCD_WIDTH; ++i) {
-      _buffer[lineOffset + i] = 0xFF;
+  void _drawLine() {
+    if (_current.LY < VBLANK_THRESHOLD)
+    {
+      for (int x = 0; x < LCD_WIDTH; ++x)
+      {
+        if (_current.isBackgroundDisplayEnabled)
+          _drawBackgroundPixel(x);
+        if (_current.isWindowDisplayEnabled)
+          _drawWindowPixel(x);
+        if (_current.isSpriteDisplayEnabled)
+          _drawSpritePixel(x);
+      }
     }
     return ;
   }
 
-  /* This is for test only, should draw striped screen */
-  void _drawLine() {
-    if (_current_LY >= VBLANK_THRESHOLD)
-      return ;
-    else if (_current_LCDC & (1 << 7) == 0)
-      return _clearLine();
-    else
-    {
-      List<int> colorlist;
-      colorlist = (_current_LY % 2 == 0) ? [0xFF, 0, 0, 0xFF] : [0, 0, 0xFF, 0xFF];
-      for (int i = 0; i < LCD_WIDTH; ++i) {
-        int pixelOffset = 4 * (_current_LY * LCD_WIDTH + i);
-        _buffer[pixelOffset + 0] = colorlist[0];
-        _buffer[pixelOffset + 1] = colorlist[1];
-        _buffer[pixelOffset + 2] = colorlist[2];
-        _buffer[pixelOffset + 3] = colorlist[3];
-      }
-      return ;
-    }
+  void _drawBackgroundPixel(int x) {
+    final int posY = _current.SCY + _current.LY;
+    final int tileY = posY ~/ 8;
+    final int posX =  _current.SCX + x;
+    final int tileX = posX ~/ 8;
+    final int tileID = this.pull8(_current.tileMapAddress_BG + tileY * 32 + tileX);
+    final int tileAddress = _current.getTileAddress(tileID);
+    final int relativeY = posY % 8;
+    final int tileRow = this.pull16(tileAddress + relativeY * 2);
+    final int relativeX = posX % 8;
+    final int colorId_l = (tileRow & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
+    final int colorId_h = (tileRow & (1 << (15 - relativeX)) == 0) ? 0x0 : 0x2;
+    final List clist = _colorMap[_current.getColor(colorId_l | colorId_h)];
+    final int pixelOffset = (_current.LY * LCD_WIDTH + x) * 4;
+    _buffer[pixelOffset + 0] = clist[0];
+    _buffer[pixelOffset + 1] = clist[1];
+    _buffer[pixelOffset + 2] = clist[2];
+    _buffer[pixelOffset + 3] = clist[3];
+    return ;
+  }
+
+  void _drawWindowPixel(int x) {
+    return ;
+  }
+
+  void _drawSpritePixel(int x) {
+    return ;
   }
 
 }
