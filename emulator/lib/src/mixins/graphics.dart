@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/03 17:37:14 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/03 18:24:37 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -280,18 +280,20 @@ abstract class Graphics
     {
       for (int x = 0; x < LCD_WIDTH; ++x)
       {
+        Color c = Color.White;
         if (_current.isBackgroundDisplayEnabled)
-          _drawBackgroundPixel(x);
+          c = _getBackgroundPixel(x);
         if (_current.isWindowDisplayEnabled)
-          _drawWindowPixel(x);
+          c = _getWindowPixel(x);
         if (_current.isSpriteDisplayEnabled)
-          _drawSpritePixel(x);
+          c = _getSpritePixel(x, c);
+        _drawPixel(x, c);
       }
     }
     return ;
   }
 
-  void _drawBackgroundPixel(int x) {
+  Color _getBackgroundPixel(int x) {
     final int posY = _current.SCY + _current.LY;
     final int tileY = posY ~/ 8;
     final int posX =  _current.SCX + x;
@@ -303,20 +305,24 @@ abstract class Graphics
     final int relativeX = posX % 8;
     final int colorId_l = (tileRow & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
     final int colorId_h = (tileRow & (1 << (15 - relativeX)) == 0) ? 0x0 : 0x2;
-    final List clist = _colorMap[_current.getColor(colorId_l | colorId_h)];
+    return _current.getColor(colorId_l | colorId_h);
+  }
+
+  Color _getWindowPixel(int x) {
+    return Color.White;
+  }
+
+  Color _getSpritePixel(int x, Color c) {
+    return Color.White;
+  }
+
+  void _drawPixel(int x, Color c) {
     final int pixelOffset = (_current.LY * LCD_WIDTH + x) * 4;
-    _buffer[pixelOffset + 0] = clist[0];
-    _buffer[pixelOffset + 1] = clist[1];
-    _buffer[pixelOffset + 2] = clist[2];
-    _buffer[pixelOffset + 3] = clist[3];
-    return ;
-  }
-
-  void _drawWindowPixel(int x) {
-    return ;
-  }
-
-  void _drawSpritePixel(int x) {
+    final List cList = _colorMap[c];
+    _buffer[pixelOffset + 0] = cList[0];
+    _buffer[pixelOffset + 1] = cList[1];
+    _buffer[pixelOffset + 2] = cList[2];
+    _buffer[pixelOffset + 3] = cList[3];
     return ;
   }
 
