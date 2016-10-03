@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/03 18:24:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/03 18:29:14 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -295,16 +295,17 @@ abstract class Graphics
 
   Color _getBackgroundPixel(int x) {
     final int posY = _current.SCY + _current.LY;
-    final int tileY = posY ~/ 8;
     final int posX =  _current.SCX + x;
+    final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
-    final int tileID = this.pull8(_current.tileMapAddress_BG + tileY * 32 + tileX);
+    final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_BG + tileY * 32 + tileX);
     final int tileAddress = _current.getTileAddress(tileID);
     final int relativeY = posY % 8;
-    final int tileRow = this.pull16(tileAddress + relativeY * 2);
     final int relativeX = posX % 8;
-    final int colorId_l = (tileRow & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
-    final int colorId_h = (tileRow & (1 << (15 - relativeX)) == 0) ? 0x0 : 0x2;
+    final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
+    final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
+    final int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
+    final int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
     return _current.getColor(colorId_l | colorId_h);
   }
 
