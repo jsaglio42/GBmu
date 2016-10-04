@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/03 21:24:02 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/04 20:43:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -74,7 +74,8 @@ class GRegisterCurrentInfo {
 
   bool get isLCDEnabled => (this.LCDC & (1 << 7) != 0);
   GraphicMode get mode => GraphicMode.values[this.STAT & 0x3];
-  bool isInterruptMonitored(int intID) => (this.STAT & (1 << intID) != 0);
+  bool isInterruptMonitored(GraphicMode g)
+    => (this.STAT & (1 << (g.index + 3)) != 0);
 
   bool get isWindowDisplayEnabled => (this.LCDC & (1 << 5) != 0);
   bool get isSpriteDisplayEnabled => (this.LCDC & (1 << 2) != 0);
@@ -163,105 +164,119 @@ abstract class Graphics
   }
   
   /* Private ******************************************************************/
-  /* MUST UPDATE _updated_LY and _updated_mode, and request interrupt */
   void _updateGraphicMode(int nbClock) {
-    bool interruptMonitored;
-
+    // print('$_counterScanline : ${_current.mode.toString()}');
     _counterScanline += nbClock;
-    if (_counterScanline >= NEWLINE_THRESHOLD)
+    switch (_current.mode)
     {
-      _counterScanline = 0;
-      _updateScanline();
+      case (GraphicMode.OAM_ACCESS) : _OAM_routine(); break;
+      case (GraphicMode.VRAM_ACCESS) : _VRAM_routine(); break;
+      case (GraphicMode.HBLANK) : ; _HBLANK_routine(); break;
+      case (GraphicMode.VBLANK) : ; _VBLANK_routine(); break;
+      default: assert (false, 'GraphicMode: switch failure');
+    }
+    assert(_updated.LY != null, "LY: Condition Failure");
+    assert(_updated.mode != null, "Mode: Condition Failure");
+  }
+
+  /* Switch to VRAM_ACCESS or remain as is */
+  void _OAM_routine() {
+    if (_counterScanline >= CLOCK_PER_OAM_ACCESS)
+    {
+      _counterScanline -= CLOCK_PER_OAM_ACCESS;
+      _updated.LY = _current.LY;
+      _updated.mode = GraphicMode.VRAM_ACCESS;
     }
     else
     {
       _updated.LY = _current.LY;
-      if (_counterScanline >= HBLANK_THRESHOLD)
-      {
-        _updated.mode = GraphicMode.HBLANK;
-        interruptMonitored = _current.isInterruptMonitored(3);
-      }
-      else if (_counterScanline >= VRAM_THRESHOLD)
-      {
-        _updated.mode = GraphicMode.VRAM_ACCESS;
-        interruptMonitored = false;
-      }
-      else
-      {
-        _updated.mode = GraphicMode.OAM_ACCESS;
-        interruptMonitored = _current.isInterruptMonitored(5);
-      }
-      assert(_updated.LY != null, "LY: Condition Failure");
-      assert(_updated.mode != null, "Mode: Condition Failure");
-      assert(interruptMonitored != null, "interrupt: Condition Failure");
-
-      /* FOR DEBUG */
-      // print('''
-      //   counterScanline: $_counterScanline
-      //   Current mode: ${_current_mode.toString()}
-      //   Update mode: ${_updated_mode.toString()}
-      //   ''');
-
-      if (interruptMonitored && (_updated.mode != _current.mode))
-        this.requestInterrupt(InterruptType.LCDStat);
+      _updated.mode = _current.mode;
     }
-    return ;
   }
 
-  /* MUST UPDATE _updated_LY and _updated_mode, LCD Routine and interrupt */
-  void _updateScanline() {
-    final int incLY = _current.LY + 1;
-    bool interruptMonitored;
-
-    _updated.drawLine = true;
-    if (incLY >= NEWFRAME_THRESHOLD)
+  /* Switch to HBLANK or remain as is */
+  void _VRAM_routine() {
+    if (_counterScanline >= CLOCK_PER_VRAM_ACCESS)
     {
-      _updated.LY = 0;
-      _updated.mode = GraphicMode.OAM_ACCESS;
-      _updated.updateScreen = true;
-      interruptMonitored = _current.isInterruptMonitored(5);
-    }
-    else if (incLY >= VBLANK_THRESHOLD)
-    {
-      _updated.LY = incLY;
-      _updated.mode = GraphicMode.VBLANK;
-      interruptMonitored = _current.isInterruptMonitored(4);
+      _counterScanline -= CLOCK_PER_VRAM_ACCESS;
+      _updated.LY = _current.LY;
+      _updated.mode = GraphicMode.HBLANK;
+      if (_current.isInterruptMonitored(_updated.mode))
+        this.requestInterrupt(InterruptType.LCDStat);
     }
     else
     {
-      _updated.LY = incLY;
-      _updated.mode = GraphicMode.OAM_ACCESS;
-      interruptMonitored = _current.isInterruptMonitored(5);
+      _updated.LY = _current.LY;
+      _updated.mode = _current.mode;
     }
-    assert(_updated.LY != null, "LY: Condition Failure");
-    assert(_updated.mode != null, "Mode: Condition Failure");
-    assert(interruptMonitored != null, "interrupt: Condition Failure");
+  }
 
-    /* FOR DEBUG */
-    // print('''
-    //   *** Update Line ***
-    //   LY = $_updated_LY
-    //   Current mode: ${_current_mode.toString()}
-    //   Update mode: ${_updated_mode.toString()}
-    //   ''');
-
-    if (interruptMonitored && (_updated.mode != _current.mode))
+  /* Switch to OAM_ACCESS/VBLANK or remain as is */
+  void _HBLANK_routine() {
+    if (_counterScanline >= CLOCK_PER_HBLANK)
+    {
+      _counterScanline -= CLOCK_PER_HBLANK;
+      _updated.drawLine = true;
+      _updated.LY = _current.LY + 1;
+      if (_updated.LY < VBLANK_THRESHOLD)
+        _updated.mode = GraphicMode.OAM_ACCESS;
+      else
+      {
+        _updated.mode = GraphicMode.VBLANK;
+        this.requestInterrupt(InterruptType.VBlank);
+      }
+      if (_current.isInterruptMonitored(_updated.mode))
         this.requestInterrupt(InterruptType.LCDStat);
-    return ;
+    }
+    else
+    {
+      _updated.LY = _current.LY;
+      _updated.mode = _current.mode;
+    }
+  }
+
+  /* Switch to OAM_ACCESS or remain as is */
+  void _VBLANK_routine() {
+    if (_counterScanline >= CLOCK_PER_LINE)
+    {
+      _counterScanline -= CLOCK_PER_LINE;
+      final int incLY = _current.LY + 1;
+      if (incLY >= FRAME_THRESHOLD)
+      {
+        _updated.updateScreen = true;
+        _updated.LY = 0;
+        _updated.mode = GraphicMode.OAM_ACCESS;
+        if (_current.isInterruptMonitored(_updated.mode))
+          this.requestInterrupt(InterruptType.LCDStat);
+      }
+      else
+      {
+        _updated.LY = incLY;
+        _updated.mode = _current.mode;
+      }
+    }
+    else
+    {
+      _updated.LY = _current.LY;
+      _updated.mode = _current.mode;
+    }
   }
 
   /* MUST trigger LYC interrupt and push new STAT/LY register */
   void _updateGraphicRegisters() {
     final int interrupt_bits = _current.STAT & 0xF8;
     final int mode_bits = _updated.mode.index;
-    final int coincidence_bit = (_current.LYC == _updated.LY) ? (1 << 2) : 0;
-    if (coincidence_bit != 0 && _current.isInterruptMonitored(6))
+    if (_current.LYC != _updated.LY)
+      _updated.STAT = mode_bits | interrupt_bits;
+    else
+    {
+      _updated.STAT = mode_bits | interrupt_bits | 0x4;
+      if (_current.STAT & (1 << 6) != 0)
         this.requestInterrupt(InterruptType.LCDStat);
-    _updated.STAT = coincidence_bit | mode_bits | interrupt_bits;
-    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.STAT.index].address
-      , _updated.STAT);
-    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.LY.index].address
-      , _updated.LY);
+    }
+    this.tailRam
+      ..push8_unsafe(g_memRegInfos[MemReg.STAT.index].address, _updated.STAT)
+      ..push8_unsafe(g_memRegInfos[MemReg.LY.index].address, _updated.LY);
     return ;
   }
 

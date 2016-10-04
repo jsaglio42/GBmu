@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/30 23:13:01 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/04 20:39:47 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -115,7 +115,9 @@ abstract class Mmu
     switch(rinfo?.reg)
     {
       case (MemReg.P1) : return setJoypadRegister(v);
-      case (MemReg.DIV) : return setDIVRegister();
+      case (MemReg.DIV) : return resetDIVRegister();
+      case (MemReg.LY) : return resetLYRegister();
+      case (MemReg.DMA) : return execDMA(v);
       default: return this.tailRam.push8_unsafe(memAddr, v);
     }
   }
@@ -137,8 +139,22 @@ abstract class Mmu
   }
 
   /* Timers */
-  void setDIVRegister() {
+  void resetDIVRegister() {
     this.tailRam.push8_unsafe(g_memRegInfos[MemReg.DIV.index].address, 0x00);
+    return ;
+  }
+
+  /* LCD */
+  void resetLYRegister() {
+    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.LY.index].address, 0x00);
+    return ;
+  }
+
+  void execDMA(int v) {
+    final int addr = v << 8;
+    for (int i = 0 ; i < 0xA0; i++) {
+      this.tailRam.push8_unsafe(0xFE00 + i, this.pull8(addr + i));
+    }
     return ;
   }
 

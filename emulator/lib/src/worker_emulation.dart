@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/30 18:17:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 18:20:54 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -216,7 +216,7 @@ abstract class Emulation implements Worker.AWorker {
       clockSum = _emulate(timeLimit, clockLimit);
     }
     catch (e, st) {
-      // Ft.logwarn(Ft.typeStr(this), '_onEmulation#try', [e, st]);
+      Ft.logwarn(Ft.typeStr(this), '_onEmulation#try', [e, st]);
       clockSum = 0;
       error = e;
       stacktrace = st;

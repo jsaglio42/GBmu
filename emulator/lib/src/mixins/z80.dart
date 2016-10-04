@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 16:59:04 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/04 20:39:19 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -96,7 +96,7 @@ abstract class Z80
       case (0x32) : return _LDD_HL_A();                 //  LD (HL-), A
       case (0x33) : return _INC_rr(Reg16.SP);           //  INC SP
       case (0x34) : return _INC_HL();                   //  INC (HL)
-      case (0x35) : return _INC_HL();                   //  DEC (HL)
+      case (0x35) : return _DEC_HL();                   //  DEC (HL)
       case (0x36) : return _LD_HL_n();                  //  LD (HL), n
       case (0x37) : return _SCF();                      //  SCF
 
@@ -106,7 +106,7 @@ abstract class Z80
       case (0x3B) : return _DEC_rr(Reg16.SP);           //  DEC SP
       case (0x3C) : return _INC_r(Reg8.A);              //  INC A
       case (0x3D) : return _DEC_r(Reg8.A);              //  DEC A
-      case (0x3E) : return _LD_r_n(Reg8.A);               //  LD A, n
+      case (0x3E) : return _LD_r_n(Reg8.A);             //  LD A, n
       case (0x3F) : return _CCF();                      //  CCF
 
       case (0x40) : return _LD_r_r(Reg8.B, Reg8.B);     //  LD B, B
