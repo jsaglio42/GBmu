@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   handler_drag_drop.dart                             :+:      :+:    :+:   //
+//   platform_dom_dragged.dart                          :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/29 18:08:03 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 17:48:02 by ngoguey          ###   ########.fr       //
+//   Created: 2016/10/04 19:04:08 by ngoguey           #+#    #+#             //
+//   Updated: 2016/10/04 19:27:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,51 +25,51 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-class HandlerDragDrop {
+class PlatformDomDragged {
 
   // ATTRIBUTES ************************************************************* **
-  final PlatformDomComponentStorage _pdcs;
   final PlatformComponentEvents _pce;
   final PlatformDomEvents _pde;
 
+  Ft.Option<DomComponent> _dragged = new Ft.Option<DomComponent>.none();
+
   // CONSTRUCTION *********************************************************** **
-  static HandlerDragDrop _instance;
-
-  factory HandlerDragDrop(pdcs, pde, pce) {
-    if (_instance == null)
-      _instance = new HandlerDragDrop._(pdcs, pde, pce);
-    return _instance;
-  }
-
-  HandlerDragDrop._(this._pdcs, this._pde, this._pce) {
-    Ft.log('HandlerDragDrop', 'contructor');
+  PlatformDomDragged(this._pde, this._pce) {
+    Ft.log('PlatformDomDragged', 'contructor');
 
     _pde.onDragStart.forEach(_onDragStart);
     _pde.onDragStop.forEach(_onDragStop);
-    _pde.onDropReceived.forEach(_onDropReceived);
+    _pce.onCartEvent
+      .where((ev) => ev.isDelete && ev.cart == _dragged.v)
+      .map((ev) => ev.cart)
+      .forEach(_handleDraggedDelete);
+    // Todo: motitor chip delete while dragged
   }
 
   // CALLBACKS ************************************************************** **
+  Ft.Option<DomComponent> get dragged => _dragged;
+
   void _onDragStart(HtmlDraggable that) {
-    _pdcs.draggedArrival(that as DomComponent);
+    assert(_dragged.isNone, "from: _onDragStart");
+    _dragged = new Ft.Option<DomComponent>.some(that as DomComponent);
+    _pce.draggedChange(
+        new SlotEvent<DomComponent>.Arrival(that as DomComponent));
   }
 
   void _onDragStop(HtmlDraggable that) {
-    _pdcs.draggedDismissal();
+    assert(_dragged.isSome, "from: _onDragStop");
+    _pce.draggedChange(new SlotEvent<DomComponent>.Dismissal(_dragged.v));
+    _dragged = new Ft.Option<DomComponent>.none();
   }
 
-  void _onDropReceived(HtmlDropZone that) {
-    assert(_pdcs.dragged.isSome, '_onDropReceived() with none dragged');
-    if (_pdcs.dragged.v is DomCart) {
-      assert(that is CartBank, '_onDropReceived() on bad zone');
-      if (that is DomGameBoySocket) {
-        _pdcs.gbCartArrival(_pdcs.dragged.v);
-      }
-      else
-        _pdcs.gbCartDismissal();
-    }
-    //   //TODO implement chip drop
+  void _handleDraggedDelete(HtmlDraggable that) {
+    Ft.log('PlatformDomDragged', '_handleDraggedDelete', [that]);
+    that.hdr_abort();
+    _pce.draggedChange(
+        new SlotEvent<DomComponent>.Dismissal(that as DomComponent));
+    _dragged = new Ft.Option<DomComponent>.none();
   }
+
 
 }
 

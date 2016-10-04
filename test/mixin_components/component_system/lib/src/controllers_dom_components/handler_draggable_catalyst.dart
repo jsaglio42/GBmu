@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 17:04:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 14:30:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 19:03:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,51 +28,28 @@ import 'package:component_system/src/include_cdc.dart';
 class HandlerDraggableCatalyst {
 
   // ATTRIBUTES ************************************************************* **
-  final PlatformDomComponentStorage _pdcs;
-  // final PlatformTopLevelBanks _ptlb;
+  final PlatformCart _pc;
   final PlatformComponentEvents _pce;
-  // final PlatformDomEvents _pde;
 
   List<HtmlDropZone> _enabledOpt;
 
   // CONSTRUCTION *********************************************************** **
-  static HandlerDraggableCatalyst _instance;
-
-  factory HandlerDraggableCatalyst(pdcs, pce) {
-    if (_instance == null)
-      _instance = new HandlerDraggableCatalyst._(pdcs, pce);
-    return _instance;
-  }
-
-  HandlerDraggableCatalyst._(this._pdcs, this._pce) {
+  HandlerDraggableCatalyst(this._pc, this._pce) {
     Ft.log('HandlerDraggableCatalyst', 'contructor');
 
     // TODO: Listen chips creations / ?deletions?
     // TODO: Enable all chips in chip sockets
     // TODO: Disable all chips in chip sockets
-    _pce.onOpenedCartChange.forEach(_onOpenedCartChange);
-    _pce.onGbCartChange.forEach(_onGbCartChange);
+    _pce.onCartEvent.forEach(_onCartEvent);
   }
 
   // CALLBACKS ************************************************************** **
-  void _onOpenedCartChange(SlotEvent<DomCart> ev) {
-    if (ev.isArrival) {
-      ev.value.hdr_enable();
-    }
-    else {
-      if (ev.value != _pdcs.gbCart.v)
-        ev.value.hdr_disable();
-    }
-  }
-
-  void _onGbCartChange(SlotEvent<DomCart> ev) {
-    if (ev.isArrival) {
-      // ev.value.hdr_enable();
-    }
-    else {
-      // if (ev.value != _pdcs.gbCart.v)
-      ev.value.hdr_disable();
-    }
+  void _onCartEvent(CartEvent<DomCart> ev) {
+    if (ev.isClose || ev.isDeleteOpened
+        || ev.isDeleteGameBoy || ev.isUnloadClosed)
+        ev.cart.hdr_disable();
+    else if (ev.isOpen)
+      ev.cart.hdr_enable();
   }
 
   // PRIVATE **************************************************************** **

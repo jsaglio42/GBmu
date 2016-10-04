@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:51:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 14:30:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 19:02:40 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -49,9 +49,7 @@ class PlatformTopLevelBanks {
     , _ddcb = new DomDetachedCartBank(pde) {
     Ft.log('PlatformTLB', 'contructor');
 
-    _pce.onCartNew.forEach(_handleCartNew);
-    _pce.onCartDelete.forEach(_handleCartDelete);
-    _pce.onGbCartChange.forEach(_handleGbCartChange);
+    _pce.onCartEvent.forEach(_handleCartEvent);
   }
 
   // PUBLIC ***************************************************************** **
@@ -59,24 +57,17 @@ class PlatformTopLevelBanks {
   DomDetachedCartBank get cartBank => _ddcb;
 
   // CALLBACKS ************************************************************** **
-  void _handleCartNew(DomCart c) {
-    Ft.log('PlatformTLB', '_handleCartNew', [c]);
-    _ddcb.elt.nodes.add(c.elt);
-  }
-
-  void _handleCartDelete(DomCart c) {
-    Ft.log('PlatformTLB', '_handleCartDelete', [c]);
-    if (_ddcb.elt.nodes.contains(c.elt))
-      _ddcb.elt.nodes.remove(c.elt);
-  }
-
-  void _handleGbCartChange(SlotEvent<DomCart> ev) {
-    final DomCart that = ev.value;
-
-    if (ev.isDismissal)
-      _ddcb.elt.nodes.add(that.elt);
-    else
-      _dgbs.elt.nodes = [that.elt];
+  void _handleCartEvent(CartEvent<DomCart> ev) {
+    Ft.log('PlatformTLB', '_handleCartEvent', [ev]);
+    if (ev.isNew || ev.isUnload)
+      _ddcb.elt.nodes.add(ev.cart.elt);
+    else if (ev.isLoad)
+      _dgbs.elt.nodes = [ev.cart.elt];
+    else if (ev.isDeleteOpened || ev.isDeleteClosed)
+      _ddcb.elt.nodes.remove(ev.cart.elt);
+    else if (ev.isDeleteGameBoy)
+      _dgbs.elt.nodes = [];
+    // else: Don't act on Open & Close
   }
 
 }

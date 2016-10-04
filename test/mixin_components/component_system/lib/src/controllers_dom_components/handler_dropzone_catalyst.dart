@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:41:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 14:30:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 19:03:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,23 +28,15 @@ import 'package:component_system/src/include_cdc.dart';
 class HandlerDropZoneCatalyst {
 
   // ATTRIBUTES ************************************************************* **
-  final PlatformDomComponentStorage _pdcs;
+  // final PlatformDomComponentStorage _pdcs;
+  final PlatformCart _pc;
   final PlatformTopLevelBanks _ptlb;
   final PlatformComponentEvents _pce;
-  // final PlatformDomEvents _pde;
 
   List<HtmlDropZone> _enabledOpt;
 
   // CONSTRUCTION *********************************************************** **
-  static HandlerDropZoneCatalyst _instance;
-
-  factory HandlerDropZoneCatalyst(pdcs, ptlb, pce) {
-    if (_instance == null)
-      _instance = new HandlerDropZoneCatalyst._(pdcs, ptlb, pce);
-    return _instance;
-  }
-
-  HandlerDropZoneCatalyst._(this._pdcs, this._ptlb, this._pce) {
+  HandlerDropZoneCatalyst(this._pc, this._ptlb, this._pce) {
     Ft.log('HandlerDropZoneCatalyst', 'contructor');
 
     _pce.onDraggedChange.forEach(_onDragChange);
@@ -68,11 +60,11 @@ class HandlerDropZoneCatalyst {
   // PRIVATE **************************************************************** **
   void _startCart(DomCart c) {
     _enabledOpt = <HtmlDropZone>[];
-    if (_pdcs.gbCart.v == c) {
+    if (_pc.gbCart.v == c) {
       _enabledOpt.add(_ptlb.cartBank);
     }
-    else if (_pdcs.openedCart.v == c) {
-      if (_pdcs.gbCart.isNone)
+    else if (_pc.openedCart.v == c) {
+      if (_pc.gbCart.isNone)
         _enabledOpt.add(_ptlb.gbSocket);
     }
     else

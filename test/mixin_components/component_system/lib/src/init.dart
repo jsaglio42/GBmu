@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 17:56:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 19:32:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -42,15 +42,22 @@ Async.Future init(p) async {
   final TransformerLseDataCheck tdc = new TransformerLseDataCheck(pcs, tu);
   final TransformerLseIdbCheck tic = new TransformerLseIdbCheck(pidb, tdc);
 
+
   final PlatformDomEvents pde = new PlatformDomEvents();
   final PlatformComponentEvents pce = new PlatformComponentEvents();
+
+  final PlatformDomDragged pdd = new PlatformDomDragged(pde, pce);
+  final PlatformCart pc = new PlatformCart(pde, pce, pdd);
+
   final PlatformDomComponentStorage pdcs =
-    new PlatformDomComponentStorage(pcs, pde, pce);
+    new PlatformDomComponentStorage(pcs, pde, pce, pc);
   final PlatformTopLevelBanks ptlb = new PlatformTopLevelBanks(pde, pce);
-  final HandlerCartVisibility hcv = new HandlerCartVisibility(pdcs, pde, pce);
-  final HandlerDragDrop hdd = new HandlerDragDrop(pdcs, pde, pce);
-  final HandlerDropZoneCatalyst hdzc = new HandlerDropZoneCatalyst(pdcs, ptlb, pce);
-  final HandlerDraggableCatalyst hdc = new HandlerDraggableCatalyst(pdcs, pce);
+
+  // final HandlerCartVisibility hcv = new HandlerCartVisibility(pdcs, pde, pce);
+  // final HandlerDragDrop hdd = new HandlerDragDrop(pdcs, pde, pce);
+
+  final HandlerDropZoneCatalyst hdzc = new HandlerDropZoneCatalyst(pc, ptlb, pce);
+  final HandlerDraggableCatalyst hdc = new HandlerDraggableCatalyst(pc, pce);
 
   final Emulator.Rom rom = new Emulator.Rom(0, 400);
   final Emulator.Ram ram = new Emulator.Ram(0, 400);
@@ -83,6 +90,8 @@ Async.Future init(p) async {
 
   /* await */ pls.start();
 
+  // await pcs.newRom(rom); //Add Rom
+  // await pcs.newRom(rom);
   // await pcs.newRom(rom);
   // await pcs.newRam(ram);
   // await pcs.newSs(ss);
@@ -106,6 +115,19 @@ Async.Future init(p) async {
   // await new Async.Future.delayed(new Duration(seconds: 2));
   // print('go!');
   // pcs.delete(lsram);
+
+
+
+  // print('MAIN await first DomCart');
+  // final DomCart dc = await pce.onCartEvent
+  // .where((ev) => ev.isNew)
+  // .map((ev) => ev.cart)
+  // .first;
+  // print('MAIN got first DomCart');
+  // print('MAIN await 3seconds');
+  // await new Async.Future.delayed(new Duration(seconds: 2));
+  // pcs.delete(dc.data);
+  // print('MAIN done 3seconds');
 
   Ft.log('Component_System', 'init#done');
   return ;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 15:10:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 19:02:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -66,7 +66,7 @@ class GameBoy implements CartState {
 enum _CartEvent {
   New, Open, Close, Load,
   UnloadOpened, UnloadClosed,
-  DeleteDetached, DeleteGameBoy,
+  DeleteOpened, DeleteClosed, DeleteGameBoy,
 }
 
 const _cartEventTargets = const <_CartEvent, List<CartState>>{
@@ -76,12 +76,14 @@ const _cartEventTargets = const <_CartEvent, List<CartState>>{
   _CartEvent.Load: const <CartState>[Opened.v, GameBoy.v],
   _CartEvent.UnloadOpened: const <CartState>[GameBoy.v, Opened.v],
   _CartEvent.UnloadClosed: const <CartState>[GameBoy.v, Closed.v],
+  _CartEvent.DeleteOpened: const <CartState>[Opened.v, None.v],
+  _CartEvent.DeleteClosed: const <CartState>[Closed.v, None.v],
   _CartEvent.DeleteGameBoy: const <CartState>[GameBoy.v, None.v],
-  _CartEvent.DeleteDetached: const <CartState>[Opened.v, None.v],
 };
 
-class CartEvent {
-  final DomCart cart;
+class CartEvent<T> {
+
+  final T cart;
   final _CartEvent _ev;
 
   CartEvent.New(this.cart) : _ev = _CartEvent.New;
@@ -90,8 +92,9 @@ class CartEvent {
   CartEvent.Load(this.cart) : _ev = _CartEvent.Load;
   CartEvent.UnloadOpened(this.cart) : _ev = _CartEvent.UnloadOpened;
   CartEvent.UnloadClosed(this.cart) : _ev = _CartEvent.UnloadClosed;
+  CartEvent.DeleteOpened(this.cart) : _ev = _CartEvent.DeleteOpened;
+  CartEvent.DeleteClosed(this.cart) : _ev = _CartEvent.DeleteClosed;
   CartEvent.DeleteGameBoy(this.cart) : _ev = _CartEvent.DeleteGameBoy;
-  CartEvent.DeleteDetached(this.cart) : _ev = _CartEvent.DeleteDetached;
 
   bool get isNew => _ev == _CartEvent.New;
   bool get isOpen => _ev == _CartEvent.Open;
@@ -99,12 +102,13 @@ class CartEvent {
   bool get isLoad => _ev == _CartEvent.Load;
   bool get isUnloadOpened => _ev == _CartEvent.UnloadOpened;
   bool get isUnloadClosed => _ev == _CartEvent.UnloadClosed;
+  bool get isDeleteOpened => _ev == _CartEvent.DeleteOpened;
+  bool get isDeleteClosed => _ev == _CartEvent.DeleteClosed;
   bool get isDeleteGameBoy => _ev == _CartEvent.DeleteGameBoy;
-  bool get isDeleteDetached => _ev == _CartEvent.DeleteDetached;
 
-  bool get isUnload => UnloadOpened || UnloadClosed;
+  bool get isUnload => isUnloadOpened || isUnloadClosed;
   bool get isMove => isLoad || isUnload;
-  bool get isDelete => isDeleteGameBoy || isDeleteDetached;
+  bool get isDelete => isDeleteGameBoy || isDeleteOpened || isDeleteClosed;
 
   CartState get src => _cartEventTargets[_ev][0];
   CartState get dst => _cartEventTargets[_ev][1];

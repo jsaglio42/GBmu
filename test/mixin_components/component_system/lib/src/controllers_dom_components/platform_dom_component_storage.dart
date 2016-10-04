@@ -6,11 +6,9 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 16:13:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 19:05:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
-
-library platform_dom_component_storage;
 
 import 'dart:js' as Js;
 import 'dart:async' as Async;
@@ -27,24 +25,14 @@ import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-part './platform_dom_component_storage_parts.dart';
+class PlatformDomComponentStorage {
 
-abstract class _Super {
-
+  // ATTRIBUTES ************************************************************* **
   final PlatformComponentStorage _pcs;
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
+  final PlatformCart _pc;
 
-  _Super(this._pcs, this._pde, this._pce);
-
-}
-
-class PlatformDomComponentStorage extends _Super
-  with _OpenedCartStorage
-  , _GbCartStorage
-  , _DraggedStorage {
-
-  // ATTRIBUTES ************************************************************* **
   final static Html.NodeValidatorBuilder _domCartValidator =
     new Html.NodeValidatorBuilder()
     ..allowHtml5()
@@ -56,16 +44,7 @@ class PlatformDomComponentStorage extends _Super
   final Map<int, DomComponent> _components = <int, DomComponent>{};
 
   // CONTRUCTION ************************************************************ **
-  static PlatformDomComponentStorage _instance;
-
-  factory PlatformDomComponentStorage(pcs, pde, pce) {
-    if (_instance == null)
-      _instance = new PlatformDomComponentStorage._(pcs, pde, pce);
-    return _instance;
-  }
-
-  PlatformDomComponentStorage._(pcs, pde, pce)
-    : super(pcs, pde, pce){
+  PlatformDomComponentStorage(this._pcs, this._pde, this._pce, this._pc) {
     Ft.log('PlatformDCS', 'contructor');
   }
 
@@ -88,7 +67,7 @@ class PlatformDomComponentStorage extends _Super
     if (e.type is Rom) {
       de = new DomCart(_pde, e, _cartHtml, _domCartValidator);
       _components[e.uid] = de;
-      _pce.cartNew(de);
+      _pc.newCart(de);
     }
   }
 
@@ -99,7 +78,7 @@ class PlatformDomComponentStorage extends _Super
     if (e.type is Rom) {
       de = _components[e.uid];
       _components.remove(e.uid);
-      _pce.cartDelete(de);
+      _pc.deleteCart(de);
     }
   }
 

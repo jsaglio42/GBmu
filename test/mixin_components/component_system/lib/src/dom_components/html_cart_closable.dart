@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:16:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 17:25:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 18:33:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -64,7 +64,7 @@ abstract class HtmlCartClosable implements HtmlElementCart, DomElement {
   }
 
   void hcc_abort() {
-    assert(_abort == false && __enabled.state == true, "hcc_abort() invalid");
+    assert(_abort == false && __opened.state == true, "hcc_abort() invalid");
     _abort = true;
   }
 

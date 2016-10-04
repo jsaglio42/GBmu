@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:21:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 18:40:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 19:30:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -72,14 +72,15 @@ abstract class HtmlDraggable implements DomElement {
   }
 
   void _onDragStop(_, __) {
-    this.pde.dragStop(this);
+    if (_abort)
+      _abort = false;
+    else
+      this.pde.dragStop(this);
   }
 
   void _onDrag(_, __) {
-    if (_abort) {
-      _abort = false;
+    if (_abort)
       return false;
-    }
     return true;
   }
 
