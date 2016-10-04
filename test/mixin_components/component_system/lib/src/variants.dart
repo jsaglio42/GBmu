@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 14:34:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 15:10:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,73 +36,81 @@ class Ss implements Chip {
 }
 
 // Locations **************************************************************** **
-abstract class CartLocation {
-  static const Iterable<CartLocation> values =
-    const <CartLocation>[None.v, Detached.v, GameBoy.v];
-}
+abstract class CartState {}
 
-abstract class ChipLocation {
-  static const Iterable<ChipLocation> values =
-    const <ChipLocation>[None.v, Detached.v, Cart.v];
-}
-
-class None implements CartLocation, ChipLocation {
+class None implements CartState {
   const None._();
   static const None v = const None._();
   String toString() => 'None';
 }
 
-class Detached implements CartLocation, ChipLocation {
-  const Detached._();
-  static const Detached v = const Detached._();
-  String toString() => 'Detached';
+class Closed implements CartState {
+  const Closed._();
+  static const Closed v = const Closed._();
+  String toString() => 'Closed';
 }
 
-class GameBoy implements CartLocation {
+class Opened implements CartState {
+  const Opened._();
+  static const Opened v = const Opened._();
+  String toString() => 'Opened';
+}
+
+class GameBoy implements CartState {
   const GameBoy._();
   static const GameBoy v = const GameBoy._();
   String toString() => 'GameBoy';
 }
 
-class Cart implements ChipLocation {
-  const Cart._();
-  static const Cart v = const Cart._();
-  String toString() => 'Cart';
-}
-
 // Cart movements *********************************************************** **
-enum _CartMoveEvent {
-  New, Load, Unload, GameBoyDelete, DetachedDelete,
+enum _CartEvent {
+  New, Open, Close, Load,
+  UnloadOpened, UnloadClosed,
+  DeleteDetached, DeleteGameBoy,
 }
 
-const _cartMoveTargets = const <_CartMoveEvent, List<CartLocation>>{
-  _CartMoveEvent.New: const <CartLocation>[None.v, Detached.v],
-  _CartMoveEvent.Load: const <CartLocation>[Detached.v, GameBoy.v],
-  _CartMoveEvent.Unload: const <CartLocation>[GameBoy.v, Detached.v],
-  _CartMoveEvent.GameBoyDelete: const <CartLocation>[GameBoy.v, None.v],
-  _CartMoveEvent.DetachedDelete: const <CartLocation>[Detached.v, None.v],
+const _cartEventTargets = const <_CartEvent, List<CartState>>{
+  _CartEvent.New: const <CartState>[None.v, Closed.v],
+  _CartEvent.Open: const <CartState>[Closed.v, Opened.v],
+  _CartEvent.Close: const <CartState>[Opened.v, Closed.v],
+  _CartEvent.Load: const <CartState>[Opened.v, GameBoy.v],
+  _CartEvent.UnloadOpened: const <CartState>[GameBoy.v, Opened.v],
+  _CartEvent.UnloadClosed: const <CartState>[GameBoy.v, Closed.v],
+  _CartEvent.DeleteGameBoy: const <CartState>[GameBoy.v, None.v],
+  _CartEvent.DeleteDetached: const <CartState>[Opened.v, None.v],
 };
 
-class CartMoveEvent {
+class CartEvent {
   final DomCart cart;
-  final _CartMoveEvent _ev;
+  final _CartEvent _ev;
 
-  CartMoveEvent.New(this.cart) : _ev = _CartMoveEvent.New;
-  CartMoveEvent.Load(this.cart) : _ev = _CartMoveEvent.Load;
-  CartMoveEvent.Unload(this.cart) : _ev = _CartMoveEvent.Unload;
-  CartMoveEvent.GameBoyDelete(this.cart) : _ev = _CartMoveEvent.GameBoyDelete;
-  CartMoveEvent.DetachedDelete(this.cart) : _ev = _CartMoveEvent.DetachedDelete;
+  CartEvent.New(this.cart) : _ev = _CartEvent.New;
+  CartEvent.Open(this.cart) : _ev = _CartEvent.Open;
+  CartEvent.Close(this.cart) : _ev = _CartEvent.Close;
+  CartEvent.Load(this.cart) : _ev = _CartEvent.Load;
+  CartEvent.UnloadOpened(this.cart) : _ev = _CartEvent.UnloadOpened;
+  CartEvent.UnloadClosed(this.cart) : _ev = _CartEvent.UnloadClosed;
+  CartEvent.DeleteGameBoy(this.cart) : _ev = _CartEvent.DeleteGameBoy;
+  CartEvent.DeleteDetached(this.cart) : _ev = _CartEvent.DeleteDetached;
 
-  bool get isNew => _ev == _CartMoveEvent.New;
-  bool get isLoad => _ev == _CartMoveEvent.Load;
-  bool get isUnload => _ev == _CartMoveEvent.Unload;
-  bool get isGameBoyDelete => _ev == _CartMoveEvent.GameBoyDelete;
-  bool get isDetachedDelete => _ev == _CartMoveEvent.DetachedDelete;
+  bool get isNew => _ev == _CartEvent.New;
+  bool get isOpen => _ev == _CartEvent.Open;
+  bool get isClose => _ev == _CartEvent.Close;
+  bool get isLoad => _ev == _CartEvent.Load;
+  bool get isUnloadOpened => _ev == _CartEvent.UnloadOpened;
+  bool get isUnloadClosed => _ev == _CartEvent.UnloadClosed;
+  bool get isDeleteGameBoy => _ev == _CartEvent.DeleteGameBoy;
+  bool get isDeleteDetached => _ev == _CartEvent.DeleteDetached;
+
+  bool get isUnload => UnloadOpened || UnloadClosed;
   bool get isMove => isLoad || isUnload;
-  bool get isDelete => isGameBoyDelete || isDetachedDelete;
+  bool get isDelete => isDeleteGameBoy || isDeleteDetached;
 
-  CartLocation get src => _cartMoveTargets[_ev][0];
-  CartLocation get dst => _cartMoveTargets[_ev][1];
+  CartState get src => _cartEventTargets[_ev][0];
+  CartState get dst => _cartEventTargets[_ev][1];
+
+  bool get isOpenedChange => src is Opened || dst is Opened;
+  bool get isGbChange => src is GameBoy || dst is GameBoy;
 
 }
 
