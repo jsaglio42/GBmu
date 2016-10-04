@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 17:04:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 17:53:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 14:30:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -56,7 +56,7 @@ class HandlerDraggableCatalyst {
 
   // CALLBACKS ************************************************************** **
   void _onOpenedCartChange(SlotEvent<DomCart> ev) {
-    if (ev.type is Arrival) {
+    if (ev.isArrival) {
       ev.value.hdr_enable();
     }
     else {
@@ -66,7 +66,7 @@ class HandlerDraggableCatalyst {
   }
 
   void _onGbCartChange(SlotEvent<DomCart> ev) {
-    if (ev.type is Arrival) {
+    if (ev.isArrival) {
       // ev.value.hdr_enable();
     }
     else {

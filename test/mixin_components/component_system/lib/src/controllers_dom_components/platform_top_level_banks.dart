@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:51:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 17:03:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 14:30:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -73,7 +73,7 @@ class PlatformTopLevelBanks {
   void _handleGbCartChange(SlotEvent<DomCart> ev) {
     final DomCart that = ev.value;
 
-    if (ev.type is Dismissal)
+    if (ev.isDismissal)
       _ddcb.elt.nodes.add(that.elt);
     else
       _dgbs.elt.nodes = [that.elt];

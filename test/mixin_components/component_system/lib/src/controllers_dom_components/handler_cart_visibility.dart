@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 16:58:26 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 18:09:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 14:29:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -86,7 +86,7 @@ class HandlerCartVisibility {
   void _onGbCartChange(SlotEvent<DomCart> ev) {
     final HtmlCartClosable that = ev.value;
 
-    if (ev.type is Arrival) {
+    if (ev.isArrival) {
       assert(_openingOpt == null, '_onCartInGbOpt() with one opening');
       _pdcs.openedCartDismissal();
       that.hcc_hideButton();

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:41:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 17:29:09 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 14:30:31 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,7 +52,7 @@ class HandlerDropZoneCatalyst {
 
   // CALLBACKS ************************************************************** **
   void _onDragChange(SlotEvent<DomComponent> ev) {
-    if (ev.type is Arrival) {
+    if (ev.isArrival) {
       assert(_enabledOpt == null, '_onDragChange() Arrival with some enabled');
       if (ev.value is DomCart)
         _startCart(ev.value);
