@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/08 13:31:53 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 17:55:10 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 19:51:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,14 +25,6 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/emulator.dart' as Emulator;
 // import 'package:emulator/filedb.dart' as Emufiledb;
 
-// import './component_system.dart';
-// import './component_system_dom.dart';
-// import './cart_system/mixin_assembly.dart';
-// import './cart_system/controller_cart_system.dart' as Csc;
-// import './cart_system/globals.dart';
-// import './chip.dart';
-// import './toplevel_banks.dart';
-
 import 'package:component_system/cs.dart' as Cs;
 
 /*
@@ -40,12 +32,6 @@ import 'package:component_system/cs.dart' as Cs;
  */
 
 // String _cartHtml;
-final Html.NodeValidatorBuilder _domCartValidator =
-  new Html.NodeValidatorBuilder()
-  ..allowHtml5()
-  ..allowElement('button', attributes: ['href', 'data-parent', 'data-toggle'])
-  ..allowElement('th', attributes: ['style'])
-  ..allowElement('tr', attributes: ['style']);
 
 final tetrisHead = new Uint8List.fromList(<int>[
   0xc3, 0x8b, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc3, 0x8b, 0x02, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -75,35 +61,8 @@ final tetrisHead = new Uint8List.fromList(<int>[
 ]);
 
 /*
- * Internal Methods
- */
-
-/*
  * Exposed Methods
  */
-
-// Async.Future<Map<Emufiledb.IdbStore, Set<int>>> _detachedChips() async {
-
-//   final Set<int> rams = new Set.from(g_dbProxy.rams.keys);
-//   final Set<int> sss = new Set.from(g_dbProxy.sss.keys);
-
-//   final Iterable<Async.Future<Map<String, dynamic>>> futureCartsInfo =
-//     g_dbProxy.carts.values.map(
-//         (Emufiledb.ProxyEntry prox) => g_dbProxy.info(prox));
-
-//   (await Async.Future.wait(futureCartsInfo))
-//   .forEach(
-//       (Map<String, dynamic> cinfo) {
-//         rams.remove(cinfo['ram']);
-//         cinfo['ssList']?.forEach((int ssIdOpt) {
-//           sss.remove(ssIdOpt);
-//         });
-//       });
-//   return {
-//     Emufiledb.IdbStore.Ram: rams,
-//     Emufiledb.IdbStore.Ss: sss,
-//   };
-// }
 
 Async.Future init(Emulator.Emulator emu) async {
   Ft.log('main', 'init', [emu]);
@@ -113,47 +72,6 @@ Async.Future init(Emulator.Emulator emu) async {
     print(e);
     print(st);
   }));
-
-  // final cscFut = Csc.make();
-  // final cartHtmlFut = Html.HttpRequest.getString("cart_table.html");
-
-  // final cartHtml = await cartHtmlFut;
-  // g_csc = await cscFut;
-
-  // await g_csc.init();
-
-  // DomCart c = new DomCart(cartHtml, _domCartValidator);
-
-
-
-  // DomChipSocket c = new DomChipSocket();
-
-//   g_cartBank = new CartBank(cartHtml, _domCartValidator);
-//   g_dChipBank = new DetachedChipBank();
-//   g_gbSocket = new GameBoySocket();
-
-//   if (g_dbProxy.roms.length == 0) {
-//     await g_dbProxy.addRom('tetris_head.rom', tetrisHead);
-//     await g_dbProxy.addRom('tetris_head.rom', tetrisHead);
-//     await g_dbProxy.addRam('pokemon.save', tetrisHead);
-//     await g_dbProxy.addRam('pokemon.save', tetrisHead);
-//     await g_dbProxy.addRam('pokemon.save', tetrisHead);
-//   }
-//   print(g_dbProxy);
-
-//   final futureDetachedChips = _detachedChips();
-
-//   g_dbProxy.carts.forEach((int i, Emufiledb.ProxyEntry prox){
-//     g_cartBank.add(prox);
-//   });
-
-//   final detachedChips = await futureDetachedChips;
-//   detachedChips[Emufiledb.IdbStore.Ram].forEach((int id){
-//     g_dChipBank.newRam(g_dbProxy.rams[id]);
-//   });
-//   detachedChips[Emufiledb.IdbStore.Ss].forEach((int id){
-//     g_dChipBank.newSs(g_dbProxy.sss[id]);
-//   });
 
   return ;
 }
