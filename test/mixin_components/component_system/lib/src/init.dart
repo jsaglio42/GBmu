@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 19:32:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 15:22:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -56,7 +56,8 @@ Async.Future init(p) async {
   // final HandlerCartVisibility hcv = new HandlerCartVisibility(pdcs, pde, pce);
   // final HandlerDragDrop hdd = new HandlerDragDrop(pdcs, pde, pce);
 
-  final HandlerDropZoneCatalyst hdzc = new HandlerDropZoneCatalyst(pc, ptlb, pce);
+  final HandlerDropZoneCatalyst hdzc =
+    new HandlerDropZoneCatalyst(pc, ptlb, pce, pde);
   final HandlerDraggableCatalyst hdc = new HandlerDraggableCatalyst(pc, pce);
 
   final Emulator.Rom rom = new Emulator.Rom(0, 400);

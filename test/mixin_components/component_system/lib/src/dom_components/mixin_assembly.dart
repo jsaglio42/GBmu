@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 18:33:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 16:10:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -61,7 +61,8 @@ class DomGameBoySocket extends DomElement
     : super(pde) {
     Ft.log('DomGameBoySocket', 'constructor', [pde]);
     this.hes_init(Html.querySelector('#gb-slot'));
-    this.hdz_init(HtmlDropZone.makeClassesMap(null, null, null, null));
+    this.hdz_init(HtmlDropZone.makeClassesMap(
+            'gameboysocket-hover', null, 'gameboysocket-active', null));
   }
 
 }
@@ -78,7 +79,8 @@ class DomDetachedCartBank extends DomElement
     : super(pde) {
     Ft.log('DomGameBoySocket', 'constructor', [pde]);
     this.hes_init(Html.querySelector('#accordion'));
-    this.hdz_init(HtmlDropZone.makeClassesMap(null, null, null, null));
+    this.hdz_init(HtmlDropZone.makeClassesMap(
+            'accordion-hover', null, 'accordion-active', null));
   }
 
 }

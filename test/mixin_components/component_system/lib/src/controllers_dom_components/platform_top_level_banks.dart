@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:51:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 19:02:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 16:46:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -59,6 +59,11 @@ class PlatformTopLevelBanks {
   // CALLBACKS ************************************************************** **
   void _handleCartEvent(CartEvent<DomCart> ev) {
     Ft.log('PlatformTLB', '_handleCartEvent', [ev]);
+    if (ev.isMove) {
+      ev.cart.elt.style.left = '0px';
+      ev.cart.elt.style.top = '0px';
+    }
+
     if (ev.isNew || ev.isUnload)
       _ddcb.elt.nodes.add(ev.cart.elt);
     else if (ev.isLoad)

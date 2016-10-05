@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 19:04:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 19:27:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 16:58:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -72,57 +72,3 @@ class PlatformDomDragged {
 
 
 }
-
-// abstract class HtmlDropZoneFaceController<HtmlDraggableSubClass, HtmlDropZoneSubClass> {
-
-//   // ATTRIBUTES ************************************************************* **
-//   HtmlDraggable _draggedOpt;
-//   List<HtmlDropZone> _monitoredHtmlDropZoneList;
-
-//   // CONSTRUCTION *********************************************************** **
-//   void init() {
-//     Ft.log('HtmlDropZoneFaceController', 'init');
-//     g_csc.onDragStart
-//       .where((HtmlDraggable d) => d is HtmlDraggableSubClass).forEach(_onDragStart);
-//     g_csc.onDragStop
-//       .where((HtmlDraggable d) => d is HtmlDraggableSubClass).forEach(_onDragStop);
-//     g_csc.onHtmlDropZoneEntered
-//       .where((HtmlDropZone d) => d is HtmlDropZoneSubClass).forEach(_onHtmlDropZoneEntered);
-//     g_csc.onHtmlDropZoneLeaved
-//       .where((HtmlDropZone d) => d is HtmlDropZoneSubClass).forEach(_onHtmlDropZoneLeaved);
-
-//     // TODO:
-//     // Need to dynamically update _monitoredHtmlDropZoneList
-//   }
-
-//   // CALLBACKS ************************************************************** **
-//   void _onDragStart(HtmlDraggable that) {
-//     assert(_draggedOpt == null, "_onDragStop() with some dragged");
-//     _draggedOpt = that;
-
-//     // TODO:
-//     // Need to match all `_monitoredHtmlDropZoneList` to `that`
-
-//     // Gather booleans for suitability
-//     // Gather tooltip messages for unsuitable ones
-//     // Do this asynchronously
-//   }
-
-//   void _onDragStop(HtmlDraggable that) {
-//     assert(that == _draggedOpt, '_onDragStop() with strange parameter($that)');
-//     _draggedOpt = null;
-//   }
-
-//   void _onHtmlDropZoneEntered(HtmlDropZone that) {
-//     assert(_monitoredHtmlDropZoneList.contains(that)
-//         , "_onHtmlDropZoneEntered() with strange parameter($that)");
-//   }
-
-//   void _onHtmlDropZoneLeaved(HtmlDropZone that) {
-//     assert(_monitoredHtmlDropZoneList.contains(that)
-//         , "_onHtmlDropZoneLeaved() with strange parameter($that)");
-//   }
-
-//   // PRIVATE **************************************************************** **
-
-// }

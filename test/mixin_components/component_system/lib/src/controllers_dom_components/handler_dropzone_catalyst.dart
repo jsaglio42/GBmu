@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:41:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 19:03:34 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 17:03:11 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,48 +28,77 @@ import 'package:component_system/src/include_cdc.dart';
 class HandlerDropZoneCatalyst {
 
   // ATTRIBUTES ************************************************************* **
-  // final PlatformDomComponentStorage _pdcs;
   final PlatformCart _pc;
   final PlatformTopLevelBanks _ptlb;
   final PlatformComponentEvents _pce;
+  final PlatformDomEvents _pde;
 
-  List<HtmlDropZone> _enabledOpt;
+  List<HtmlDropZone> _suitableOpt;
+  List<HtmlDropZone> _unsuitableOpt;
 
   // CONSTRUCTION *********************************************************** **
-  HandlerDropZoneCatalyst(this._pc, this._ptlb, this._pce) {
+  HandlerDropZoneCatalyst(this._pc, this._ptlb, this._pce, this._pde) {
     Ft.log('HandlerDropZoneCatalyst', 'contructor');
 
     _pce.onDraggedChange.forEach(_onDragChange);
+    _pde.onDropEntered.forEach(_onDropEntered);
+    _pde.onDropLeft.forEach(_onDropLeft);
   }
 
   // CALLBACKS ************************************************************** **
   void _onDragChange(SlotEvent<DomComponent> ev) {
     if (ev.isArrival) {
-      assert(_enabledOpt == null, '_onDragChange() Arrival with some enabled');
+      assert(_suitableOpt == null, '_onDragChange() Arrival with some enabled');
       if (ev.value is DomCart)
         _startCart(ev.value);
       // TODO: Implement chip drop zone catalyst
+      _suitableOpt.forEach((dz){
+            dz.hdz_enable();
+            dz.hdz_setFace(false, true);
+          });
+      _unsuitableOpt.forEach((dz){
+            dz.hdz_setFace(false, false);
+          });
     }
     else {
-      assert(_enabledOpt != null, '_onDragChange() Dismissal with none enabled');
-      _enabledOpt.forEach((dz) => dz.hdz_disable());
-      _enabledOpt = null;
+      assert(_suitableOpt != null,
+          '_onDragChange() Dismissal with none enabled');
+      _suitableOpt.forEach((dz) => dz.hdz_disable());
+      _suitableOpt.forEach((dz) => dz.hdz_unsetAllStyles());
+      _suitableOpt = null;
+      _unsuitableOpt.forEach((dz) => dz.hdz_unsetAllStyles());
+      _unsuitableOpt = null;
     }
+  }
+
+  void _onDropEntered(HtmlDropZone e) {
+    if (_suitableOpt.contains(e))
+      e.hdz_setFace(true, true);
+    else
+      e.hdz_setFace(true, false);
+  }
+
+  void _onDropLeft(HtmlDropZone e) {
+    if (_suitableOpt.contains(e))
+      e.hdz_setFace(false, true);
+    else
+      e.hdz_setFace(false, false);
   }
 
   // PRIVATE **************************************************************** **
   void _startCart(DomCart c) {
-    _enabledOpt = <HtmlDropZone>[];
+    _suitableOpt = <HtmlDropZone>[];
+    _unsuitableOpt = <HtmlDropZone>[];
     if (_pc.gbCart.v == c) {
-      _enabledOpt.add(_ptlb.cartBank);
+      _suitableOpt.add(_ptlb.cartBank);
     }
     else if (_pc.openedCart.v == c) {
-      if (_pc.gbCart.isNone)
-        _enabledOpt.add(_ptlb.gbSocket);
+      if (_pc.gbCart.isNone) {
+        _suitableOpt.add(_ptlb.gbSocket);
+      }
     }
     else
       assert(false, 'from: _startCart()');
-    _enabledOpt.forEach((dz) => dz.hdz_enable());
   }
 
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:26:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:50:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 16:44:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,6 +50,7 @@ abstract class HtmlDropZone implements DomElement {
       'drop': _onDrop,
       'over': _onEnter,
       'out': _onLeave,
+      'tolerance': 'pointer',
     })]);
     this.jqElt.callMethod('droppable', ['disable']);
   }
@@ -70,23 +71,21 @@ abstract class HtmlDropZone implements DomElement {
   }
 
   void hdz_setFace(bool hover, bool suitable) {
-    assert(__enabled, "hdz_setFace() invalid");
     _cleanCurrentOptClass();
     if (_classesOpt[hover][suitable] != null) {
+      print('$runtimeType setting ${_classesOpt[hover][suitable]}');
       this.elt.classes.add(_classesOpt[hover][suitable]);
       _activePairOpt = <bool>[hover, suitable];
     }
   }
 
   void hdz_setTooltip(String msg) {
-    assert(__enabled, "hdz_setTooltip() invalid");
     _cleanCurrentOptTooltip();
     // TODO: set tooltip
     _tooltipActive = true;
   }
 
   void hdz_unsetAllStyles() {
-    assert(__enabled, "hdz_unsetAllStyles() invalid");
     _cleanCurrentOptClass();
     _cleanCurrentOptTooltip();
   }
@@ -97,6 +96,7 @@ abstract class HtmlDropZone implements DomElement {
   }
 
   void _onEnter(_, __){
+    print('DEBUG: $runtimeType#_onEnter');
     this.pde.dropEntered(this);
   }
 
