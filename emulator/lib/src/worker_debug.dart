@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 18:20:42 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 09:37:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -124,7 +124,7 @@ abstract class Debug implements Worker.AWorker {
     });
     this.ports.send('InstInfo', _buildInstList(gb));
     this.ports.send('MemRegInfo', l);
-    this.ports.send('ClockInfo', gb.clockCount);
+    this.ports.send('ClockInfo', gb.clockTotal);
     return ;
   }
 
@@ -169,8 +169,9 @@ abstract class Debug implements Worker.AWorker {
     this.sc.addSideEffect(_singleRefresh, (){}, [
       [DebuggerExternalMode.Operating],
     ]);
-    this.ports.listener('DebStatusRequest').forEach(_onDebModeChangeReq);
-    this.ports.listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
+    this.ports
+      ..listener('DebStatusRequest').forEach(_onDebModeChangeReq)
+      ..listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
   }
 
 }

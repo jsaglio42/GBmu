@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 17:25:21 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 09:14:03 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,16 +29,12 @@ abstract class Timers
   implements Hardware.Hardware
   , Interrupt.InterruptManager {
 
-  int _clockTotal = 0;
   int _counterTIMA = 0;
   int _counterDIV = 0;
 
   /* API **********************************************************************/
-
-  int get clockCount => _clockTotal;
-
   void updateTimers(int nbClock) {
-    _clockTotal += nbClock;
+    this.clockTotal += nbClock;
     _updateDIV(nbClock);
     _updateTIMA(nbClock);
     return ;

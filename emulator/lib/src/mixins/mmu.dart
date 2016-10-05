@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 20:39:47 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 09:16:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,6 +45,8 @@ abstract class Mmu
 
   void push8(int memAddr, int v)
   {
+    if (memAddr == 0xFFE2)
+      this.hardbreak = true;
     if (_isInRange(memAddr, CARTRIDGE_ROM_FIRST, CARTRIDGE_ROM_LAST))
       this.c.push8_Rom(memAddr, v);
     else if (_isInRange(memAddr, CARTRIDGE_RAM_FIRST, CARTRIDGE_RAM_LAST))
@@ -117,7 +119,7 @@ abstract class Mmu
       case (MemReg.P1) : return setJoypadRegister(v);
       case (MemReg.DIV) : return resetDIVRegister();
       case (MemReg.LY) : return resetLYRegister();
-      case (MemReg.DMA) : return execDMA(v);
+      case (MemReg.DMA) : return execDMA(memAddr, v);
       default: return this.tailRam.push8_unsafe(memAddr, v);
     }
   }
@@ -150,11 +152,12 @@ abstract class Mmu
     return ;
   }
 
-  void execDMA(int v) {
+  void execDMA(int regAddress, int v) {
     final int addr = v << 8;
     for (int i = 0 ; i < 0xA0; i++) {
       this.tailRam.push8_unsafe(0xFE00 + i, this.pull8(addr + i));
     }
+    this.tailRam.push8_unsafe(regAddress, v);
     return ;
   }
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 18:20:30 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 09:23:03 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -44,7 +44,7 @@ abstract class Observer implements Worker.AWorker {
     final elapsed =
       now.difference(_pollTime).inMicroseconds.toDouble() /
       MICROSECONDS_PER_SECOND_DOUBLE;
-    final clock = this.gbOpt.clockCount;
+    final clock = this.gbOpt.clockTotal;
     final cps =
       (clock - _gbClockPoll).toDouble() / elapsed;
     final observedSpeed = cps / GB_CPU_FREQ_DOUBLE;

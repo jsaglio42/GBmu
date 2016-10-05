@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 18:20:54 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 09:53:31 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -236,6 +236,10 @@ abstract class Emulation implements Worker.AWorker {
         'st': stacktrace.toString(),
       });
     }
+    else if (this.gbOpt.hardbreak) {
+      _updatePauseMode(PauseExternalMode.Effective);
+      this.gbOpt.hardbreak = false;
+    }
     else if (_autoBreak) {
       _autoBreakIn -= clockSum;
       if (_autoBreakIn <= 0)
@@ -283,6 +287,8 @@ abstract class Emulation implements Worker.AWorker {
         break ;
       clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
       clockSum += this.gbOpt.exec(clockExec);
+      if (this.gbOpt.hardbreak)
+        break ;
     }
     return clockSum;
   }
@@ -329,36 +335,29 @@ abstract class Emulation implements Worker.AWorker {
   void init_emulation()
   {
     Ft.log("WorkerEmu", 'init_emulation');
-    this.sc.setState(GameBoyExternalMode.Absent);
-    this.sc.setState(PauseExternalMode.Ineffective);
-    this.sc.setState(AutoBreakExternalMode.Instruction);
-    this.sc.addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos);
-    this.sc.addSideEffect(
-        _enableAutoBreak, _disableAutoBreak, _activeAutoBreakCombos);
-    this.ports.listener('EmulationStart')
-      .forEach(_onEmulationStartReq);
-    this.ports.listener('Debug')
-      .forEach((Map map){
-        if (map['action'] == 'crash') {
-          _simulateCrash = true;
-          Ft.log("WorkerEmu", 'listener#debug#crash');
-        }
-      });
-    this.ports.listener('Debug')
-      .where((map) => map['action'] == 'eject')
-      .forEach(_onEjectReq);
-    this.ports.listener('EmulationSpeed')
-      .listen(_onEmulationSpeedChangeReq);
-    this.ports.listener('EmulationAutoBreak')
-      .listen(_onAutoBreakReq);
-    this.ports.listener('EmulationPause')
-      .listen(_onPauseReq);
-    this.ports.listener('EmulationResume')
-      .listen(_onResumeReq);
-    this.ports.listener('KeyDownEvent')
-      .listen(_onKeyDown);
-    this.ports.listener('KeyUpEvent')
-      .listen(_onKeyUp);
+    this.sc
+      ..setState(GameBoyExternalMode.Absent)
+      ..setState(PauseExternalMode.Ineffective)
+      ..setState(AutoBreakExternalMode.Instruction);
+    this.sc
+      ..addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos)
+      ..addSideEffect(_enableAutoBreak, _disableAutoBreak, _activeAutoBreakCombos);
+    this.ports
+      ..listener('EmulationStart').forEach(_onEmulationStartReq)
+      ..listener('EmulationSpeed').forEach(_onEmulationSpeedChangeReq)
+      ..listener('EmulationAutoBreak').forEach(_onAutoBreakReq)
+      ..listener('EmulationPause').forEach(_onPauseReq)
+      ..listener('EmulationResume').forEach(_onResumeReq)
+      ..listener('KeyDownEvent').forEach(_onKeyDown)
+      ..listener('KeyUpEvent').forEach(_onKeyUp)
+      ..listener('Debug')
+        .where((map) => map['action'] == 'eject').forEach(_onEjectReq)
+      ..listener('Debug').forEach(
+        (Map map) {
+          if (map['action'] == 'crash') {
+            _simulateCrash = true;
+            Ft.log("WorkerEmu", 'listener#debug#crash');
+        }});
   }
 
 }
