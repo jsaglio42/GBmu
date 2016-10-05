@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:50:11 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 18:05:09 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -823,7 +823,7 @@ abstract class Z80
     final int calculated = l + r;
     final int result = calculated & 0xFF;
     this.cpur.cy = ((l + r) > 0xFF) ? 1 : 0;
-    this.cpur.h = ((l & 0xF) + (r & 0xF) > 0xF) ? 1 : 0;
+    this.cpur.h = ((l & 0x0F) + (r & 0x0F) > 0x0F) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
@@ -899,7 +899,7 @@ abstract class Z80
     final int calculated = l - r;
     final int result = calculated & 0xFF;
     this.cpur.cy = (l < r) ? 1 : 0;
-    this.cpur.h = ((l & 0xF) < (r & 0xF)) ? 1 : 0;
+    this.cpur.h = ((l & 0x0F) < (r & 0x0F)) ? 1 : 0;
     this.cpur.n = 1;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
@@ -1393,7 +1393,7 @@ abstract class Z80
   int _SWAP_calculate(int val) {
     assert(val & ~0xFF == 0);
     final int h = (val >> 4);
-    final int l = (val & 0xFF);
+    final int l = (val & 0x0F);
     final int result = h | (l << 4);
     this.cpur.cy = 0;
     this.cpur.h = 0;
