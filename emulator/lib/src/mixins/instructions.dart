@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 11:05:18 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 13:52:07 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -288,7 +288,7 @@ final List<InstructionInfo> g_instInfos = const <InstructionInfo>[
   const InstructionInfo(0xDF,   1,   0,  16,  16,   'RST 18H',         '- - - -'),
   const InstructionInfo(0xE0,   1,   1,  12,  12,   'LD (0xFF+n), A',  '- - - -'),
   const InstructionInfo(0xE1,   1,   0,  12,  12,   'POP HL',          '- - - -'),
-  const InstructionInfo(0xE2,   1,   1,   8,   8,   'LD (0xFF+C), A',  '- - - -'),
+  const InstructionInfo(0xE2,   1,   0,   8,   8,   'LD (0xFF+C), A',  '- - - -'),
   const InstructionInfo(0xE3,   1,   0,   4,   4,   '0xE3: NOP',       '- - - -'),
   const InstructionInfo(0xE4,   1,   0,   4,   4,   '0xE4: NOP',       '- - - -'),
   const InstructionInfo(0xE5,   1,   0,  16,  16,   'PUSH HL',         '- - - -'),

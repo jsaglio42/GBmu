@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 09:18:49 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 14:24:43 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,15 +52,20 @@ class GameBoy extends Object
     int executedClocks = 0;
     while(executedClocks < nbClock)
     {
+      this.lastInstPC = this.cpur.PC;
+
       instructionDuration = this.executeInstruction();
       this.updateTimers(instructionDuration);
       this.updateGraphics(instructionDuration);
       executedClocks += instructionDuration;
       this.handleInterrupts();
-      if (this.hardbreak) {
-        print('*** HARDBREAK ***');
+
+      // requestHB(this.cpur.HL == 0xFFE2); // debug
+      // requestHB(this.cpur.HL == 0xFFFE); // debug
+      requestHB(this.cpur.PC == 0x287C); // debug
+
+      if (this.hardbreak)
         break ;
-      }
     }
     return (executedClocks);
   }

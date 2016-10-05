@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/05 09:52:40 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 14:18:03 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,6 +18,8 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
 import "package:emulator/src/hardware/data.dart" as Data;
+
+import "package:emulator/src/mixins/instructions.dart" as Instructions;
 
 abstract class Hardware {
 
@@ -41,9 +43,20 @@ abstract class Hardware {
   bool halt = false;
   bool stop = false;
 
+  /* Useful for debug */
+  int lastInstPC = 0x00;
   /* Can be used to force breakpoint anywhere in code */
-  bool hardbreak = false;
+  bool _hardbreak = false;
+  bool get hardbreak => _hardbreak;
+  void clearHB() { this._hardbreak = false; }
+  void requestHB(bool c) {
+    if (c == true) {
+      print('HARDBREAK [$clockTotal]');
+      this._hardbreak = true;
+    }
+  }
 
+  /* Init */
   void initHardware(Cartridge.ACartridge c) {
     assert(_c == null, "Hardware: Cartridge already initialised");
     _c = c;

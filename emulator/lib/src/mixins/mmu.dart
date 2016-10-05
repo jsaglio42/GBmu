@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 09:16:35 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 12:03:38 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,8 +45,8 @@ abstract class Mmu
 
   void push8(int memAddr, int v)
   {
-    if (memAddr == 0xFFE2)
-      this.hardbreak = true;
+    // requestHB(memAddr == 0xFFE2); // debug
+
     if (_isInRange(memAddr, CARTRIDGE_ROM_FIRST, CARTRIDGE_ROM_LAST))
       this.c.push8_Rom(memAddr, v);
     else if (_isInRange(memAddr, CARTRIDGE_RAM_FIRST, CARTRIDGE_RAM_LAST))

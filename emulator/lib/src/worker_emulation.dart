@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 09:53:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 12:04:06 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -238,7 +238,7 @@ abstract class Emulation implements Worker.AWorker {
     }
     else if (this.gbOpt.hardbreak) {
       _updatePauseMode(PauseExternalMode.Effective);
-      this.gbOpt.hardbreak = false;
+      this.gbOpt.clearHB();
     }
     else if (_autoBreak) {
       _autoBreakIn -= clockSum;
