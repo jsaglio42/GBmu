@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 15:22:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 17:40:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -48,9 +48,10 @@ Async.Future init(p) async {
 
   final PlatformDomDragged pdd = new PlatformDomDragged(pde, pce);
   final PlatformCart pc = new PlatformCart(pde, pce, pdd);
+  final PlatformChip pch = new PlatformChip(pde, pce, pdd, pc);
 
   final PlatformDomComponentStorage pdcs =
-    new PlatformDomComponentStorage(pcs, pde, pce, pc);
+    new PlatformDomComponentStorage(pcs, pde, pce, pc, pch);
   final PlatformTopLevelBanks ptlb = new PlatformTopLevelBanks(pde, pce);
 
   // final HandlerCartVisibility hcv = new HandlerCartVisibility(pdcs, pde, pce);

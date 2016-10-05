@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 19:05:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 17:40:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,6 +32,7 @@ class PlatformDomComponentStorage {
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
   final PlatformCart _pc;
+  final PlatformChip _pch;
 
   final static Html.NodeValidatorBuilder _domCartValidator =
     new Html.NodeValidatorBuilder()
@@ -44,7 +45,8 @@ class PlatformDomComponentStorage {
   final Map<int, DomComponent> _components = <int, DomComponent>{};
 
   // CONTRUCTION ************************************************************ **
-  PlatformDomComponentStorage(this._pcs, this._pde, this._pce, this._pc) {
+  PlatformDomComponentStorage(
+      this._pcs, this._pde, this._pce, this._pc, this._pch) {
     Ft.log('PlatformDCS', 'contructor');
   }
 
@@ -69,16 +71,26 @@ class PlatformDomComponentStorage {
       _components[e.uid] = de;
       _pc.newCart(de);
     }
+    else {
+      if (e.type is Ram)
+        de = new DomChip(_pde, e);
+      else
+        de = new DomChip(_pde, e);
+      _components[e.uid] = de;
+      _pch.newChip(de);
+    }
   }
 
   void _handleDelete(LsEntry e) {
     DomComponent de;
 
     Ft.log('PlatformDCS', '_handleDetele', [e]);
-    if (e.type is Rom) {
-      de = _components[e.uid];
-      _components.remove(e.uid);
+    de = _components[e.uid];
+    _components.remove(e.uid);
+    if (e.type is Rom)
       _pc.deleteCart(de);
+    else {
+      _pch.deleteChip(de);
     }
   }
 

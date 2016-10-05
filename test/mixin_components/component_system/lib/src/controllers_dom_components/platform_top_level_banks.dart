@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:51:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 16:46:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 17:42:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,6 +33,7 @@ class PlatformTopLevelBanks {
 
   final DomGameBoySocket _dgbs;
   final DomDetachedCartBank _ddcb;
+  final DomDetachedChipBank _ddchb;
 
   // CONTRUCTION ************************************************************ **
   static PlatformTopLevelBanks _instance;
@@ -46,7 +47,8 @@ class PlatformTopLevelBanks {
   PlatformTopLevelBanks._(pde, this._pce)
     : _pde = pde
     , _dgbs = new DomGameBoySocket(pde)
-    , _ddcb = new DomDetachedCartBank(pde) {
+    , _ddcb = new DomDetachedCartBank(pde)
+    , _ddchb = new DomDetachedChipBank(pde) {
     Ft.log('PlatformTLB', 'contructor');
 
     _pce.onCartEvent.forEach(_handleCartEvent);
@@ -55,6 +57,7 @@ class PlatformTopLevelBanks {
   // PUBLIC ***************************************************************** **
   DomGameBoySocket get gbSocket => _dgbs;
   DomDetachedCartBank get cartBank => _ddcb;
+  DomDetachedChipBank get chipBank => _ddchb;
 
   // CALLBACKS ************************************************************** **
   void _handleCartEvent(CartEvent<DomCart> ev) {

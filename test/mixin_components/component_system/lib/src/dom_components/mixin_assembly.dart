@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 16:10:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/05 17:21:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,6 +28,7 @@ class DomCart extends DomComponent
   with HtmlElementCart
   , HtmlCartClosable
   , HtmlDraggable {
+
   DomCart(
       PlatformDomEvents pde, LsRom data, String cartHtml, Html.NodeValidator v)
     : super(pde, data) {
@@ -36,6 +37,33 @@ class DomCart extends DomComponent
     this.hcc_init();
     this.hdr_init(125, 143, 75, 99);
   }
+
+}
+
+class DomChip extends DomComponent
+  with HtmlElementSimple
+  , HtmlDraggable {
+
+  DomChip(PlatformDomEvents pde, LsRom data)
+    : super(pde, data) {
+    Html.ImageElement elt;
+    int hCenter;
+
+    Ft.log('DomChip', 'constructor', [pde, data]);
+    if (data.type is Ram) {
+      hCenter = 92;
+      elt = new Html.ImageElement()
+        ..classes.addAll(["cart-ram-bis", "ui-widget-content"]);
+    }
+    else {
+      hCenter = 44;
+      elt = new Html.ImageElement()
+        ..classes.addAll(["cart-ss-bis", "ui-widget-content"]);
+    }
+    this.hes_init(elt);
+    this.hdr_init(hCenter, 26, 20, 100);
+  }
+
 }
 
 // class DomChipSocket extends DomElement
@@ -53,8 +81,6 @@ class DomGameBoySocket extends DomElement
   with HtmlElementSimple
   , HtmlDropZone
   , CartBank
-  // , TopLevelBank
-  // , SingleElementBank<DomCart>
 {
 
   DomGameBoySocket(PlatformDomEvents pde)
@@ -71,16 +97,30 @@ class DomDetachedCartBank extends DomElement
   with HtmlElementSimple
   , HtmlDropZone
   , CartBank
-  // , TopLevelBank
-  // , ListBank<DomCart>
 {
 
   DomDetachedCartBank(PlatformDomEvents pde)
     : super(pde) {
-    Ft.log('DomGameBoySocket', 'constructor', [pde]);
+    Ft.log('DomDetachedCartBank', 'constructor', [pde]);
     this.hes_init(Html.querySelector('#accordion'));
     this.hdz_init(HtmlDropZone.makeClassesMap(
             'accordion-hover', null, 'accordion-active', null));
+  }
+
+}
+
+class DomDetachedChipBank extends DomElement
+  with HtmlElementSimple
+  , HtmlDropZone
+  , ChipBank
+{
+
+  DomDetachedChipBank(PlatformDomEvents pde)
+    : super(pde) {
+    Ft.log('DomDetachedChipBank', 'constructor', [pde]);
+    this.hes_init(Html.querySelector('#detached-chip-bank'));
+    this.hdz_init(HtmlDropZone.makeClassesMap(
+            'chipbank-hover', null, 'chipbank-active', null));
   }
 
 }
