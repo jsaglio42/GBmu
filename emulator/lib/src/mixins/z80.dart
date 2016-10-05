@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 14:19:02 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 17:50:11 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -1581,7 +1581,7 @@ abstract class Z80
     }
     else
     {
-      this.cpur.PC += 3;
+      this.cpur.PC += 1;
       return 8;
     }
   }
@@ -1594,6 +1594,7 @@ abstract class Z80
   int _RETI()
   {
     this.ime = true;
+    // print('*** END OF INTERRUPT ***');
     return _RET();
   }
 
