@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 18:50:09 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/09/30 23:20:18 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,13 +21,14 @@ import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
 * Joypad behaviour is strange, depending on value in b4 and b5, reading to  FF00
 * will return the states of either buttons or directions.
 * There is a private attribute _joypadState that stores the state of all 
-* and reading from FF00 will build the answer based on this _joypadState
+* and reading from FF00 will build the answer based on this _joypadState.
+* !!! Reading to the Joypad return the complementary of the states (ie 0 = set)
 *
 * Wiring of Joypad input:              Implementation via joypadState:
-*                      
+*
 *                                         joypadState
 *   FF00H                                   +---+
-*   +---+                                   | 8 +--- Button = 0 | Direction = 1
+*   +---+                                   | 8 +--- Direction = 0 | Buttons = 1
 *   | 7 |                                   |---|
 *   |   |                                   | 7 +--- Down
 *   | 6 |                                   |   |
@@ -35,13 +36,13 @@ import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
 *   | 5 +-------------------+               |   |
 *   |   |                   |               | 5 +--- Left
 *   | 4 +---------+         |               |   |
-*   |   |   Start |    Down |               | 4 +--- Right
+*   |   |    Down |   Start |               | 4 +--- Right
 *   | 3 +---------+---------+ - R3          |   |
-*   |   |  Select |      Up |               | 3 +--- Start
+*   |   |      Up |  Select |               | 3 +--- Start
 *   | 2 +---------+---------+ - R2          |   |
-*   |   |       B |    Left |               | 2 +--- Select
+*   |   |    Left |       B |               | 2 +--- Select
 *   | 1 +---------+---------+ - R1          |   |
-*   |   |       A |   Right |               | 1 +--- B
+*   |   |   Right |       A |               | 1 +--- B
 *   | 0 +---------+---------+ - R0          |   |
 *   +---+         |         |               | 0 +--- A
 *                C0        C1               +---+
@@ -49,14 +50,14 @@ import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
 */
 
 enum JoypadKey {
-  A,
-  B,
-  Select,
-  Start,
   Right,
   Left,
   Up,
-  Down
+  Down,
+  A,
+  B,
+  Select,
+  Start
 }
 
 abstract class Joypad

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 20:32:47 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 17:49:31 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -62,6 +62,8 @@ abstract class InterruptManager
   }
 
   /* Private */
+
+  int _vblankno = 0;
   void _serviceInterrupt(InterruptType i) {
     this.ime = false;
     this.halt = false;
@@ -71,7 +73,10 @@ abstract class InterruptManager
     this.tailRam.push8_unsafe(_addrIF, IF_new);
     this.pushOnStack16(this.cpur.PC);
     switch(i) {
-      case (InterruptType.VBlank) : this.cpur.PC = 0x0040 ; break ;
+      case (InterruptType.VBlank) :
+        // print('VBLANK NO: ${_vblankno++}');
+        this.cpur.PC = 0x0040;
+        break ;
       case (InterruptType.LCDStat) : this.cpur.PC = 0x0048 ; break ;
       case (InterruptType.Timer) : this.cpur.PC = 0x0050 ; break ;
       case (InterruptType.Serial) : this.cpur.PC = 0x0058 ; break ;

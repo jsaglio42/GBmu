@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 18:58:57 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 18:05:09 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,6 +15,7 @@ import 'dart:typed_data';
 import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
+import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
@@ -96,7 +97,7 @@ abstract class Z80
       case (0x32) : return _LDD_HL_A();                 //  LD (HL-), A
       case (0x33) : return _INC_rr(Reg16.SP);           //  INC SP
       case (0x34) : return _INC_HL();                   //  INC (HL)
-      case (0x35) : return _INC_HL();                   //  DEC (HL)
+      case (0x35) : return _DEC_HL();                   //  DEC (HL)
       case (0x36) : return _LD_HL_n();                  //  LD (HL), n
       case (0x37) : return _SCF();                      //  SCF
 
@@ -106,7 +107,7 @@ abstract class Z80
       case (0x3B) : return _DEC_rr(Reg16.SP);           //  DEC SP
       case (0x3C) : return _INC_r(Reg8.A);              //  INC A
       case (0x3D) : return _DEC_r(Reg8.A);              //  DEC A
-      case (0x3E) : return _LD_r_n(Reg8.A);               //  LD A, n
+      case (0x3E) : return _LD_r_n(Reg8.A);             //  LD A, n
       case (0x3F) : return _CCF();                      //  CCF
 
       case (0x40) : return _LD_r_r(Reg8.B, Reg8.B);     //  LD B, B
@@ -822,7 +823,7 @@ abstract class Z80
     final int calculated = l + r;
     final int result = calculated & 0xFF;
     this.cpur.cy = ((l + r) > 0xFF) ? 1 : 0;
-    this.cpur.h = ((l & 0xF) + (r & 0xF) > 0xF) ? 1 : 0;
+    this.cpur.h = ((l & 0x0F) + (r & 0x0F) > 0x0F) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
@@ -898,7 +899,7 @@ abstract class Z80
     final int calculated = l - r;
     final int result = calculated & 0xFF;
     this.cpur.cy = (l < r) ? 1 : 0;
-    this.cpur.h = ((l & 0xF) < (r & 0xF)) ? 1 : 0;
+    this.cpur.h = ((l & 0x0F) < (r & 0x0F)) ? 1 : 0;
     this.cpur.n = 1;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
@@ -1145,6 +1146,7 @@ abstract class Z80
     this.cpur.A = (~this.cpur.A & 0xFF);
     this.cpur.h = 1;
     this.cpur.n = 1;
+    this.cpur.PC += 1;
     return 4;
   }
 
@@ -1152,6 +1154,7 @@ abstract class Z80
     this.cpur.cy = 1 - this.cpur.cy;
     this.cpur.n = 0;
     this.cpur.h = 0;
+    this.cpur.PC += 1;
     return 4;
   }
 
@@ -1159,6 +1162,7 @@ abstract class Z80
     this.cpur.cy = 1;
     this.cpur.n = 0;
     this.cpur.h = 0;
+    this.cpur.PC += 1;
     return 4;
   }
 
@@ -1389,7 +1393,7 @@ abstract class Z80
   int _SWAP_calculate(int val) {
     assert(val & ~0xFF == 0);
     final int h = (val >> 4);
-    final int l = (val & 0xFF);
+    final int l = (val & 0x0F);
     final int result = h | (l << 4);
     this.cpur.cy = 0;
     this.cpur.h = 0;
@@ -1509,7 +1513,7 @@ abstract class Z80
   int _JP_C_nn()  { return  _JP_cc_nn(this.cpur.cy == 1); }
 
   int _JP_HL() {
-    this.cpur.PC = this.pull16(this.cpur.HL);
+    this.cpur.PC = this.cpur.HL;
     return 4;
   }
 
@@ -1577,7 +1581,7 @@ abstract class Z80
     }
     else
     {
-      this.cpur.PC += 3;
+      this.cpur.PC += 1;
       return 8;
     }
   }
@@ -1590,6 +1594,7 @@ abstract class Z80
   int _RETI()
   {
     this.ime = true;
+    // print('*** END OF INTERRUPT ***');
     return _RET();
   }
 

@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   mem_mmu.dart                                       :+:      :+:    :+:   //
+//   mmu.dart                                           :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 20:35:53 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 15:18:46 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,6 +45,8 @@ abstract class Mmu
 
   void push8(int memAddr, int v)
   {
+    // requestHB(memAddr == 0xFF87); // debug
+
     if (_isInRange(memAddr, CARTRIDGE_ROM_FIRST, CARTRIDGE_ROM_LAST))
       this.c.push8_Rom(memAddr, v);
     else if (_isInRange(memAddr, CARTRIDGE_RAM_FIRST, CARTRIDGE_RAM_LAST))
@@ -115,28 +117,47 @@ abstract class Mmu
     switch(rinfo?.reg)
     {
       case (MemReg.P1) : return setJoypadRegister(v);
-      case (MemReg.DIV) : return setDIVRegister();
+      case (MemReg.DIV) : return resetDIVRegister();
+      case (MemReg.LY) : return resetLYRegister();
+      case (MemReg.DMA) : return execDMA(memAddr, v);
       default: return this.tailRam.push8_unsafe(memAddr, v);
     }
   }
 
   /* Joypad */
   int getJoypadRegister() {
-    if (this.joypadState >> 8 == 0) // b8 = 0: return buttons
-      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0xFF;
-    else // return directions
-      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0xFF;
+    if (this.joypadState & 0x100 == 0) // b8 = 0: return directions
+      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0x3F;
+    else // b8 = 1: return buttons
+      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0x3F;
   }
+
   void setJoypadRegister(int v) {
-    this.joypadState &= 0xFF; // Reset b8: buttons are selected
-    if (v >> 4 != 0) // Directions: b8 = 1
+    if (v & 0x10 == 0) // Directions: b8 <- 1
+      this.joypadState &= 0xFF;
+    else if (v & 0x20 == 0) // Buttons: b8 <- 1
       this.joypadState |= (1 << 8);
     return ;
   }
 
   /* Timers */
-  void setDIVRegister() {
+  void resetDIVRegister() {
     this.tailRam.push8_unsafe(g_memRegInfos[MemReg.DIV.index].address, 0x00);
+    return ;
+  }
+
+  /* LCD */
+  void resetLYRegister() {
+    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.LY.index].address, 0x00);
+    return ;
+  }
+
+  void execDMA(int regAddress, int v) {
+    final int addr = v << 8;
+    for (int i = 0 ; i < 0xA0; i++) {
+      this.tailRam.push8_unsafe(0xFE00 + i, this.pull8(addr + i));
+    }
+    this.tailRam.push8_unsafe(regAddress, v);
     return ;
   }
 

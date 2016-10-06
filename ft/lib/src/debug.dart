@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 11:08:37 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:38:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/04 18:23:19 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,7 +14,8 @@ import 'dart:js' as Js;
 import 'dart:math' as Math;
 
 // http://blog.sethladd.com/2013/12/compile-time-dead-code-elimination-with.html
-const _enabled = const String.fromEnvironment('FTLOG') != null;
+// const _enabled = const String.fromEnvironment('FTLOG') != null;
+const _enabled = false;
 
 DateTime now() => new DateTime.now();
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 10:39:34 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 12:04:06 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -48,7 +48,9 @@ final Map<AutoBreakExternalMode, int> _autoBreakClocks = {
 
 abstract class Emulation implements Worker.AWorker {
 
-  Async.Timer _timerOrNull = null;
+  Async.Stream _fut;
+  Async.StreamSubscription _sub;
+  // Async.Timer _timerOrNull = null;
 
   bool _simulateCrash = false;
 
@@ -69,28 +71,28 @@ abstract class Emulation implements Worker.AWorker {
   {
     final AutoBreakExternalMode ab = AutoBreakExternalMode.values[abRaw.index];
 
-    Ft.log(Ft.typeStr(this), '_onAutoBreakReq', [ab]);
+    Ft.log("WorkerEmu", '_onAutoBreakReq', [ab]);
     assert(this.abMode != ab, '_onAutoBreakReq($ab) twice');
     this.sc.setState(ab);
   }
 
   void _onPauseReq(_)
   {
-    Ft.log(Ft.typeStr(this), '_onPauseReq');
+    Ft.log("WorkerEmu", '_onPauseReq');
     if (this.pauseMode != PauseExternalMode.Effective)
       _updatePauseMode(PauseExternalMode.Effective);
   }
 
   void _onResumeReq(_)
   {
-    Ft.log(Ft.typeStr(this), '_onResumeReq');
+    Ft.log("WorkerEmu", '_onResumeReq');
     if (this.pauseMode != PauseExternalMode.Ineffective)
       _updatePauseMode(PauseExternalMode.Ineffective);
   }
 
   void _onEmulationSpeedChangeReq(map)
   {
-    Ft.log(Ft.typeStr(this), '_onEmulationSpeedChangeReq', [map]);
+    Ft.log("WorkerEmu", '_onEmulationSpeedChangeReq', [map]);
     assert(map['speed'] != null && map['speed'] is double,
         "_onEmulationSpeedChangeReq($map)");
     _updateEmulationSpeed(map['speed']);
@@ -100,7 +102,7 @@ abstract class Emulation implements Worker.AWorker {
   {
     var gb;
 
-    Ft.log(Ft.typeStr(this), '_onEmulationStartReq');
+    Ft.log("WorkerEmu", '_onEmulationStartReq');
     try {
       gb = _assembleGameBoy(l);
     }
@@ -113,10 +115,10 @@ abstract class Emulation implements Worker.AWorker {
     }
     _updateEmulationSpeed(_emulationSpeed);
     this.gbOpt = gb;
-    _updateGBMode(GameBoyExternalMode.Emulating);
     if (this.debMode == DebuggerExternalMode.Operating
         && this.pauseMode != PauseExternalMode.Effective)
       _updatePauseMode(PauseExternalMode.Effective);
+    _updateGBMode(GameBoyExternalMode.Emulating);
     this.ports.send('Events', <String, dynamic>{
       'type': EmulatorEvent.GameBoyStart,
       'msg': "Plokemon violet.rom",
@@ -126,9 +128,10 @@ abstract class Emulation implements Worker.AWorker {
 
   void _onEjectReq(_)
   {
-    Ft.log(Ft.typeStr(this), '_onEjectReq');
+    Ft.log("WorkerEmu", '_onEjectReq');
     assert(this.gbMode != GameBoyExternalMode.Absent,
         "_onEjectReq with no gameboy");
+    this.gbOpt = null;
     _updateGBMode(GameBoyExternalMode.Absent);
     this.ports.send('Events', <String, dynamic>{
       'type': EmulatorEvent.GameBoyEject,
@@ -158,7 +161,7 @@ abstract class Emulation implements Worker.AWorker {
 
   void _updateEmulationSpeed(double speed)
   {
-    Ft.log(Ft.typeStr(this), '_updateEmulationSpeed', [speed]);
+    Ft.log("WorkerEmu", '_updateEmulationSpeed', [speed]);
     assert(!(speed < 0.0), "_updateEmulationSpeed($speed)");
     if (speed.isFinite) {
       _emulationSpeed = speed;
@@ -174,14 +177,14 @@ abstract class Emulation implements Worker.AWorker {
 
   void _updateGBMode(GameBoyExternalMode m)
   {
-    Ft.log(Ft.typeStr(this), '_updateGBMode', [m]);
+    Ft.log("WorkerEmu", '_updateGBMode', [m]);
     this.sc.setState(m);
     this.ports.send('EmulationStatus', m);
   }
 
   void _updatePauseMode(PauseExternalMode m)
   {
-    Ft.log(Ft.typeStr(this), '_updatePauseMode', [m]);
+    Ft.log("WorkerEmu", '_updatePauseMode', [m]);
     this.sc.setState(m);
     if (m == PauseExternalMode.Effective)
       this.ports.send('EmulationPause', 42);
@@ -201,7 +204,7 @@ abstract class Emulation implements Worker.AWorker {
 
   // LOOPING ROUTINE ******************************************************** **
 
-  void _onEmulation()
+  void _onEmulation(_)
   {
     int clockSum;
     var error, stacktrace;
@@ -213,7 +216,7 @@ abstract class Emulation implements Worker.AWorker {
       clockSum = _emulate(timeLimit, clockLimit);
     }
     catch (e, st) {
-      // Ft.logwarn(Ft.typeStr(this), '_onEmulation#try', [e, st]);
+      Ft.logwarn(Ft.typeStr(this), '_onEmulation#try', [e, st]);
       clockSum = 0;
       error = e;
       stacktrace = st;
@@ -222,9 +225,9 @@ abstract class Emulation implements Worker.AWorker {
     _emulationCount++;
     _rescheduleTime = _emulationStartTime.add(
         EMULATION_PERIOD_DURATION * _emulationCount);
-    _timerOrNull = null;
-    _timerOrNull = new Async.Timer(
-        _rescheduleTime.difference(Ft.now()), _onEmulation);
+    _fut = new Async.Future.delayed(_makeRescheduleDelay())
+      .asStream();
+    _sub = _fut.listen(_onEmulation);
     if (error != null) {
       _updateGBMode(GameBoyExternalMode.Crashed);
       this.ports.send('Events', <String, dynamic>{
@@ -233,12 +236,26 @@ abstract class Emulation implements Worker.AWorker {
         'st': stacktrace.toString(),
       });
     }
+    else if (this.gbOpt.hardbreak) {
+      _updatePauseMode(PauseExternalMode.Effective);
+      this.gbOpt.clearHB();
+    }
     else if (_autoBreak) {
       _autoBreakIn -= clockSum;
       if (_autoBreakIn <= 0)
         _updatePauseMode(PauseExternalMode.Effective);
     }
     return ;
+  }
+
+  Duration _makeRescheduleDelay() {
+    final DateTime now = Ft.now();
+    final Duration delta = _rescheduleTime.difference(now);
+
+    if (delta < EMULATION_RESCHEDULE_MIN_DELAY)
+      return EMULATION_RESCHEDULE_MIN_DELAY;
+    else
+      return delta;
   }
 
   int _clockLimitOfClockDebt(double clockDebt)
@@ -259,7 +276,7 @@ abstract class Emulation implements Worker.AWorker {
     int clockExec;
 
     if (_simulateCrash) {
-      Ft.log(Ft.typeStr(this), '_emulate#simulateCrash');
+      Ft.log("WorkerEmu", '_emulate#simulateCrash');
       _simulateCrash = false;
       throw new Exception('Simulated crash');
     }
@@ -270,6 +287,8 @@ abstract class Emulation implements Worker.AWorker {
         break ;
       clockExec = Math.min(MAXIMUM_CLOCK_PER_EXEC_INT, clockLimit - clockSum);
       clockSum += this.gbOpt.exec(clockExec);
+      if (this.gbOpt.hardbreak)
+        break ;
     }
     return clockSum;
   }
@@ -278,27 +297,28 @@ abstract class Emulation implements Worker.AWorker {
 
   void _makeLooping()
   {
-    Ft.log(Ft.typeStr(this), '_makeLooping');
-    assert(_timerOrNull == null, "_makeLooping() with some timer");
+    Ft.log("WorkerEmu", '_makeLooping');
+    assert(_sub == null, "_makeLooping() with some timer");
     _clockDeficit = 0.0;
     _emulationStartTime = Ft.now().add(EMULATION_START_DELAY);
     _rescheduleTime = _emulationStartTime;
     _emulationCount = 0;
-    _timerOrNull = new Async.Timer(EMULATION_START_DELAY, _onEmulation);
+    _fut = new Async.Future.delayed(EMULATION_START_DELAY).asStream();
+    _sub = _fut.listen(_onEmulation);
   }
 
   void _makeDormant()
   {
-    Ft.log(Ft.typeStr(this), '_makeDormant');
-    assert(_timerOrNull != null && _timerOrNull.isActive,
-        "_makeDormant with no timer");
-    _timerOrNull.cancel();
-    _timerOrNull = null;
+    Ft.log("WorkerEmu", '_makeDormant');
+    assert(_sub != null, "_makeDormant with no timer");
+    _sub.pause();
+    _fut = null;
+    _sub = null;
   }
 
   void _enableAutoBreak()
   {
-    Ft.log(Ft.typeStr(this), '_enableAutoBreak');
+    Ft.log("WorkerEmu", '_enableAutoBreak');
     assert(this.abMode != AutoBreakExternalMode.None, "_enableAutoBreak");
     _autoBreakIn = _autoBreakClocks[this.abMode];
     _autoBreak = true;
@@ -306,7 +326,7 @@ abstract class Emulation implements Worker.AWorker {
 
   void _disableAutoBreak()
   {
-    Ft.log(Ft.typeStr(this), '_disableAutoBreak');
+    Ft.log("WorkerEmu", '_disableAutoBreak');
     _autoBreak = false;
   }
 
@@ -314,37 +334,30 @@ abstract class Emulation implements Worker.AWorker {
 
   void init_emulation()
   {
-    Ft.log(Ft.typeStr(this), 'init_emulation');
-    this.sc.setState(GameBoyExternalMode.Absent);
-    this.sc.setState(PauseExternalMode.Ineffective);
-    this.sc.setState(AutoBreakExternalMode.Instruction);
-    this.sc.addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos);
-    this.sc.addSideEffect(
-        _enableAutoBreak, _disableAutoBreak, _activeAutoBreakCombos);
-    this.ports.listener('EmulationStart')
-      .forEach(_onEmulationStartReq);
-    this.ports.listener('Debug')
-      .forEach((Map map){
-        if (map['action'] == 'crash') {
-          _simulateCrash = true;
-          Ft.log(Ft.typeStr(this), 'listener#debug#crash');
-        }
-      });
-    this.ports.listener('Debug')
-      .where((map) => map['action'] == 'eject')
-      .forEach(_onEjectReq);
-    this.ports.listener('EmulationSpeed')
-      .listen(_onEmulationSpeedChangeReq);
-    this.ports.listener('EmulationAutoBreak')
-      .listen(_onAutoBreakReq);
-    this.ports.listener('EmulationPause')
-      .listen(_onPauseReq);
-    this.ports.listener('EmulationResume')
-      .listen(_onResumeReq);
-    this.ports.listener('KeyDownEvent')
-      .listen(_onKeyDown);
-    this.ports.listener('KeyUpEvent')
-      .listen(_onKeyUp);
+    Ft.log("WorkerEmu", 'init_emulation');
+    this.sc
+      ..setState(GameBoyExternalMode.Absent)
+      ..setState(PauseExternalMode.Ineffective)
+      ..setState(AutoBreakExternalMode.Instruction);
+    this.sc
+      ..addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos)
+      ..addSideEffect(_enableAutoBreak, _disableAutoBreak, _activeAutoBreakCombos);
+    this.ports
+      ..listener('EmulationStart').forEach(_onEmulationStartReq)
+      ..listener('EmulationSpeed').forEach(_onEmulationSpeedChangeReq)
+      ..listener('EmulationAutoBreak').forEach(_onAutoBreakReq)
+      ..listener('EmulationPause').forEach(_onPauseReq)
+      ..listener('EmulationResume').forEach(_onResumeReq)
+      ..listener('KeyDownEvent').forEach(_onKeyDown)
+      ..listener('KeyUpEvent').forEach(_onKeyUp)
+      ..listener('Debug')
+        .where((map) => map['action'] == 'eject').forEach(_onEjectReq)
+      ..listener('Debug').forEach(
+        (Map map) {
+          if (map['action'] == 'crash') {
+            _simulateCrash = true;
+            Ft.log("WorkerEmu", 'listener#debug#crash');
+        }});
   }
 
 }

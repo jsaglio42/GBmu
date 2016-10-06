@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 19:00:30 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/05 14:25:08 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,9 +28,12 @@ abstract class InstructionsDecoder
   List<Instructions.Instruction> pullInstructionList(int len) {
     final lst = <Instructions.Instruction>[];
     int pc_current = this.cpur.PC;
+    Instructions.Instruction inst;
 
-    for (int i = 0; i < len; ++i) {
-      Instructions.Instruction inst;
+    try { inst = _getInstruction(this.lastInstPC); }
+    catch (e) { inst = null; }
+    lst.add(inst);
+    for (int i = 1; i < len; ++i) {
       try {
         inst = _getInstruction(pc_current);
         pc_current += inst.info.instSize;
@@ -41,7 +44,6 @@ abstract class InstructionsDecoder
   }
 
   /* Private ******************************************************************/
-
   Instructions.InstructionInfo _getInstructionInfo(int addr) {
     final op = this.pull8(addr);
     if (op == 0xCB)
