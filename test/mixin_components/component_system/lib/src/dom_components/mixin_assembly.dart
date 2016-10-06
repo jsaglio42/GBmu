@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:21:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 14:32:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -44,7 +44,7 @@ class DomChip extends DomComponent
   with HtmlElementSimple
   , HtmlDraggable {
 
-  DomChip(PlatformDomEvents pde, LsRom data)
+  DomChip(PlatformDomEvents pde, LsRam data)
     : super(pde, data) {
     Html.ImageElement elt;
     int hCenter;

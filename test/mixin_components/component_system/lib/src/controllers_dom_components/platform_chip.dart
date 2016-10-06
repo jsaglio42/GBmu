@@ -6,11 +6,11 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:38:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 14:35:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-// library platform_cart;
+library platform_chip;
 
 import 'dart:js' as Js;
 import 'dart:async' as Async;
@@ -27,7 +27,7 @@ import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-// part 'platform_cart_parts.dart';
+part 'platform_chip_parts.dart';
 
 class PlatformChip
   // extends Object with _Actions implements _Super

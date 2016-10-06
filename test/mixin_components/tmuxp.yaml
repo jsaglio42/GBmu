@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/04 19:07:36 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/06 14:34:57 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,7 +62,7 @@ windows:
 
 - window_index: 4
   window_name: cdc handlers
-  panes: ['e $CDC/platform_cart(|_parts).dart']
+  panes: ['e $CDC/platform_{cart,chip}(|_parts).dart']
 - window_index: 5
   window_name: cdc handlers
   panes: ['e $CDC/handler_*catalyst*.dart $CDC/platform_dom_dragged.dart']

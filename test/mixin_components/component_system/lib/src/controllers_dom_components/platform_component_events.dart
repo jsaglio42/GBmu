@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 15:55:47 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 18:49:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 15:29:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,48 +45,10 @@ class PlatformComponentEvents {
   void cartEvent(CartEvent<DomCart> that) => _cartEvent.add(that);
   Async.Stream<CartEvent<DomCart>> get onCartEvent => _cartEvent.stream;
 
-  // // final Async.StreamController<DomCart> _cartNew =
-  // //   new Async.StreamController<DomCart>.broadcast();
-  // // void cartNew(DomCart that) => _cartNew.add(that);
-  // // Async.Stream<DomCart> get onCartNew => _cartNew.stream;
-  // Async.Stream<DomCart> get onCartNew =>
-  //   onCartEvent
-  //   .where((CartEvent<DomCart> ev) => ev.src is None)
-  //   .map((CartEvent<DomCart> ev) => ev.cart);
-
-  // // (cartNew|cartDelete|openedCartChange|gbCartChange)
-
-  // // final Async.StreamController<DomCart> _cartDelete =
-  // //   new Async.StreamController<DomCart>.broadcast();
-  // // void cartDelete(DomCart that) => _cartDelete.add(that);
-  // // Async.Stream<DomCart> get onCartDelete => _cartDelete.stream;
-  // Async.Stream<DomCart> get onCartDelete =>
-  //   onCartEvent
-  //   .where((CartEvent<DomCart> ev) => ev.dst is None)
-  //   .map((CartEvent<DomCart> ev) => ev.cart);
-
-  // // final Async.StreamController<SlotEvent<DomCart>> _openedCartChange =
-  // //   new Async.StreamController<SlotEvent<DomCart>>.broadcast();
-  // // void openedCartChange(SlotEvent<DomCart> that) => _openedCartChange.add(that);
-  // // Async.Stream<SlotEvent<DomCart>> get onOpenedCartChange => _openedCartChange.stream;
-  // Async.Stream<SlotEvent<DomCart>> get onOpenedCartChange =>
-  //   onCartEvent
-  //   .where((CartEvent<DomCart> ev) => ev.isOpenedChange)
-  //   .map((CartEvent<DomCart> ev) => ev.src is Opened
-  //       ? new SlotEvent<DomCart>.Dismissal(ev.cart)
-  //       : new SlotEvent<DomCart>.Arrival(ev.cart));
-
-  // // final Async.StreamController<SlotEvent<DomCart>> _gbCartChange =
-  // //   new Async.StreamController<SlotEvent<DomCart>>.broadcast();
-  // // void gbCartChange(SlotEvent<DomCart> that) => _gbCartChange.add(that);
-  // // Async.Stream<SlotEvent<DomCart>> get onGbCartChange => _gbCartChange.stream;
-  // Async.Stream<SlotEvent<DomCart>> get onGbCartChange =>
-  //   onCartEvent
-  //   .where((CartEvent<DomCart> ev) => ev.isGbChange)
-  //   .map((CartEvent<DomCart> ev) => ev.src is GameBoy
-  //       ? new SlotEvent<DomCart>.Dismissal(ev.cart)
-  //       : new SlotEvent<DomCart>.Arrival(ev.cart));
-
+  final Async.StreamController<ChipEvent<DomChip, DomCart>> _chipEvent =
+    new Async.StreamController<ChipEvent<DomChip, DomCart>>.broadcast();
+  void chipEvent(ChipEvent<DomChip, DomCart> that) => _chipEvent.add(that);
+  Async.Stream<ChipEvent<DomChip, DomCart>> get onChipEvent => _chipEvent.stream;
 
   final Async.StreamController<SlotEvent<DomComponent>> _draggedChange =
     new Async.StreamController<SlotEvent<DomComponent>>.broadcast();

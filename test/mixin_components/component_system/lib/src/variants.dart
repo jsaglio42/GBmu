@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 19:02:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 15:30:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -37,8 +37,9 @@ class Ss implements Chip {
 
 // Locations **************************************************************** **
 abstract class CartState {}
+abstract class ChipState {}
 
-class None implements CartState {
+class None implements CartState, ChipState {
   const None._();
   static const None v = const None._();
   String toString() => 'None';
@@ -60,6 +61,18 @@ class GameBoy implements CartState {
   const GameBoy._();
   static const GameBoy v = const GameBoy._();
   String toString() => 'GameBoy';
+}
+
+class Detached implements ChipState {
+  const Detached._();
+  static const Detached v = const Detached._();
+  String toString() => 'Detached';
+}
+
+class Attached implements ChipState {
+  const Attached._();
+  static const Attached v = const Attached._();
+  String toString() => 'Attached';
 }
 
 // Cart movements *********************************************************** **
@@ -115,6 +128,54 @@ class CartEvent<T> {
 
   bool get isOpenedChange => src is Opened || dst is Opened;
   bool get isGbChange => src is GameBoy || dst is GameBoy;
+
+}
+// Chip events ************************************************************** **
+enum _ChipEvent {
+  New, Attach, Detach, DeleteAttached, DeleteDetached,
+}
+
+const _chipEventTargets = const <_ChipEvent, List<ChipState>>{
+  _ChipEvent.New: const <ChipState>[None.v, Detached.v],
+  _ChipEvent.Attach: const <ChipState>[Detached.v, Attached.v],
+  _ChipEvent.Detach: const <ChipState>[Attached.v, Detached.v],
+  _ChipEvent.DeleteAttached: const <ChipState>[Attached.v, None.v],
+  _ChipEvent.DeleteDetached: const <ChipState>[Detached.v, None.v],
+};
+
+class ChipEvent<T, C> {
+
+  final T chip;
+  final _ChipEvent _ev;
+
+  ChipEvent.New(this.chip) : _ev = _ChipEvent.New;
+  ChipEvent.DeleteDetached(this.chip) : _ev = _ChipEvent.DeleteDetached;
+  factory ChipEvent.Attach(chip, cart) =>
+    new ChipEventCart<T, C>(chip, cart, _ChipEvent.Attach);
+  factory ChipEvent.Detach(chip, cart) =>
+    new ChipEventCart<T, C>(chip, cart, _ChipEvent.Detach);
+  factory ChipEvent.DeleteAttached(chip, cart) =>
+    new ChipEventCart<T, C>(chip, cart, _ChipEvent.DeleteAttached);
+
+  ChipEvent._detail(this.chip, this._ev);
+
+  bool get isNew => _ev = _ChipEvent.New;
+  bool get isAttach => _ev = _ChipEvent.Attach;
+  bool get isDetach => _ev = _ChipEvent.Detach;
+  bool get isDeleteAttached => _ev = _ChipEvent.DeleteAttached;
+  bool get isDeleteDetached => _ev = _ChipEvent.DeleteDetached;
+  bool get isMove => isAttach || isDetach;
+  bool get isDelete => isDeleteDetached || isDeleteAttached;
+
+}
+
+class ChipEventCart<T, C> extends ChipEvent<T> {
+
+  final C cart;
+
+  ChipEventCart._detail(chip, this.cart, ev) : super._detail(chip, ev);
+  ChipEventCart.Detach(chip, this.cart, ev) : super._detail(chip, ev);
+  ChipEventCart.DeleteAttached(chip, this.cart, ev) : super._detail(chip, ev);
 
 }
 
