@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 18:05:09 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/06 10:35:06 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -1139,7 +1139,19 @@ abstract class Z80
 
   /* Miscellaneous ************************************************************/
   int _DAA() {
-    assert(false, "DAA");
+    int result = this.cpur.A;
+    int l_corr = (this.cpur.n == 0) ? 0x06 : -0x06;
+    int h_corr = (this.cpur.n == 0) ? 0x60 : -0x60;
+    if (this.cpur.h == 1 || (this.cpur.A & 0xF) > 9)
+      result += l_corr;
+    if (this.cpur.cy == 1 || this.cpur.A > 0x9F)
+      result += h_corr;
+    this.cpur.A = result & 0xFF;
+    this.cpur.cy = (result < 0 || result > 0xFF) ? 0x1 : 0x0;
+    this.cpur.h = 0;
+    this.cpur.z = (this.cpur.A == 0) ? 0x1 : 0x0;
+    this.cpur.PC += 1;
+    return 4;
   }
 
   int _CPL() {
