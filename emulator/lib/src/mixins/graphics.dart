@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 22:20:28 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/06 09:38:53 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -299,6 +299,7 @@ abstract class Graphics
   void _updateScreen() {
     Uint8List tmp;
 
+    // print('UpdateScreen');
     tmp = _buffer;
     _buffer = this.lcdScreen;
     this.lcdScreen = tmp;
@@ -308,6 +309,7 @@ abstract class Graphics
   void _drawLine() {
     if (_current.LY < VBLANK_THRESHOLD)
     {
+      // print('Draw Line');
       for (int x = 0; x < LCD_WIDTH; ++x)
       {
         Color c = Color.White;
@@ -341,7 +343,7 @@ abstract class Graphics
 
   Color _getWindowPixel(int x) {
     final int posY = _current.LY - _current.WY;
-    final int posX =  x - _current.WY;
+    final int posX =  x - _current.WX;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
     final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_WIN + tileY * 32 + tileX);
@@ -356,29 +358,31 @@ abstract class Graphics
     return Color.Black;
   }
 
-  Color _getSpritePixel(int x, Color c) {
+  Color _getSpritePixel(int x, Color BGcolor) {
     final int sizeY = (_current.LCDC & (1 << 2) == 0) ? 8 : 16;
     for (int spriteno = 0; spriteno < 40; ++spriteno) {
       int spriteOffset = 0xFE00 + spriteno * 4;
-      int info = this.tailRam.pull8_unsafe(spriteOffset + 3);
-      // bool aboveBG = (info & (1 << 7)) == 0;
-      // if (!aboveBG && c != Color.White)
-        // continue ;
-      int posY = this.tailRam.pull8_unsafe(spriteOffset);
+      int posY = this.tailRam.pull8_unsafe(spriteOffset) - 16;
       int relativeY = _current.LY - posY;
       if (relativeY < 0 || relativeY >= sizeY)
         continue ;
-      bool flipY = (info & (1 << 6)) == 1;
-      if (flipY)
-        relativeY = sizeY - 1 - relativeY;
-      int posX = this.tailRam.pull8_unsafe(spriteOffset + 1);
+      int posX = this.tailRam.pull8_unsafe(spriteOffset + 1) - 8;
       int relativeX = x - posX;
       if (relativeX < 0 || relativeX >= 8)
         continue ;
+
+      int info = this.tailRam.pull8_unsafe(spriteOffset + 3);
+      bool aboveBG = (info & (1 << 7)) == 0;
+      if (!aboveBG && BGcolor != Color.White)
+        continue ;
+
+      bool flipY = (info & (1 << 6)) == 1;
+      if (flipY)
+        relativeY = sizeY - 1 - relativeY;
       bool flipX = (info & (1 << 5)) == 1;
       if (flipX)
         relativeX = 7 - relativeX;
-      print('lol');
+
       int tileID = this.tailRam.pull8_unsafe(spriteOffset + 2);
       int tileAddress = 0x8000 + tileID * 16;
       int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
@@ -386,11 +390,11 @@ abstract class Graphics
       int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
       int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
       int OBP = (info >> 4) & 0x1;
-      Color col = _current.getColorOBJ(colorId_l | colorId_h, OBP);
-      if (col != Color.White)
-        return c;
+      Color Pcolor = _current.getColorOBJ(colorId_l | colorId_h, OBP);
+      if (Pcolor != Color.White)
+        return Pcolor;
       }
-    return c;
+    return BGcolor;
   }
 
   void _drawPixel(int x, Color c) {
