@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:40:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 16:43:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -60,10 +60,13 @@ class PlatformDomComponentStorage {
   }
 
   // PUBLIC ***************************************************************** **
+  // DomComponent componentOfUid(int uid) =>
+    // _components[uid];
 
   // CALLBACKS ************************************************************** **
   void _handleNew(LsEntry e) {
     DomComponent de;
+    LsChip ec;
 
     Ft.log('PlatformDCS', '_handleNew', [e]);
     if (e.type is Rom) {
@@ -77,12 +80,18 @@ class PlatformDomComponentStorage {
       else
         de = new DomChip(_pde, e);
       _components[e.uid] = de;
-      _pch.newChip(de);
+      ec = e as LsChip;
+      if (!ec.isBound)
+        _pce.chipEvent(new ChipEvent<DomChip, DomCart>.NewDetached(de));
+      else
+        _pce.chipEvent(new ChipEvent<DomChip, DomCart>.NewAttached(
+                de, _components[ec.romUid.v]));
     }
   }
 
   void _handleDelete(LsEntry e) {
     DomComponent de;
+    LsChip ec;
 
     Ft.log('PlatformDCS', '_handleDetele', [e]);
     de = _components[e.uid];
@@ -90,14 +99,37 @@ class PlatformDomComponentStorage {
     if (e.type is Rom)
       _pc.deleteCart(de);
     else {
-      _pch.deleteChip(de);
+      ec = e as LsChip;
+      if (!ec.isBound)
+        _pce.chipEvent(new ChipEvent<DomChip, DomCart>.DeleteDetached(de));
+      else
+        _pce.chipEvent(new ChipEvent<DomChip, DomCart>.DeleteAttached(
+                de, _components[ec.romUid.v]));
     }
   }
 
   void _handleUpdate(Update<LsEntry> u) {
     DomComponent de;
+    final LsChip oldDat = u.oldValue;
+    final LsChip newDat = u.newValue;
 
     Ft.log('PlatformDCS', '_handleUpdate', [u]);
+    de = new DomChip(_pde, newDat);
+    _components[newDat.uid] = de;
+    if (     newDat.type is Ss  &&  oldDat.isBound &&  newDat.isBound)
+      ; //move ss
+    else if (newDat.type is Ss  &&  oldDat.isBound && !newDat.isBound)
+      ; //unbind ss
+    else if (newDat.type is Ss  && !oldDat.isBound &&  newDat.isBound)
+      ; //bind ss
+    else if (newDat.type is Ram &&  oldDat.isBound &&  newDat.isBound)
+      ; //move ss
+    else if (newDat.type is Ram &&  oldDat.isBound && !newDat.isBound)
+      ; //unbind ram
+    else if (newDat.type is Ram && !oldDat.isBound &&  newDat.isBound)
+      ; //bind ram
+    else
+      assert(false, '_handleUpdate#unreachable');
   }
 
   // PRIVATE **************************************************************** **

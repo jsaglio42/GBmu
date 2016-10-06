@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 15:30:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 17:22:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -132,13 +132,18 @@ class CartEvent<T> {
 }
 // Chip events ************************************************************** **
 enum _ChipEvent {
-  New, Attach, Detach, DeleteAttached, DeleteDetached,
+  NewAttached, NewDetached,
+  Attach, Detach,
+  MoveAttach,
+  DeleteAttached, DeleteDetached,
 }
 
 const _chipEventTargets = const <_ChipEvent, List<ChipState>>{
-  _ChipEvent.New: const <ChipState>[None.v, Detached.v],
+  _ChipEvent.NewAttached: const <ChipState>[None.v, Attached.v],
+  _ChipEvent.NewDetached: const <ChipState>[None.v, Detached.v],
   _ChipEvent.Attach: const <ChipState>[Detached.v, Attached.v],
   _ChipEvent.Detach: const <ChipState>[Attached.v, Detached.v],
+  _ChipEvent.MoveAttach: const <ChipState>[Attached.v, Attached.v],
   _ChipEvent.DeleteAttached: const <ChipState>[Attached.v, None.v],
   _ChipEvent.DeleteDetached: const <ChipState>[Detached.v, None.v],
 };
@@ -148,34 +153,56 @@ class ChipEvent<T, C> {
   final T chip;
   final _ChipEvent _ev;
 
-  ChipEvent.New(this.chip) : _ev = _ChipEvent.New;
+  ChipEvent.NewDetached(this.chip) : _ev = _ChipEvent.NewDetached;
   ChipEvent.DeleteDetached(this.chip) : _ev = _ChipEvent.DeleteDetached;
+  factory ChipEvent.NewAttached(chip, cart) =>
+    new ChipEventCart<T, C>._detail(chip, cart, _ChipEvent.NewAttached);
   factory ChipEvent.Attach(chip, cart) =>
-    new ChipEventCart<T, C>(chip, cart, _ChipEvent.Attach);
+    new ChipEventCart<T, C>._detail(chip, cart, _ChipEvent.Attach);
   factory ChipEvent.Detach(chip, cart) =>
-    new ChipEventCart<T, C>(chip, cart, _ChipEvent.Detach);
+    new ChipEventCart<T, C>._detail(chip, cart, _ChipEvent.Detach);
   factory ChipEvent.DeleteAttached(chip, cart) =>
-    new ChipEventCart<T, C>(chip, cart, _ChipEvent.DeleteAttached);
+    new ChipEventCart<T, C>._detail(chip, cart, _ChipEvent.DeleteAttached);
+  factory ChipEvent.MoveAttach(chip, {oldCart, newCart}) =>
+    new ChipEventCart2<T, C>._detail(
+        chip, oldCart, newCart, _ChipEvent.MoveAttach);
 
   ChipEvent._detail(this.chip, this._ev);
 
-  bool get isNew => _ev = _ChipEvent.New;
-  bool get isAttach => _ev = _ChipEvent.Attach;
-  bool get isDetach => _ev = _ChipEvent.Detach;
-  bool get isDeleteAttached => _ev = _ChipEvent.DeleteAttached;
-  bool get isDeleteDetached => _ev = _ChipEvent.DeleteDetached;
-  bool get isMove => isAttach || isDetach;
+  bool get isNewAttached => _ev == _ChipEvent.NewAttached;
+  bool get isNewDetached => _ev == _ChipEvent.NewDetached;
+  bool get isAttach => _ev == _ChipEvent.Attach;
+  bool get isDetach => _ev == _ChipEvent.Detach;
+  bool get isMoveAttach => _ev == _ChipEvent.MoveAttach;
+  bool get isDeleteAttached => _ev == _ChipEvent.DeleteAttached;
+  bool get isDeleteDetached => _ev == _ChipEvent.DeleteDetached;
+  bool get isNew => isNewAttached || isNewDetached;
+  bool get isMove => isAttach || isDetach || isMoveAttach;
   bool get isDelete => isDeleteDetached || isDeleteAttached;
+
+  ChipState get src => _chipEventTargets[_ev][0];
+  ChipState get dst => _chipEventTargets[_ev][1];
+
+  bool get isDetachedChange => src is Detached || dst is Detached;
 
 }
 
-class ChipEventCart<T, C> extends ChipEvent<T> {
+class ChipEventCart<T, C> extends ChipEvent<T, C> {
 
   final C cart;
 
-  ChipEventCart._detail(chip, this.cart, ev) : super._detail(chip, ev);
-  ChipEventCart.Detach(chip, this.cart, ev) : super._detail(chip, ev);
-  ChipEventCart.DeleteAttached(chip, this.cart, ev) : super._detail(chip, ev);
+  ChipEventCart._detail(chip, this.cart, ev)
+    : super._detail(chip, ev);
+
+}
+
+class ChipEventCart2<T, C> extends ChipEvent<T, C> {
+
+  final C oldCart;
+  final C newCart;
+
+  ChipEventCart2._detail(chip, this.oldCart, this.newCart, ev)
+    : super._detail(chip, ev);
 
 }
 

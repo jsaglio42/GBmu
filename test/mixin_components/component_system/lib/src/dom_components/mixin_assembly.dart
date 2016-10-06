@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 14:32:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 17:03:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -54,11 +54,13 @@ class DomChip extends DomComponent
       hCenter = 92;
       elt = new Html.ImageElement()
         ..classes.addAll(["cart-ram-bis", "ui-widget-content"]);
+      elt.setAttribute('src', 'images/gb_ram.png');
     }
     else {
       hCenter = 44;
       elt = new Html.ImageElement()
         ..classes.addAll(["cart-ss-bis", "ui-widget-content"]);
+      elt.setAttribute('src', 'images/gb_ss.png');
     }
     this.hes_init(elt);
     this.hdr_init(hCenter, 26, 20, 100);

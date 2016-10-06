@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:41:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:03:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 17:24:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -51,6 +51,8 @@ class HandlerDropZoneCatalyst {
       assert(_suitableOpt == null, '_onDragChange() Arrival with some enabled');
       if (ev.value is DomCart)
         _startCart(ev.value);
+      else
+        _startChip(ev.value);
       // TODO: Implement chip drop zone catalyst
       _suitableOpt.forEach((dz){
             dz.hdz_enable();
@@ -99,6 +101,11 @@ class HandlerDropZoneCatalyst {
     }
     else
       assert(false, 'from: _startCart()');
+  }
+
+  void _startChip(DomChip c) {
+    _suitableOpt = <HtmlDropZone>[];
+    _unsuitableOpt = <HtmlDropZone>[];
   }
 
 }

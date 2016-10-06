@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:51:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:42:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 17:04:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,6 +52,9 @@ class PlatformTopLevelBanks {
     Ft.log('PlatformTLB', 'contructor');
 
     _pce.onCartEvent.forEach(_handleCartEvent);
+    _pce.onChipEvent
+      .where((ev) => ev.isDetachedChange)
+      .forEach(_handleChipEvent);
   }
 
   // PUBLIC ***************************************************************** **
@@ -66,7 +69,6 @@ class PlatformTopLevelBanks {
       ev.cart.elt.style.left = '0px';
       ev.cart.elt.style.top = '0px';
     }
-
     if (ev.isNew || ev.isUnload)
       _ddcb.elt.nodes.add(ev.cart.elt);
     else if (ev.isLoad)
@@ -76,6 +78,27 @@ class PlatformTopLevelBanks {
     else if (ev.isDeleteGameBoy)
       _dgbs.elt.nodes = [];
     // else: Don't act on Open & Close
+  }
+
+  void _handleChipEvent(ChipEvent<DomChip, DomCart> ev) {
+    Ft.log('PlatformTLB', '_handleChipEvent', [ev]);
+    if (ev.isMove) {
+      ev.chip.elt.style.left = '0px';
+      ev.chip.elt.style.top = '0px';
+    }
+
+    if (ev.isNewDetached || ev.isDetach)
+      _ddchb.elt.nodes.add(ev.chip.elt);
+    else if (ev.isDeleteDetached)
+      _ddchb.elt.nodes.remove(ev.chip.elt);
+    //   _ChipEvent.NewAttached: const <ChipState>[None.v, Attached.v],
+    //   _ChipEvent.DeleteAttached: const <ChipState>[Attached.v, None.v],
+    //   _ChipEvent.MoveAttach: const <ChipState>[Attached.v, Attached.v],
+
+    //   _ChipEvent.NewDetached: const <ChipState>[None.v, Detached.v],
+    //   _ChipEvent.Attach: const <ChipState>[Detached.v, Attached.v],
+    //   _ChipEvent.Detach: const <ChipState>[Attached.v, Detached.v],
+    //   _ChipEvent.DeleteDetached: const <ChipState>[Detached.v, None.v],
   }
 
 }

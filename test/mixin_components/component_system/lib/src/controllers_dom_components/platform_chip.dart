@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 14:35:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 16:37:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -34,6 +34,7 @@ class PlatformChip
 {
 
   // ATTRIBUTES ************************************************************* **
+  // final PlatformDomComponentStorage _pdcs;
   final PlatformComponentStorage _pcs;
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
@@ -51,29 +52,18 @@ class PlatformChip
   }
 
   // PUBLIC ***************************************************************** **
-  void newChip(DomChip that) {
-  //   _actionNew(that);
-  //   if (_openingOpt == null) {
-  //     if (_openedCart.isSome) {
-  //       openedCart.v.hcc_startClose();
-  //       _actionClose();
-  //     }
-  //     that.hcc_startOpen();
-  //     _openingOpt = that;
-  //   }
-  }
+  // void newChip(DomChip that) {
+  //   _pce.chipEvent(new ChipEvent<DomChip, DomCart>.New(that));
+  // }
 
-  void deleteChip(DomChip that) {
-  //   if (that == _gbCart.v)
-  //     _actionDeleteGameBoy();
-  //   else if (that == _openedCart.v)
-  //     _actionDeleteOpened();
-  //   else {
-  //     if (that == _openingOpt)
-  //       that.hcc_abort();
-  //     _actionDeleteClosed(that);
-  //   }
-  }
+  // void deleteChip(DomChip that, [DomCart c]) {
+  //   if (!(that.data as LsChip).isBound)
+  //     _actionDeleteDetached(that);
+  //   else
+  //     _actionDeleteAttached(that, c);
+  // }
+
+  // void attach()
 
   // CALLBACKS ************************************************************** **
   // The almighty function that has the view on:

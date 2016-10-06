@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 17:04:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 19:03:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/06 17:23:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -41,6 +41,7 @@ class HandlerDraggableCatalyst {
     // TODO: Enable all chips in chip sockets
     // TODO: Disable all chips in chip sockets
     _pce.onCartEvent.forEach(_onCartEvent);
+    _pce.onChipEvent.forEach(_onChipEvent);
   }
 
   // CALLBACKS ************************************************************** **
@@ -52,6 +53,31 @@ class HandlerDraggableCatalyst {
       ev.cart.hdr_enable();
   }
 
+  void _onChipEvent(ChipEvent<DomChip, DomCart> ev) {
+    DomCart dc, dc2;
+    bool isOpenedOrGb(DomCart c) => _pc.gbCart.v == c || _pc.openedCart.v == c;
+    DomCart cart() => (ev as ChipEventCart<DomChip, DomCart>).cart;
+    DomCart cartNew() => (ev as ChipEventCart2<DomChip, DomCart>).newCart;
+    DomCart cartOld() => (ev as ChipEventCart2<DomChip, DomCart>).oldCart;
+
+    if (ev.isNewDetached)
+      _updateChipState(ev.chip, false, true);
+    else if (ev.isAttach)
+      _updateChipState(ev.chip, true, isOpenedOrGb(cart()));
+    else if (ev.isMoveAttach)
+      _updateChipState(ev.chip, isOpenedOrGb(cartOld()), isOpenedOrGb(cartNew()));
+    else if (ev.isDetach)
+      _updateChipState(ev.chip, isOpenedOrGb(cart()), true);
+    else if (ev.isNewAttached)
+      _updateChipState(ev.chip, false, isOpenedOrGb(cart()));
+  }
+
   // PRIVATE **************************************************************** **
+  void _updateChipState(DomChip c, bool oldActive, bool newActive) {
+    if (oldActive && !newActive)
+      c.hdr_disable();
+    else if (!oldActive && newActive)
+      c.hdr_enable();
+  }
 
 }
