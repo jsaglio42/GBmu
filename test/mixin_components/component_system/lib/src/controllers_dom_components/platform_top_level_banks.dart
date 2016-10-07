@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:51:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 13:59:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:52:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,27 +28,12 @@ import 'package:component_system/src/include_cdc.dart';
 class PlatformTopLevelBanks {
 
   // ATTRIBUTES ************************************************************* **
-  final PlatformComponentEvents _pce;
   final PlatformDomEvents _pde;
-
-  final DomGameBoySocket _dgbs;
-  final DomDetachedCartBank _ddcb;
-  final DomDetachedChipBank _ddchb;
+  final PlatformComponentEvents _pce;
+  final PlatformDomComponentStorage _pdcs;
 
   // CONTRUCTION ************************************************************ **
-  static PlatformTopLevelBanks _instance;
-
-  factory PlatformTopLevelBanks(pde, pce) {
-    if (_instance == null)
-      _instance = new PlatformTopLevelBanks._(pde, pce);
-    return _instance;
-  }
-
-  PlatformTopLevelBanks._(pde, this._pce)
-    : _pde = pde
-    , _dgbs = new DomGameBoySocket(pde)
-    , _ddcb = new DomDetachedCartBank(pde)
-    , _ddchb = new DomDetachedChipBank(pde) {
+  PlatformTopLevelBanks(this._pde, this._pce, this._pdcs) {
     Ft.log('PlatformTLB', 'contructor');
 
     _pce.onCartEvent.forEach(_handleCartEvent);
@@ -56,11 +41,6 @@ class PlatformTopLevelBanks {
       .where((ev) => ev.isDetachedChange)
       .forEach(_handleChipEvent);
   }
-
-  // PUBLIC ***************************************************************** **
-  DomGameBoySocket get gbSocket => _dgbs;
-  DomDetachedCartBank get cartBank => _ddcb;
-  DomDetachedChipBank get chipBank => _ddchb;
 
   // CALLBACKS ************************************************************** **
   void _handleCartEvent(CartEvent<DomCart> ev) {
@@ -70,13 +50,13 @@ class PlatformTopLevelBanks {
       ev.cart.elt.style.top = '0px';
     }
     if (ev.isNew || ev.isUnload)
-      _ddcb.elt.nodes.add(ev.cart.elt);
+      _pdcs.cartBank.elt.nodes.add(ev.cart.elt);
     else if (ev.isLoad)
-      _dgbs.elt.nodes = [ev.cart.elt];
+      _pdcs.gbSocket.elt.nodes = [ev.cart.elt];
     else if (ev.isDeleteOpened || ev.isDeleteClosed)
-      _ddcb.elt.nodes.remove(ev.cart.elt);
+      _pdcs.cartBank.elt.nodes.remove(ev.cart.elt);
     else if (ev.isDeleteGameBoy)
-      _dgbs.elt.nodes = [];
+      _pdcs.gbSocket.elt.nodes = [];
     // else: Don't act on Open & Close
   }
 
@@ -88,9 +68,9 @@ class PlatformTopLevelBanks {
     }
 
     if (ev.isNewDetached || ev.isDetach)
-      _ddchb.elt.nodes.add(ev.chip.elt);
+      _pdcs.chipBank.elt.nodes.add(ev.chip.elt);
     else if (ev.isDeleteDetached)
-      _ddchb.elt.nodes.remove(ev.chip.elt);
+      _pdcs.chipBank.elt.nodes.remove(ev.chip.elt);
     //   _ChipEvent.NewAttached: const <ChipState>[None.v, Attached.v],
     //   _ChipEvent.DeleteAttached: const <ChipState>[Attached.v, None.v],
     //   _ChipEvent.MoveAttach: const <ChipState>[Attached.v, Attached.v],

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:41:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 17:24:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:50:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,16 +28,15 @@ import 'package:component_system/src/include_cdc.dart';
 class HandlerDropZoneCatalyst {
 
   // ATTRIBUTES ************************************************************* **
-  final PlatformCart _pc;
-  final PlatformTopLevelBanks _ptlb;
-  final PlatformComponentEvents _pce;
   final PlatformDomEvents _pde;
+  final PlatformComponentEvents _pce;
+  final PlatformDomComponentStorage _pdcs;
 
   List<HtmlDropZone> _suitableOpt;
   List<HtmlDropZone> _unsuitableOpt;
 
   // CONSTRUCTION *********************************************************** **
-  HandlerDropZoneCatalyst(this._pc, this._ptlb, this._pce, this._pde) {
+  HandlerDropZoneCatalyst(this._pde, this._pce, this._pdcs) {
     Ft.log('HandlerDropZoneCatalyst', 'contructor');
 
     _pce.onDraggedChange.forEach(_onDragChange);
@@ -91,12 +90,12 @@ class HandlerDropZoneCatalyst {
   void _startCart(DomCart c) {
     _suitableOpt = <HtmlDropZone>[];
     _unsuitableOpt = <HtmlDropZone>[];
-    if (_pc.gbCart.v == c) {
-      _suitableOpt.add(_ptlb.cartBank);
+    if (_pdcs.gbCart.v == c) {
+      _suitableOpt.add(_pdcs.cartBank);
     }
-    else if (_pc.openedCart.v == c) {
-      if (_pc.gbCart.isNone) {
-        _suitableOpt.add(_ptlb.gbSocket);
+    else if (_pdcs.openedCart.v == c) {
+      if (_pdcs.gbCart.isNone) {
+        _suitableOpt.add(_pdcs.gbSocket);
       }
     }
     else

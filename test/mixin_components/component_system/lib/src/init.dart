@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:01:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:53:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,6 +35,7 @@ import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
 Async.Future init(p) async {
   Ft.log('Component_System', 'init', [p]);
 
+  // Component storage interactions (local storage/indexedDb)
   final PlatformIndexedDb pidb = new PlatformIndexedDb();
   final PlatformLocalStorage pls = new PlatformLocalStorage();
   final PlatformComponentStorage pcs = new PlatformComponentStorage(pls, pidb);
@@ -42,25 +43,45 @@ Async.Future init(p) async {
   final TransformerLseDataCheck tdc = new TransformerLseDataCheck(pcs, tu);
   final TransformerLseIdbCheck tic = new TransformerLseIdbCheck(pidb, tdc);
 
+  // Dom logic-less controllers
   final PlatformDomEvents pde = new PlatformDomEvents();
   final PlatformComponentEvents pce = new PlatformComponentEvents();
-  final PlatformDomComponentStorage pdcs = new PlatformDomComponentStorage();
+  final PlatformDomComponentStorage pdcs = new PlatformDomComponentStorage(
+      new DomGameBoySocket(pde),
+      new DomDetachedCartBank(pde),
+      new DomDetachedChipBank(pde));
 
+  // Dom controllers
+  final PlatformDomDragged pdd = new PlatformDomDragged(pde, pce, pdcs);
+  final PlatformTopLevelBanks ptlb = new PlatformTopLevelBanks(pde, pce, pdcs);
 
-  final PlatformDomDragged pdd = new PlatformDomDragged(pde, pce);
-  final PlatformCart pc = new PlatformCart(pde, pce, pdd);
-  final PlatformChip pch = new PlatformChip(pde, pce, pdd, pc);
-
-  final PlatformDomComponentStorageLogic pdcsl =
-    new PlatformDomComponentStorageLogic(pcs, pde, pce, pc, pch);
-  final PlatformTopLevelBanks ptlb = new PlatformTopLevelBanks(pde, pce);
-
-  // final HandlerCartVisibility hcv = new HandlerCartVisibility(pdcs, pde, pce);
-  // final HandlerDragDrop hdd = new HandlerDragDrop(pdcs, pde, pce);
-
+  // Drag/drop enablers
   final HandlerDropZoneCatalyst hdzc =
-    new HandlerDropZoneCatalyst(pc, ptlb, pce, pde);
-  final HandlerDraggableCatalyst hdc = new HandlerDraggableCatalyst(pc, pce);
+    new HandlerDropZoneCatalyst(pde, pce, pdcs);
+  final HandlerDraggableCatalyst hdc =
+    new HandlerDraggableCatalyst(pde, pce, pdcs);
+
+  // // Bridge between data and dom
+  final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs);
+  final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs);
+  final PlatformDomComponentStorageLogic pdcsl =
+    new PlatformDomComponentStorageLogic(pcs, pde, pce, pdcs, pc, pch);
+
+  // // pidb.start: async computation
+  await pidb.start(Html.window.indexedDB);
+
+  // // pcs.start: interdependant controllers
+  pcs.start(tic);
+
+  // // pdcsl.start: async computation
+  await pdcsl.start();
+
+  // // pls.start: data retrieval from local-storage
+  /* await */ pls.start();
+
+
+
+
 
   final Emulator.Rom rom = new Emulator.Rom(0, 400);
   final Emulator.Ram ram = new Emulator.Ram(0, 400);
@@ -71,9 +92,6 @@ Async.Future init(p) async {
   // List<Async.Future> futs;
   // List comps;
 
-  await pidb.start(Html.window.indexedDB);
-  pcs.start(tic);
-  await pdcsl.start();
 
   // pcs.entryDelete.forEach((_){
   //       print('main#deleteEntry');
@@ -91,7 +109,6 @@ Async.Future init(p) async {
   //   pcs.entryNew.where((LsEntry e) => e.type is Ss).first,
   // ];
 
-  /* await */ pls.start();
 
   // await pcs.newRom(rom); //Add Rom
   // await pcs.newRom(rom);

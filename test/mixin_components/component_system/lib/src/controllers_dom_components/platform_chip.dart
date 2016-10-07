@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 16:37:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:53:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -34,15 +34,13 @@ class PlatformChip
 {
 
   // ATTRIBUTES ************************************************************* **
-  // final PlatformDomComponentStorage _pdcs;
   final PlatformComponentStorage _pcs;
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
-  final PlatformDomDragged _pdd;
-  final PlatformCart _pc;
+  final PlatformDomComponentStorage _pdcs;
 
   // CONSTRUCTION *********************************************************** **
-  PlatformChip(this._pde, this._pce, this._pdd, this._pc) {
+  PlatformChip(this._pcs, this._pde, this._pce, this._pdcs) {
     Ft.log('PlatformChip', 'contructor');
 
     _pde.onDropReceived
@@ -72,12 +70,12 @@ class PlatformChip
     DomCart cart;
     DomChip chip;
 
-    assert(_pdd.dragged.isSome, '_onDropReceived() with none dragged');
-    chip = _pdd.dragged.v;
+    assert(_pdcs.dragged.isSome, '_onDropReceived() with none dragged');
+    chip = _pdcs.dragged.v;
     if (that is DomDetachedChipBank)
       _pcs.unbind(chip.data);
     else {
-      // cart = _pc.cartOfSocket(that);
+      // cart = _pdcs.cartOfSocket(that);
       // if (chip.data.type is Ram)
         // _pcs.bindRam(chip.data, cart.data);
       // else

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 17:04:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 17:23:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:49:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,13 +28,14 @@ import 'package:component_system/src/include_cdc.dart';
 class HandlerDraggableCatalyst {
 
   // ATTRIBUTES ************************************************************* **
-  final PlatformCart _pc;
+  final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
+  final PlatformDomComponentStorage _pdcs;
 
   List<HtmlDropZone> _enabledOpt;
 
   // CONSTRUCTION *********************************************************** **
-  HandlerDraggableCatalyst(this._pc, this._pce) {
+  HandlerDraggableCatalyst(this._pde, this._pce, this._pdcs) {
     Ft.log('HandlerDraggableCatalyst', 'contructor');
 
     // TODO: Listen chips creations / ?deletions?
@@ -55,7 +56,8 @@ class HandlerDraggableCatalyst {
 
   void _onChipEvent(ChipEvent<DomChip, DomCart> ev) {
     DomCart dc, dc2;
-    bool isOpenedOrGb(DomCart c) => _pc.gbCart.v == c || _pc.openedCart.v == c;
+    bool isOpenedOrGb(DomCart c) =>
+      _pdcs.gbCart.v == c || _pdcs.openedCart.v == c;
     DomCart cart() => (ev as ChipEventCart<DomChip, DomCart>).cart;
     DomCart cartNew() => (ev as ChipEventCart2<DomChip, DomCart>).newCart;
     DomCart cartOld() => (ev as ChipEventCart2<DomChip, DomCart>).oldCart;

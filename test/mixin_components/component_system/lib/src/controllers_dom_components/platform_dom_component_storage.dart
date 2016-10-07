@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:04:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:54:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,13 +28,16 @@ import 'package:component_system/src/include_cdc.dart';
 class PlatformDomComponentStorage {
 
   // ATTRIBUTES ************************************************************* **
+  final DomGameBoySocket _dgbs;
+  final DomDetachedCartBank _ddcb;
+  final DomDetachedChipBank _ddchb;
   final Map<int, DomComponent> _components = <int, DomComponent>{};
   Ft.Option<DomCart> _openedCart = new Ft.Option<DomCart>.none();
   Ft.Option<DomCart> _gbCart = new Ft.Option<DomCart>.none();
   Ft.Option<DomComponent> _dragged = new Ft.Option<DomCart>.none();
 
   // CONTRUCTION ************************************************************ **
-  PlatformDomComponentStorage();
+  PlatformDomComponentStorage(this._dgbs, this._ddcb, this._ddchb);
 
   // LIBRARY PUBLIC ********************************************************* **
   _setDomComponent(DomComponent c) {
@@ -47,6 +50,9 @@ class PlatformDomComponentStorage {
   }
 
   // PUBLIC ***************************************************************** **
+  DomGameBoySocket get gbSocket => _dgbs;
+  DomDetachedCartBank get cartBank => _ddcb;
+  DomDetachedChipBank get chipBank => _ddchb;
   Ft.Option<DomCart> get openedCart => _openedCart;
   Ft.Option<DomCart> get gbCart => _gbCart;
   Ft.Option<DomComponent> get dragged => _dragged;
@@ -105,6 +111,7 @@ class PlatformDomComponentStorageLogic {
   final PlatformComponentStorage _pcs;
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
+  final PlatformDomComponentStorage _pdcs;
   final PlatformCart _pc;
   final PlatformChip _pch;
 
@@ -120,7 +127,7 @@ class PlatformDomComponentStorageLogic {
 
   // CONTRUCTION ************************************************************ **
   PlatformDomComponentStorageLogic(
-      this._pcs, this._pde, this._pce, this._pc, this._pch) {
+      this._pcs, this._pde, this._pce, this._pdcs, this._pc, this._pch) {
     Ft.log('PlatformDCSL', 'contructor');
   }
 

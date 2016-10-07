@@ -6,16 +6,17 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 18:26:32 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 14:36:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:40:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 part of platform_cart;
 
 abstract class _Super {
-  Ft.Option<DomCart> _openedCart;
-  Ft.Option<DomCart> _gbCart;
+
   PlatformComponentEvents get _pce;
+  PlatformDomComponentStorage get _pdcs;
+
 }
 
 abstract class _Actions implements _Super {
@@ -25,55 +26,55 @@ abstract class _Actions implements _Super {
 
   void _actionOpen(DomCart that) {
     Ft.log('_Actions', '_actionOpen', [that]);
-    assert(_openedCart.isNone, 'from: cartOpen');
-    _openedCart = new Ft.Option<DomCart>.some(that);
+    assert(_pdcs.openedCart.isNone, 'from: cartOpen');
+    _pdcs.openedCart = that;
     _pce.cartEvent(new CartEvent<DomCart>.Open(that));
   }
 
   void _actionClose() {
     Ft.log('_Actions', '_actionClose');
-    assert(_openedCart.isSome, "from: cartClose");
-    _pce.cartEvent(new CartEvent<DomCart>.Close(_openedCart.v));
-    _openedCart = new Ft.Option<DomCart>.none();
+    assert(_pdcs.openedCart.isSome, "from: cartClose");
+    _pce.cartEvent(new CartEvent<DomCart>.Close(_pdcs.openedCart.v));
+    _pdcs.unsetOpenedCart();
   }
 
   void _actionLoad() {
     Ft.log('_Actions', '_actionLoad');
-    assert(_gbCart.isNone, "from: cartLoad");
-    assert(_openedCart.isSome, "from: cartLoad");
-    _gbCart = _openedCart;
-    _pce.cartEvent(new CartEvent<DomCart>.Load(_openedCart.v));
-    _openedCart = new Ft.Option<DomCart>.none();
+    assert(_pdcs.gbCart.isNone, "from: cartLoad");
+    assert(_pdcs.openedCart.isSome, "from: cartLoad");
+    _pdcs.gbCart = _pdcs.openedCart.v;
+    _pce.cartEvent(new CartEvent<DomCart>.Load(_pdcs.openedCart.v));
+    _pdcs.unsetOpenedCart();
   }
 
   void _actionUnloadOpened() {
     Ft.log('_Actions', '_actionUnloadOpened');
-    assert(_gbCart.isSome, "from: cartUnloadOpened");
-    assert(_openedCart.isNone, "from: cartUnloadOpened");
-    _openedCart = _gbCart;
-    _gbCart = new Ft.Option<DomCart>.none();
-    _pce.cartEvent(new CartEvent<DomCart>.UnloadOpened(_openedCart.v));
+    assert(_pdcs.gbCart.isSome, "from: cartUnloadOpened");
+    assert(_pdcs.openedCart.isNone, "from: cartUnloadOpened");
+    _pdcs.openedCart = _pdcs.gbCart.v;
+    _pdcs.unsetGbCart();
+    _pce.cartEvent(new CartEvent<DomCart>.UnloadOpened(_pdcs.openedCart.v));
   }
 
   void _actionUnloadClosed() {
     Ft.log('_Actions', '_actionUnloadClosed');
-    assert(_gbCart.isSome, "from: cartUnloadOpened");
-    _pce.cartEvent(new CartEvent<DomCart>.UnloadClosed(_gbCart.v));
-    _gbCart = new Ft.Option<DomCart>.none();
+    assert(_pdcs.gbCart.isSome, "from: cartUnloadOpened");
+    _pce.cartEvent(new CartEvent<DomCart>.UnloadClosed(_pdcs.gbCart.v));
+    _pdcs.unsetGbCart;
   }
 
   void _actionDeleteGameBoy() {
     Ft.log('_Actions', '_actionDeleteGameBoy');
-    assert(_gbCart.isSome, "from: _actionDeleteGameBoy");
-    _pce.cartEvent(new CartEvent<DomCart>.DeleteGameBoy(_gbCart.v));
-    _gbCart = new Ft.Option<DomCart>.none();
+    assert(_pdcs.gbCart.isSome, "from: _actionDeleteGameBoy");
+    _pce.cartEvent(new CartEvent<DomCart>.DeleteGameBoy(_pdcs.gbCart.v));
+    _pdcs.unsetGbCart;
   }
 
   void _actionDeleteOpened() {
     Ft.log('_Actions', '_actionDeleteOpened');
-    assert(_openedCart.isSome, "from: _actionDeleteOpened");
-    _pce.cartEvent(new CartEvent<DomCart>.DeleteOpened(_openedCart.v));
-    _openedCart = new Ft.Option<DomCart>.none();
+    assert(_pdcs.openedCart.isSome, "from: _actionDeleteOpened");
+    _pce.cartEvent(new CartEvent<DomCart>.DeleteOpened(_pdcs.openedCart.v));
+    _pdcs.unsetOpenedCart;
   }
 
   void _actionDeleteClosed(DomCart that) =>

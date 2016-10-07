@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 19:04:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 16:58:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:48:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,38 +28,35 @@ import 'package:component_system/src/include_cdc.dart';
 class PlatformDomDragged {
 
   // ATTRIBUTES ************************************************************* **
-  final PlatformComponentEvents _pce;
   final PlatformDomEvents _pde;
-
-  Ft.Option<DomComponent> _dragged = new Ft.Option<DomComponent>.none();
+  final PlatformComponentEvents _pce;
+  final PlatformDomComponentStorage _pdcs;
 
   // CONSTRUCTION *********************************************************** **
-  PlatformDomDragged(this._pde, this._pce) {
+  PlatformDomDragged(this._pde, this._pce, this._pdcs) {
     Ft.log('PlatformDomDragged', 'contructor');
 
     _pde.onDragStart.forEach(_onDragStart);
     _pde.onDragStop.forEach(_onDragStop);
     _pce.onCartEvent
-      .where((ev) => ev.isDelete && ev.cart == _dragged.v)
+      .where((ev) => ev.isDelete && ev.cart == _pdcs.dragged.v) //TODO: check comparison to global
       .map((ev) => ev.cart)
       .forEach(_handleDraggedDelete);
     // Todo: motitor chip delete while dragged
   }
 
   // CALLBACKS ************************************************************** **
-  Ft.Option<DomComponent> get dragged => _dragged;
-
   void _onDragStart(HtmlDraggable that) {
-    assert(_dragged.isNone, "from: _onDragStart");
-    _dragged = new Ft.Option<DomComponent>.some(that as DomComponent);
+    assert(_pdcs.dragged.isNone, "from: _onDragStart");
+    _pdcs.dragged = that as DomComponent;
     _pce.draggedChange(
         new SlotEvent<DomComponent>.Arrival(that as DomComponent));
   }
 
   void _onDragStop(HtmlDraggable that) {
-    assert(_dragged.isSome, "from: _onDragStop");
-    _pce.draggedChange(new SlotEvent<DomComponent>.Dismissal(_dragged.v));
-    _dragged = new Ft.Option<DomComponent>.none();
+    assert(_pdcs.dragged.isSome, "from: _onDragStop");
+    _pce.draggedChange(new SlotEvent<DomComponent>.Dismissal(_pdcs.dragged.v));
+    _pdcs.unsetDragged();
   }
 
   void _handleDraggedDelete(HtmlDraggable that) {
@@ -67,7 +64,7 @@ class PlatformDomDragged {
     that.hdr_abort();
     _pce.draggedChange(
         new SlotEvent<DomComponent>.Dismissal(that as DomComponent));
-    _dragged = new Ft.Option<DomComponent>.none();
+    _pdcs.unsetDragged();
   }
 
 
