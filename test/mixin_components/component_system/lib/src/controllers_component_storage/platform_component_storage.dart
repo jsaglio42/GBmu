@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 18:56:59 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 19:12:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -171,8 +171,8 @@ class PlatformComponentStorage {
       Ft.logerr('PlatformCS', 'bindSs#missing-element', [c]);
       return ;
     }
-    if (c.isBound) {
-      Ft.logerr('PlatformCS', 'bindSs#bound', [c]);
+    if (c.isBound && c.romUid.v == dst.uid && c.slot.v == slot) {
+      Ft.logerr('PlatformCS', 'bindSs#already-here', [c]);
       return ;
     }
     if (c.life is Dead) {
