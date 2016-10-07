@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 18:38:20 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/07 19:06:31 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -401,9 +401,10 @@ abstract class Graphics
       int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
       int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
       int OBP = (info >> 4) & 0x1;
-      Color Pcolor = _current.getColorOBJ(colorId_l | colorId_h, OBP);
-      if (Pcolor != Color.White)
-        return Pcolor;
+      int colorID = colorId_l | colorId_h;
+      if (colorID == 0)
+        return BGcolor;
+      return _current.getColorOBJ(colorID, OBP);
     }
     return BGcolor;
   }
