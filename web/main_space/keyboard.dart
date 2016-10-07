@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/09/28 11:50:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/07 13:08:05 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,10 +32,10 @@ Map<int, JoypadKey> keySettings = <int, JoypadKey>{
   76 : JoypadKey.B,
   16 : JoypadKey.Select,
   13 : JoypadKey.Start,
-  68 : JoypadKey.Right,
-  65 : JoypadKey.Left,
-  87 : JoypadKey.Up,
-  83 : JoypadKey.Down
+  70 : JoypadKey.Right,
+  83 : JoypadKey.Left,
+  69 : JoypadKey.Up,
+  68 : JoypadKey.Down
 };
 
 /* Private ********************************************************************/

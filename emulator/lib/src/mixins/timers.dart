@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 09:14:03 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/07 18:39:22 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,6 +29,7 @@ abstract class Timers
   implements Hardware.Hardware
   , Interrupt.InterruptManager {
 
+  int _thresholdTIMA = 1024;
   int _counterTIMA = 0;
   int _counterDIV = 0;
 
@@ -43,10 +44,10 @@ abstract class Timers
   /* Private ******************************************************************/
 
   void _updateDIV(int nbClock) {
-    _counterDIV -= nbClock;
-    if (_counterDIV <= 0)
+    _counterDIV += nbClock;
+    if (_counterDIV > 256)
     {
-      _counterDIV = 0xFF;
+      _counterDIV -= 256;
       final DIV_old = this.tailRam.pull8_unsafe(_addrDIV);
       final DIV_new = (DIV_old + 1) & 0xFF;
       this.tailRam.push8_unsafe(_addrDIV, DIV_new);
@@ -56,24 +57,36 @@ abstract class Timers
 
   void _updateTIMA(int nbClock) {
     final int TAC = this.tailRam.pull8_unsafe(_addrTAC);
-    if (TAC & (0x1 << 2) != 0) {
-      _counterTIMA -= nbClock;
-      if (_counterTIMA <= 0)
+    if (TAC & (0x1 << 2) == 0)
+      return ;
+    _counterTIMA += nbClock;
+    if (_counterTIMA > _thresholdTIMA)
+    {
+      _counterTIMA -= _thresholdTIMA;
+      _thresholdTIMA = _getTimerFrequency(TAC);
+      final int TIMA_old = this.tailRam.pull8_unsafe(_addrTIMA);
+      if (TIMA_old < 0xFF)
+        this.tailRam.push8_unsafe(_addrTIMA, TIMA_old + 1);
+      else
       {
-        switch(TAC & 0x3)
-        {
-          case (0): _counterTIMA = 1024; break;
-          case (1): _counterTIMA = 16; break;
-          case (2): _counterTIMA = 64; break;
-          case (3): _counterTIMA = 256; break;
-          default : assert(false, '_updateTIMA: switch failure');
-        }
         final int TMA = this.tailRam.pull8_unsafe(_addrTMA);
         this.tailRam.push8_unsafe(_addrTIMA, TMA);
         this.requestInterrupt(InterruptType.Timer);
       }
     }
     return ;
+  }
+
+  int _getTimerFrequency(int TAC)
+  {
+    switch(TAC & 0x3)
+    {
+      case (0): return 1024;
+      case (1): return 16;
+      case (2): return 64;
+      case (3): return 256;
+      default : assert(false, '_getTimerFrequency: switch failure');
+    }
   }
 
 }

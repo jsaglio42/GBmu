@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 09:38:53 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/07 18:38:20 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -89,8 +89,9 @@ class GRegisterCurrentInfo {
 
   int getTileAddress(int tileID) {
     assert(tileID & ~0xFF == 0, 'Invalid tileID');
-    if (this.LCDC & (1 << 4) == 0)
-      return 0x8800 + tileID.toSigned(2) * 16;
+    if (this.LCDC & (1 << 4) == 0) {
+      return 0x9000 + tileID.toSigned(8) * 16;
+    }
     else
       return 0x8000 + tileID * 16;
   }
@@ -316,7 +317,7 @@ abstract class Graphics
         if (_current.isBackgroundDisplayEnabled)
           c = _getBackgroundPixel(x);
         if (_current.isWindowDisplayEnabled)
-          c = _getWindowPixel(x);
+          c = _getWindowPixel(x, c);
         if (_current.isSpriteDisplayEnabled)
           c = _getSpritePixel(x, c);
         _drawPixel(x, c);
@@ -326,12 +327,15 @@ abstract class Graphics
   }
 
   Color _getBackgroundPixel(int x) {
-    final int posY = _current.SCY + _current.LY;
-    final int posX =  _current.SCX + x;
+    // print('Background');
+    final int posY = _current.LY + _current.SCY;
+    final int posX =  x + _current.SCX;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
     final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_BG + tileY * 32 + tileX);
+
     final int tileAddress = _current.getTileAddress(tileID);
+
     final int relativeY = posY % 8;
     final int relativeX = posX % 8;
     final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
@@ -341,21 +345,27 @@ abstract class Graphics
     return _current.getColorBG(colorId_l | colorId_h);
   }
 
-  Color _getWindowPixel(int x) {
+  Color _getWindowPixel(int x, Color BGcolor) {
+    // print('Window');
     final int posY = _current.LY - _current.WY;
+    if (posY < 0 || posY >= LCD_HEIGHT)
+      return BGcolor;
     final int posX =  x - _current.WX;
+    if (posX < 0 || posX >= LCD_WIDTH)
+      return BGcolor;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
     final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_WIN + tileY * 32 + tileX);
+
     final int tileAddress = _current.getTileAddress(tileID);
+
     final int relativeY = posY % 8;
     final int relativeX = posX % 8;
     final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
     final int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
-    // return _current.getColor(colorId_l | colorId_h);
-    return Color.Black;
+    return _current.getColorBG(colorId_l | colorId_h);
   }
 
   Color _getSpritePixel(int x, Color BGcolor) {
@@ -376,15 +386,16 @@ abstract class Graphics
       if (!aboveBG && BGcolor != Color.White)
         continue ;
 
-      bool flipY = (info & (1 << 6)) == 1;
-      if (flipY)
-        relativeY = sizeY - 1 - relativeY;
-      bool flipX = (info & (1 << 5)) == 1;
-      if (flipX)
-        relativeX = 7 - relativeX;
+      // print(sizeY);
+      // bool flipY = (info & (1 << 6)) == 1;
+      // if (flipY)
+      //   relativeY = sizeY - 1 - relativeY;
+      // bool flipX = (info & (1 << 5)) == 1;
+      // if (flipX)
+      //   relativeX = 7 - relativeX;
 
       int tileID = this.tailRam.pull8_unsafe(spriteOffset + 2);
-      int tileAddress = 0x8000 + tileID * 16;
+      int tileAddress = 0x8000 + tileID * 2 * sizeY;
       int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
       int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
       int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
@@ -393,7 +404,7 @@ abstract class Graphics
       Color Pcolor = _current.getColorOBJ(colorId_l | colorId_h, OBP);
       if (Pcolor != Color.White)
         return Pcolor;
-      }
+    }
     return BGcolor;
   }
 
@@ -408,104 +419,3 @@ abstract class Graphics
   }
 
 }
-
-
-
-
-
-
-
-// void Emulator::RenderSprites( ) 
-// {
-//    bool use8x16 = false ;
-//    if (TestBit(lcdControl,2))
-//      use8x16 = true ;
-
-//    for (int sprite = 0 ; sprite < 40; sprite++)
-//    { 
-//      // sprite occupies 4 bytes in the sprite attributes table
-//      BYTE index = sprite*4 ; 
-//      BYTE yPos = ReadMemory(0xFE00+index) - 16;
-//      BYTE xPos = ReadMemory(0xFE00+index+1)-8;
-//      BYTE tileLocation = ReadMemory(0xFE00+index+2) ;
-//      BYTE attributes = ReadMemory(0xFE00+index+3) ;
-
-//      bool yFlip = TestBit(attributes,6) ;
-//      bool xFlip = TestBit(attributes,5) ;
-
-//      int scanline = ReadMemory(0xFF44);
-
-//      int ysize = 8; 
-//      if (use8x16)
-//        ysize = 16;
-
-//      // does this sprite intercept with the scanline?
-//      if ((scanline >= yPos) && (scanline < (yPos+ysize)))
-//      {
-//        int line = scanline - yPos ;
-
-//        // read the sprite in backwards in the y axis
-//        if (yFlip)
-//        {
-//          line -= ysize ;
-//          line *= -1 ;
-//        }
-
-//        line *= 2; // same as for tiles
-//        WORD dataAddress = (0x8000 + (tileLocation * 16)) + line ; 
-//        BYTE data1 = ReadMemory( dataAddress ) ;
-//        BYTE data2 = ReadMemory( dataAddress +1 ) ;
-
-//        // its easier to read in from right to left as pixel 0 is 
-//        // bit 7 in the colour data, pixel 1 is bit 6 etc...
-//        for (int tilePixel = 7; tilePixel >= 0; tilePixel--)
-//        { 
-//          int colourbit = tilePixel ;
-//          // read the sprite in backwards for the x axis 
-//          if (xFlip) 
-//          {
-//            colourbit -= 7 ;
-//            colourbit *= -1 ;
-//          }
-
-//          // the rest is the same as for tiles
-//          int colourNum = BitGetVal(data2,colourbit) ;
-//          colourNum <<= 1;
-//          colourNum |= BitGetVal(data1,colourbit) ;
-
-//          WORD colourAddress = TestBit(attributes,4)?0xFF49:0xFF48 ;
-//          COLOUR col=GetColour(colourNum, colourAddress ) ;
-
-//          // white is transparent for sprites.
-//          if (col == WHITE)
-//            continue ;
-
-//          int red = 0;
-//          int green = 0;
-//          int blue = 0;
-
-//          switch(col)
-//          {
-//            case WHITE: red =255;green=255;blue=255;break ;
-//            case LIGHT_GRAY:red =0xCC;green=0xCC ;blue=0xCC;break ;
-//            case DARK_GRAY:red=0x77;green=0x77;blue=0x77;break ;
-//          }
-
-//          int xPix = 0 - tilePixel ;
-//          xPix += 7 ;
-
-//          int pixel = xPos+xPix ;
-
-//          // sanity check
-//          if ((scanline<0)||(scanline>143)||(pixel<0)||(pixel>159))
-//          {
-//            continue ;
-//          }
-
-//          m_ScreenData[pixel][scanline][0] = red ;
-//          m_ScreenData[pixel][scanline][1] = green ;
-//          m_ScreenData[pixel][scanline][2] = blue ;
-//        }
-//      }
-//    }
-// }
