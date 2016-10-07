@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/06 14:34:57 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/07 15:08:35 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,7 +73,7 @@ windows:
   panes: [e $DC/mixin_*.dart]
 - window_index: 8
   window_name: html drop drag
-  panes: ['e $DC/html_{dropzone,draggable}*.dart']
+  panes: ['e $DC/html_{dropzone,draggable}*.dart $DC/chip_socket_container.dart']
 - window_index: 9
   window_name: html elements
   panes: ['e $DC/html_*{cart,simple}*.dart']

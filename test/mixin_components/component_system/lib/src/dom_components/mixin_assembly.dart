@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 17:03:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 15:22:50 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,8 @@ import 'package:component_system/src/include_cdc.dart';
 class DomCart extends DomComponent
   with HtmlElementCart
   , HtmlCartClosable
-  , HtmlDraggable {
+  , HtmlDraggable
+  , ChipSocketContainer {
 
   DomCart(
       PlatformDomEvents pde, LsRom data, String cartHtml, Html.NodeValidator v)
@@ -36,6 +37,7 @@ class DomCart extends DomComponent
     this.hec_init(cartHtml, v);
     this.hcc_init();
     this.hdr_init(125, 143, 75, 99);
+    this.csc_init();
   }
 
 }
@@ -68,17 +70,24 @@ class DomChip extends DomComponent
 
 }
 
-// class DomChipSocket extends DomElement
-  // with HtmlElementSimple
-  // , HtmlDropZone {
+class DomChipSocket extends DomElement
+  with HtmlElementSimple
+  , HtmlDropZone
+  , ChipBank {
 
-  // ChipSocket(PlatformDomEvents pde, Html.Element elt)
-  // {
-    // Ft.log('ChipSocket', 'constructor');
-  // }
+  DomChipSocket(PlatformDomEvents pde, Html.Element elt)
+    : super(pde) {
+    Ft.log('DomChipSocket', 'constructor');
 
-// }
+    this.hes_init(elt);
+    this.hdz_init(HtmlDropZone.makeClassesMap(
+            null, null, null, null));
+  }
 
+}
+
+
+// TOP LEVEL BANKS ********************************************************** **
 class DomGameBoySocket extends DomElement
   with HtmlElementSimple
   , HtmlDropZone

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 19:04:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:48:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 15:04:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,7 @@ class PlatformDomDragged {
     _pde.onDragStart.forEach(_onDragStart);
     _pde.onDragStop.forEach(_onDragStop);
     _pce.onCartEvent
-      .where((ev) => ev.isDelete && ev.cart == _pdcs.dragged.v) //TODO: check comparison to global
+      .where((ev) => ev.isDelete && ev.cart == _pdcs.dragged.v)
       .map((ev) => ev.cart)
       .forEach(_handleDraggedDelete);
     // Todo: motitor chip delete while dragged
