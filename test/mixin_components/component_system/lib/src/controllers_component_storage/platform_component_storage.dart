@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:07:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 17:13:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -196,7 +196,7 @@ class PlatformComponentStorage {
       Ft.logerr('PlatformCS', 'unbind#missing-element', [c]);
       return ;
     }
-    if (c.isBound) {
+    if (!c.isBound) {
       Ft.logerr('PlatformCS', 'unbind#not-bound', [c]);
       return ;
     }

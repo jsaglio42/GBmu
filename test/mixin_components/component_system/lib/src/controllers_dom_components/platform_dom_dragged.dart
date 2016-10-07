@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 19:04:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 15:04:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 16:35:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,6 +25,7 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
+//TODO: Rename `Handler`
 class PlatformDomDragged {
 
   // ATTRIBUTES ************************************************************* **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:53:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 16:27:20 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,8 +29,7 @@ import 'package:component_system/src/include_cdc.dart';
 
 part 'platform_chip_parts.dart';
 
-class PlatformChip
-  // extends Object with _Actions implements _Super
+class PlatformChip extends Object with _Actions implements _Super
 {
 
   // ATTRIBUTES ************************************************************* **
@@ -50,16 +49,23 @@ class PlatformChip
   }
 
   // PUBLIC ***************************************************************** **
-  // void newChip(DomChip that) {
-  //   _pce.chipEvent(new ChipEvent<DomChip, DomCart>.New(that));
-  // }
+  void newChip(DomChip that) {
+    final LsChip data = that.data as LsChip;
 
-  // void deleteChip(DomChip that, [DomCart c]) {
-  //   if (!(that.data as LsChip).isBound)
-  //     _actionDeleteDetached(that);
-  //   else
-  //     _actionDeleteAttached(that, c);
-  // }
+    if (!data.isBound)
+      _actionNewDetached(that);
+    else
+      _actionNewAttached(that);
+  }
+
+  void deleteChip(DomChip that) {
+    final LsChip data = that.data as LsChip;
+
+    if (!data.isBound)
+      _actionDeleteDetached(that);
+    else
+      _actionDeleteAttached(that);
+  }
 
   // void attach()
 
@@ -69,18 +75,19 @@ class PlatformChip
   void _onDropReceived(ChipBank that) {
     DomCart cart;
     DomChip chip;
+    LsChip chdata;
 
     assert(_pdcs.dragged.isSome, '_onDropReceived() with none dragged');
     chip = _pdcs.dragged.v;
+    chdata = chip.data as LsChip;
     if (that is DomDetachedChipBank)
-      _pcs.unbind(chip.data);
+      _pcs.unbind(chdata);
     else {
-      // cart = _pdcs.cartOfSocket(that);
-      // if (chip.data.type is Ram)
-        // _pcs.bindRam(chip.data, cart.data);
-      // else
-        // _pcs.bindSS(chip.data, cart.data, that.dcs_ssSlot);
-      // TODO: uncomment for ss
+      cart = _pdcs.cartOfSocket(that as DomChipSocket);
+      if (chdata.type is Ram)
+        _pcs.bindRam(chdata, cart.data);
+      else
+        _pcs.bindSs(chdata, cart.data, cart.ssSocketIndex(that));
     }
   }
 

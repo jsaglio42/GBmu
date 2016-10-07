@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:53:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 16:36:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,7 +43,7 @@ Async.Future init(p) async {
   final TransformerLseDataCheck tdc = new TransformerLseDataCheck(pcs, tu);
   final TransformerLseIdbCheck tic = new TransformerLseIdbCheck(pidb, tdc);
 
-  // Dom logic-less controllers
+  // Dom logic-less controllers (should be renamed to `Store`)
   final PlatformDomEvents pde = new PlatformDomEvents();
   final PlatformComponentEvents pce = new PlatformComponentEvents();
   final PlatformDomComponentStorage pdcs = new PlatformDomComponentStorage(
@@ -53,30 +53,28 @@ Async.Future init(p) async {
 
   // Dom controllers
   final PlatformDomDragged pdd = new PlatformDomDragged(pde, pce, pdcs);
-  final PlatformTopLevelBanks ptlb = new PlatformTopLevelBanks(pde, pce, pdcs);
-
-  // Drag/drop enablers
-  final HandlerDropZoneCatalyst hdzc =
-    new HandlerDropZoneCatalyst(pde, pce, pdcs);
-  final HandlerDraggableCatalyst hdc =
+  final HandlerDomComponentNodes _ =
+    new HandlerDomComponentNodes(pde, pce, pdcs);
+  final HandlerDropZoneCatalyst __ = new HandlerDropZoneCatalyst(pde, pce, pdcs);
+  final HandlerDraggableCatalyst ___ =
     new HandlerDraggableCatalyst(pde, pce, pdcs);
 
-  // // Bridge between data and dom
+  // Bridge between data and dom
   final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs);
   final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs);
   final PlatformDomComponentStorageLogic pdcsl =
     new PlatformDomComponentStorageLogic(pcs, pde, pce, pdcs, pc, pch);
 
-  // // pidb.start: async computation
+  // pidb.start: async computation
   await pidb.start(Html.window.indexedDB);
 
-  // // pcs.start: interdependant controllers
+  // pcs.start: interdependant controllers
   pcs.start(tic);
 
-  // // pdcsl.start: async computation
+  // pdcsl.start: async computation
   await pdcsl.start();
 
-  // // pls.start: data retrieval from local-storage
+  // pls.start: data retrieval from local-storage
   /* await */ pls.start();
 
 

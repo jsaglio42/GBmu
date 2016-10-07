@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   platform_top_level_banks.dart                      :+:      :+:    :+:   //
+//   handler_dom_component_nodes.dart                   :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/10/01 16:51:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:52:07 by ngoguey          ###   ########.fr       //
+//   Created: 2016/10/07 16:30:42 by ngoguey           #+#    #+#             //
+//   Updated: 2016/10/07 16:48:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,7 +25,7 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-class PlatformTopLevelBanks {
+class HandlerDomComponentNodes {
 
   // ATTRIBUTES ************************************************************* **
   final PlatformDomEvents _pde;
@@ -33,18 +33,16 @@ class PlatformTopLevelBanks {
   final PlatformDomComponentStorage _pdcs;
 
   // CONTRUCTION ************************************************************ **
-  PlatformTopLevelBanks(this._pde, this._pce, this._pdcs) {
-    Ft.log('PlatformTLB', 'contructor');
+  HandlerDomComponentNodes(this._pde, this._pce, this._pdcs) {
+    Ft.log('HandlerDCN', 'contructor');
 
     _pce.onCartEvent.forEach(_handleCartEvent);
-    _pce.onChipEvent
-      .where((ev) => ev.isDetachedChange)
-      .forEach(_handleChipEvent);
+    _pce.onChipEvent.forEach(_handleChipEvent);
   }
 
   // CALLBACKS ************************************************************** **
   void _handleCartEvent(CartEvent<DomCart> ev) {
-    Ft.log('PlatformTLB', '_handleCartEvent', [ev]);
+    Ft.log('HandlerDCN', '_handleCartEvent', [ev]);
     if (ev.isMove) {
       ev.cart.elt.style.left = '0px';
       ev.cart.elt.style.top = '0px';
@@ -61,24 +59,31 @@ class PlatformTopLevelBanks {
   }
 
   void _handleChipEvent(ChipEvent<DomChip, DomCart> ev) {
-    Ft.log('PlatformTLB', '_handleChipEvent', [ev]);
+    final LsChip chdata = ev.chip.data as LsChip;
+    DomCart ca;
+    DomChipSocket s;
+
+    Ft.log('HandlerDCN', '_handleChipEvent', [ev]);
     if (ev.isMove) {
       ev.chip.elt.style.left = '0px';
       ev.chip.elt.style.top = '0px';
     }
-
     if (ev.isNewDetached || ev.isDetach)
       _pdcs.chipBank.elt.nodes.add(ev.chip.elt);
     else if (ev.isDeleteDetached)
       _pdcs.chipBank.elt.nodes.remove(ev.chip.elt);
-    //   _ChipEvent.NewAttached: const <ChipState>[None.v, Attached.v],
-    //   _ChipEvent.DeleteAttached: const <ChipState>[Attached.v, None.v],
-    //   _ChipEvent.MoveAttach: const <ChipState>[Attached.v, Attached.v],
-
-    //   _ChipEvent.NewDetached: const <ChipState>[None.v, Detached.v],
-    //   _ChipEvent.Attach: const <ChipState>[Detached.v, Attached.v],
-    //   _ChipEvent.Detach: const <ChipState>[Attached.v, Detached.v],
-    //   _ChipEvent.DeleteDetached: const <ChipState>[Detached.v, None.v],
+    else {
+      ca = ev.isMoveAttach
+        ? (ev as ChipEventCart2<DomChip, DomCart>).newCart
+        : (ev as ChipEventCart<DomChip, DomCart>).cart;
+      s = chdata.type is Ram
+        ? ca.ramSocket
+        : ca.ssSocket(chdata.slot.v);
+      if (ev.isNewAttached || ev.isMoveAttach || ev.isAttach)
+        s.elt.nodes.add(ev.chip.elt);
+      else if (ev.isDeleteAttached)
+        s.elt.nodes.remove(ev.chip.elt);
+    }
   }
 
 }

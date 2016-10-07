@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 15:22:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 16:12:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -75,13 +75,17 @@ class DomChipSocket extends DomElement
   , HtmlDropZone
   , ChipBank {
 
-  DomChipSocket(PlatformDomEvents pde, Html.Element elt)
+  DomChipSocket(PlatformDomEvents pde, Html.Element elt, Chip type)
     : super(pde) {
     Ft.log('DomChipSocket', 'constructor');
 
     this.hes_init(elt);
-    this.hdz_init(HtmlDropZone.makeClassesMap(
-            null, null, null, null));
+    if (type is Ram)
+      this.hdz_init(HtmlDropZone.makeClassesMap(
+              'cart-ram-socket-hover', null, 'cart-ram-socket-active', null));
+    else
+      this.hdz_init(HtmlDropZone.makeClassesMap(
+              'cart-ss-socket-hover', null, 'cart-ss-socket-active', null));
   }
 
 }

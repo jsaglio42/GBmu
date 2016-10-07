@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:54:34 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 17:09:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,22 +31,36 @@ class PlatformDomComponentStorage {
   final DomGameBoySocket _dgbs;
   final DomDetachedCartBank _ddcb;
   final DomDetachedChipBank _ddchb;
+
   final Map<int, DomComponent> _components = <int, DomComponent>{};
+  final Map<DomChipSocket, DomCart> _cartOfSocket = <DomChipSocket, DomCart>{};
+
   Ft.Option<DomCart> _openedCart = new Ft.Option<DomCart>.none();
   Ft.Option<DomCart> _gbCart = new Ft.Option<DomCart>.none();
   Ft.Option<DomComponent> _dragged = new Ft.Option<DomCart>.none();
+
 
   // CONTRUCTION ************************************************************ **
   PlatformDomComponentStorage(this._dgbs, this._ddcb, this._ddchb);
 
   // LIBRARY PUBLIC ********************************************************* **
   _setDomComponent(DomComponent c) {
+    DomCart ca;
+
+    if (c is DomCart) {
+      for (DomChipSocket s in (c as DomCart).sockets)
+        _cartOfSocket[s] = c as DomCart;
+    }
     _components[c.data.uid] = c;
   }
 
   _deleteDomComponent(DomComponent c) {
-    assert(_components.contains(c.data.uid));
-    _components.delete(c.data.uid);
+    assert(_components.containsKey(c.data.uid));
+    if (c is DomCart) {
+      for (DomChipSocket s in (c as DomCart).sockets)
+        _cartOfSocket.remove(s);
+    }
+    _components.remove(c.data.uid);
   }
 
   // PUBLIC ***************************************************************** **
@@ -57,11 +71,18 @@ class PlatformDomComponentStorage {
   Ft.Option<DomCart> get gbCart => _gbCart;
   Ft.Option<DomComponent> get dragged => _dragged;
 
+  // Components getters ********************************* **
+  DomCart cartOfSocket(DomChipSocket s) {
+    print(_cartOfSocket);
+    assert(_cartOfSocket[s] != null);
+    return _cartOfSocket[s];
+  }
+
   bool contains(int i) =>
     _components.containsKey(i);
 
   DomComponent componentOfUid(int i) {
-    assert(_components.contains(i), 'form: componentOfUid($i)');
+    assert(_components.containsKey(i), 'form: componentOfUid($i)');
     return _components[i];
   }
 
@@ -73,6 +94,18 @@ class PlatformDomComponentStorage {
     return cart;
   }
 
+  Iterable<DomChip> chipsOfCart(DomCart c) =>
+    _components.values
+    .where((DomComponent co) {
+      LsChip data;
+
+      if (co is! DomChip)
+        return false;
+      data = (co.data as LsChip);
+      return data.isBound && data.romUid.v == c.data.uid;
+    });
+
+  // Ft.Option handling ********************************* **
   void set openedCart(DomCart c) {
     assert(_openedCart.isNone, 'from: openedCart($c)');
     _openedCart = new Ft.Option<DomCart>.some(c);
@@ -103,6 +136,8 @@ class PlatformDomComponentStorage {
     _dragged = new Ft.Option<DomCart>.none();
   }
 
+  // PRIVATE **************************************************************** **
+
 }
 
 class PlatformDomComponentStorageLogic {
@@ -123,8 +158,6 @@ class PlatformDomComponentStorageLogic {
     ..allowElement('tr', attributes: ['style']);
   String _cartHtml;
 
-  final Map<int, DomComponent> _components = <int, DomComponent>{};
-
   // CONTRUCTION ************************************************************ **
   PlatformDomComponentStorageLogic(
       this._pcs, this._pde, this._pce, this._pdcs, this._pc, this._pch) {
@@ -141,18 +174,16 @@ class PlatformDomComponentStorageLogic {
   }
 
   // PUBLIC ***************************************************************** **
-  // DomComponent componentOfUid(int uid) =>
-    // _components[uid];
 
   // CALLBACKS ************************************************************** **
   void _handleNew(LsEntry e) {
     DomComponent de;
-    LsChip ec;
+    // LsChip ec;
 
     Ft.log('PlatformDCSL', '_handleNew', [e]);
     if (e.type is Rom) {
       de = new DomCart(_pde, e, _cartHtml, _domCartValidator);
-      _components[e.uid] = de;
+      _pdcs._setDomComponent(de);
       _pc.newCart(de);
     }
     else {
@@ -160,59 +191,60 @@ class PlatformDomComponentStorageLogic {
         de = new DomChip(_pde, e);
       else
         de = new DomChip(_pde, e);
-      _components[e.uid] = de;
-      ec = e as LsChip;
-      if (!ec.isBound)
-        _pce.chipEvent(new ChipEvent<DomChip, DomCart>.NewDetached(de));
-      else
-        _pce.chipEvent(new ChipEvent<DomChip, DomCart>.NewAttached(
-                de, _components[ec.romUid.v]));
+      _pdcs._setDomComponent(de);
+      _pch.newChip(de);
+      // ec = e as LsChip;
+      // if (!ec.isBound)
+      //   _pce.chipEvent(new ChipEvent<DomChip, DomCart>.NewDetached(de));
+      // else
+      //   _pce.chipEvent(new ChipEvent<DomChip, DomCart>.NewAttached(
+      //           de, _components[ec.romUid.v]));
     }
   }
 
   void _handleDelete(LsEntry e) {
     DomComponent de;
-    LsChip ec;
+    // LsChip ec;
 
     Ft.log('PlatformDCSL', '_handleDetele', [e]);
-    de = _components[e.uid];
-    _components.remove(e.uid);
+    de = _pdcs.componentOfUid(e.uid);
+    _pdcs._deleteDomComponent(de);
     if (e.type is Rom)
       _pc.deleteCart(de);
-    else {
-      ec = e as LsChip;
-      if (!ec.isBound)
-        _pce.chipEvent(new ChipEvent<DomChip, DomCart>.DeleteDetached(de));
-      else
-        _pce.chipEvent(new ChipEvent<DomChip, DomCart>.DeleteAttached(
-                de, _components[ec.romUid.v]));
-    }
+    else
+      // {
+      _pch.deleteChip(de);
+    //   ec = e as LsChip;
+    //   if (!ec.isBound)
+    //     _pce.chipEvent(new ChipEvent<DomChip, DomCart>.DeleteDetached(de));
+    //   else
+    //     _pce.chipEvent(new ChipEvent<DomChip, DomCart>.DeleteAttached(
+    //             de, _components[ec.romUid.v]));
+    // }
   }
 
   void _handleUpdate(Update<LsEntry> u) {
-    DomComponent de;
-    final LsChip oldDat = u.oldValue;
-    final LsChip newDat = u.newValue;
+    // DomComponent de;
+    // final LsChip oldDat = u.oldValue;
+    // final LsChip newDat = u.newValue;
 
-    Ft.log('PlatformDCSL', '_handleUpdate', [u]);
-    de = new DomChip(_pde, newDat);
-    _components[newDat.uid] = de;
-    if (     newDat.type is Ss  &&  oldDat.isBound &&  newDat.isBound)
-      ; //move ss
-    else if (newDat.type is Ss  &&  oldDat.isBound && !newDat.isBound)
-      ; //unbind ss
-    else if (newDat.type is Ss  && !oldDat.isBound &&  newDat.isBound)
-      ; //bind ss
-    else if (newDat.type is Ram &&  oldDat.isBound &&  newDat.isBound)
-      ; //move ss
-    else if (newDat.type is Ram &&  oldDat.isBound && !newDat.isBound)
-      ; //unbind ram
-    else if (newDat.type is Ram && !oldDat.isBound &&  newDat.isBound)
-      ; //bind ram
-    else
-      assert(false, '_handleUpdate#unreachable');
+    // Ft.log('PlatformDCSL', '_handleUpdate', [u]);
+    // de = new DomChip(_pde, newDat);
+    // _components[newDat.uid] = de;
+    // if (     newDat.type is Ss  &&  oldDat.isBound &&  newDat.isBound)
+    //   ; //move ss
+    // else if (newDat.type is Ss  &&  oldDat.isBound && !newDat.isBound)
+    //   ; //unbind ss
+    // else if (newDat.type is Ss  && !oldDat.isBound &&  newDat.isBound)
+    //   ; //bind ss
+    // else if (newDat.type is Ram &&  oldDat.isBound &&  newDat.isBound)
+    //   ; //move ss
+    // else if (newDat.type is Ram &&  oldDat.isBound && !newDat.isBound)
+    //   ; //unbind ram
+    // else if (newDat.type is Ram && !oldDat.isBound &&  newDat.isBound)
+    //   ; //bind ram
+    // else
+    //   assert(false, '_handleUpdate#unreachable');
   }
-
-  // PRIVATE **************************************************************** **
 
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 17:04:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:49:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 17:10:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -48,10 +48,14 @@ class HandlerDraggableCatalyst {
   // CALLBACKS ************************************************************** **
   void _onCartEvent(CartEvent<DomCart> ev) {
     if (ev.isClose || ev.isDeleteOpened
-        || ev.isDeleteGameBoy || ev.isUnloadClosed)
-        ev.cart.hdr_disable();
-    else if (ev.isOpen)
+        || ev.isDeleteGameBoy || ev.isUnloadClosed) {
+      ev.cart.hdr_disable();
+      _pdcs.chipsOfCart(ev.cart).forEach((c) => c.hdr_disable());
+    }
+    else if (ev.isOpen) {
       ev.cart.hdr_enable();
+      _pdcs.chipsOfCart(ev.cart).forEach((c) => c.hdr_enable());
+    }
   }
 
   void _onChipEvent(ChipEvent<DomChip, DomCart> ev) {

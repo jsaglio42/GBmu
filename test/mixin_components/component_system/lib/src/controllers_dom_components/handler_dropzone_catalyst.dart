@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:41:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:50:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 17:02:53 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,7 @@ import 'dart:convert';
 import 'package:ft/ft.dart' as Ft;
 
 import 'package:component_system/src/include_cs.dart';
-// import 'package:component_system/src/include_ccs.dart';
+import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
@@ -52,7 +52,6 @@ class HandlerDropZoneCatalyst {
         _startCart(ev.value);
       else
         _startChip(ev.value);
-      // TODO: Implement chip drop zone catalyst
       _suitableOpt.forEach((dz){
             dz.hdz_enable();
             dz.hdz_setFace(false, true);
@@ -103,8 +102,30 @@ class HandlerDropZoneCatalyst {
   }
 
   void _startChip(DomChip c) {
+    final LsChip data = c.data as LsChip;
+    Iterable<DomChipSocket> it;
+
     _suitableOpt = <HtmlDropZone>[];
     _unsuitableOpt = <HtmlDropZone>[];
+    if (data.isBound)
+      _suitableOpt.add(_pdcs.chipBank);
+    _suitableOpt.addAll(_shownChipSocketsType(data.type));
   }
+
+  Iterable<DomChipSocket> _shownChipSocketsType(Chip type) sync* {
+    if (type is Ram) {
+      if (_pdcs.gbCart.isSome)
+        yield _pdcs.gbCart.v.ramSocket;
+      if (_pdcs.openedCart.isSome)
+        yield _pdcs.openedCart.v.ramSocket;
+    }
+    else {
+      if (_pdcs.gbCart.isSome)
+        yield* _pdcs.gbCart.v.ssSockets;
+      if (_pdcs.openedCart.isSome)
+        yield* _pdcs.openedCart.v.ssSockets;
+    }
+  }
+
 
 }
