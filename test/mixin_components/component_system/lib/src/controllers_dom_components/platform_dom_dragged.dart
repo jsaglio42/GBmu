@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 19:04:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 16:35:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 18:12:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,7 +43,8 @@ class PlatformDomDragged {
       .where((ev) => ev.isDelete && ev.cart == _pdcs.dragged.v)
       .map((ev) => ev.cart)
       .forEach(_handleDraggedDelete);
-    // Todo: motitor chip delete while dragged
+    // TODO: test all events ?
+    // TODO: motitor chip delete while dragged
   }
 
   // CALLBACKS ************************************************************** **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 16:27:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 18:01:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -67,11 +67,9 @@ class PlatformChip extends Object with _Actions implements _Super
       _actionDeleteAttached(that);
   }
 
-  // void attach()
-
   // CALLBACKS ************************************************************** **
   // The almighty function that has the view on:
-  //   The chip-socket, the cart its parent, and the dragged chip.
+  //   The chip-socket, the cart, and the dragged chip.
   void _onDropReceived(ChipBank that) {
     DomCart cart;
     DomChip chip;

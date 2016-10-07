@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 16:41:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 17:02:53 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 18:30:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -101,31 +101,58 @@ class HandlerDropZoneCatalyst {
       assert(false, 'from: _startCart()');
   }
 
-  void _startChip(DomChip c) {
-    final LsChip data = c.data as LsChip;
+  void _startChip(DomChip dragged) {
+    final LsChip data = dragged.data as LsChip;
     Iterable<DomChipSocket> it;
 
     _suitableOpt = <HtmlDropZone>[];
     _unsuitableOpt = <HtmlDropZone>[];
     if (data.isBound)
       _suitableOpt.add(_pdcs.chipBank);
-    _suitableOpt.addAll(_shownChipSocketsType(data.type));
+    if (_pdcs.gbCart.isSome)
+      _enableCartSockets(_pdcs.gbCart.v, dragged);
+    if (_pdcs.openedCart.isSome)
+      _enableCartSockets(_pdcs.openedCart.v, dragged);
   }
 
-  Iterable<DomChipSocket> _shownChipSocketsType(Chip type) sync* {
-    if (type is Ram) {
-      if (_pdcs.gbCart.isSome)
-        yield _pdcs.gbCart.v.ramSocket;
-      if (_pdcs.openedCart.isSome)
-        yield _pdcs.openedCart.v.ramSocket;
+  void _enableCartSockets(DomCart c, DomChip dragged) {
+    final LsChip chdata = dragged.data as LsChip;
+    final LsRom cadata = c.data as LsRom;
+
+    if (chdata.type is Ram) {
+      if (_pdcs.chipOfCartOpt(c, Ram.v) == null) {
+        if (cadata.isCompatible(chdata))
+          _suitableOpt.add(c.ramSocket);
+        else
+          _unsuitableOpt.add(c.ramSocket);
+      }
     }
     else {
-      if (_pdcs.gbCart.isSome)
-        yield* _pdcs.gbCart.v.ssSockets;
-      if (_pdcs.openedCart.isSome)
-        yield* _pdcs.openedCart.v.ssSockets;
+      for (int i = 0; i < 4; i++) {
+        if (_pdcs.chipOfCartOpt(c, Ss.v, i) == null) {
+          if (cadata.isCompatible(chdata))
+            _suitableOpt.add(c.ssSocket(i));
+          else
+            _unsuitableOpt.add(c.ssSocket(i));
+        }
+      }
     }
   }
+
+  // Iterable<DomChipSocket> _shownChipSocketsType(Chip type) sync* {
+  //   if (type is Ram) {
+  //     if (_pdcs.gbCart.isSome)
+  //       yield _pdcs.gbCart.v.ramSocket;
+  //     if (_pdcs.openedCart.isSome)
+  //       yield _pdcs.openedCart.v.ramSocket;
+  //   }
+  //   else {
+  //     if (_pdcs.gbCart.isSome)
+  //       yield* _pdcs.gbCart.v.ssSockets;
+  //     if (_pdcs.openedCart.isSome)
+  //       yield* _pdcs.openedCart.v.ssSockets;
+  //   }
+  // }
 
 
 }

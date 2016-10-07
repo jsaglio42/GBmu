@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 17:09:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 18:30:40 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -72,14 +72,12 @@ class PlatformDomComponentStorage {
   Ft.Option<DomComponent> get dragged => _dragged;
 
   // Components getters ********************************* **
+  // Most of them are linear in time
   DomCart cartOfSocket(DomChipSocket s) {
     print(_cartOfSocket);
     assert(_cartOfSocket[s] != null);
     return _cartOfSocket[s];
   }
-
-  bool contains(int i) =>
-    _components.containsKey(i);
 
   DomComponent componentOfUid(int i) {
     assert(_components.containsKey(i), 'form: componentOfUid($i)');
@@ -101,9 +99,31 @@ class PlatformDomComponentStorage {
 
       if (co is! DomChip)
         return false;
-      data = (co.data as LsChip);
+      data = co.data as LsChip;
       return data.isBound && data.romUid.v == c.data.uid;
     });
+
+  DomChip chipOfCartOpt(DomCart c, Chip type, [int slot]) {
+    assert(type is Ram || slot != null);
+    return  _components.values
+      .where((DomComponent co) {
+        LsChip data;
+
+        if (co is! DomChip)
+          return false;
+        data = co.data as LsChip;
+        if (!data.isBound || data.romUid.v != c.data.uid)
+          return false;
+        if (data.type is Ram && type is Ram)
+          return true;
+        else if (data.type is Ss && type is Ss && data.slot.v == slot)
+          return true;
+        else
+          return false;
+      })
+      .take(1)
+      .fold(null, (_, e) => e);
+  }
 
   // Ft.Option handling ********************************* **
   void set openedCart(DomCart c) {
@@ -140,6 +160,7 @@ class PlatformDomComponentStorage {
 
 }
 
+//TODO: Rename class
 class PlatformDomComponentStorageLogic {
 
   // ATTRIBUTES ************************************************************* **
@@ -178,7 +199,6 @@ class PlatformDomComponentStorageLogic {
   // CALLBACKS ************************************************************** **
   void _handleNew(LsEntry e) {
     DomComponent de;
-    // LsChip ec;
 
     Ft.log('PlatformDCSL', '_handleNew', [e]);
     if (e.type is Rom) {
@@ -187,24 +207,14 @@ class PlatformDomComponentStorageLogic {
       _pc.newCart(de);
     }
     else {
-      if (e.type is Ram)
-        de = new DomChip(_pde, e);
-      else
-        de = new DomChip(_pde, e);
+      de = new DomChip(_pde, e);
       _pdcs._setDomComponent(de);
       _pch.newChip(de);
-      // ec = e as LsChip;
-      // if (!ec.isBound)
-      //   _pce.chipEvent(new ChipEvent<DomChip, DomCart>.NewDetached(de));
-      // else
-      //   _pce.chipEvent(new ChipEvent<DomChip, DomCart>.NewAttached(
-      //           de, _components[ec.romUid.v]));
     }
   }
 
   void _handleDelete(LsEntry e) {
     DomComponent de;
-    // LsChip ec;
 
     Ft.log('PlatformDCSL', '_handleDetele', [e]);
     de = _pdcs.componentOfUid(e.uid);
@@ -212,24 +222,24 @@ class PlatformDomComponentStorageLogic {
     if (e.type is Rom)
       _pc.deleteCart(de);
     else
-      // {
       _pch.deleteChip(de);
-    //   ec = e as LsChip;
-    //   if (!ec.isBound)
-    //     _pce.chipEvent(new ChipEvent<DomChip, DomCart>.DeleteDetached(de));
-    //   else
-    //     _pce.chipEvent(new ChipEvent<DomChip, DomCart>.DeleteAttached(
-    //             de, _components[ec.romUid.v]));
-    // }
   }
 
   void _handleUpdate(Update<LsEntry> u) {
-    // DomComponent de;
+    DomComponent de;
     // final LsChip oldDat = u.oldValue;
     // final LsChip newDat = u.newValue;
 
-    // Ft.log('PlatformDCSL', '_handleUpdate', [u]);
-    // de = new DomChip(_pde, newDat);
+    Ft.log('PlatformDCSL', '_handleUpdate', [u]);
+    _pch.deleteChip(_pdcs.componentOfUid(u.newValue.uid));
+    de = new DomChip(_pde, u.newValue);
+    _pdcs._setDomComponent(de);
+    _pch.newChip(de);
+    // if (oldDat.isBound && newDat.isBound)
+    //   _pch.moveChip(de);
+    // else if (!oldDat.isBound && newDat.isBound)
+    //   _pch.bindChip(de);
+
     // _components[newDat.uid] = de;
     // if (     newDat.type is Ss  &&  oldDat.isBound &&  newDat.isBound)
     //   ; //move ss
