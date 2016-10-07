@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:29:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:11:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 18:41:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -83,6 +83,5 @@ class TransformerLseIdbCheck {
     }
     return ;
   }
-
 
 }

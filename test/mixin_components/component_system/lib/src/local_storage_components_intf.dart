@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 17:19:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 18:59:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -88,7 +88,6 @@ abstract class LsChip implements LsEntry {
   }
 
   factory LsChip.bind(LsChip c, int romUid, [int slot]) {
-    assert(!c.isBound, "LsChip.bind($c)");
     assert(c.life is Alive, "LsChip.bind($c)");
 
     if (c.type is Ram)

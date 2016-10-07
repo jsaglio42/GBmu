@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:01:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:11:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 19:01:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -101,7 +101,7 @@ class TransformerLseDataCheck {
   // Disallow impossible bind
   bool _handleUpdate(Update<LsEntry> e) {
     final LsEntry current = _pcs.entryOptOfUid(e.newValue.uid);
-    LsChip cold, cnew, ccur;
+    LsChip cold, cnew;
 
     Ft.log('TLSEDataCheck','_handleUpdate', [e.newValue]);
     if (current == null) {
@@ -116,16 +116,22 @@ class TransformerLseDataCheck {
       Ft.logwarn('TLSEDataCheck', '_handleUpdate#update-on-rom');
       return false;
     }
-    ccur = current;
+    // ccur = current;
     cold = e.oldValue;
     cnew = e.newValue;
-    if (ccur.romUid.v != cold.romUid.v) {
-      Ft.logwarn('TLSEDataCheck', '_handleUpdate#unsound-old');
+    if (!cold.isBound && !cnew.isBound) {
+      Ft.logwarn('TLSEDataCheck', '_handleUpdate#chip-re-notbound');
       return false;
     }
-    if (cold.isBound == cnew.isBound) {
-      Ft.logwarn('TLSEDataCheck', '_handleUpdate#unsound-update');
-      return false;
+    if (cold.isBound && cnew.isBound && cold.romUid.v == cnew.romUid.v) {
+      if (cnew.type is Ram) {
+        Ft.logwarn('TLSEDataCheck', '_handleUpdate#ram-not-moving');
+        return false;
+      }
+      else if (cold.slot.v == cnew.slot.v) {
+        Ft.logwarn('TLSEDataCheck', '_handleUpdate#ss-not-moving');
+        return false;
+      }
     }
     if (cnew.type is Chip) {
       if ((cnew as LsChip).isBound && !_bindPossible(cnew))
