@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 18:26:32 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:40:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 15:03:20 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -60,21 +60,22 @@ abstract class _Actions implements _Super {
     Ft.log('_Actions', '_actionUnloadClosed');
     assert(_pdcs.gbCart.isSome, "from: cartUnloadOpened");
     _pce.cartEvent(new CartEvent<DomCart>.UnloadClosed(_pdcs.gbCart.v));
-    _pdcs.unsetGbCart;
+    _pdcs.unsetGbCart();
   }
 
   void _actionDeleteGameBoy() {
     Ft.log('_Actions', '_actionDeleteGameBoy');
     assert(_pdcs.gbCart.isSome, "from: _actionDeleteGameBoy");
     _pce.cartEvent(new CartEvent<DomCart>.DeleteGameBoy(_pdcs.gbCart.v));
-    _pdcs.unsetGbCart;
+    _pdcs.unsetGbCart();
   }
 
   void _actionDeleteOpened() {
     Ft.log('_Actions', '_actionDeleteOpened');
     assert(_pdcs.openedCart.isSome, "from: _actionDeleteOpened");
     _pce.cartEvent(new CartEvent<DomCart>.DeleteOpened(_pdcs.openedCart.v));
-    _pdcs.unsetOpenedCart;
+
+    _pdcs.unsetOpenedCart();
   }
 
   void _actionDeleteClosed(DomCart that) =>

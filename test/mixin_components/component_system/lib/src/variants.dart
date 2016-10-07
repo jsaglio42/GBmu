@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 17:22:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/07 14:57:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -129,6 +129,8 @@ class CartEvent<T> {
   bool get isOpenedChange => src is Opened || dst is Opened;
   bool get isGbChange => src is GameBoy || dst is GameBoy;
 
+  String toString() => 'CartEvent.$_ev';
+
 }
 // Chip events ************************************************************** **
 enum _ChipEvent {
@@ -185,6 +187,7 @@ class ChipEvent<T, C> {
 
   bool get isDetachedChange => src is Detached || dst is Detached;
 
+  String toString() => 'ChipEvent.$_ev';
 }
 
 class ChipEventCart<T, C> extends ChipEvent<T, C> {
