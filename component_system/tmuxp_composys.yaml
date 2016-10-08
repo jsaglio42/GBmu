@@ -6,23 +6,22 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/08 14:20:48 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/08 16:35:50 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# tmux kill-session -t 'GBmu' ; tmuxp load ./tmuxp.yaml
+# tmux kill-session -t 'GBmu_composys' ; tmuxp load ./tmuxp_composys.yaml
 # http://tmuxp.readthedocs.io/en/latest/examples.html
 
-session_name: 'GBmu'
+session_name: 'GBmu_composys'
 shell_command_before: "cd ${PWD}"
 global_options:
   automatic-rename: false
 environment:
-  WEB: ./web
-  CS: ./component_system/lib/src
-  CCS: ./component_system/lib/src/controllers_component_storage
-  DC: ./component_system/lib/src/dom_components
-  CDC: ./component_system/lib/src/controllers_dom_components
+  CS: ./lib/src
+  CCS: ./lib/src/controllers_component_storage
+  DC: ./lib/src/dom_components
+  CDC: ./lib/src/controllers_dom_components
 windows:
 - window_index: '998'
   window_name: commit
@@ -34,11 +33,11 @@ windows:
 
 - window_index: 999
   window_name: tmux edit
-  panes: [e ./tmuxp.yaml]
+  panes: [e ./tmuxp_composys.yaml]
 
 - window_index: 500
   window_name: compilation
-  panes: [e ./pubspec.yaml ./component_system/pubspec.yaml]
+  panes: [e ./pubspec.yaml]
 
 - window_index: 0
   window_name: main

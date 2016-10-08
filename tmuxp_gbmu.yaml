@@ -1,0 +1,74 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    tmuxp.yaml                                         :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
+#    Updated: 2016/10/08 16:54:02 by ngoguey          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+# tmux kill-session -t 'GBmu' ; tmuxp load ./tmuxp_gbmu.yaml
+# http://tmuxp.readthedocs.io/en/latest/examples.html
+
+session_name: 'GBmu'
+shell_command_before: "cd ${PWD}"
+global_options:
+  automatic-rename: false
+environment:
+  WEB: ./web
+  DEB: ./web/debugger
+  MS: ./web/main_space
+  OPT: ./web/options
+windows:
+- window_index: '998'
+  window_name: commit
+  layout: even-horizontal
+  panes:
+    - clear
+    - clear
+    - clear
+
+- window_index: 999
+  window_name: tmux edit
+  panes: [e ./tmuxp_gbmu.yaml]
+
+- window_index: 500
+  window_name: compilation
+  panes: ['e ./pubspec.yaml ./*{component,ft,emulator}*/pubspec.yaml']
+
+- window_index: 0
+  window_name: main
+  layout: main-vertical
+  panes:
+    - ps -W | ack -i 'dart.exe' | sed -e 's/^[ \t]*//' | cut -d' ' -f1 | xargs kill -f ; pub get ; pub serve
+    - emacs $WEB/main.dart README.md
+
+- window_index: 1
+  panes: ['e $WEB/{index.html,styles.css}']
+
+- window_index: 2
+  panes: ['e $WEB/nav.dart']
+- window_index: 7
+  panes: ['e $WEB/{alerts,canvas,keyboard}.dart']
+- window_index: 8
+  panes: ['e $OPT/*.dart']
+
+
+
+- window_index: 10
+  panes: ['e $DEB/{deb.dart,buttons.dart}']
+- window_index: 11
+  panes: ['e $DEB/*clock_info*.(html|dart)']
+- window_index: 12
+  panes: ['e $DEB/*instruction_flo*.(html|dart)']
+- window_index: 13
+  panes: ['e $DEB/*mem_exp*.(html|dart)']
+- window_index: 14
+  panes: ['e $DEB/*mem_re*.(html|dart)']
+- window_index: 15
+  panes: ['e $DEB/registers.(html|dart)*']
+- window_index: 16
+  panes: ['e $DEB/**.(html|dart)']

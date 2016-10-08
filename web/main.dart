@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 16:17:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 16:55:40 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,8 +18,8 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
-import './main_space/keyboard.dart' as Keyboard;
-import './main_space/canvas.dart' as Canvas;
+import './keyboard.dart' as Keyboard;
+import './canvas.dart' as Canvas;
 
 import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
