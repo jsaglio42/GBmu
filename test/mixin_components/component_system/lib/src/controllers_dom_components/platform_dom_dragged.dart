@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 19:04:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 18:12:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 13:10:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -40,11 +40,11 @@ class PlatformDomDragged {
     _pde.onDragStart.forEach(_onDragStart);
     _pde.onDragStop.forEach(_onDragStop);
     _pce.onCartEvent
-      .where((ev) => ev.isDelete && ev.cart == _pdcs.dragged.v)
-      .map((ev) => ev.cart)
-      .forEach(_handleDraggedDelete);
-    // TODO: test all events ?
-    // TODO: motitor chip delete while dragged
+      .where((ev) => ev.cart == _pdcs.dragged.v)
+      .forEach(_handleDraggedCartEvent);
+    _pce.onChipEvent
+      .where((ev) => ev.chip == _pdcs.dragged.v)
+      .forEach(_handleDraggedChipEvent);
   }
 
   // CALLBACKS ************************************************************** **
@@ -61,12 +61,28 @@ class PlatformDomDragged {
     _pdcs.unsetDragged();
   }
 
-  void _handleDraggedDelete(HtmlDraggable that) {
-    Ft.log('PlatformDomDragged', '_handleDraggedDelete', [that]);
-    that.hdr_abort();
-    _pce.draggedChange(
-        new SlotEvent<DomComponent>.Dismissal(that as DomComponent));
-    _pdcs.unsetDragged();
+  void _handleDraggedCartEvent(CartEvent<DomCart> ev) {
+    Ft.log('PlatformDomDragged', '_handleDraggedCartEvent', [ev]);
+
+    if (ev.isNew || ev.isOpen || ev.isClose)
+      assert(false, 'from: _handleDraggedCartEvent, impossible');
+    else {
+      ev.cart.hdr_abort();
+      _pce.draggedChange(new SlotEvent<DomComponent>.Dismissal(ev.cart));
+      _pdcs.unsetDragged();
+    }
+  }
+
+  void _handleDraggedChipEvent(ChipEvent<DomChip, DomCart> ev) {
+    Ft.log('PlatformDomDragged', '_handleDraggedChipEvent', [ev]);
+
+    if (ev.isNewAttached || ev.isNewDetached)
+      assert(false, 'from: _handleDraggedChipEvent, impossible');
+    else {
+      ev.chip.hdr_abort();
+      _pce.draggedChange(new SlotEvent<DomComponent>.Dismissal(ev.chip));
+      _pdcs.unsetDragged();
+    }
   }
 
 
