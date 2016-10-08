@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 18:30:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 12:48:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -38,7 +38,6 @@ class PlatformDomComponentStorage {
   Ft.Option<DomCart> _openedCart = new Ft.Option<DomCart>.none();
   Ft.Option<DomCart> _gbCart = new Ft.Option<DomCart>.none();
   Ft.Option<DomComponent> _dragged = new Ft.Option<DomCart>.none();
-
 
   // CONTRUCTION ************************************************************ **
   PlatformDomComponentStorage(this._dgbs, this._ddcb, this._ddchb);
@@ -74,7 +73,6 @@ class PlatformDomComponentStorage {
   // Components getters ********************************* **
   // Most of them are linear in time
   DomCart cartOfSocket(DomChipSocket s) {
-    print(_cartOfSocket);
     assert(_cartOfSocket[s] != null);
     return _cartOfSocket[s];
   }
@@ -227,34 +225,13 @@ class PlatformDomComponentStorageLogic {
 
   void _handleUpdate(Update<LsEntry> u) {
     DomComponent de;
-    // final LsChip oldDat = u.oldValue;
-    // final LsChip newDat = u.newValue;
 
     Ft.log('PlatformDCSL', '_handleUpdate', [u]);
-    _pch.deleteChip(_pdcs.componentOfUid(u.newValue.uid));
-    de = new DomChip(_pde, u.newValue);
-    _pdcs._setDomComponent(de);
-    _pch.newChip(de);
-    // if (oldDat.isBound && newDat.isBound)
-    //   _pch.moveChip(de);
-    // else if (!oldDat.isBound && newDat.isBound)
-    //   _pch.bindChip(de);
-
-    // _components[newDat.uid] = de;
-    // if (     newDat.type is Ss  &&  oldDat.isBound &&  newDat.isBound)
-    //   ; //move ss
-    // else if (newDat.type is Ss  &&  oldDat.isBound && !newDat.isBound)
-    //   ; //unbind ss
-    // else if (newDat.type is Ss  && !oldDat.isBound &&  newDat.isBound)
-    //   ; //bind ss
-    // else if (newDat.type is Ram &&  oldDat.isBound &&  newDat.isBound)
-    //   ; //move ss
-    // else if (newDat.type is Ram &&  oldDat.isBound && !newDat.isBound)
-    //   ; //unbind ram
-    // else if (newDat.type is Ram && !oldDat.isBound &&  newDat.isBound)
-    //   ; //bind ram
-    // else
-    //   assert(false, '_handleUpdate#unreachable');
+    de = _pdcs.componentOfUid(u.newValue.uid);
+    // _pch.deleteChip(_pdcs.componentOfUid(u.newValue.uid));
+    // de = new DomChip(_pde, u.newValue);
+    // _pdcs._setDomComponent(de);
+    _pch.updateChip(de, u);
   }
 
 }

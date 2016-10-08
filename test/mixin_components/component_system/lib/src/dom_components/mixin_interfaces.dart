@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 18:19:17 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 14:06:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 12:40:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,5 +52,10 @@ abstract class DomComponent extends DomElement {
 
   // PUBLIC ***************************************************************** **
   LsEntry get data => _data;
+
+  void setData(LsEntry data) {
+    assert(data.type == _data.type);
+    _data = data;
+  }
 
 }

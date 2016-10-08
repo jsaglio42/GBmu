@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 16:36:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 11:35:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -53,11 +53,9 @@ Async.Future init(p) async {
 
   // Dom controllers
   final PlatformDomDragged pdd = new PlatformDomDragged(pde, pce, pdcs);
-  final HandlerDomComponentNodes _ =
-    new HandlerDomComponentNodes(pde, pce, pdcs);
-  final HandlerDropZoneCatalyst __ = new HandlerDropZoneCatalyst(pde, pce, pdcs);
-  final HandlerDraggableCatalyst ___ =
-    new HandlerDraggableCatalyst(pde, pce, pdcs);
+  new HandlerDomComponentNodes(pde, pce, pdcs);
+  new HandlerDropZoneCatalyst(pde, pce, pdcs);
+  new HandlerDraggableCatalyst(pde, pce, pdcs);
 
   // Bridge between data and dom
   final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs);

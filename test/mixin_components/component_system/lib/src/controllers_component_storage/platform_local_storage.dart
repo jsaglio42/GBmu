@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:08:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:07:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 12:48:31 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -96,7 +96,6 @@ class PlatformLocalStorage {
     value = e.valueJson;
     Html.window.localStorage[key] = value;
     Async.Timer.run(() {
-      print('pls, truc added');
       _lsEntryNew.add(new LsEvent(key, oldValue: null, newValue: value));
     });
 

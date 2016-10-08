@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 18:01:09 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 12:45:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -65,6 +65,23 @@ class PlatformChip extends Object with _Actions implements _Super
       _actionDeleteDetached(that);
     else
       _actionDeleteAttached(that);
+  }
+
+  void updateChip(DomChip that, Update<LsEntry> u) {
+    final LsChip oldDat = u.oldValue;
+    final LsChip newDat = u.newValue;
+
+    that.setData(newDat);
+    if (oldDat.isBound && newDat.isBound)
+      _actionMoveAttach(
+          that, _pdcs.componentOfUid(oldDat.romUid.v),
+          _pdcs.componentOfUid(newDat.romUid.v));
+    else if (oldDat.isBound && !newDat.isBound)
+      _actionDetach(that, _pdcs.componentOfUid(oldDat.romUid.v));
+    else if (!oldDat.isBound && newDat.isBound)
+      _actionAttach(that, _pdcs.componentOfUid(newDat.romUid.v));
+    else
+      assert(false, 'updateChip#unreachable');
   }
 
   // CALLBACKS ************************************************************** **
