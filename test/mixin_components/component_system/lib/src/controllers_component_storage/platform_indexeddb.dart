@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/01 16:01:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 13:52:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -91,17 +91,18 @@ class PlatformIndexedDb {
     return tra.completed;
   }
 
-  //TODO: openKeyCursor when dart version 1.19.1
+  // Can't open openKeyCursor because of dart lib implementation with webkit
   Async.Future<bool> contains(Component c, int id) async {
     Idb.Transaction tra;
     bool found = false;
 
     Ft.log('PlatformIDB', 'contains', [c, id]);
     tra = _db.transaction(c.toString(), 'readonly');
+
     await tra.objectStore(c.toString())
     .openCursor(key: id)
-    .first
-    .then((Idb.Cursor cur) {
+    .take(1)
+    .forEach((Idb.Cursor cur) {
       found = true;
     });
     return tra.completed.then((_) => found);

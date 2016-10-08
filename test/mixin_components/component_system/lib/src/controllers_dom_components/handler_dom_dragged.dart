@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   platform_dom_dragged.dart                          :+:      :+:    :+:   //
+//   handler_dom_dragged.dart                           :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/10/04 19:04:08 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 13:10:29 by ngoguey          ###   ########.fr       //
+//   Created: 2016/10/08 13:50:19 by ngoguey           #+#    #+#             //
+//   Updated: 2016/10/08 13:50:58 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,8 +25,7 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-//TODO: Rename `Handler`
-class PlatformDomDragged {
+class HandlerDomDragged {
 
   // ATTRIBUTES ************************************************************* **
   final PlatformDomEvents _pde;
@@ -34,8 +33,8 @@ class PlatformDomDragged {
   final PlatformDomComponentStorage _pdcs;
 
   // CONSTRUCTION *********************************************************** **
-  PlatformDomDragged(this._pde, this._pce, this._pdcs) {
-    Ft.log('PlatformDomDragged', 'contructor');
+  HandlerDomDragged(this._pde, this._pce, this._pdcs) {
+    Ft.log('HandlerDomDragged', 'contructor');
 
     _pde.onDragStart.forEach(_onDragStart);
     _pde.onDragStop.forEach(_onDragStop);
@@ -62,7 +61,7 @@ class PlatformDomDragged {
   }
 
   void _handleDraggedCartEvent(CartEvent<DomCart> ev) {
-    Ft.log('PlatformDomDragged', '_handleDraggedCartEvent', [ev]);
+    Ft.log('HandlerDomDragged', '_handleDraggedCartEvent', [ev]);
 
     if (ev.isNew || ev.isOpen || ev.isClose)
       assert(false, 'from: _handleDraggedCartEvent, impossible');
@@ -74,7 +73,7 @@ class PlatformDomDragged {
   }
 
   void _handleDraggedChipEvent(ChipEvent<DomChip, DomCart> ev) {
-    Ft.log('PlatformDomDragged', '_handleDraggedChipEvent', [ev]);
+    Ft.log('HandlerDomDragged', '_handleDraggedChipEvent', [ev]);
 
     if (ev.isNewAttached || ev.isNewDetached)
       assert(false, 'from: _handleDraggedChipEvent, impossible');
@@ -84,6 +83,5 @@ class PlatformDomDragged {
       _pdcs.unsetDragged();
     }
   }
-
 
 }

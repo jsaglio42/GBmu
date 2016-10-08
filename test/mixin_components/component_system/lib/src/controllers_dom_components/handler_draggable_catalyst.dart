@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/01 17:04:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 17:10:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 13:47:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -38,9 +38,6 @@ class HandlerDraggableCatalyst {
   HandlerDraggableCatalyst(this._pde, this._pce, this._pdcs) {
     Ft.log('HandlerDraggableCatalyst', 'contructor');
 
-    // TODO: Listen chips creations / ?deletions?
-    // TODO: Enable all chips in chip sockets
-    // TODO: Disable all chips in chip sockets
     _pce.onCartEvent.forEach(_onCartEvent);
     _pce.onChipEvent.forEach(_onChipEvent);
   }

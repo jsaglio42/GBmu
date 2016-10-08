@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/06 14:35:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 12:46:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 13:53:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -51,7 +51,6 @@ abstract class _Actions implements _Super {
   void _actionAttach(DomChip that, DomCart c) {
     _pce.chipEvent(new ChipEvent<DomChip, DomCart>.Attach(that, c));
   }
-
 
   // PUBLIC ***************************************************************** **
 

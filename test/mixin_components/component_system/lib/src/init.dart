@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 11:35:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 14:18:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,7 +52,7 @@ Async.Future init(p) async {
       new DomDetachedChipBank(pde));
 
   // Dom controllers
-  final PlatformDomDragged pdd = new PlatformDomDragged(pde, pce, pdcs);
+  new HandlerDomDragged(pde, pce, pdcs);
   new HandlerDomComponentNodes(pde, pce, pdcs);
   new HandlerDropZoneCatalyst(pde, pce, pdcs);
   new HandlerDraggableCatalyst(pde, pce, pdcs);
@@ -60,8 +60,7 @@ Async.Future init(p) async {
   // Bridge between data and dom
   final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs);
   final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs);
-  final PlatformDomComponentStorageLogic pdcsl =
-    new PlatformDomComponentStorageLogic(pcs, pde, pce, pdcs, pc, pch);
+  final PlatformDom pd = new PlatformDom(pcs, pde, pce, pdcs, pc, pch);
 
   // pidb.start: async computation
   await pidb.start(Html.window.indexedDB);
@@ -70,11 +69,12 @@ Async.Future init(p) async {
   pcs.start(tic);
 
   // pdcsl.start: async computation
-  await pdcsl.start();
+  await pd.start();
 
   // pls.start: data retrieval from local-storage
   /* await */ pls.start();
 
+  // The following code is used for debug
 
 
 

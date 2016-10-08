@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 12:48:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 14:16:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,7 +43,7 @@ class PlatformDomComponentStorage {
   PlatformDomComponentStorage(this._dgbs, this._ddcb, this._ddchb);
 
   // LIBRARY PUBLIC ********************************************************* **
-  _setDomComponent(DomComponent c) {
+  setDomComponent(DomComponent c) {
     DomCart ca;
 
     if (c is DomCart) {
@@ -53,7 +53,7 @@ class PlatformDomComponentStorage {
     _components[c.data.uid] = c;
   }
 
-  _deleteDomComponent(DomComponent c) {
+  deleteDomComponent(DomComponent c) {
     assert(_components.containsKey(c.data.uid));
     if (c is DomCart) {
       for (DomChipSocket s in (c as DomCart).sockets)
@@ -155,83 +155,5 @@ class PlatformDomComponentStorage {
   }
 
   // PRIVATE **************************************************************** **
-
-}
-
-//TODO: Rename class
-class PlatformDomComponentStorageLogic {
-
-  // ATTRIBUTES ************************************************************* **
-  final PlatformComponentStorage _pcs;
-  final PlatformDomEvents _pde;
-  final PlatformComponentEvents _pce;
-  final PlatformDomComponentStorage _pdcs;
-  final PlatformCart _pc;
-  final PlatformChip _pch;
-
-  final static Html.NodeValidatorBuilder _domCartValidator =
-    new Html.NodeValidatorBuilder()
-    ..allowHtml5()
-    ..allowElement('button', attributes: ['href', 'data-parent', 'data-toggle'])
-    ..allowElement('th', attributes: ['style'])
-    ..allowElement('tr', attributes: ['style']);
-  String _cartHtml;
-
-  // CONTRUCTION ************************************************************ **
-  PlatformDomComponentStorageLogic(
-      this._pcs, this._pde, this._pce, this._pdcs, this._pc, this._pch) {
-    Ft.log('PlatformDCSL', 'contructor');
-  }
-
-  Async.Future start() async {
-    Ft.log('PlatformDCSL', 'start', []);
-
-    _cartHtml = await Html.HttpRequest.getString("cart_table.html");
-    _pcs.entryDelete.forEach(_handleDelete);
-    _pcs.entryNew.forEach(_handleNew);
-    _pcs.entryUpdate.forEach(_handleUpdate);
-  }
-
-  // PUBLIC ***************************************************************** **
-
-  // CALLBACKS ************************************************************** **
-  void _handleNew(LsEntry e) {
-    DomComponent de;
-
-    Ft.log('PlatformDCSL', '_handleNew', [e]);
-    if (e.type is Rom) {
-      de = new DomCart(_pde, e, _cartHtml, _domCartValidator);
-      _pdcs._setDomComponent(de);
-      _pc.newCart(de);
-    }
-    else {
-      de = new DomChip(_pde, e);
-      _pdcs._setDomComponent(de);
-      _pch.newChip(de);
-    }
-  }
-
-  void _handleDelete(LsEntry e) {
-    DomComponent de;
-
-    Ft.log('PlatformDCSL', '_handleDetele', [e]);
-    de = _pdcs.componentOfUid(e.uid);
-    _pdcs._deleteDomComponent(de);
-    if (e.type is Rom)
-      _pc.deleteCart(de);
-    else
-      _pch.deleteChip(de);
-  }
-
-  void _handleUpdate(Update<LsEntry> u) {
-    DomComponent de;
-
-    Ft.log('PlatformDCSL', '_handleUpdate', [u]);
-    de = _pdcs.componentOfUid(u.newValue.uid);
-    // _pch.deleteChip(_pdcs.componentOfUid(u.newValue.uid));
-    // de = new DomChip(_pde, u.newValue);
-    // _pdcs._setDomComponent(de);
-    _pch.updateChip(de, u);
-  }
 
 }

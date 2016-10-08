@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 11:21:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 14:15:54 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,8 +23,6 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
-
-// TODO: overload operator equal here
 
 class DomCart extends DomComponent
   with HtmlElementCart

@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/07 15:08:35 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/08 14:20:48 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,17 +55,17 @@ windows:
 
 - window_index: 3
   window_name: platform dom compo
-  panes: ['e $CDC/platform_*{dom_compo,top_level}*.dart']
+  panes: ['e $CDC/platform_dom.dart']
 - window_index: 6
   window_name: platforms events
-  panes: ['e $CDC/platform_*events*.dart']
+  panes: ['e $CDC/platform_*events*.dart $CDC/platform_dom_component_storage.dart']
 
 - window_index: 4
   window_name: cdc handlers
   panes: ['e $CDC/platform_{cart,chip}(|_parts).dart']
 - window_index: 5
   window_name: cdc handlers
-  panes: ['e $CDC/handler_*catalyst*.dart $CDC/platform_dom_dragged.dart']
+  panes: ['e $CDC/handler_*{catalyst,node,dragged}*.dart']
 
 
 - window_index: 7
