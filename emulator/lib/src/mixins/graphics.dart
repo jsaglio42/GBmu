@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 19:06:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/08 18:03:08 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -111,10 +111,11 @@ class GRegisterCurrentInfo {
     assert(colorID & ~0x3 == 0, 'Invalid colorID');
     final int OBP = (paletteID == 0) ? this.OBP0 : this.OBP1;
     switch (colorID) {
+      case (0) : return Color.values[(this.BGP >> 0) & 0x3];
       case (1) : return Color.values[(OBP >> 2) & 0x3];
       case (2) : return Color.values[(OBP >> 4) & 0x3];
       case (3) : return Color.values[(OBP >> 6) & 0x3];
-      default : return Color.values[(OBP >> 0) & 0x3];
+      default : assert(false, 'getColor: switch failure');
     }
   }
 
@@ -313,21 +314,19 @@ abstract class Graphics
       // print('Draw Line');
       for (int x = 0; x < LCD_WIDTH; ++x)
       {
-        Color c = Color.White;
-        if (_current.isBackgroundDisplayEnabled)
-          c = _getBackgroundPixel(x);
-        if (_current.isWindowDisplayEnabled)
-          c = _getWindowPixel(x, c);
-        if (_current.isSpriteDisplayEnabled)
-          c = _getSpritePixel(x, c);
+        int BGColorID = _getBackgroundColorID(x);
+        int WinColorID = _getWindowColorID(x, BGColorID);
+        Color c = _getSpriteColor(x, WinColorID);
         _drawPixel(x, c);
       }
     }
     return ;
   }
 
-  Color _getBackgroundPixel(int x) {
+  int _getBackgroundColorID(int x) {
     // print('Background');
+    if (!_current.isBackgroundDisplayEnabled)
+      return 0x00;
     final int posY = _current.LY + _current.SCY;
     final int posX =  x + _current.SCX;
     final int tileY = posY ~/ 8;
@@ -342,17 +341,19 @@ abstract class Graphics
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
     final int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
-    return _current.getColorBG(colorId_l | colorId_h);
+    return (colorId_l | colorId_h);
   }
 
-  Color _getWindowPixel(int x, Color BGcolor) {
+  int _getWindowColorID(int x, int BGColorID) {
     // print('Window');
+    if (!_current.isWindowDisplayEnabled)
+      return BGColorID;
     final int posY = _current.LY - _current.WY;
     if (posY < 0 || posY >= LCD_HEIGHT)
-      return BGcolor;
+      return BGColorID;
     final int posX =  x - _current.WX;
     if (posX < 0 || posX >= LCD_WIDTH)
-      return BGcolor;
+      return BGColorID;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
     final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_WIN + tileY * 32 + tileX);
@@ -365,10 +366,12 @@ abstract class Graphics
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
     final int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
-    return _current.getColorBG(colorId_l | colorId_h);
+    return (colorId_l | colorId_h);
   }
 
-  Color _getSpritePixel(int x, Color BGcolor) {
+  Color _getSpriteColor(int x, int BGcolorID) {
+    if (!_current.isSpriteDisplayEnabled)
+      return _current.getColorBG(BGcolorID);
     final int sizeY = (_current.LCDC & (1 << 2) == 0) ? 8 : 16;
     for (int spriteno = 0; spriteno < 40; ++spriteno) {
       int spriteOffset = 0xFE00 + spriteno * 4;
@@ -383,7 +386,7 @@ abstract class Graphics
 
       int info = this.tailRam.pull8_unsafe(spriteOffset + 3);
       bool aboveBG = (info & (1 << 7)) == 0;
-      if (!aboveBG && BGcolor != Color.White)
+      if (!aboveBG && BGcolorID != 0)
         continue ;
 
       // print(sizeY);
@@ -403,10 +406,10 @@ abstract class Graphics
       int OBP = (info >> 4) & 0x1;
       int colorID = colorId_l | colorId_h;
       if (colorID == 0)
-        return BGcolor;
+        return _current.getColorBG(BGcolorID);
       return _current.getColorOBJ(colorID, OBP);
     }
-    return BGcolor;
+    return _current.getColorBG(BGcolorID);
   }
 
   void _drawPixel(int x, Color c) {
