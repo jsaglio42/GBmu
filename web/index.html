@@ -110,10 +110,18 @@
         </div><!-- /#debContainer -->
 
         <!-- cartsContainer-->
-        <div class="col-md-4 col-lg-3" id="cartsContainer">
+        <div class="panel-group col-md-4 col-lg-3" id="cartsContainer">
               <!-- cartsBody -->
               <div class="row" id="cartsBody">
-                CartsCartsCartsCartsCartsCartsCartsCarts<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>Cart<br/><br/><br/><br/><br/><br/>Cart<br/><br/><br/><br/><br/><br/>Cart<br/><br/><br/><br/><br/><br/>Cart
+                GameBoy Slot:
+                <div id="gb-slot" class="ui-widget-header toplevel-bank"></div>
+                Cart Bank:
+                <div id="accordion" class="ui-widget-header toplevel-bank"></div>
+                Detached Chip Bank:
+                <div id="detached-chip-bank" class="ui-widget-header toplevel-bank"></div>
+                Volcano:
+                Soon...
+
               </div><!-- /cartsBody -->
         </div><!-- /cartsContainer -->
 
@@ -148,9 +156,10 @@
     </footer><!-- /FOOTER -->
 
     <!-- Js Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.1.3/bootstrap-slider.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script>
      $(function(){
@@ -159,8 +168,6 @@
        $("#debColInstructionFlow").load("debugger/instruction_flow.html");
        $("#debColRegisters").load("debugger/registers.html");
        $("#debColClock").load("debugger/clock_info.html");
-       /* $("#mainBottomPanel").load("main_space/bottom_panel.html");*/
-
      });
     </script>
 

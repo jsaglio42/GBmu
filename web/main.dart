@@ -6,11 +6,12 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 15:46:09 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 16:17:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
+import 'dart:async' as Async;
 import 'dart:js' as Js;
 import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
@@ -169,8 +170,12 @@ void test_endianess(){
 
 main()
 {
+  Async.runZoned((){
+    run();
+  }, onError: (_, st) {
+    Ft.logerr('main.dart', 'main#uncaught', [st]);
+  });
   // Emulator.debugRomHeader();
   // test_endianess();
-  run().catchError((e) => print('main:\tError:\n$e'));
   return ;
 }

@@ -9,6 +9,8 @@ dependencies:
     path: ./ft
   emulator:
     path: ./emulator
+  component_system:
+    path: ./component_system
 transformers:
 - $dart2js:
     checked: true

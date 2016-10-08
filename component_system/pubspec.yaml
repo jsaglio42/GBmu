@@ -5,7 +5,7 @@ environment:
   sdk: '>=1.13.0 <2.0.0'
 dependencies:
   ft:
-    path: ../../../ft
+    path: ../ft
 transformers:
 - $dart2js:
     checked: true
