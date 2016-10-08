@@ -5,6 +5,8 @@ environment:
   sdk: '>=1.13.0 <2.0.0'
 dependencies:
   browser: ^0.10.0
+  component_system:
+    path: ./component_system
   ft:
     path: ../../ft
   emulator:
