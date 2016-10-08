@@ -34,13 +34,24 @@ body {
 /* PANELS GLOBAL ************************************************************ */
 /* ************************************************************************** */
 
-#debContainer, #optContainer {
+#debContainer, #optContainer, #cartsContainer {
 }
 
-#debBody, #optBody {
+#debBody, #optBody, #cartsBody {
     background-color: rgba(0, 71, 171, 0.2);
     border: 1px solid black;
     border-radius: 6px;
+}
+
+#cartsBody {
+    float: left;
+    /* margin-left:0; */
+    /* margin-right:0; */
+    /* margin: auto; */
+}
+
+#cartsBody {
+    display: inline-block
 }
 
 /* ************************************************************************** */

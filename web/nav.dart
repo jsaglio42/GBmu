@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 16:17:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/08 17:56:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -83,6 +83,20 @@ List<_Panel> _makePanels(Emulator.Emulator emu)
           Deb.onOpen, Deb.onClose));
   l.add(new _Panel(aLst[1], Html.querySelector('#optBody'),
           Opt.onOpen, Opt.onClose));
+  l.add(new _Panel(aLst[0], Html.querySelector('#cartsContainer'),
+          (){
+      Html.querySelector('#canvasContainer')
+        .classes
+        ..add('col-md-8')
+        ..add('col-lg-9')
+        ..remove('col-lg-12');
+    }, (){
+      Html.querySelector('#canvasContainer')
+        .classes
+        ..remove('col-md-8')
+        ..remove('col-lg-9')
+        ..add('col-lg-12');
+    }));
   return l;
 }
 
