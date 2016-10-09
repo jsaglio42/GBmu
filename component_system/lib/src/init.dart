@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 14:18:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 14:23:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,15 +25,15 @@ import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-import 'package:component_system/src/tmp_emulator_enums.dart';
-import 'package:component_system/src/tmp_emulator_types.dart' as Emulator;
+import 'package:emulator/enums.dart';
+import 'package:emulator/emulator.dart' as Emulator;
 
 /* {"uid":2927093936,"type":"Rom"}
  *   {"idbid":1,"_ramSize":400,"_globalChecksum":8173}
  */
 
-Async.Future init(p) async {
-  Ft.log('Component_System', 'init', [p]);
+Async.Future init(Emulator.Emulator emu) async {
+  Ft.log('Component_System', 'init', [emu]);
 
   // Component storage interactions (local storage/indexedDb)
   final PlatformIndexedDb pidb = new PlatformIndexedDb();
@@ -76,12 +76,9 @@ Async.Future init(p) async {
 
   // The following code is used for debug
 
-
-
-
-  final Emulator.Rom rom = new Emulator.Rom(0, 400);
-  final Emulator.Ram ram = new Emulator.Ram(0, 400);
-  final Emulator.Ss ss = new Emulator.Ss.dummy();
+  // final Emulator.Rom rom = new Emulator.Rom.ofFile('test.gb', );
+  // final Emulator.Ram ram = new Emulator.Ram.ofFile('test.save', );
+  // final Emulator.Ss ss = new Emulator.Ss.ofFile('test.ss', );
   // LsRom lsrom;
   // LsRam lsram;
   // LsSs lsss;

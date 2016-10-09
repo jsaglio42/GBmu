@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 13:55:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 14:03:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 14:32:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,13 +19,11 @@ import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/variants.dart' as V;
 
-// TODO: Compile this file
 // TODO: Implement save states
 
 // Save State *************************************************************** **
 class Ss extends Object
-  with FileReprData
-  implements FileRepr {
+  implements Data.FileRepr {
 
   // ATTRIBUTES ************************************************************* **
   int _romGlobalChecksum;
@@ -41,7 +39,7 @@ class Ss extends Object
   // Only called from Emulator, on emulation start request, with data from Idb
   Ss.unserialize(Map<String, dynamic> serialization) {
     _frd_init(serialization['fileName'] as String);
-    _romGlobalChecksum = serialization['romGlobalChecksum'] as int);
+    _romGlobalChecksum = serialization['romGlobalChecksum'] as int;
     Ft.log('Ss', 'ctor.unserialize', [this.fileName, this.terseData]);
   }
 
@@ -66,5 +64,8 @@ class Ss extends Object
       'romGlobalChecksum': _romGlobalChecksum,
       'filename': _fileName,
     };
+
+  // PUBLIC ***************************************************************** **
+  int get romGlobalChecksum => _romGlobalChecksum;
 
 }

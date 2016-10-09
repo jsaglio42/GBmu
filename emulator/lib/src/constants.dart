@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 13:29:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 14:21:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -92,6 +92,6 @@ const int VBLANK_THRESHOLD = LCD_HEIGHT;
 const int FRAME_THRESHOLD = VBLANK_THRESHOLD + 10;
 
 /* File extensions */
-const String ROM_EXTENSION = ".rom";
+const String ROM_EXTENSION = ".gb";
 const String RAM_EXTENSION = ".save";
 const String SS_EXTENSION = ".ss";
