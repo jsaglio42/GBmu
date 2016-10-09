@@ -6,13 +6,16 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 14:11:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 19:36:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:typed_data';
 import 'dart:math' as Math;
 import 'dart:async' as Async;
+import 'dart:html' as Html;
+import 'dart:indexed_db' as Idb;
+import 'dart:js' as Js;
 
 import 'package:ft/ft.dart' as Ft;
 
@@ -98,13 +101,13 @@ abstract class Emulation implements Worker.AWorker {
     _updateEmulationSpeed(map['speed']);
   }
 
-  void _onEmulationStartReq(Uint8List l) //TODO: Retrieve string from indexDB
+  Async.Future _onEmulationStartReq(Map<String, dynamic> map) async
   {
     var gb;
 
     Ft.log("WorkerEmu", '_onEmulationStartReq');
     try {
-      gb = _assembleGameBoy(l);
+      gb = await _assembleGameBoy(map);
     }
     catch (e) {
       this.ports.send('Events', <String, dynamic>{
@@ -192,17 +195,55 @@ abstract class Emulation implements Worker.AWorker {
       this.ports.send('EmulationResume', 42);
   }
 
-  Gameboy.GameBoy _assembleGameBoy(Uint8List l)
+  Async.Future<Gameboy.GameBoy> _assembleGameBoy(Map<String, dynamic> map) async
   {
-    final drom = l; //TODO: Retrieve from indexedDB
-    final Data.Rom irom = new Data.Rom.unserialize(
-        <String, dynamic>{
-          'data': drom,
-          'fileName': 'no-name-yet' + ROM_EXTENSION
-        });
+    // print(['a']);
+    print(Js.context);
+    // print(Js.context['window']);
+    // Ft.logwarn('', '', [Js.context['indexedDB']]);
+    // print();
+    // Js.context.callMethod('alert', ['Hello from Dart!']);
+    // print(['a', Html.window]);
+
+    // var v = Js.JsObject.fromBrowserObject(Js.context);
+
+    // print(v);
+
+    Js.context['console'].callMethod('log', [Js.context]);
+
+
+    Html.DedicatedWorkerGlobalScope con = Js.context;
+    print('a');
+    Idb.Database idb;
+    // = await Html.WorkerGlobalScope.indexedDB.open('GBmu_db');
+    print('b');
+
+    // final drom = l; //TODO: Retrieve from indexedDB
+    final Data.Rom irom = await _romOfIdb(idb, map['romKey']);
     // final Data.Ram iram = new Data.Ram.unserialize();
     final c = new Cartridge.ACartridge(irom); //TODO: Take iram as parameter, if present
     return new Gameboy.GameBoy(c);
+  }
+
+  Async.Future<Data.Rom> _romOfIdb(Idb.Database idb, int romKey) async {
+    Idb.Transaction tra;
+    dynamic serialized;
+
+    tra = idb.transaction('Rom', 'readonly');
+
+    await tra.objectStore('Rom')
+      .openCursor(key: romKey)
+      .take(1)
+      .forEach((Idb.CursorWithValue cur) {
+        print('m');
+        serialized = cur.value;
+      });
+    return tra.completed.then((_) => new Data.Rom.unserialize(serialized));
+    // final Data.Rom irom = new Data.Rom.unserialize(
+    //     <String, dynamic>{
+    //       'data': drom,
+    //       'fileName': 'no-name-yet' + ROM_EXTENSION
+    //     });
   }
 
   // LOOPING ROUTINE ******************************************************** **

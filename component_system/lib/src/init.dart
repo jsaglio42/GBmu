@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 17:45:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 18:32:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -150,5 +150,5 @@ Async.Future init(Emulator.Emulator emu) async {
   // print('MAIN done 3seconds');
 
   Ft.log('Component_System', 'init#done');
-  return ;
+  return pdcs;
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 10:38:17 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/09 18:36:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -51,7 +51,7 @@ final _workerReceivers = <String, Type>{
   'KeyDownEvent' : JoypadKey,
   'KeyUpEvent' : JoypadKey,
   'DebStatusRequest' : DebuggerModeRequest,
-  'EmulationStart' : Uint8List,
+  'EmulationStart' : <String, dynamic>{}.runtimeType,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
   'EmulationAutoBreak' : AutoBreakExternalMode,
   'EmulationPause' : int,

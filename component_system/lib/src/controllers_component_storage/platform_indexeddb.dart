@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 14:19:53 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 18:41:20 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,6 +26,8 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_ccs.dart';
 
 const String _DBNAME = 'GBmu_db';
+
+//Idb.Database db = await Html.IndexedDatabase.open('GBmu_db');
 
 class PlatformIndexedDb {
 

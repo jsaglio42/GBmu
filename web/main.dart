@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 16:55:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 19:04:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,18 +35,18 @@ run() async
 {
   Ft.log('main.dart', 'run');
 
-  final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
-  assert(inBut != null, "no inbut");
+  // final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
+  // assert(inBut != null, "no inbut");
 
-  final reader = new Html.FileReader();
-  Uint8List lst;
+  // final reader = new Html.FileReader();
+  // Uint8List lst;
 
-  inBut.onChange.forEach((_){
-        reader.readAsArrayBuffer(inBut.files[0]);
-      });
-  reader.onLoad.forEach((_){
-        lst = reader.result;
-      });
+  // inBut.onChange.forEach((_){
+        // reader.readAsArrayBuffer(inBut.files[0]);
+      // });
+  // reader.onLoad.forEach((_){
+        // lst = reader.result;
+      // });
 
 
   var emuFut = Emulator.spawn()
@@ -55,10 +55,17 @@ run() async
   var emu = await emuFut;
   Ft.log('main.dart', 'run#emuCreated');
 
+  var tmp_pdcs;
+
   Html.querySelector('#magbut')
   .onClick.listen((_) {
         Ft.log('main.dart', 'magbut#onClick');
-        emu.send('EmulationStart', lst);
+
+        if (tmp_pdcs.gbCart.isSome) {
+          emu.send('EmulationStart', <String, dynamic>{
+            'romKey': tmp_pdcs.gbCart.v.data.idbid,
+          });
+        }
       });
 
   Html.querySelector('#ejectbut')
@@ -111,7 +118,9 @@ run() async
   Canvas.init(emu);
 
   // Mainalerts.init(emu);
-  Nav.init(emu);
+  tmp_pdcs = await Nav.init(emu);
+
+  print(tmp_pdcs);
 
   var mainGameBoyState = Html.querySelector('#mainGameBoyState');
 

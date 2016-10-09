@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 17:56:22 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 18:33:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -106,6 +106,7 @@ Async.Future init(Emulator.Emulator emu) async
   _panels = _makePanels(emu);
   Deb.init(emu);
   Opt.init(emu);
-  await Cs.init(emu);
+  var pdcs = await Cs.init(emu);
   Ft.log('nav.dart', 'init#done', [emu]);
+  return pdcs;
 }
