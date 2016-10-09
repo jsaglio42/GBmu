@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 13:47:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 14:11:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -198,7 +198,7 @@ abstract class Emulation implements Worker.AWorker {
     final Data.Rom irom = new Data.Rom.unserialize(
         <String, dynamic>{
           'data': drom,
-          'filename': 'no-name-yet' + ROM_EXTENSION
+          'fileName': 'no-name-yet' + ROM_EXTENSION
         });
     // final Data.Ram iram = new Data.Ram.unserialize();
     final c = new Cartridge.ACartridge(irom); //TODO: Take iram as parameter, if present
