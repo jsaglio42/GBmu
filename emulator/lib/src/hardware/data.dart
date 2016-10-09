@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 13:56:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 18:15:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -136,12 +136,7 @@ class Ram extends AData
   // Only called from Emulator, on emulation start request, with no data
   Ram.empty(Rom rom)
     : super(0, new Uint8List(rom.pullHeaderValue(RomHeaderField.RAM_Size))) {
-    final String n = rom.fileName;
-    final int i = n.length;
-    final String ramName = n.replaceRange(
-        i - ROM_EXTENSION.length, null, RAM_EXTENSION);
-
-    _frd_init(ramName);
+    _frd_init(FileRepr.ramNameOfRomName(rom.fileName));
     Ft.log('Ram', 'ctor.empty', [this.fileName, this.terseData]);
   }
 

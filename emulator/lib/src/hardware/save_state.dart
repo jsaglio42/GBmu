@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 13:55:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 14:32:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 18:15:08 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,6 +18,7 @@ import 'package:emulator/src/enums.dart';
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/variants.dart' as V;
+import 'package:emulator/src/gameboy.dart' as GameBoy;
 
 // TODO: Implement save states
 
@@ -27,28 +28,28 @@ class Ss extends Object
 
   // ATTRIBUTES ************************************************************* **
   int _romGlobalChecksum;
+  final String _fileName;
 
   // CONSTRUCTION *********************************************************** **
   // Only called once in DOM, when an external file is loaded
-  Ss.ofFile(String fileName, Uint8List data) {
-    _frd_init(fileName);
+  Ss.ofFile(String fileName, Uint8List data)
+    : _fileName = fileName {
     _romGlobalChecksum = 42;
     Ft.log('Ss', 'ctor.ofFile', [this.fileName, this.terseData]);
   }
 
   // Only called from Emulator, on emulation start request, with data from Idb
-  Ss.unserialize(Map<String, dynamic> serialization) {
-    _frd_init(serialization['fileName'] as String);
+  Ss.unserialize(Map<String, dynamic> serialization)
+    : serialization['fileName'] as String {
     _romGlobalChecksum = serialization['romGlobalChecksum'] as int;
     Ft.log('Ss', 'ctor.unserialize', [this.fileName, this.terseData]);
   }
 
   // Only called from Emulator, on gameboy snapshot required
-  Ss.ofGameBoy(GameBoy gb) {
-    final Data.Rom rom = gb.c.rom;
-
-    _frd_init(rom.fileName);
-    _romGlobalChecksum = gb.pullHeaderValue(RomHeaderField.Global_Checksum);
+  Ss.ofGameBoy(GameBoy.GameBoy gb)
+    : _fileName = FileRepr.ssNameOfRomName(gb.c.rom.fileName) {
+    _romGlobalChecksum =
+      gb.c.rom.pullHeaderValue(RomHeaderField.Global_Checksum);
     Ft.log('Ss', 'ctor.ofGameBoy', [this.fileName, this.terseData]);
   }
 
@@ -58,7 +59,7 @@ class Ss extends Object
     'romGlobalChecksum': 42,
   };
 
-  String get fileName => _filename;
+  String get fileName => _fileName;
   dynamic serialize() =>
     <String, dynamic>{
       'romGlobalChecksum': _romGlobalChecksum,

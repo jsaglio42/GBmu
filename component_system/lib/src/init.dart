@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 17:13:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 17:45:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -62,6 +62,9 @@ Async.Future init(Emulator.Emulator emu) async {
   final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs);
   final PlatformDom pd = new PlatformDom(pcs, pde, pce, pdcs, pc, pch);
 
+  // Misc. controllers
+  final HandlerFileAdmission hfa = new HandlerFileAdmission(pcs);
+
   // pidb.start: async computation
   await pidb.start(Html.window.indexedDB);
 
@@ -77,51 +80,6 @@ Async.Future init(Emulator.Emulator emu) async {
   // The following code is used for debug
 
 
-
-  var document = Html.document;
-  var target = Html.querySelector('#cartsBody');
-
-  int docCount = 0;
-  int targetCount = 0;
-
-  document.onDragEnter.forEach((ev) {
-        if (docCount == 0)
-          target.classes.add('active');
-        docCount++;
-        print('document: onDragEnter $docCount');
-      });
-  document.onDragLeave.forEach((ev) {
-        docCount--;
-        print('document: onDragLeave $docCount');
-        if (docCount == 0)
-          target.classes.remove('active');
-      });
-  document.onDragOver.forEach((ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-      });
-  document.onDrop.forEach((ev) {
-        print('document: onDrop (targetCount > 0 ? ${targetCount > 0})');
-        targetCount = 0;
-        docCount = 0;
-        target.classes.remove('active');
-        target.classes.remove('hover');
-        ev.stopPropagation();
-        ev.preventDefault();
-      });
-
-  target.onDragEnter.forEach((ev) {
-        if (targetCount == 0)
-          target.classes.add('hover');
-        targetCount++;
-        print('target: onDragEnter $targetCount');
-      });
-  target.onDragLeave.forEach((ev) {
-        targetCount--;
-        print('target: onDragLeave $targetCount');
-        if (targetCount == 0)
-          target.classes.remove('hover');
-      });
 
 
 

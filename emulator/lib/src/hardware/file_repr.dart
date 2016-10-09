@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 12:48:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 13:54:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 18:14:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,18 @@ abstract class FileRepr {
   Map<String, dynamic> get terseData;
 
   dynamic serialize();
+
+  static String ramNameOfRomName(String n) {
+    final int i = n.length;
+
+    return n.replaceRange(i - ROM_EXTENSION.length, null, RAM_EXTENSION);
+  }
+
+  static String ssNameOfRomName(String n) {
+    final int i = n.length;
+
+    return n.replaceRange(i - ROM_EXTENSION.length, null, SS_EXTENSION);
+  }
 
 }
 

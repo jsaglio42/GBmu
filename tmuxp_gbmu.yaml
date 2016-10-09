@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/09 13:45:52 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/09 18:08:31 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -76,7 +76,7 @@ windows:
 
 # GAMEBOY ******************************************************************* **
 - window_index: 14
-  panes: ['e $HW/{data,file_repr,headerdecoder}.dart']
+  panes: ['e $HW/{data,file_repr,headerdecoder,save_state}.dart']
 - window_index: 15
   panes: ['e $HW/{cpu_registers,hardware}.dart']
 - window_index: 16
@@ -135,7 +135,6 @@ windows:
   window_name: main
   layout: main-vertical
   panes:
-    - ps -W | ack -i 'dart.exe' | sed -e 's/^[ \t]*//' | cut -d' ' -f1 | xargs kill -f ; pub get ; pub serve
     - emacs $CS/init.dart README.md
 - window_index: 101
   window_name: includes
@@ -146,7 +145,7 @@ windows:
 
 - window_index: 103
   window_name: platform dom compo
-  panes: ['e $CDC/platform_dom.dart']
+  panes: ['e $CDC/platform_dom.dart $CS/*file_adm*.dart']
 - window_index: 106
   window_name: platforms events
   panes: ['e $CDC/platform_*events*.dart $CDC/platform_dom_component_storage.dart']
