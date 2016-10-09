@@ -226,7 +226,7 @@ body {
     background-color: rgba(155, 216, 235, 0.85);
     padding: 7px;
     width: 265px; /* 251 + padding * 2 */
-    min-height: 287px;
+    min-height: 143px; /* 287 / 2 */
 }
 
 #gb-slot.gameboysocket-active {
@@ -242,7 +242,8 @@ body {
     background-color: rgba(246, 206, 149, 0.85);
     padding: 7px;
     width: 265px; /* 251 + padding * 2 */
-    padding-top: 50px;
+    min-height: 143px; /* 287 / 2 */
+    /* padding-top: 50px; */
 }
 
 #accordion.accordion-active {
@@ -258,7 +259,7 @@ body {
     background-color: rgba(145, 207, 145, 0.85);
     padding: 7px;
     width: 265px;
-    min-height: 100px;
+    min-height: 143px; /* 287 / 2 */
 }
 
 #detached-chip-bank.chipbank-active {
