@@ -45,13 +45,20 @@ body {
 
 #cartsBody {
     float: left;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: inline-block
     /* margin-left:0; */
     /* margin-right:0; */
     /* margin: auto; */
 }
 
-#cartsBody {
-    display: inline-block
+#cartsBody.active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#cartsBody.hover {
+    background-color: rgba(0, 200, 0, 0.75);
 }
 
 /* ************************************************************************** */
@@ -216,9 +223,9 @@ body {
 
 /* GAMEBOY CART SLOT ******************************************************** */
 #gb-slot {
+    background-color: rgba(155, 216, 235, 0.85);
     padding: 7px;
     width: 265px; /* 251 + padding * 2 */
-    background-color: gray;
     min-height: 287px;
 }
 
@@ -232,7 +239,7 @@ body {
 
 /* DETACHED CART BANK ******************************************************* */
 #accordion {
-    background-color: black;
+    background-color: rgba(246, 206, 149, 0.85);
     padding: 7px;
     width: 265px; /* 251 + padding * 2 */
     padding-top: 50px;
@@ -248,7 +255,7 @@ body {
 
 /* DETACHED CHIP BANK ******************************************************* */
 #detached-chip-bank {
-    background-color: gray;
+    background-color: rgba(145, 207, 145, 0.85);
     padding: 7px;
     width: 265px;
     min-height: 100px;
