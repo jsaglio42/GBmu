@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/08 16:54:02 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/09 13:45:52 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,14 @@ environment:
   DEB: ./web/debugger
   MS: ./web/main_space
   OPT: ./web/options
+  EMU: ./emulator/lib/src/
+  HW: ./emulator/lib/src/hardware
+  CART: ./emulator/lib/src/cartridge
+
+  CS: ./component_system/lib/src
+  CCS: ./component_system/lib/src/controllers_component_storage
+  DC: ./component_system/lib/src/dom_components
+  CDC: ./component_system/lib/src/controllers_dom_components
 windows:
 - window_index: '998'
   window_name: commit
@@ -50,25 +58,120 @@ windows:
   panes: ['e $WEB/{index.html,styles.css}']
 
 - window_index: 2
-  panes: ['e $WEB/nav.dart']
+  panes: ['e ./emulator/lib/{constants,emulator,enums,variants}.dart']
+
+- window_index: 4
+  panes: ['e $EMU/{emulator,worker,worker_emulation}.dart']
+- window_index: 5
+  panes: ['e $EMU/worker_{debug,observer}.dart $EMU/worker/*.dart']
+- window_index: 6
+  panes: ['e $EMU/{constants,enums,variants,globals}.dart']
+
 - window_index: 7
-  panes: ['e $WEB/{alerts,canvas,keyboard}.dart']
+  panes: ['e $WEB/nav.dart']
 - window_index: 8
+  panes: ['e $WEB/{alerts,canvas,keyboard}.dart']
+- window_index: 9
   panes: ['e $OPT/*.dart']
 
-
-
-- window_index: 10
-  panes: ['e $DEB/{deb.dart,buttons.dart}']
-- window_index: 11
-  panes: ['e $DEB/*clock_info*.(html|dart)']
-- window_index: 12
-  panes: ['e $DEB/*instruction_flo*.(html|dart)']
-- window_index: 13
-  panes: ['e $DEB/*mem_exp*.(html|dart)']
+# GAMEBOY ******************************************************************* **
 - window_index: 14
-  panes: ['e $DEB/*mem_re*.(html|dart)']
+  panes: ['e $HW/{data,file_repr,headerdecoder}.dart']
 - window_index: 15
-  panes: ['e $DEB/registers.(html|dart)*']
+  panes: ['e $HW/{cpu_registers,hardware}.dart']
 - window_index: 16
+  panes: ['e $CART/*.dart']
+
+
+- window_index: 20
+  panes: ['e $DEB/{deb.dart,buttons.dart}']
+- window_index: 21
+  panes: ['e $DEB/*clock_info*.(html|dart)']
+- window_index: 22
+  panes: ['e $DEB/*instruction_flo*.(html|dart)']
+- window_index: 23
+  panes: ['e $DEB/*mem_exp*.(html|dart)']
+- window_index: 24
+  panes: ['e $DEB/*mem_re*.(html|dart)']
+- window_index: 25
+  panes: ['e $DEB/registers.(html|dart)*']
+- window_index: 26
   panes: ['e $DEB/**.(html|dart)']
+
+
+
+
+
+# ├── hardware
+# │   ├── data.dart
+# │   ├── headerdecoder.dart
+# │   └── registermapping.dart
+
+# │   ├── cpu_registers.dart
+# │   ├── hardware.dart
+
+
+
+
+
+# ├── gameboy.dart
+# ├── mixins
+# │   ├── graphics.dart
+# │   ├── instructions.dart
+# │   ├── instructionsdecoder.dart
+# │   ├── interruptmanager.dart
+# │   ├── joypad.dart
+# │   ├── mmu.dart
+# │   ├── timers.dart
+# │   └── z80.dart
+# ├── cartridge
+# │   ├── cart_mbc1.dart
+# │   ├── cart_romonly.dart
+# │   └── cartridge.dart
+
+
+# COMPONENT SYSTEM ********************************************************** **
+- window_index: 100
+  window_name: main
+  layout: main-vertical
+  panes:
+    - ps -W | ack -i 'dart.exe' | sed -e 's/^[ \t]*//' | cut -d' ' -f1 | xargs kill -f ; pub get ; pub serve
+    - emacs $CS/init.dart README.md
+- window_index: 101
+  window_name: includes
+  panes: [e $CS/include_*.dart]
+- window_index: 102
+  window_name: small classes
+  panes: ['e $CS/*{variants,local_storage_compo}*.dart']
+
+- window_index: 103
+  window_name: platform dom compo
+  panes: ['e $CDC/platform_dom.dart']
+- window_index: 106
+  window_name: platforms events
+  panes: ['e $CDC/platform_*events*.dart $CDC/platform_dom_component_storage.dart']
+
+- window_index: 104
+  window_name: cdc handlers
+  panes: ['e $CDC/platform_{cart,chip}(|_parts).dart']
+- window_index: 105
+  window_name: cdc handlers
+  panes: ['e $CDC/handler_*{catalyst,node,dragged}*.dart']
+
+- window_index: 107
+  window_name: mixins_
+  panes: [e $DC/mixin_*.dart]
+- window_index: 108
+  window_name: html drop drag
+  panes: ['e $DC/html_{dropzone,draggable}*.dart $DC/chip_socket_container.dart']
+- window_index: 109
+  window_name: html elements
+  panes: ['e $DC/html_*{cart,simple}*.dart']
+
+# CCS
+- window_index: 141
+  window_name: ccs platforms
+  panes: ['e $CCS/platform*.dart']
+- window_index: 142
+  window_name: ccs transformers
+  panes: ['e $CCS/transf*.dart']

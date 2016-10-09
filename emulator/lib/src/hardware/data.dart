@@ -6,15 +6,21 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 18:37:46 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/09 13:56:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
+
+library gbmu_data;
 
 import "dart:typed_data";
 import "package:ft/ft.dart" as Ft;
 
 import 'package:emulator/src/enums.dart';
+import 'package:emulator/src/constants.dart';
+import 'package:emulator/src/variants.dart' as V;
 import "package:emulator/src/hardware/headerdecoder.dart" as Headerdecoder;
+
+part 'package:emulator/src/hardware/file_repr.dart';
 
 /* Data Implementation ********************************************************/
 abstract class AData {
@@ -52,7 +58,7 @@ abstract class AReadOperation implements AData {
 }
 
 /* WriteOperation *************************************************************/
-abstract class AWriteOperation implements AData  {
+abstract class AWriteOperation implements AData {
 
   void clear() { _data.fillRange(0, this.size, 0); }
 
@@ -67,26 +73,83 @@ abstract class AWriteOperation implements AData  {
 
 }
 
-/* Rom ************************************************************************/
-class Rom extends AData
-  with AReadOperation, Headerdecoder.HeaderDecoder{
+// Ram internal to GameBoy ************************************************** **
+class GbRam extends AData
+  with AReadOperation, AWriteOperation {
 
-  Rom.ofUint8List(int memOffset, Uint8List l)
+  GbRam.ofUint8List(int memOffset, Uint8List l)
     : super(memOffset, l);
 
-  Rom(int memOffset, int size)
+  GbRam(int memOffset, int size)
     : super(memOffset, new Uint8List(size));
 
 }
 
-/* Ram ************************************************************************/
+// Rom ********************************************************************** **
+class Rom extends AData
+  with AReadOperation, Headerdecoder.HeaderDecoder, FileReprData {
+
+  // CONSTRUCTION *********************************************************** **
+  // Only called once in DOM, when an external file is loaded
+  Rom.ofFile(String fileName, Uint8List data)
+    : super(0, data) {
+    _frd_init(fileName);
+    Ft.log('Rom', 'ctor.ofFile', [this.fileName, this.terseData]);
+  }
+
+  // Only called from Emulator, on emulation start request, with data from Idb
+  Rom.unserialize(Map<String, dynamic> serialization)
+    : super(0, serialization['data'] as Uint8List) {
+    _frd_init(serialization['fileName'] as String);
+    Ft.log('Rom', 'ctor.unserialize', [this.fileName, this.terseData]);
+  }
+
+  // FROM FILEREPRDATA ****************************************************** **
+  V.Component get type => V.Rom.v;
+
+  Map<String, dynamic> get terseData => <String, dynamic>{
+    'ramSize': this.pullHeaderValue(RomHeaderField.RAM_Size),
+    'globalChecksum': this.pullHeaderValue(RomHeaderField.Global_Checksum),
+  };
+
+}
+
+// Ram ********************************************************************** **
 class Ram extends AData
-  with AReadOperation, AWriteOperation {
+  with AReadOperation, AWriteOperation, FileReprData {
 
-  Ram.ofUint8List(int memOffset, Uint8List l)
-    : super(memOffset, l);
+  // CONSTRUCTION *********************************************************** **
+  // Only called once in DOM, when an external file is loaded
+  Ram.ofFile(String fileName, Uint8List data)
+    : super(0, data) {
+    _frd_init(fileName);
+    Ft.log('Ram', 'ctor.ofFile', [this.fileName, this.terseData]);
+  }
 
-  Ram(int memOffset, int size)
-    : super(memOffset, new Uint8List(size));
+  // Only called from Emulator, on emulation start request, with data from Idb
+  Ram.unserialize(Map<String, dynamic> serialization)
+    : super(0, serialization['data'] as Uint8List) {
+    _frd_init(serialization['fileName'] as String);
+    Ft.log('Ram', 'ctor.unserialize', [this.fileName, this.terseData]);
+  }
+
+  // Only called from Emulator, on emulation start request, with no data
+  Ram.empty(Rom rom)
+    : super(0, new Uint8List(rom.pullHeaderValue(RomHeaderField.RAM_Size))) {
+    final String n = rom.fileName;
+    final int i = n.length;
+    final String ramName = n.replaceRange(
+        i - ROM_EXTENSION.length, null, RAM_EXTENSION);
+
+    _frd_init(ramName);
+    Ft.log('Ram', 'ctor.empty', [this.fileName, this.terseData]);
+  }
+
+  // FROM FILEREPRDATA ****************************************************** **
+  V.Component get type => V.Ram.v;
+
+  Map<String, dynamic> get terseData => <String, dynamic>{
+    'size': this.size,
+  };
 
 }

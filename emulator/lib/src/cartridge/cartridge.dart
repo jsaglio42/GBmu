@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:30:40 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 18:36:12 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/09 13:48:11 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -42,7 +42,7 @@ abstract class ACartridge {
     final expectedRamSize = rom.pullHeaderValue(RomHeaderField.RAM_Size);
     final isLogoValid = rom.pullHeaderValue(RomHeaderField.Nintendo_Logo);
     final Data.Ram ram = (optionalRam == null)
-      ? new Data.Ram(0, expectedRamSize)
+      ? new Data.Ram.empty(rom)
       : optionalRam;
     if (expectedRomSize != rom.size)
       throw new Exception('Cartridge: ROM Size is not matching header info');

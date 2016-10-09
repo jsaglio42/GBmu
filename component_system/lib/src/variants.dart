@@ -6,34 +6,11 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:57:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/09 11:44:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-abstract class Chip implements Component{}
-
-abstract class Component {
-  static const Iterable<Component> values =
-    const <Component>[Rom.v, Ram.v, Ss.v];
-}
-
-class Rom implements Component {
-  const Rom._();
-  static const Rom v = const Rom._();
-  String toString() => 'Rom';
-}
-
-class Ram implements Chip {
-  const Ram._();
-  static const Ram v = const Ram._();
-  String toString() => 'Ram';
-}
-
-class Ss implements Chip {
-  const Ss._();
-  static const Ss v = const Ss._();
-  String toString() => 'Ss';
-}
+export 'package:emulator/variants.dart';
 
 // Locations **************************************************************** **
 abstract class CartState {}
@@ -132,6 +109,7 @@ class CartEvent<T> {
   String toString() => 'CartEvent.$_ev';
 
 }
+
 // Chip events ************************************************************** **
 enum _ChipEvent {
   NewAttached, NewDetached,
