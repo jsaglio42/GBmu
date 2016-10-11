@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/26 20:15:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/11 16:08:47 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,6 +17,11 @@ import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 
 class CartMBC1 extends Cartridge.ACartridge  {
+
+  int _mode = 0;
+  int _bankno_ROM = 0;
+  int _bankno_RAM = 0;
+  bool _enableRAM = false;
 
   CartMBC1.internal(Data.Rom rom, Data.Ram ram)
     : super.internal(rom, ram);
