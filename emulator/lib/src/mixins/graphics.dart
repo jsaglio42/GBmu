@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 18:03:08 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/11 16:00:00 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -76,46 +76,47 @@ class GRegisterCurrentInfo {
     return ;
   }
 
-  bool get isLCDEnabled => (this.LCDC & (1 << 7) != 0);
-  GraphicMode get mode => GraphicMode.values[this.STAT & 0x3];
-  bool isInterruptMonitored(GraphicMode g)
-    => (this.STAT & (1 << (g.index + 3)) != 0);
+  bool get isLCDEnabled => (this.LCDC >> 7) & 0x1 == 1;
+  bool get isWindowDisplayEnabled => (this.LCDC >> 5) & 0x1 == 1;
+  bool get isSpriteDisplayEnabled => (this.LCDC >> 1) & 0x1 == 1;
+  bool get isBackgroundDisplayEnabled => (this.LCDC >> 1) & 0x1 == 1;
+  int  get tileMapAddress_BG => (this.LCDC >> 3) & 0x1 == 1 ? 0x9C00 : 0x9800;
+  int  get tileMapAddress_WIN => (this.LCDC >> 6) & 0x1 == 1 ? 0x9C00 : 0x9800;
 
-  bool get isWindowDisplayEnabled => (this.LCDC & (1 << 5) != 0);
-  bool get isSpriteDisplayEnabled => (this.LCDC & (1 << 1) != 0);
-  bool get isBackgroundDisplayEnabled => (this.LCDC & (1 << 0) != 0);
-  int  get tileMapAddress_BG => (this.LCDC & (1 << 3) == 0) ? 0x9800 : 0x9C00;
-  int  get tileMapAddress_WIN => (this.LCDC & (1 << 6) == 0) ? 0x9800 : 0x9C00;
+  GraphicMode get mode => GraphicMode.values[this.STAT & 0x3];
+
+  bool isInterruptMonitored(GraphicMode g) {
+    return (this.STAT >> (g.index + 3)) & 0x1 == 1;
+  }
 
   int getTileAddress(int tileID) {
     assert(tileID & ~0xFF == 0, 'Invalid tileID');
-    if (this.LCDC & (1 << 4) == 0) {
-      return 0x9000 + tileID.toSigned(8) * 16;
-    }
-    else
+    if ((this.LCDC >> 4) & 0x1 == 1)
       return 0x8000 + tileID * 16;
+    else
+      return 0x9000 + tileID.toSigned(8) * 16;
   }
 
   Color getColorBG(int colorID) {
-    assert(colorID & ~0x3 == 0, 'Invalid colorID');
-    switch (colorID) {
+    switch (colorID)
+    {
       case (0) : return Color.values[(this.BGP >> 0) & 0x3];
       case (1) : return Color.values[(this.BGP >> 2) & 0x3];
       case (2) : return Color.values[(this.BGP >> 4) & 0x3];
       case (3) : return Color.values[(this.BGP >> 6) & 0x3];
-      default : assert(false, 'getColor: switch failure');
+      default : assert(false, 'getColorBG: switch failure');
     }
   }
 
   Color getColorOBJ(int colorID, int paletteID) {
-    assert(colorID & ~0x3 == 0, 'Invalid colorID');
     final int OBP = (paletteID == 0) ? this.OBP0 : this.OBP1;
-    switch (colorID) {
-      case (0) : return Color.values[(this.BGP >> 0) & 0x3];
+    switch (colorID)
+    {
+      case (0) : return Color.values[(OBP >> 0) & 0x3];
       case (1) : return Color.values[(OBP >> 2) & 0x3];
       case (2) : return Color.values[(OBP >> 4) & 0x3];
       case (3) : return Color.values[(OBP >> 6) & 0x3];
-      default : assert(false, 'getColor: switch failure');
+      default : assert(false, 'getColorOBJ: switch failure');
     }
   }
 
@@ -288,7 +289,7 @@ abstract class Graphics
     else
     {
       _updated.STAT = mode_bits | interrupt_bits | 0x4;
-      if (_current.STAT & (1 << 6) != 0)
+      if ((_current.STAT >> 6) & 0x1 == 1)
         this.requestInterrupt(InterruptType.LCDStat);
     }
     this.tailRam
@@ -309,24 +310,26 @@ abstract class Graphics
   }
 
   void _drawLine() {
+    List<Color> lineBuffer = new List<Color>();
     if (_current.LY < VBLANK_THRESHOLD)
     {
       // print('Draw Line');
       for (int x = 0; x < LCD_WIDTH; ++x)
       {
-        int BGColorID = _getBackgroundColorID(x);
-        int WinColorID = _getWindowColorID(x, BGColorID);
-        Color c = _getSpriteColor(x, WinColorID);
-        _drawPixel(x, c);
+        Color BGColor = _getBackgroundColor(x);
+        Color WinColor = _getWindowColor(x, BGColor);
+        lineBuffer.add(WinColor);
       }
+      _drawSprites(lineBuffer);
+      _updateScreenBuffer(lineBuffer);
     }
     return ;
   }
 
-  int _getBackgroundColorID(int x) {
+  Color _getBackgroundColor(int x) {
     // print('Background');
     if (!_current.isBackgroundDisplayEnabled)
-      return 0x00;
+      return Color.White;
     final int posY = _current.LY + _current.SCY;
     final int posX =  x + _current.SCX;
     final int tileY = posY ~/ 8;
@@ -339,21 +342,21 @@ abstract class Graphics
     final int relativeX = posX % 8;
     final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
-    final int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
-    final int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
-    return (colorId_l | colorId_h);
+    final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
+    final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
+    return _current.getColorBG(colorId_l | colorId_h);
   }
 
-  int _getWindowColorID(int x, int BGColorID) {
+  Color _getWindowColor(int x, Color BGColor) {
     // print('Window');
     if (!_current.isWindowDisplayEnabled)
-      return BGColorID;
+      return BGColor;
     final int posY = _current.LY - _current.WY;
     if (posY < 0 || posY >= LCD_HEIGHT)
-      return BGColorID;
+      return BGColor;
     final int posX =  x - _current.WX;
     if (posX < 0 || posX >= LCD_WIDTH)
-      return BGColorID;
+      return BGColor;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
     final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_WIN + tileY * 32 + tileX);
@@ -364,61 +367,87 @@ abstract class Graphics
     final int relativeX = posX % 8;
     final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
-    final int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
-    final int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
-    return (colorId_l | colorId_h);
+    final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
+    final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
+    return _current.getColorBG(colorId_l | colorId_h);
   }
 
-  Color _getSpriteColor(int x, int BGcolorID) {
+  void _drawSprites(List<Color> lineBuffer) {
     if (!_current.isSpriteDisplayEnabled)
-      return _current.getColorBG(BGcolorID);
-    final int sizeY = (_current.LCDC & (1 << 2) == 0) ? 8 : 16;
+      return ;
+    final List<int> zbuffer = new List.filled(LCD_WIDTH, -1);
+    final int sizeY = ((_current.LCDC >> 2) & 0x1 == 1) ? 16 : 8;
     for (int spriteno = 0; spriteno < 40; ++spriteno) {
       int spriteOffset = 0xFE00 + spriteno * 4;
       int posY = this.tailRam.pull8_unsafe(spriteOffset) - 16;
       int relativeY = _current.LY - posY;
       if (relativeY < 0 || relativeY >= sizeY)
         continue ;
-      int posX = this.tailRam.pull8_unsafe(spriteOffset + 1) - 8;
-      int relativeX = x - posX;
-      if (relativeX < 0 || relativeX >= 8)
-        continue ;
 
       int info = this.tailRam.pull8_unsafe(spriteOffset + 3);
-      bool aboveBG = (info & (1 << 7)) == 0;
-      if (!aboveBG && BGcolorID != 0)
-        continue ;
+      bool priorityToBG = (info >> 7) & 0x1 == 1;
+      bool flipY = (info >> 6) & 0x1 == 1;
+      bool flipX = (info >> 5) & 0x1 == 1;
+      int OBP = (info >> 4) & 0x1;
 
-      // print(sizeY);
-      // bool flipY = (info & (1 << 6)) == 1;
-      // if (flipY)
-      //   relativeY = sizeY - 1 - relativeY;
-      // bool flipX = (info & (1 << 5)) == 1;
-      // if (flipX)
-      //   relativeX = 7 - relativeX;
+      if (flipY)
+        relativeY = sizeY - 1 - relativeY;
 
       int tileID = this.tailRam.pull8_unsafe(spriteOffset + 2);
-      int tileAddress = 0x8000 + tileID * 2 * sizeY;
+      /* tile address should use sizeY ? TO BE CHECKED */
+      int tileAddress = 0x8000 + tileID * 16;
       int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
       int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
-      int colorId_l = (tileRow_l & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x1;
-      int colorId_h = (tileRow_h & (1 << (7 - relativeX)) == 0) ? 0x0 : 0x2;
-      int OBP = (info >> 4) & 0x1;
-      int colorID = colorId_l | colorId_h;
-      if (colorID == 0)
-        return _current.getColorBG(BGcolorID);
-      return _current.getColorOBJ(colorID, OBP);
+      int posX = this.tailRam.pull8_unsafe(spriteOffset + 1) - 8;
+
+      for (int relativeX = 0; relativeX < 8; ++relativeX) {
+        int x = posX + relativeX;
+        if (x < 0)
+          continue ;
+        if (x >= LCD_WIDTH)
+          break ;
+        Color BGColor = lineBuffer[x];
+
+        /* Not sure about BG transparency here; TO BE CHECKED */
+        if (priorityToBG && (BGColor != Color.White))
+          continue ;
+        if (zbuffer[x] >= 0)
+          continue ;
+
+        int colorId_l;
+        int colorId_h;
+        if (flipX)
+        {
+          colorId_l = (tileRow_l >> relativeX) & 0x1 == 1 ? 0x1 : 0x0;
+          colorId_h = (tileRow_h >> relativeX) & 0x1 == 1 ? 0x2 : 0x0;
+        }
+        else
+        {
+          colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
+          colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
+        }
+
+        int colorID = colorId_l | colorId_h;
+        if (colorID == 0)
+          continue;
+        lineBuffer[x] = _current.getColorOBJ(colorID, OBP);
+        zbuffer[x] = spriteno;
+      }
     }
-    return _current.getColorBG(BGcolorID);
   }
 
-  void _drawPixel(int x, Color c) {
-    final int pixelOffset = (_current.LY * LCD_WIDTH + x) * 4;
-    final List cList = _colorMap[c];
-    _buffer[pixelOffset + 0] = cList[0];
-    _buffer[pixelOffset + 1] = cList[1];
-    _buffer[pixelOffset + 2] = cList[2];
-    _buffer[pixelOffset + 3] = cList[3];
+  void _updateScreenBuffer(List<Color> lineBuffer) {
+    assert(lineBuffer.length == LCD_WIDTH, 'Failure');
+    for (int x = 0; x < LCD_WIDTH; ++x)
+    {
+      int pixelOffset = (_current.LY * LCD_WIDTH + x) * 4;
+      Color c = lineBuffer[x];
+      List cList = _colorMap[c];
+      _buffer[pixelOffset + 0] = cList[0];
+      _buffer[pixelOffset + 1] = cList[1];
+      _buffer[pixelOffset + 2] = cList[2];
+      _buffer[pixelOffset + 3] = cList[3];
+    }
     return ;
   }
 
