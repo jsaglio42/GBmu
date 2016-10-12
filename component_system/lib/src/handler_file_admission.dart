@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 17:33:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 17:11:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 17:34:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,11 +21,11 @@ import 'dart:convert';
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
+import 'package:emulator/constants.dart';
 
 // import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
-import 'package:emulator/constants.dart';
 // import 'package:component_system/src/include_cdc.dart';
 
 // http://stackoverflow.com/questions/3144881/how-do-i-detect-a-html5-drag-event-entering-and-leaving-the-window-like-gmail-d
@@ -127,6 +127,5 @@ class HandlerFileAdmission {
     await reader.onLoad.first;
     return reader.result;
   }
-
 
 }

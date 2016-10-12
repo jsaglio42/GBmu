@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:17:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:15:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -56,24 +56,24 @@ run() async
   var emu = await emuFut;
   Ft.log('main.dart', 'run#emuCreated');
 
-  var tmp_pdcs;
+  // var tmp_pdcs;
 
-  Html.querySelector('#magbut')
-  .onClick.listen((_) {
-        Ft.log('main.dart', 'magbut#onClick');
+  // Html.querySelector('#magbut')
+  // .onClick.listen((_) {
+  //       Ft.log('main.dart', 'magbut#onClick');
 
 
-        if (tmp_pdcs.gbCart.isSome) {
-          emu.send('EmulationStart',
-              new Emulator.RequestEmuStart(
-                  idb:'GBmu_db',
-                  romStore: V.Rom.v.toString(),
-                  ramStore: V.Ram.v.toString(),
-                  ssStore: V.Ss.v.toString(),
-                  romKey: tmp_pdcs.gbCart.v.data.idbid
-                                           ));
-        }
-      });
+  //       if (tmp_pdcs.gbCart.isSome) {
+  //         emu.send('EmulationStart',
+  //             new Emulator.RequestEmuStart(
+  //                 idb:'GBmu_db',
+  //                 romStore: V.Rom.v.toString(),
+  //                 ramStore: V.Ram.v.toString(),
+  //                 ssStore: V.Ss.v.toString(),
+  //                 romKey: tmp_pdcs.gbCart.v.data.idbid
+  //                                          ));
+  //       }
+  //     });
 
   // Html.querySelector('#ejectbut')
   // .onClick.listen((_) {
@@ -118,36 +118,13 @@ run() async
   Debinstflow.init(emu);
   Debclocks.init(emu);
   Debbuttons.init(emu);
-  // Mainbottompanel.init(emu);
   Mainalerts.init(emu);
 
   Keyboard.init(emu);
   Canvas.init(emu);
 
   // Mainalerts.init(emu);
-  tmp_pdcs = await Nav.init(emu);
-
-  print(tmp_pdcs);
-
-  var mainGameBoyState = Html.querySelector('#mainGameBoyState');
-
-  var mainRomName = Html.querySelector('#mainRomName');
-  emu.listener('EmulationStatus').forEach((modeRaw){
-        final mode = GameBoyExternalMode.values[modeRaw.index];
-        final name = 'Plokemon Violet super cool version 5.55';
-
-        try {
-          if (mode == GameBoyExternalMode.Absent)
-            mainRomName.text = '';
-          else if (name.length > 20)
-            mainRomName.text = name.substring(0, 20) + '...';
-          else
-            mainRomName.text = name;
-          mainGameBoyState.text = '(' + mode.toString().substring(20) + ')';
-        } catch (e) {
-          print(e);
-        }
-      });
+  await Nav.init(emu);
 
 
 

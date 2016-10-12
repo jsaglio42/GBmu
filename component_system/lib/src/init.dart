@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 18:32:47 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 17:48:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,7 +63,8 @@ Async.Future init(Emulator.Emulator emu) async {
   final PlatformDom pd = new PlatformDom(pcs, pde, pce, pdcs, pc, pch);
 
   // Misc. controllers
-  final HandlerFileAdmission hfa = new HandlerFileAdmission(pcs);
+  new HandlerFileAdmission(pcs);
+  new HandlerEmulatorCommunication(emu, pce, pdcs);
 
   // pidb.start: async computation
   await pidb.start(Html.window.indexedDB);
@@ -77,78 +78,6 @@ Async.Future init(Emulator.Emulator emu) async {
   // pls.start: data retrieval from local-storage
   /* await */ pls.start();
 
-  // The following code is used for debug
-
-
-
-
-
-  // final Emulator.Rom rom = new Emulator.Rom.ofFile('test.gb', );
-  // final Emulator.Ram ram = new Emulator.Ram.ofFile('test.save', );
-  // final Emulator.Ss ss = new Emulator.Ss.ofFile('test.ss', );
-  // LsRom lsrom;
-  // LsRam lsram;
-  // LsSs lsss;
-  // List<Async.Future> futs;
-  // List comps;
-
-
-  // pcs.entryDelete.forEach((_){
-  //       print('main#deleteEntry');
-  //     });
-  // pcs.entryNew.forEach((_){
-  //       print('main#newEntry');
-  //     });
-  // pcs.entryUpdate.forEach((_){
-  //       print('main#updateEntry');
-  //     });
-
-  // futs = [
-  //   pcs.entryNew.where((LsEntry e) => e.type is Rom).first,
-  //   pcs.entryNew.where((LsEntry e) => e.type is Ram).first,
-  //   pcs.entryNew.where((LsEntry e) => e.type is Ss).first,
-  // ];
-
-
-  // await pcs.newRom(rom); //Add Rom
-  // await pcs.newRom(rom);
-  // await pcs.newRom(rom);
-  // await pcs.newRam(ram);
-  // await pcs.newSs(ss);
-
-  // comps = await Async.Future.wait(futs);
-
-  // lsrom = comps[0];
-  // lsram = comps[1];
-  // lsss = comps[2];
-
-  // pcs.bindRam(lsram, lsrom);
-  // pcs.bindSs(lsss, lsrom, 2);
-  // pcs.unbind(lsss);
-
-  // lsram = (await pcs.entryUpdate.first).newValue;
-  // await new Async.Future.delayed(new Duration(seconds: 2));
-  // print('go!');
-  // pcs.unbind(lsram);
-
-  // lsram = (await pcs.entryUpdate.first).newValue;
-  // await new Async.Future.delayed(new Duration(seconds: 2));
-  // print('go!');
-  // pcs.delete(lsram);
-
-
-
-  // print('MAIN await first DomCart');
-  // final DomCart dc = await pce.onCartEvent
-  // .where((ev) => ev.isNew)
-  // .map((ev) => ev.cart)
-  // .first;
-  // print('MAIN got first DomCart');
-  // print('MAIN await 3seconds');
-  // await new Async.Future.delayed(new Duration(seconds: 2));
-  // pcs.delete(dc.data);
-  // print('MAIN done 3seconds');
-
   Ft.log('Component_System', 'init#done');
-  return pdcs;
+  return ;
 }

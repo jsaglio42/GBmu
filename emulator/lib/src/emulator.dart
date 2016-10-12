@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 11:01:38 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:11:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,7 +36,6 @@ final _mainReceivers = <String, Type>{
   'MemRegInfo' : Uint8List,
   'ClockInfo' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
-  'EmulationStatus' : GameBoyExternalMode,
   'EmulationPause' : int,
   'EmulationResume' : int,
   'DebStatusUpdate' : bool,
@@ -51,6 +50,7 @@ final _workerReceivers = <String, Type>{
   'KeyUpEvent' : JoypadKey,
   'DebStatusRequest' : DebuggerModeRequest,
   'EmulationStart' : RequestEmuStart,
+  'EmulationEject' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
   'EmulationAutoBreak' : AutoBreakExternalMode,
   'EmulationPause' : int,
@@ -69,14 +69,12 @@ class RequestEmuStart {
   final String idb;
   final String romStore;
   final String ramStore;
-  final String ssStore;
 
   final int romKey;
   final int ramKeyOpt;
-  final int ssKeyOpt;
 
-  RequestEmuStart({this.idb, this.romStore, this.ramStore, this.ssStore,
-    this.romKey, this.ramKeyOpt, this.ssKeyOpt});
+  RequestEmuStart({
+    this.idb, this.romStore, this.ramStore, this.romKey, this.ramKeyOpt});
 
 }
 

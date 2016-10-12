@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:24:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:25:40 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -104,7 +104,7 @@ abstract class Emulation implements Worker.AWorker {
 
   Async.Future _onEmulationStartReq(RequestEmuStart req) async
   {
-    var gb;
+    Gameboy.GameBoy gb;
 
     Ft.log("WorkerEmu", '_onEmulationStartReq');
     try {
@@ -122,11 +122,8 @@ abstract class Emulation implements Worker.AWorker {
     if (this.debMode == DebuggerExternalMode.Operating
         && this.pauseMode != PauseExternalMode.Effective)
       _updatePauseMode(PauseExternalMode.Effective);
-    _updateGBMode(GameBoyExternalMode.Emulating);
-    this.ports.send('Events', <String, dynamic>{
-      'type': EmulatorEvent.GameBoyStart,
-      'msg': "Plokemon violet.rom",
-    });
+    _updateGBMode(GameBoyExternalMode.Emulating,
+        <String, dynamic>{'name': gb.c.rom.fileName});
     return ;
   }
 
@@ -136,7 +133,7 @@ abstract class Emulation implements Worker.AWorker {
     assert(this.gbMode != GameBoyExternalMode.Absent,
         "_onEjectReq with no gameboy");
     this.gbOpt = null;
-    _updateGBMode(GameBoyExternalMode.Absent);
+    _updateGBMode(GameBoyExternalMode.Absent, <String, dynamic>{});
     this.ports.send('Events', <String, dynamic>{
       'type': EmulatorEvent.GameBoyEject,
       'msg': "bye bye Plokemon violet.rom",
@@ -179,11 +176,22 @@ abstract class Emulation implements Worker.AWorker {
     _clockDeficit = 0.0;
   }
 
-  void _updateGBMode(GameBoyExternalMode m)
+  void _updateGBMode(GameBoyExternalMode m, Map<String, dynamic> map)
   {
-    Ft.log("WorkerEmu", '_updateGBMode', [m]);
+    Ft.log("WorkerEmu", '_updateGBMode', [m, map]);
     this.sc.setState(m);
-    this.ports.send('EmulationStatus', m);
+    switch (m) {
+      case (GameBoyExternalMode.Emulating):
+        map['type'] = EmulatorEvent.GameBoyStart;
+        break;
+      case (GameBoyExternalMode.Absent):
+        map['type'] = EmulatorEvent.GameBoyEject;
+        break;
+      case (GameBoyExternalMode.Crashed):
+        map['type'] = EmulatorEvent.GameBoyCrash;
+        break;
+    }
+    this.ports.send('Events', map);
   }
 
   void _updatePauseMode(PauseExternalMode m)
@@ -196,23 +204,6 @@ abstract class Emulation implements Worker.AWorker {
       this.ports.send('EmulationResume', 42);
   }
 
-  void log(v) {
-    print('<${v.runtimeType}>($v)');
-    Js.context['console'].callMethod('log', [v]);
-  }//debug
-
-
-  void _wakeUpDart() {
-    new Async.Future.delayed(new Duration(seconds: 1), () {
-      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
-      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
-      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
-      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
-      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
-      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
-    });
-  }
-
   Async.Future<Idb.Database> _futureDatabaseOfName(String name) {
     final idbf = Js.context['indexedDB'];
     final Async.Completer compl = new Async.Completer.sync();
@@ -222,11 +213,11 @@ abstract class Emulation implements Worker.AWorker {
     req['onsuccess'] = (ev){
       Ft.log('WorkerEmu', '_onSuccess', [ev]);
       compl.complete(ev.target.result);
-      _wakeUpDart();
+      new Async.Future.delayed(new Duration(milliseconds: 5), (){});
     };
     req['onerror'] = (ev){
       compl.completeError('Database error: ${ev.target.errorCode}');
-      _wakeUpDart();
+      new Async.Future.delayed(new Duration(milliseconds: 5), (){});
     };
     return compl.future;
   }
@@ -303,9 +294,7 @@ abstract class Emulation implements Worker.AWorker {
       .asStream();
     _sub = _fut.listen(_onEmulation);
     if (error != null) {
-      _updateGBMode(GameBoyExternalMode.Crashed);
-      this.ports.send('Events', <String, dynamic>{
-        'type': EmulatorEvent.GameBoyCrash,
+      _updateGBMode(GameBoyExternalMode.Crashed, <String, dynamic>{
         'msg': error.toString(),
         'st': stacktrace.toString(),
       });
@@ -424,14 +413,13 @@ abstract class Emulation implements Worker.AWorker {
       ..listener('EmulationResume').forEach(_onResumeReq)
       ..listener('KeyDownEvent').forEach(_onKeyDown)
       ..listener('KeyUpEvent').forEach(_onKeyUp)
-      ..listener('Debug')
-        .where((map) => map['action'] == 'eject').forEach(_onEjectReq)
-      ..listener('Debug').forEach(
-        (Map map) {
-          if (map['action'] == 'crash') {
-            _simulateCrash = true;
-            Ft.log("WorkerEmu", 'listener#debug#crash');
-        }});
+      ..listener('EmulationEject').forEach(_onEjectReq);
+      // ..listener('Debug').forEach(
+      //   (Map map) {
+      //     if (map['action'] == 'crash') {
+      //       _simulateCrash = true;
+      //       Ft.log("WorkerEmu", 'listener#debug#crash');
+      //   }});
   }
 
 }
