@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 15:18:46 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/11 16:26:33 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,8 +45,6 @@ abstract class Mmu
 
   void push8(int memAddr, int v)
   {
-    // requestHB(memAddr == 0xFF87); // debug
-
     if (_isInRange(memAddr, CARTRIDGE_ROM_FIRST, CARTRIDGE_ROM_LAST))
       this.c.push8_Rom(memAddr, v);
     else if (_isInRange(memAddr, CARTRIDGE_RAM_FIRST, CARTRIDGE_RAM_LAST))

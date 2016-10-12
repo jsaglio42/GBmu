@@ -829,6 +829,18 @@ abstract class Z80
     return result;
   }
 
+  int _ADC_calculate(int l, int r) {
+    assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
+    r += this.cpur.cy;
+    final int calculated = l + r;
+    final int result = calculated & 0xFF;
+    this.cpur.cy = ((l + r) > 0xFF) ? 1 : 0;
+    this.cpur.h = ((l & 0x0F) + (r & 0x0F) > 0x0F) ? 1 : 0;
+    this.cpur.n = 0;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
+    return result;
+  }
+
   int _ADD_r(Reg8 r) {
     final int val = this.cpur.pull8(r);
     this.cpur.A = _ADD_calculate(this.cpur.A, val);
@@ -852,22 +864,22 @@ abstract class Z80
 
   /* ADC */
   int _ADC_r(Reg8 r) {
-    final int val = this.cpur.pull8(r) + this.cpur.cy;
-    this.cpur.A = _ADD_calculate(this.cpur.A, val);
+    final int val = this.cpur.pull8(r);
+    this.cpur.A = _ADC_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 4;
   }
 
   int _ADC_n() {
-    final int val = this.pull8(this.cpur.PC + 1) + this.cpur.cy;
-    this.cpur.A = _ADD_calculate(this.cpur.A, val);
+    final int val = this.pull8(this.cpur.PC + 1);
+    this.cpur.A = _ADC_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _ADC_HL() {
-    final int val = this.pull8(this.cpur.HL) + this.cpur.cy;
-    this.cpur.A = _ADD_calculate(this.cpur.A, val);
+    final int val = this.pull8(this.cpur.HL);
+    this.cpur.A = _ADC_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
   }
@@ -905,6 +917,18 @@ abstract class Z80
     return result;
   }
 
+  int _SBC_calculate(int l, int r) {
+    assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
+    r += this.cpur.cy;
+    final int calculated = l - r;
+    final int result = calculated & 0xFF;
+    this.cpur.cy = (l < r) ? 1 : 0;
+    this.cpur.h = ((l & 0x0F) < (r & 0x0F)) ? 1 : 0;
+    this.cpur.n = 1;
+    this.cpur.z = (result == 0) ? 0x1 : 0x0;
+    return result;
+  }
+
   int _SUB_r(Reg8 r) {
     final int val = this.cpur.pull8(r);
     this.cpur.A = _SUB_calculate(this.cpur.A, val);
@@ -928,22 +952,22 @@ abstract class Z80
 
   /* SBC */
   int _SBC_r(Reg8 r) {
-    final int val = this.cpur.pull8(r) + this.cpur.cy;
-    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    final int val = this.cpur.pull8(r);
+    this.cpur.A = _SBC_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 4;
   }
 
   int _SBC_n() {
-    final int val = this.pull8(this.cpur.PC + 1) + this.cpur.cy;
-    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    final int val = this.pull8(this.cpur.PC + 1);
+    this.cpur.A = _SBC_calculate(this.cpur.A, val);
     this.cpur.PC += 2;
     return 8;
   }
 
   int _SBC_HL() {
-    final int val = this.pull8(this.cpur.HL) + this.cpur.cy;
-    this.cpur.A = _SUB_calculate(this.cpur.A, val);
+    final int val = this.pull8(this.cpur.HL);
+    this.cpur.A = _SBC_calculate(this.cpur.A, val);
     this.cpur.PC += 1;
     return 8;
   }

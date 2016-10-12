@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/11 16:00:00 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/11 17:29:45 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -330,8 +330,8 @@ abstract class Graphics
     // print('Background');
     if (!_current.isBackgroundDisplayEnabled)
       return Color.White;
-    final int posY = _current.LY + _current.SCY;
-    final int posX =  x + _current.SCX;
+    final int posY = (_current.LY + _current.SCY) & 0xFF;
+    final int posX =  (x + _current.SCX) & 0xFF;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
     final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_BG + tileY * 32 + tileX);
@@ -385,7 +385,7 @@ abstract class Graphics
         continue ;
 
       int info = this.tailRam.pull8_unsafe(spriteOffset + 3);
-      bool priorityToBG = (info >> 7) & 0x1 == 1;
+      bool priorityIsBG = (info >> 7) & 0x1 == 1;
       bool flipY = (info >> 6) & 0x1 == 1;
       bool flipX = (info >> 5) & 0x1 == 1;
       int OBP = (info >> 4) & 0x1;
@@ -409,7 +409,7 @@ abstract class Graphics
         Color BGColor = lineBuffer[x];
 
         /* Not sure about BG transparency here; TO BE CHECKED */
-        if (priorityToBG && (BGColor != Color.White))
+        if (priorityIsBG && (BGColor != Color.White))
           continue ;
         if (zbuffer[x] >= 0)
           continue ;

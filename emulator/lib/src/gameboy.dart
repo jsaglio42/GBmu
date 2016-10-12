@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:47:22 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/11 16:27:04 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -54,27 +54,11 @@ class GameBoy extends Object
     {
       this.lastInstPC = this.cpur.PC;
 
-      // if (this.clockTotal > 9501428) // Clock of VBLANK no 123
-      //   print(Ft.toAddressString(this.lastInstPC & 0xFF00, 4));
-
-      // if (this.clockTotal > 9571652) // Clock of VBLANK no 124
-      //   print(Ft.toAddressString(this.lastInstPC, 4));
-
       instructionDuration = this.executeInstruction();
       this.updateTimers(instructionDuration);
       this.updateGraphics(instructionDuration);
       executedClocks += instructionDuration;
       this.handleInterrupts();
-
-      // requestHB(this.cpur.PC == 0x0040); // VBREAK START
-      // requestHB(this.cpur.PC == 0x028A); // VBREAK END
-
-      // requestHB(this.cpur.PC == 0x036C); // Something happens here <- CHECK IF 0xFF85 is zero
-
-      // requestHB(this.cpur.PC == 0x040D);
-      // requestHB(this.pull8(0xFFE1) == 0x25);
-      // requestHB(this.cpur.HL == 0xFFFE); // debug
-      // requestHB(this.cpur.PC == 0x287C); // debug
 
       if (this.hardbreak)
         break ;
