@@ -330,8 +330,8 @@ abstract class Graphics
     // print('Background');
     if (!_current.isBackgroundDisplayEnabled)
       return Color.White;
-    final int posY = _current.LY + _current.SCY;
-    final int posX =  x + _current.SCX;
+    final int posY = (_current.LY + _current.SCY) & 0xFF;
+    final int posX =  (x + _current.SCX) & 0xFF;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
     final int tileID = this.videoRam.pull8_unsafe(_current.tileMapAddress_BG + tileY * 32 + tileX);

@@ -57,6 +57,8 @@ abstract class InterruptManager
   void requestInterrupt(InterruptType i) {
     final int IF_old = this.tailRam.pull8_unsafe(_addrIF);
     final int IF_new = IF_old | (1 << i.index);
+    this.halt = false;
+    this.stop = false;
     this.tailRam.push8_unsafe(_addrIF, IF_new);
     return ;
   }
@@ -66,8 +68,6 @@ abstract class InterruptManager
   int _vblankno = 0;
   void _serviceInterrupt(InterruptType i) {
     this.ime = false;
-    this.halt = false;
-    this.stop = false;
     final int IF_old = this.tailRam.pull8_unsafe(_addrIF);
     final int IF_new = (IF_old & ~(1 << i.index)) & 0xFF;
     this.tailRam.push8_unsafe(_addrIF, IF_new);
