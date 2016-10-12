@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:16 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 16:06:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 16:10:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,9 @@ library local_storage_components;
 
 import 'dart:convert';
 
+import 'package:emulator/enums.dart';
+import 'package:emulator/constants.dart';
+import 'package:emulator/emulator.dart' as Emulator;
 import 'package:ft/ft.dart' as Ft;
 
 import './variants.dart';
@@ -37,49 +40,45 @@ class _EntryInvalid<T> {
 
 class LsRom extends LsEntry {
 
-  // ATTRIBUTES ************************************************************* **
-  final int _ramSize;
-  final int _globalChecksum;
-
   // CONTRUCTION ************************************************************ **
-  LsRom.unsafe(
-      int uid, Life life, int idbid, this._ramSize, this._globalChecksum)
-    : super._unsafe(uid, Rom.v, life, idbid);
+  LsRom._unsafe(int uid, Life life, Map<String, dynamic> data)
+    : super._unsafe(uid, Rom.v, life, data);
 
   factory LsRom.json_exn(int uid, String valueJson) {
-
     final Map<String, dynamic> value = JSON.decode(valueJson);
 
-    if (new _EntryInvalid<int>()(value, 'idbid')
-        || new _EntryInvalid<int>()(value, '_ramSize')
-        || new _EntryInvalid<int>()(value, '_globalChecksum'))
+    if (new _EntryInvalid<int>()(value, 'idbid') ||
+        new _EntryInvalid<String>()(value, 'fileName') ||
+        !value['fileName'].endsWith(ROM_EXTENSION) ||
+        new _EntryInvalid<int>()(value, 'ramSize') ||
+        new _EntryInvalid<int>()(value, 'globalChecksum')
+        )
       throw new Exception('Bad JSON $value');
 
-    return new LsRom.unsafe(
-        uid, Alive.v, value['idbid'], value['_ramSize'],
-        value['_globalChecksum']);
+    return new LsRom._unsafe(uid, Alive.v, value);
   }
 
-  // PUBLIC ***************************************************************** **
-  String get valueJson =>
-    JSON.encode({
+  LsRom.ofRom(int uid, int idbid, Emulator.Rom rom)
+    : super._unsafe(uid, Rom.v, Alive.v, <String, dynamic>{
       'idbid': idbid,
-      '_ramSize': _ramSize,
-      '_globalChecksum': _globalChecksum
+      'fileName': rom.fileName,
+      'ramSize': rom.pullHeaderValue(RomHeaderField.RAM_Size),
+      'globalChecksum': rom.pullHeaderValue(RomHeaderField.Global_Checksum),
     });
 
-  int get ramSize => _ramSize;
-  int get globalChecksum => _globalChecksum;
+  // PUBLIC ***************************************************************** **
+  int get ramSize => _data['ramSize'];
+  int get globalChecksum => _data['globalChecksum'];
 
   bool isCompatible(LsChip c) {
     if (c.type is Ram)
-      return (c as LsRam).size == _ramSize;
+      return (c as LsRam).size == this.ramSize;
     else
-      return (c as LsSs).romGlobalChecksum == _globalChecksum;
+      return (c as LsSs).romGlobalChecksum == this.globalChecksum;
   }
 
   String toString() =>
-    '${super.toString()} rs:$_ramSize gc:$_globalChecksum';
+    '${super.toString()} rs:$ramSize gc:$globalChecksum';
 
 }
 
@@ -87,57 +86,36 @@ class LsRom extends LsEntry {
 // ************************************************************************** **
 // ************************************************************************** **
 
-class LsRam extends _LsRomParent implements LsChip {
-
-  // ATTRIBUTES ************************************************************* **
-  final int _size;
+class LsRam extends LsChip {
 
   // CONTRUCTION ************************************************************ **
-  LsRam.unsafe(int uid, Life life, int idbid, this._size, Ft.Option<int> romUid)
-    : super._unsafe(uid, Ram.v, life, idbid, romUid);
+  LsRam._unsafe(int uid, Life life, Map<String, dynamic> data)
+    : super._unsafe(uid, Ram.v, life, data);
 
-  // A Json entry is always alive
   factory LsRam.json_exn(int uid, String valueJson) {
-
     final Map<String, dynamic> value = JSON.decode(valueJson);
-    final Ft.Option<int> romUid = new _EntryInvalid<int>()(value, 'romUid')
-      ? new Ft.Option<int>.none()
-      : new Ft.Option<int>.some(value['romUid']);
 
-    if (new _EntryInvalid<int>()(value, 'idbid')
-        || new _EntryInvalid<int>()(value, '_size'))
+    if (new _EntryInvalid<int>()(value, 'idbid') ||
+        new _EntryInvalid<String>()(value, 'fileName') ||
+        !value['fileName'].endsWith(RAM_EXTENSION) ||
+        new _EntryInvalid<int>()(value, 'size')
+        )
       throw new Exception('Bad JSON $value');
-
-    return new LsRam.unsafe(uid, Alive.v, value['idbid'], value['_size'], romUid);
+    return new LsRam._unsafe(uid, Alive.v, value);
   }
 
-  LsRam.unbind(LsRam src)
-    : _size = src.size
-    , super._unsafe(src.uid, Ram.v, src.life, src.idbid,
-        new Ft.Option<int>.none());
-
-  LsRam.bind(LsRam src, int romUid)
-    : _size = src.size
-    , super._unsafe(src.uid, Ram.v, src.life, src.idbid,
-        new Ft.Option<int>.some(romUid));
+  LsRam.ofRam(int uid, int idbid, Emulator.Ram ram)
+    : super._unsafe(uid, Ram.v, Alive.v, <String, dynamic>{
+      'idbid': idbid,
+      'fileName': ram.fileName,
+      'size': ram.size,
+    });
 
   // PUBLIC ***************************************************************** **
-  String get valueJson =>
-    JSON.encode(!isBound
-        ? {
-          'idbid': idbid,
-          '_size': _size,
-        }
-        : {
-          'idbid': idbid,
-          '_size': _size,
-          'romUid': romUid.v,
-        });
-
-  int get size => _size;
+  int get size => _data['size'];
 
   String toString() =>
-    '${super.toString()} sz:$_size';
+    '${super.toString()} sz:$size';
 
 }
 
@@ -145,62 +123,36 @@ class LsRam extends _LsRomParent implements LsChip {
 // ************************************************************************** **
 // ************************************************************************** **
 
-class LsSs extends _LsRomParentSlot implements LsChip {
-
-  // ATTRIBUTES ************************************************************* **
-  final int _romGlobalChecksum;
+class LsSs extends LsChip {
 
   // CONTRUCTION ************************************************************ **
-  LsSs.unsafe(int uid, Life life, int idbid, this._romGlobalChecksum,
-      Ft.Option<int> romUid, Ft.Option<int> slot)
-    : super._unsafe(uid, Ss.v, life, idbid, romUid, slot);
+  LsSs._unsafe(int uid, Life life, Map<String, dynamic> data)
+    : super._unsafe(uid, Ss.v, life, data);
 
   factory LsSs.json_exn(int uid, String valueJson) {
-
     final Map<String, dynamic> value = JSON.decode(valueJson);
-    final Ft.Option<int> romUid = new _EntryInvalid<int>()(value, 'romUid')
-      ? new Ft.Option<int>.none()
-      : new Ft.Option<int>.some(value['romUid']);
-    final Ft.Option<int> slot = new _EntryInvalid<int>()(value, 'slot')
-      ? new Ft.Option<int>.none()
-      : new Ft.Option<int>.some(value['slot']);
 
-    if (new _EntryInvalid<int>()(value, 'idbid')
-        || new _EntryInvalid<int>()(value, '_romGlobalChecksum'))
+    if (new _EntryInvalid<int>()(value, 'idbid') ||
+        new _EntryInvalid<String>()(value, 'fileName') ||
+        !value['fileName'].endsWith(RAM_EXTENSION) ||
+        new _EntryInvalid<int>()(value, 'romGlobalChecksum')
+        )
       throw new Exception('Bad JSON $value');
-
-    return new LsSs.unsafe(uid, Alive.v, value['idbid'],
-        value['_romGlobalChecksum'], romUid, slot);
+    return new LsSs._unsafe(uid, Alive.v, value);
   }
 
-  LsSs.unbind(LsSs src)
-    : _romGlobalChecksum = src.romGlobalChecksum
-    , super._unsafe(src.uid, Ss.v, src.life, src.idbid,
-        new Ft.Option<int>.none(), new Ft.Option<int>.none());
-
-  LsSs.bind(LsSs src, int romUid, int slot)
-    : _romGlobalChecksum = src.romGlobalChecksum
-    , super._unsafe(src.uid, Ss.v, src.life, src.idbid,
-        new Ft.Option<int>.some(romUid), new Ft.Option<int>.some(slot));
+  LsSs.ofSs(int uid, int idbid, Emulator.Ss ss)
+    : super._unsafe(uid, Ram.v, Alive.v, <String, dynamic>{
+      'idbid': idbid,
+      'fileName': ss.fileName,
+      'romGlobalChecksum': ss.romGlobalChecksum,
+    });
 
   // PUBLIC ***************************************************************** **
-  String get valueJson =>
-    JSON.encode(!isBound
-        ? {
-          'idbid': idbid,
-          '_romGlobalChecksum': _romGlobalChecksum,
-        }
-        : {
-          'idbid': idbid,
-          '_romGlobalChecksum': _romGlobalChecksum,
-          'romUid': romUid.v,
-          'slot': slot.v,
-        });
-
-  int get romGlobalChecksum => _romGlobalChecksum;
+  int get romGlobalChecksum => _data['romGlobalChecksum'];
 
   String toString() =>
-    '${super.toString()} rgcs:$_romGlobalChecksum';
+    '${super.toString()} rgcs:$romGlobalChecksum';
 
 }
 

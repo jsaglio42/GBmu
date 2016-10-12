@@ -58,12 +58,12 @@
               <label class="btn btn-info">
                 (re)start<input id="magbut" style="display: none;">
               </label>
-              <label class="btn btn-danger">
-                eject (debug)<input id="ejectbut" style="display: none;">
-              </label>
-              <label class="btn btn-danger">
-                crash (debug)<input id="crashbut" style="display: none;">
-              </label>
+              <!-- <label class="btn btn-danger">
+                   eject (debug)<input id="ejectbut" style="display: none;">
+                   </label>
+                   <label class="btn btn-danger">
+                   crash (debug)<input id="crashbut" style="display: none;">
+                   </label> -->
               <span id="mainSpeedText">0.00x</span>
               <div id="mainSpeedSlider"></div>
             </div>
@@ -127,15 +127,17 @@
 
 
         <div class="col-md-8 col-lg-9" id="canvasContainer">
-          <div class="col-sm-12 text-xs-center">
+          <div class="row">
+            <div class="col-sm-12 text-xs-center">
               <div id="screenSizeRadioButtons">
                 <label class="radio-inline"><input type="radio" name="optradio" value='1'>x1</label>
                 <label class="radio-inline"><input type="radio" name="optradio" value='2' checked>x2</label>
                 <label class="radio-inline"><input type="radio" name="optradio" value='3'>x3</label>
               </div>
               <div><canvas id="gameboyScreen"/></div>
+            </div>
+            <div class="col-sm-offset-2 col-sm-8" id="mainAlertBox"></div>
           </div>
-          <div class="col-sm-offset-2 col-sm-8" id="mainAlertBox"></div>
         </div>
 
 

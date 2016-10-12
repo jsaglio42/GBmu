@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 17:33:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 18:18:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 17:11:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -71,24 +71,26 @@ class HandlerFileAdmission {
   }
 
   void _handleDocDrop(Html.MouseEvent ev) {
-    _targetCount = 0;
-    _docCount = 0;
-    _target.classes.remove('active');
-    _target.classes.remove('hover');
     ev.stopPropagation();
     ev.preventDefault();
-    if (ev.dataTransfer.types.contains('Files')) {
-      ev.dataTransfer.files.forEach((Html.File f) {
-        _processFile(f)
-          .catchError((e, st){
-            print(st);
-            // TODO: show error in alerts
-          });
-      });
+    _target.classes.remove('active');
+    _target.classes.remove('hover');
+    if (_targetCount > 0) {
+      if (ev.dataTransfer.types.contains('Files')) {
+        ev.dataTransfer.files.forEach((Html.File f) {
+          _processFile(f)
+            .catchError((e, st){
+              print(st);
+              // TODO: show error in alerts
+            });
+        });
+      }
+      else {
+        // TODO: show error in alerts
+      }
     }
-    else {
-      // TODO: show error in alerts
-    }
+    _targetCount = 0;
+    _docCount = 0;
   }
 
   void _handleTargetEnter(Html.MouseEvent ev) {
@@ -119,14 +121,10 @@ class HandlerFileAdmission {
   }
 
   Async.Future<Uint8List> _fileContent(Html.File f) async {
-    print('a');
     final reader = new Html.FileReader();
 
-    print('b');
     reader.readAsArrayBuffer(f);
-    print('c');
     await reader.onLoad.first;
-    print('d');
     return reader.result;
   }
 

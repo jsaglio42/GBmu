@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 14:19:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 16:20:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -107,10 +107,7 @@ class PlatformComponentStorage {
 
     final int uid = _makeUid();
     final int idbid = await _pidb.add(Rom.v, r);
-    final int rs = r.pullHeaderValue(RomHeaderField.RAM_Size);
-    final int gcs = r.pullHeaderValue(RomHeaderField.Global_Checksum);
-    final LsRom e =
-      new LsRom.unsafe(uid, Alive.v, idbid, rs, gcs);
+    final LsRom e = new LsRom.ofRom(uid, idbid, r);
 
     _pls.add(e);
   }
@@ -120,9 +117,7 @@ class PlatformComponentStorage {
 
     final int uid = _makeUid();
     final int idbid = await _pidb.add(Ram.v, r);
-    final int s = r.size;
-    final LsRam e =
-      new LsRam.unsafe(uid, Alive.v, idbid, s, new Ft.Option<int>.none());
+    final LsRam e = new LsRam.ofRam(uid, idbid, r);
 
     _pls.add(e);
   }
@@ -133,9 +128,7 @@ class PlatformComponentStorage {
     final int uid = _makeUid();
     final int idbid = await _pidb.add(Ss.v, ss);
     final int rgcs = ss.romGlobalChecksum;
-    final LsSs e =
-      new LsSs.unsafe(uid, Alive.v, idbid, rgcs, new Ft.Option<int>.none(),
-          new Ft.Option<int>.none());
+    final LsSs e = new LsSs.ofSs(uid, idbid, ss);
 
     _pls.add(e);
   }

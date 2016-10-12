@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 18:59:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 16:09:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,6 +33,7 @@ abstract class LsEntry {
 
   // ATTRIBUTES ************************************************************* **
   Life _life;
+  final Map<String, dynamic> _data;
 
   // CONTRUCTION ************************************************************ **
   factory LsEntry.json_exn(String keyJson, String valueJson) {
@@ -49,16 +50,16 @@ abstract class LsEntry {
     }
   }
 
-  LsEntry._unsafe(this.uid, this.type, this._life, this.idbid);
+  LsEntry._unsafe(this.uid, this.type, this._life, this._data);
 
   // PUBLIC ***************************************************************** **
   String get keyJson => JSON.encode({'uid': this.uid, 'type': '$type'});
   final int uid;
   final Component type;
 
-  String get valueJson;
+  String get valueJson => JSON.encode(_data);
   Life get life => _life;
-  final int idbid;
+  int get idbid => _data['idbid'];
 
   void kill() {
     assert(_life is Alive, "$runtimeType.kill()");
@@ -74,72 +75,53 @@ abstract class LsEntry {
 // ************************************************************************** **
 // ************************************************************************** **
 
-abstract class LsChip implements LsEntry {
+class LsChip extends LsEntry {
 
   // CONTRUCTION ************************************************************ **
+  LsChip._unsafe(int uid, Chip type, Life life, Map<String, dynamic> data)
+    : super._unsafe(uid, type, life, data) {
+    if (type is Ss)
+      assert(data.containsKey('slot') == data.containsKey('romUid'),
+          "from: LsChip._unsafe()");
+  }
+
   factory LsChip.unbind(LsChip c) {
+    final Map<String, dynamic> data = new Map.from(c._data);
+
     assert(c.isBound, "LsChip.unbind($c)");
     assert(c.life is Alive, "LsChip.unbind($c)");
-
+    data.remove('romUid');
+    data.remove('slot');
     if (c.type is Ram)
-      return new LsRam.unbind(c);
+      return new LsRam._unsafe(c.uid, Alive.v, data);
     else
-      return new LsSs.unbind(c);
+      return new LsSs._unsafe(c.uid, Alive.v, data);
   }
 
   factory LsChip.bind(LsChip c, int romUid, [int slot]) {
+    final Map<String, dynamic> data = new Map.from(c._data);
+
     assert(c.life is Alive, "LsChip.bind($c)");
-
+    assert((c.type is Ss) == (slot != null), "LsChip.bind($c)");
+    data['romUid'] = romUid;
     if (c.type is Ram)
-      return new LsRam.bind(c, romUid);
-    else
-      return new LsSs.bind(c, romUid, slot);
+      return new LsRam._unsafe(c.uid, Alive.v, data);
+    else {
+      data['slot'] = slot;
+      return new LsSs._unsafe(c.uid, Alive.v, data);
+    }
   }
 
   // PUBLIC ***************************************************************** **
-  bool get isBound;
-  Ft.Option<int> get romUid;
-  Ft.Option<int> get slot;
+  bool get isBound => _data.containsKey('romUid');
 
-}
+  Ft.Option<int> get romUid => isBound
+    ? new Ft.Option<int>.some(_data['romUid'])
+    : new Ft.Option<int>.none();
 
-// ************************************************************************** **
-// ************************************************************************** **
-// ************************************************************************** **
-
-abstract class _LsRomParent extends LsEntry implements LsChip {
-
-  // CONTRUCTION ************************************************************ **
-  _LsRomParent._unsafe(int uid, Chip type, Life life, int idbid, this.romUid)
-    : super._unsafe(uid, type, life, idbid);
-
-  // PUBLIC ***************************************************************** **
-  bool get isBound => romUid.isSome;
-  final Ft.Option<int> romUid;
-  Ft.Option<int> get slot => new Ft.Option<int>.none();
-
-  String toString() =>
-    '${super.toString()} (rom ${isBound ? "#${romUid.v}" : "none"})';
-
-}
-
-// ************************************************************************** **
-// ************************************************************************** **
-// ************************************************************************** **
-
-abstract class _LsRomParentSlot extends LsEntry implements LsChip {
-
-  // CONTRUCTION ************************************************************ **
-  _LsRomParentSlot._unsafe(
-      int uid, Chip type, Life life, int idbid, this.romUid, this.slot)
-    : super._unsafe(uid, type, life, idbid) {
-    assert(romUid.isSome == slot.isSome, "from: _LsRomParentSlot._unsafe()");
-  }
-
-  // PUBLIC ***************************************************************** **
-  bool get isBound => romUid.isSome;
-  final Ft.Option<int> romUid;
-  final Ft.Option<int> slot;
+  Ft.Option<int> get slot => isBound
+    ? new Ft.Option<int>.some(_data['slot'])
+    : new Ft.Option<int>.none();
 
   String toString() =>
     '${super.toString()} (rom '

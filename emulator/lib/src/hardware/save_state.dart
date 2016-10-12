@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 13:55:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 18:15:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 16:13:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,7 +63,7 @@ class Ss extends Object
   dynamic serialize() =>
     <String, dynamic>{
       'romGlobalChecksum': _romGlobalChecksum,
-      'filename': _fileName,
+      'fileName': _fileName,
     };
 
   // PUBLIC ***************************************************************** **

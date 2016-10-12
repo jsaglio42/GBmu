@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 19:04:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 16:17:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,6 +17,7 @@ import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
+import 'package:emulator/variants.dart' as V;
 
 import './keyboard.dart' as Keyboard;
 import './canvas.dart' as Canvas;
@@ -61,28 +62,34 @@ run() async
   .onClick.listen((_) {
         Ft.log('main.dart', 'magbut#onClick');
 
+
         if (tmp_pdcs.gbCart.isSome) {
-          emu.send('EmulationStart', <String, dynamic>{
-            'romKey': tmp_pdcs.gbCart.v.data.idbid,
-          });
+          emu.send('EmulationStart',
+              new Emulator.RequestEmuStart(
+                  idb:'GBmu_db',
+                  romStore: V.Rom.v.toString(),
+                  ramStore: V.Ram.v.toString(),
+                  ssStore: V.Ss.v.toString(),
+                  romKey: tmp_pdcs.gbCart.v.data.idbid
+                                           ));
         }
       });
 
-  Html.querySelector('#ejectbut')
-  .onClick.listen((_) {
-        Ft.log('main.dart', 'ejectbut#onClick');
-        emu.send('Debug', <String, dynamic>{
-          'action': 'eject',
-        });
-      });
+  // Html.querySelector('#ejectbut')
+  // .onClick.listen((_) {
+  //       Ft.log('main.dart', 'ejectbut#onClick');
+  //       emu.send('Debug', <String, dynamic>{
+  //         'action': 'eject',
+  //       });
+  //     });
 
-  Html.querySelector('#crashbut')
-  .onClick.listen((_) {
-        Ft.log('main.dart', 'crashbut#onClick');
-        emu.send('Debug', <String, dynamic>{
-          'action': 'crash',
-        });
-      });
+  // Html.querySelector('#crashbut')
+  // .onClick.listen((_) {
+  //       Ft.log('main.dart', 'crashbut#onClick');
+  //       emu.send('Debug', <String, dynamic>{
+  //         'action': 'crash',
+  //       });
+  //     });
 
 
   // debButtonToggle.onClick.listen((_){

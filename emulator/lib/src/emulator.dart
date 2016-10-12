@@ -6,10 +6,9 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 18:36:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 11:01:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
-
 
 import 'dart:typed_data';
 import 'dart:async' as Async;
@@ -51,7 +50,7 @@ final _workerReceivers = <String, Type>{
   'KeyDownEvent' : JoypadKey,
   'KeyUpEvent' : JoypadKey,
   'DebStatusRequest' : DebuggerModeRequest,
-  'EmulationStart' : <String, dynamic>{}.runtimeType,
+  'EmulationStart' : RequestEmuStart,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
   'EmulationAutoBreak' : AutoBreakExternalMode,
   'EmulationPause' : int,
@@ -65,7 +64,27 @@ final _workerReceivers = <String, Type>{
  * Emulator class ...
  * ************************************************************************** **
  */
+class RequestEmuStart {
 
+  final String idb;
+  final String romStore;
+  final String ramStore;
+  final String ssStore;
+
+  final int romKey;
+  final int ramKeyOpt;
+  final int ssKeyOpt;
+
+  RequestEmuStart({this.idb, this.romStore, this.ramStore, this.ssStore,
+    this.romKey, this.ramKeyOpt, this.ssKeyOpt});
+
+}
+
+/*
+ * ************************************************************************** **
+ * Emulator class ...
+ * ************************************************************************** **
+ */
 class Emulator {
 
   final Wiso.WiredIsolate _wiso;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 12:48:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 18:14:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 16:15:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -54,25 +54,7 @@ abstract class FileReprData implements AData, FileRepr {
   dynamic serialize() =>
     <String, dynamic>{
       'data': _data,
-      'filename': _filename,
+      'fileName': _filename,
     };
 
 }
-
-// class Ss implements Serializable {
-
-//   int i = 42;
-
-//   Ss.dummy();
-
-//   Ss.unserialize(Map<String, dynamic> map)
-//     : i = map['int_i'];
-
-//   dynamic serialize() =>
-//     <String, dynamic>{
-//       'int_i': i,
-//     };
-
-//   int get romGlobalChecksum => 8173;
-
-// }

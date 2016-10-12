@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 18:41:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 16:16:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -57,6 +57,7 @@ class PlatformIndexedDb {
     Ft.log('PlatformIDB', 'start', [dbf]);
     _db = await openDb();
     if (!_db.objectStoreNames.toSet().containsAll(storeNames)) {
+    // if (true) { // Swap comment to reset idb
       Ft.log('PlatformIDB', 'start#reset-db');
       _db.close();
       dbf.deleteDatabase(_DBNAME);
