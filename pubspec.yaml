@@ -1,5 +1,5 @@
 name: GBmu
-description: Game Boy for browser
+description: GameBoy for browser
 version: 0.0.1
 environment:
   sdk: '>=1.13.0 <2.0.0'
@@ -9,6 +9,8 @@ dependencies:
     path: ./ft
   emulator:
     path: ./emulator
+  component_system:
+    path: ./component_system
 transformers:
 - $dart2js:
     checked: true

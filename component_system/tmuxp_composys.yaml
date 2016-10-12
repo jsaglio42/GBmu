@@ -1,0 +1,87 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    tmuxp.yaml                                         :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
+#    Updated: 2016/10/08 16:35:50 by ngoguey          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+# tmux kill-session -t 'GBmu_composys' ; tmuxp load ./tmuxp_composys.yaml
+# http://tmuxp.readthedocs.io/en/latest/examples.html
+
+session_name: 'GBmu_composys'
+shell_command_before: "cd ${PWD}"
+global_options:
+  automatic-rename: false
+environment:
+  CS: ./lib/src
+  CCS: ./lib/src/controllers_component_storage
+  DC: ./lib/src/dom_components
+  CDC: ./lib/src/controllers_dom_components
+windows:
+- window_index: '998'
+  window_name: commit
+  layout: even-horizontal
+  panes:
+    - clear
+    - clear
+    - clear
+
+- window_index: 999
+  window_name: tmux edit
+  panes: [e ./tmuxp_composys.yaml]
+
+- window_index: 500
+  window_name: compilation
+  panes: [e ./pubspec.yaml]
+
+- window_index: 0
+  window_name: main
+  layout: main-vertical
+  panes:
+    - ps -W | ack -i 'dart.exe' | sed -e 's/^[ \t]*//' | cut -d' ' -f1 | xargs kill -f ; pub get ; pub serve
+    - emacs $CS/init.dart README.md
+- window_index: 1
+  window_name: includes
+  panes: [e $CS/include_*.dart]
+- window_index: 2
+  window_name: small classes
+  panes: ['e $CS/*{variants,local_storage_compo}*.dart']
+
+- window_index: 3
+  window_name: platform dom compo
+  panes: ['e $CDC/platform_dom.dart']
+- window_index: 6
+  window_name: platforms events
+  panes: ['e $CDC/platform_*events*.dart $CDC/platform_dom_component_storage.dart']
+
+- window_index: 4
+  window_name: cdc handlers
+  panes: ['e $CDC/platform_{cart,chip}(|_parts).dart']
+- window_index: 5
+  window_name: cdc handlers
+  panes: ['e $CDC/handler_*{catalyst,node,dragged}*.dart']
+
+
+- window_index: 7
+  window_name: mixins_
+  panes: [e $DC/mixin_*.dart]
+- window_index: 8
+  window_name: html drop drag
+  panes: ['e $DC/html_{dropzone,draggable}*.dart $DC/chip_socket_container.dart']
+- window_index: 9
+  window_name: html elements
+  panes: ['e $DC/html_*{cart,simple}*.dart']
+
+
+# CCS
+- window_index: 41
+  window_name: ccs platforms
+  panes: ['e $CCS/platform*.dart']
+- window_index: 42
+  window_name: ccs transformers
+  panes: ['e $CCS/transf*.dart']

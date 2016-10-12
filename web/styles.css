@@ -1,23 +1,18 @@
-/* body {
-    background-color: #F8F8F8;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
-    font-weight: normal;
-    line-height: 1.2em;
-    margin: 15px;
-}
-*/
+
+/* ************************************************************************** */
+/* BODY ********************************************************************* */
+/* ************************************************************************** */
 
 body {
     padding: 5px;
     background: url('images/seamless_rough_plastic_texture_nes_by_blueamnesiac-d4mxqci.png') repeat;
     color: white;
-    /* padding-top: 50px; */
+    padding-top: 50px;
 }
 
 [class*="col-"] {
-    border: 1px solid black;
-    border-radius: 6px;
+    /* border: 1px solid black; */
+    /* border-radius: 6px; */
     text-align: center;
 }
 
@@ -26,57 +21,88 @@ body {
     max-width:none;
 }
 
-.alert strong {
-    /* font-size: 12px; */
-    margin-right: 5px;
+/* ************************************************************************** */
+/* NAV ********************************************************************** */
+/* ************************************************************************** */
+
+#debButtonToggle {
+    width: 100%;
+    margin: 0px 0px;
 }
 
-.alert span {
-    font-size: 12px;
-    /* margin-left: px; */
+/* ************************************************************************** */
+/* PANELS GLOBAL ************************************************************ */
+/* ************************************************************************** */
+
+#debContainer, #optContainer, #cartsContainer {
 }
+
+#debBody, #optBody, #cartsBody {
+    background-color: rgba(0, 71, 171, 0.2);
+    border: 1px solid black;
+    border-radius: 6px;
+}
+
+#cartsContainer {
+
+    text-align: left;
+}
+
+#cartsBody {
+    /* float: left; */
+    padding-left: 20px;
+    padding-right: 20px;
+    display: inline-block;
+    /* margin-left:0; */
+    /* margin-right:0; */
+    /* margin: auto; */
+}
+
+#cartsBody.active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#cartsBody.hover {
+    background-color: rgba(0, 200, 0, 0.75);
+}
+
+/* ************************************************************************** */
+/* OPTIONS PANEL ************************************************************ */
+/* ************************************************************************** */
+
+/* SPEED SLIDER ************************************************************* */
 
 #mainSpeedText {
+    margin-left: 15px;
     text-align: right;
 }
 
 #mainSpeedSlider {
     margin-top: 20px;
     margin-left: 20px;
-    width: 80%;
+    width: 60%;
     background: #BABABA;
 }
 
-/* DEB ********************************************************************** */
-#debContainer {
-    background-color: rgba(0, 71, 171, 0.2);
-    color: white;
-    /*padding: 3px;*/
+.slider-tick {
+    opacity: 1;
 }
 
-/* DEB - TOGGLE ************************************************************* */
-#debButtonToggle {
-    width: 100%;
-    margin: 0px 0px;
-    /* margin-top: 10px; */
-    /* line-height: 0px; */
-}
-
-#debButtonToggle h3 {
-    /* width: 100%; */
-    margin: 10px 0px;
-    /* line-height: 0px; */
-}
+/* ************************************************************************** */
+/* DEB PANEL **************************************************************** */
+/* ************************************************************************** */
 
 /* DEB - BODY *************************************************************** */
-#debBody {
-    /*padding: 2px;*/
+
+#debBody > div {
+}
+
+#debBody > div:last-child {
 }
 
 #debBody td {
     font-size: 12px;
     color: #005B79;
-    /* color: rgba(0, 0, 0, 0); */
 }
 
 #debBody td .debTextHighlight {
@@ -90,10 +116,8 @@ body {
 
 #debBody th
 {
-    /* background-color: rgba(173, 216, 230, 1.0); // light blue */
     background-color: rgba(81, 144, 165, 1.0); /* strong blue */
 }
-/* #debBody th */
 
 #debColRegisters tr:nth-child(2n+1) > td,
 #debColInstructionFlow tr:nth-child(2n+1) > td,
@@ -107,7 +131,6 @@ body {
 #debColMemoryExplorer tr:nth-child(2n) > td
 {
     background-color: rgba(176, 237, 197, 1.0); /* light green */
-    /* background-color: rgba(89, 191, 124, 1.0); // strong green */
 }
 
 /* DEB - BODY - TIMINGS ***************************************************** */
@@ -121,15 +144,54 @@ body {
 }
 
 /* DEB - BODY - BUTTONS ***************************************************** */
+#debColClock, #debColButtons {
+    margin-top: 5px;
+}
+
 .debStatusButton {
-    margin-right: 20px;
+    margin-right: 15px;
+}
+
+#debColButtons > p {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+#debColButtons > form {
+    display: inline-block;
 }
 
 /* DEB - BODY - REGISTER **************************************************** */
+#debColRegisters caption {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+#debColRegisters table {
+    margin-bottom: 0px;
+}
+
 /* DEB - BODY - INSTRUCTION FLOW ******************************************** */
+#debColInstructionFlow caption {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+#debColInstructionFlow table {
+    margin-bottom: 0px;
+}
+
 /* DEB - BODY - MEMORY EXPLORER ********************************************* */
+#debColMemoryExplorer caption {
+    padding-top: 0px;
+}
+
 #debColMemoryExplorer table {
     table-layout: fixed;
+}
+
+#debColMemoryExplorer thead th:first-child {
+    width: 48px;
 }
 
 #debColMemoryExplorer td {
@@ -138,6 +200,7 @@ body {
 
 #debColMemoryExplorer th {
     font-size: 12px;
+    white-space: nowrap;
 }
 
 /* DEB - BODY - MEMORY REGISTERS ******************************************** */
@@ -148,18 +211,183 @@ body {
     margin-left: 2px;
 }
 
+/* ************************************************************************** */
+/* CANVAS ******************************************************************* */
+/* ************************************************************************** */
+
+.canvas {
+    width: 500px;
+    height: 500px;
+    background-color: grey;
+    margin: auto;
+}
+
+/* ************************************************************************** */
+/* COMPONENT SYSTEM ********************************************************* */
+/* ************************************************************************** */
+
+/* GAMEBOY CART SLOT ******************************************************** */
+#gb-slot {
+    background-color: rgba(155, 216, 235, 0.85);
+    padding: 7px;
+    width: 265px; /* 251 + padding * 2 */
+    min-height: 143px; /* 287 / 2 */
+}
+
+#gb-slot.gameboysocket-active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#gb-slot.gameboysocket-hover {
+    background-color: rgba(0, 200, 0, 0.75);
+}
+
+/* DETACHED CART BANK ******************************************************* */
+#accordion {
+    background-color: rgba(246, 206, 149, 0.85);
+    padding: 7px;
+    width: 265px; /* 251 + padding * 2 */
+    min-height: 143px; /* 287 / 2 */
+    /* padding-top: 50px; */
+}
+
+#accordion.accordion-active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#accordion.accordion-hover {
+    background-color: rgba(0, 200, 0, 0.75);
+}
+
+/* DETACHED CHIP BANK ******************************************************* */
+#detached-chip-bank {
+    background-color: rgba(145, 207, 145, 0.85);
+    padding: 7px;
+    width: 265px;
+    min-height: 143px; /* 287 / 2 */
+}
+
+#detached-chip-bank.chipbank-active {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+#detached-chip-bank.chipbank-hover {
+    background-color: rgba(0, 200, 0, 0.75);
+}
+
+/* CARTRIDGE **************************************************************** */
+.gameboy-cartridge {
+    background-color: rgba(0, 0, 0, 0.0);
+    border-width: 0px;
+}
+
+.gameboy-cartridge .btn:focus,
+.gameboy-cartridge .btn:active:focus,
+.gameboy-cartridge .btn.active:focus {
+    outline: 0 none;
+}
+
+.gameboy-cartridge .bg-head-btn {
+
+    height: 71px;
+    background: url(images/sprites.png) 0 0;
+    background-color: rgba(0, 0, 0, 0.0);
+    border-width: 0px;
+    border-radius: 0px;
+}
+
+.gameboy-cartridge .bg-head-btn.collapsed {
+    height: 53px;
+    background: url(images/sprites.png) 0 -18px;
+    background-color: rgba(0, 0, 0, 0.0);
+    border-width: 0px;
+    border-radius: 0px;
+}
+
+.gameboy-cartridge .panel-collapse {
+    height: 216px;
+    background:url(images/sprites.png) 0 -71px;
+    background-color: rgba(0, 0, 0, 0.0);
+}
+
+.gameboy-cartridge .panel-body {
+    cursor: move;
+    padding: 0px;
+    background-color: rgba(0, 0, 0, 0.0);
+}
+
+.gameboy-cartridge td,
+.gameboy-cartridge th {
+    vertical-align:top;
+}
+
+.gameboy-cartridge table, .cart-ram-bis, .cart-ss-bis {
+    border: 0px;
+}
+
+/* CHIP ********************************************************************* */
+.cart-ram-bis, .cart-ss-bis {
+	cursor: pointer;
+}
+
+/* CHIP SOCKET ************************************************************** */
+.cart-ram-socket {
+    border: 0px;
+    width: 182px;
+    height: 49px;
+    background-color: rgba(0, 255, 0, 0.0);
+}
+
+.cart-ss-socket {
+    border: 0px;
+    width: 86px;
+    height: 49px;
+}
+
+.cart-ram-socket-active {
+    /* height: 71 + 21 */
+    /* witdth: 251 + 31 */
+    background:url(images/sprites.png) -282px -92px;
+}
+
+.cart-ss-socket-active {
+    /* height: 71 + 21 + 52  */
+    /* witdth: 251 + 31 + 3 */
+    background:url(images/sprites.png) -285px -144px;
+}
+
+.cart-ram-socket-hover {
+    background:url(images/sprites.png) -533px -92px;
+}
+
+.cart-ss-socket-hover {
+    background:url(images/sprites.png) -536px -144px;
+}
+
+/* ************************************************************************** */
+/* ALERTS ******************************************************************* */
+/* ************************************************************************** */
+
+#mainAlertBox {
+    width: 500xp
+}
+
+.alert strong {
+    margin-right: 5px;
+}
+
+.alert span {
+    font-size: 12px;
+}
+
+/* ************************************************************************** */
 /* FOOTER ******************************************************************* */
-/* footer {
-   position: absolute;
-   bottom: 0;
-   width: 100%;
-   height: 60px;
-   background-color: #f5f5f5;
-   }
- */
+/* ************************************************************************** */
+
 footer {
     border: 1px solid black;
     border-radius: 6px;
+    height: 20px;
     text-align: center;
     background-color: rgba(0, 71, 171, 0.2);
 }

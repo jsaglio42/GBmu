@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/05 14:18:03 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/09 13:44:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,9 +28,9 @@ abstract class Hardware {
 
   /* Memory */
   final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
-  final internalRam = new Data.Ram(INTERNAL_RAM_FIRST, INTERNAL_RAM_SIZE);
-  final videoRam = new Data.Ram(VIDEO_RAM_FIRST, VIDEO_RAM_SIZE);
-  final tailRam = new Data.Ram(TAIL_RAM_FIRST, TAIL_RAM_SIZE);
+  final internalRam = new Data.GbRam(INTERNAL_RAM_FIRST, INTERNAL_RAM_SIZE);
+  final videoRam = new Data.GbRam(VIDEO_RAM_FIRST, VIDEO_RAM_SIZE);
+  final tailRam = new Data.GbRam(TAIL_RAM_FIRST, TAIL_RAM_SIZE);
 
   /* Lcd screen, is polled by FrameScheduler */
   Uint8List lcdScreen = new Uint8List(LCD_DATA_SIZE);

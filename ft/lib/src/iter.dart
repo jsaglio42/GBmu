@@ -6,11 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 14:10:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 11:27:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/09/15 12:11:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
+import 'dart:async' as Async;
+import 'dart:indexed_db' as Idb;
 
 Iterable<List<Html.TableCellElement>> iterTableRows(Html.TableElement tab) sync*
 {
@@ -76,4 +78,51 @@ class TripleIterable<T, U, V> {
       f(ita.current, itb.current, itc.current);
     return ;
   }
+}
+
+// Template method pattern
+abstract class _IdbStoreIterator {
+
+  final Idb.Transaction _tra;
+  final Async.Stream<Idb.CursorWithValue> _cur;
+
+  _IdbStoreIterator.transaction(Idb.Transaction tra, String storeName)
+    : _tra = tra
+    , _cur = tra
+    .objectStore(storeName)
+    .openCursor(autoAdvance: true);
+
+  _IdbStoreIterator(Idb.Database db, String storeName, String mode)
+    : this.transaction(db.transaction(storeName, mode), storeName);
+
+}
+
+// Callable class
+class IdbStoreForeach<K, V> extends _IdbStoreIterator {
+
+  IdbStoreForeach(Idb.Database db, String storeName)
+    : super(db, storeName, 'readonly');
+
+  Async.Future call(void fun(K k, V v)) {
+    _cur.forEach((Idb.CursorWithValue cur) {
+      fun(cur.key, cur.value);
+    });
+    return _tra.completed;
+  }
+
+}
+
+// Callable class
+class IdbStoreFold<K, V, T> extends _IdbStoreIterator {
+
+  IdbStoreFold(Idb.Database db, String storeName)
+    : super(db, storeName, 'readonly');
+
+  Async.Future<T> call(T acc, T fun(T acc, K k, V v)) {
+    _cur.forEach((Idb.CursorWithValue cur) {
+      acc = fun(acc, cur.key, cur.value);
+    });
+    return _tra.completed.then((_) => acc);
+  }
+
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 16:58:49 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/09 14:21:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -90,3 +90,8 @@ const int CLOCK_PER_LINE = CLOCK_PER_OAM_ACCESS
 
 const int VBLANK_THRESHOLD = LCD_HEIGHT;
 const int FRAME_THRESHOLD = VBLANK_THRESHOLD + 10;
+
+/* File extensions */
+const String ROM_EXTENSION = ".gb";
+const String RAM_EXTENSION = ".save";
+const String SS_EXTENSION = ".ss";

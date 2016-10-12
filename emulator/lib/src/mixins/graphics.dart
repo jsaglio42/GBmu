@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/11 17:29:45 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/12 17:17:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -61,7 +61,7 @@ class GRegisterCurrentInfo {
 
   GRegisterCurrentInfo();
 
-  void init(Data.Ram tr) {
+  void init(Data.GbRam tr) {
     this.LCDC = tr.pull8_unsafe(g_memRegInfos[MemReg.LCDC.index].address);
     this.STAT = tr.pull8_unsafe(g_memRegInfos[MemReg.STAT.index].address);
     this.LYC = tr.pull8_unsafe(g_memRegInfos[MemReg.LYC.index].address);
@@ -153,7 +153,7 @@ abstract class Graphics
 
   /* Used for double buffering */
   Uint8List _buffer = new Uint8List(LCD_DATA_SIZE);
-  
+
   /* Used to update LCDStatus */
   int _counterScanline = 0;
   GRegisterCurrentInfo _current = new GRegisterCurrentInfo();
@@ -180,7 +180,7 @@ abstract class Graphics
     _updateGraphicRegisters();
     return ;
   }
-  
+
   /* Private ******************************************************************/
   void _updateGraphicMode(int nbClock) {
     // print('$_counterScanline : ${_current.mode.toString()}');

@@ -6,13 +6,16 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 12:04:06 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/12 16:24:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:typed_data';
 import 'dart:math' as Math;
 import 'dart:async' as Async;
+import 'dart:html' as Html;
+import 'dart:indexed_db' as Idb;
+import 'dart:js' as Js;
 
 import 'package:ft/ft.dart' as Ft;
 
@@ -23,6 +26,7 @@ import 'package:emulator/src/worker.dart' as Worker;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
+import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 
 
 final List<List> _loopingGBCombos = [
@@ -98,13 +102,13 @@ abstract class Emulation implements Worker.AWorker {
     _updateEmulationSpeed(map['speed']);
   }
 
-  void _onEmulationStartReq(Uint8List l) //TODO: Retrieve string from indexDB
+  Async.Future _onEmulationStartReq(RequestEmuStart req) async
   {
     var gb;
 
     Ft.log("WorkerEmu", '_onEmulationStartReq');
     try {
-      gb = _assembleGameBoy(l);
+      gb = await _assembleGameBoy(req);
     }
     catch (e) {
       this.ports.send('Events', <String, dynamic>{
@@ -192,14 +196,84 @@ abstract class Emulation implements Worker.AWorker {
       this.ports.send('EmulationResume', 42);
   }
 
-  Gameboy.GameBoy _assembleGameBoy(Uint8List l)
+  void log(v) {
+    print('<${v.runtimeType}>($v)');
+    Js.context['console'].callMethod('log', [v]);
+  }//debug
+
+
+  void _wakeUpDart() {
+    new Async.Future.delayed(new Duration(seconds: 1), () {
+      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
+      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
+      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
+      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
+      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
+      print("LOL C'EST L'HEURE DE TE REVEILLER DART, LOOOOL");
+    });
+  }
+
+  Async.Future<Idb.Database> _futureDatabaseOfName(String name) {
+    final idbf = Js.context['indexedDB'];
+    final Async.Completer compl = new Async.Completer.sync();
+    final req = idbf.callMethod('open', [name]);
+
+    Ft.log('WorkerEmu', '_futureDatabaseOfName', [name]);
+    req['onsuccess'] = (ev){
+      Ft.log('WorkerEmu', '_onSuccess', [ev]);
+      compl.complete(ev.target.result);
+      _wakeUpDart();
+    };
+    req['onerror'] = (ev){
+      compl.completeError('Database error: ${ev.target.errorCode}');
+      _wakeUpDart();
+    };
+    return compl.future;
+  }
+
+  Async.Future<Gameboy.GameBoy> _assembleGameBoy(RequestEmuStart req) async
   {
-    final drom = l; //TODO: Retrieve from indexedDB
-    final dram = new Uint8List.fromList([42, 43]); //TODO: Retrieve from indexedDB
-    final irom = new Data.Rom.ofUint8List(0, drom);
-    final iram = new Data.Ram.ofUint8List(0, dram);
-    final c = new Cartridge.ACartridge(irom); //TODO: Take iram as parameter
-    return new Gameboy.GameBoy(c);
+    try {
+    Ft.log('WorkerEmu', '_assembleGameBoy', [req]);
+
+    final Idb.Database idb = await _futureDatabaseOfName(req.idb);
+    Ft.log('WorkerEmu', '_assembleGameBoy#got-idb', [idb]);
+
+    final Data.Rom rom = new Data.Rom.unserialize(
+        await _fieldOfKeys(idb, req.romStore, req.romKey));
+    Ft.log('WorkerEmu', '_assembleGameBoy#got-rom', [rom]);
+
+    final Cartridge.ACartridge c = new Cartridge.ACartridge(rom);
+    Ft.log('WorkerEmu', '_assembleGameBoy#got-cartridge', [c]);
+
+    final Gameboy.GameBoy gb = new Gameboy.GameBoy(c);
+    Ft.log('WorkerEmu', '_assembleGameBoy#got-gb', [gb]);
+
+    return gb;
+    } catch(e, st){
+      print(st);
+    }
+  }
+
+  Async.Future<dynamic> _fieldOfKeys(
+      Idb.Database idb, String storeName, int fieldKey) async {
+    Idb.Transaction tra;
+    dynamic serialized;
+
+    tra = idb.transaction(storeName, 'readonly');
+
+    await tra.objectStore(storeName)
+      .openCursor(key: fieldKey)
+      .take(1)
+      .forEach((Idb.CursorWithValue cur) {
+        serialized = cur.value;
+      });
+    return tra.completed.then((_) {
+        if (serialized == null)
+          throw new Exception('Missing $storeName#$fieldKey');
+        else
+          return serialized;
+        });
   }
 
   // LOOPING ROUTINE ******************************************************** **
@@ -338,7 +412,7 @@ abstract class Emulation implements Worker.AWorker {
     this.sc
       ..setState(GameBoyExternalMode.Absent)
       ..setState(PauseExternalMode.Ineffective)
-      ..setState(AutoBreakExternalMode.Instruction);
+      ..setState(AutoBreakExternalMode.None);
     this.sc
       ..addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos)
       ..addSideEffect(_enableAutoBreak, _disableAutoBreak, _activeAutoBreakCombos);

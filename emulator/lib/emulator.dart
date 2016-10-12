@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 12:59:10 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/24 11:25:14 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/09 14:23:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,8 @@ export 'package:emulator/src/emulator.dart';
 // export 'package:emulator/src/cartridge/cartridge.dart';
 
 export 'package:emulator/src/hardware/cpu_registers.dart';
-// export 'package:emulator/src/hardware/data.dart';
+export 'package:emulator/src/hardware/data.dart';
+export 'package:emulator/src/hardware/save_state.dart';
 // export 'package:emulator/src/hardware/hardware.dart';
 // export 'package:emulator/src/hardware/headerdecoder.dart';
 export 'package:emulator/src/hardware/registermapping.dart';

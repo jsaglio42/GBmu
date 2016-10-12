@@ -16,95 +16,70 @@
 
   <body>
     <!-- NAVIGATION BAR -->
-    <!-- <div class="navbar navbar-inverse navbar-fixed-top">
-         <div class="container">
-         <div class="navbar-header">
-         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-         <span class="sr-only">Toggle navigation</span>
-         <span class="icon-bar"></span>
-         <span class="icon-bar"></span>
-         <span class="icon-bar"></span>
-         </button>
-         <a class="navbar-brand" href="#">Project name</a>
-         </div>
-         <div id="navbar" class="collapse navbar-collapse">
-         <ul class="nav navbar-nav">
-         <li class="active"><a href="#">Home</a></li>
-         <li><a href="#about">About</a></li>
-         <li><a href="#contact">Contact</a></li>
-         </ul>
-         </div>
-         </div>
-         </div>
-       -->
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+            Cartridge:
+            <span id="mainRomName"></span>
+            <span id="mainGameBoyState">(Absent)</span>
+          </a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#">Cartridges</a></li>
+            <li><a href="#">Options</a></li>
+            <li><a href="#">Key mapping</a></li>
+            <li><a href="#" id="debButtonToggle">Debugger
+              <span id="debStatusOn" class="label label-success">On</span>
+              <span  id="debStatusOff" class="label label-danger" style="display: none;">Off</span>
+            </a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
     <!-- MAIN CONTAINER -->
     <div class="container-fluid">
-
       <!-- MAIN SPACE -->
       <div class="row">
 
-
-        <div class="col-sm-12">
-          <div class="row">
-            <label class="btn btn-info btn-file">
-              Pick ROM[tmp]<input id="inBut" type="file" style="display: none;">
-            </label>
-            <label class="btn btn-info">
-              (re)start[tmp]<input id="magbut" style="display: none;">
-            </label>
-            <label class="btn btn-danger">
-              eject[tmp]<input id="ejectbut" style="display: none;">
-            </label>
-            <label class="btn btn-danger">
-              crash[tmp]<input id="crashbut" style="display: none;">
-            </label>
-            <span id="mainGameBoyState" class="lead">Absent</span>
-            <span id="mainRomName" class="lead">(...)</span>
-          </div>
-        </div>
-
-
-        <div class="col-sm-12">
-          <div class="row">
-            <div class="col-sm-3" >
-              left
-            </div>
-            <div class="col-sm-6" >
-              <div id="screenSizeRadioButtons">
-                <label class="radio-inline"><input type="radio" name="optradio" value='1'>x1</label>
-                <label class="radio-inline"><input type="radio" name="optradio" value='2' checked>x2</label>
-                <label class="radio-inline"><input type="radio" name="optradio" value='3'>x3</label>
-              </div>
-              <div><canvas id="gameboyScreen" /></div>
-            </div>
-            <div class="col-sm-3" id="mainAlertBox">
-            </div>
-            </div>
-          </div>
-        </div>
-
-
-        <div class="col-sm-12" id="mainBottomPanel">
-        </div>
-
-
-      </div><!-- /MAIN SPACE -->
-
-      <!-- DEBUGGER CONTAINER-->
-      <div class="row" id="debContainer">
-        <div class="col-lg-12">
-          <div class="row">
-
+        <!-- OPTIONS CONTAINER -->
+        <div class="col-lg-12"  id="optContainer">
+          <!-- OPTIONS BODY -->
+          <div class="row" id="optBody">
             <div class="col-sm-12">
-              <button class="btn btn-primary" type="button" id="debButtonToggle">
-                <h3>Debugger
-                  <span id="debStatusOn" class="label label-success">On</span>
-                  <span  id="debStatusOff" class="label label-danger" style="display: none;">Off</span>
-                </h3>
-              </button>
+              <label class="btn btn-info">
+                (re)start<input id="magbut" style="display: none;">
+              </label>
+              <!-- <label class="btn btn-danger">
+                   eject (debug)<input id="ejectbut" style="display: none;">
+                   </label>
+                   <label class="btn btn-danger">
+                   crash (debug)<input id="crashbut" style="display: none;">
+                   </label> -->
+              <span id="mainSpeedText">0.00x</span>
+              <div id="mainSpeedSlider"></div>
             </div>
+            <!-- <div class="" id="mainBottomPanel"></div> -->
+            <!-- <div class="col-sm-12">
+                 <div class="row">
+                 <label class="btn btn-info btn-file">
+                 Pick ROM (debug)<input id="inBut" type="file" style="display: none;">
+                 </label>
+                 </div>
+                 </div> -->
+          </div> <!-- /OPTIONS BODY -->
+        </div> <!-- /OPTIONS CONTAINER -->
 
-            <div class="col-sm-12">
+        <!-- DEBUGGER CONTAINER-->
+        <div class="col-lg-12"  id="debContainer">
               <!-- DEBUGGER BODY -->
               <div class="row" id="debBody">
 
@@ -112,12 +87,12 @@
                 <div class="col-sm-12" id="debColButtons">
                   <button type="button" class="btn btn-success debStatusButton" style="display: none">Resume</button>
                   <button type="button" class="btn btn-warning debStatusButton">Pause</button>
-                  <b>Auto-break:</b>
+                  <p><b>Auto-break:</b></p>
                   <form>
-                    <label class="radio-inline"><input type="radio" name="optradio" value='0' checked>Instruction</label>
+                    <label class="radio-inline"><input type="radio" name="optradio" value='0'>Instruction</label>
                     <label class="radio-inline"><input type="radio" name="optradio" value='1'>Frame</label>
                     <label class="radio-inline"><input type="radio" name="optradio" value='2'>Second</label>
-                    <label class="radio-inline"><input type="radio" name="optradio" value='3'>None</label>
+                    <label class="radio-inline"><input type="radio" name="optradio" value='3' checked>None</label>
                   </form>
                 </div>
 
@@ -132,14 +107,46 @@
                 </div>
                 <div class="col-sm-4" id="debColMemRegisters"></div>
               </div><!-- /#debBody -->
+        </div><!-- /#debContainer -->
+
+
+        <!-- cartsContainer-->
+        <div class="panel-group col-md-4 col-lg-3" id="cartsContainer">
+          <!-- cartsBody -->
+          <div class="row" id="cartsBody">
+            GameBoy Slot:
+            <div id="gb-slot" class="ui-widget-header toplevel-bank"></div>
+            Cart Bank:
+            <div id="accordion" class="ui-widget-header toplevel-bank"></div>
+            Detached Chip Bank:
+            <div id="detached-chip-bank" class="ui-widget-header toplevel-bank"></div>
+            Volcano:
+            Soon...
+          </div><!-- /cartsBody -->
+        </div><!-- /cartsContainer -->
+
+
+        <div class="col-md-8 col-lg-9" id="canvasContainer">
+          <div class="row">
+            <div class="col-sm-12 text-xs-center">
+              <div id="screenSizeRadioButtons">
+                <label class="radio-inline"><input type="radio" name="optradio" value='1'>x1</label>
+                <label class="radio-inline"><input type="radio" name="optradio" value='2' checked>x2</label>
+                <label class="radio-inline"><input type="radio" name="optradio" value='3'>x3</label>
+              </div>
+              <div><canvas id="gameboyScreen"/></div>
             </div>
+            <div class="col-sm-offset-2 col-sm-8" id="mainAlertBox"></div>
           </div>
         </div>
-      </div><!-- /#debContainer -->
+
+
+
+      </div><!-- /MAIN SPACE -->
     </div><!-- /MAIN CONTAINER -->
     <!-- FOOTER -->
     <footer class="footer">
-      <small class="col-sm-2">
+      <small class="pull-left col-sm-2">
         <a href="http://blueamnesiac.deviantart.com/">artworks</a>
       </small>
       <small class="pull-right col-sm-2">
@@ -151,9 +158,10 @@
     </footer><!-- /FOOTER -->
 
     <!-- Js Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.1.3/bootstrap-slider.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script>
      $(function(){
@@ -162,8 +170,6 @@
        $("#debColInstructionFlow").load("debugger/instruction_flow.html");
        $("#debColRegisters").load("debugger/registers.html");
        $("#debColClock").load("debugger/clock_info.html");
-       $("#mainBottomPanel").load("main_space/bottom_panel.html");
-
      });
     </script>
 

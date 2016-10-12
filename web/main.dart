@@ -6,19 +6,21 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/28 12:01:56 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/12 16:17:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
+import 'dart:async' as Async;
 import 'dart:js' as Js;
 import 'dart:typed_data';
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
+import 'package:emulator/variants.dart' as V;
 
-import './main_space/keyboard.dart' as Keyboard;
-import './main_space/canvas.dart' as Canvas;
+import './keyboard.dart' as Keyboard;
+import './canvas.dart' as Canvas;
 
 import './debugger/registers.dart' as Debregisters;
 import './debugger/mem_registers.dart' as Debmregisters;
@@ -26,25 +28,26 @@ import './debugger/mem_explorer.dart' as Debmexplorer;
 import './debugger/instruction_flow.dart' as Debinstflow;
 import './debugger/clock_info.dart' as Debclocks;
 import './debugger/buttons.dart' as Debbuttons;
-import './main_space/bottom_panel.dart' as Mainbottompanel;
-import './main_space/alerts.dart' as Mainalerts;
+
+import './alerts.dart' as Mainalerts;
+import 'nav.dart' as Nav;
 
 run() async
 {
   Ft.log('main.dart', 'run');
 
-  final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
-  assert(inBut != null, "no inbut");
+  // final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
+  // assert(inBut != null, "no inbut");
 
-  final reader = new Html.FileReader();
-  Uint8List lst;
+  // final reader = new Html.FileReader();
+  // Uint8List lst;
 
-  inBut.onChange.forEach((_){
-        reader.readAsArrayBuffer(inBut.files[0]);
-      });
-  reader.onLoad.forEach((_){
-        lst = reader.result;
-      });
+  // inBut.onChange.forEach((_){
+        // reader.readAsArrayBuffer(inBut.files[0]);
+      // });
+  // reader.onLoad.forEach((_){
+        // lst = reader.result;
+      // });
 
 
   var emuFut = Emulator.spawn()
@@ -53,51 +56,60 @@ run() async
   var emu = await emuFut;
   Ft.log('main.dart', 'run#emuCreated');
 
+  var tmp_pdcs;
+
   Html.querySelector('#magbut')
   .onClick.listen((_) {
         Ft.log('main.dart', 'magbut#onClick');
-        emu.send('EmulationStart', lst);
+
+
+        if (tmp_pdcs.gbCart.isSome) {
+          emu.send('EmulationStart',
+              new Emulator.RequestEmuStart(
+                  idb:'GBmu_db',
+                  romStore: V.Rom.v.toString(),
+                  ramStore: V.Ram.v.toString(),
+                  ssStore: V.Ss.v.toString(),
+                  romKey: tmp_pdcs.gbCart.v.data.idbid
+                                           ));
+        }
       });
 
-  Html.querySelector('#ejectbut')
-  .onClick.listen((_) {
-        Ft.log('main.dart', 'ejectbut#onClick');
-        emu.send('Debug', <String, dynamic>{
-          'action': 'eject',
-        });
-      });
+  // Html.querySelector('#ejectbut')
+  // .onClick.listen((_) {
+  //       Ft.log('main.dart', 'ejectbut#onClick');
+  //       emu.send('Debug', <String, dynamic>{
+  //         'action': 'eject',
+  //       });
+  //     });
 
-  Html.querySelector('#crashbut')
-  .onClick.listen((_) {
-        Ft.log('main.dart', 'crashbut#onClick');
-        emu.send('Debug', <String, dynamic>{
-          'action': 'crash',
-        });
-      });
+  // Html.querySelector('#crashbut')
+  // .onClick.listen((_) {
+  //       Ft.log('main.dart', 'crashbut#onClick');
+  //       emu.send('Debug', <String, dynamic>{
+  //         'action': 'crash',
+  //       });
+  //     });
 
-  var debStatusOn = Html.querySelector('#debStatusOn');
-  var debStatusOff = Html.querySelector('#debStatusOff');
-  var debButtonToggle = Html.querySelector('#debButtonToggle');
-  var debBody = Js.context.callMethod(r'$', ['#debBody']);
 
-  debButtonToggle.onClick.listen((_){
-        Ft.log('main.dart', 'debToggle#onClick');
-        emu.send('DebStatusRequest', DebuggerModeRequest.Toggle);
-      });
+  // debButtonToggle.onClick.listen((_){
+  //       Ft.log('main.dart', 'debToggle#onClick');
+  //       emu.send('DebStatusRequest', DebuggerModeRequest.Toggle);
+  //     });
 
-  emu.listener('DebStatusUpdate').forEach((bool enabled) {
-    Ft.log('main.dart', 'debStatus#onEvent', [enabled]);
-    if (enabled) {
-      debStatusOn.style.display = '';
-      debStatusOff.style.display = 'none';
-      debBody.callMethod('slideDown', ['slow']);
-    }
-    else {
-      debStatusOn.style.display = 'none';
-      debStatusOff.style.display = '';
-      debBody.callMethod('slideUp', ['fast']);
-    }
-  });
+  // emu.listener('DebStatusUpdate').forEach((bool enabled) {
+  //   Ft.log('main.dart', 'debStatus#onEvent', [enabled]);
+  //   if (enabled) {
+  //     debStatusOn.style.display = '';
+  //     debStatusOff.style.display = 'none';
+  //     debBody.callMethod('slideDown', ['slow']);
+  //   }
+  //   else {
+  //     debStatusOn.style.display = 'none';
+  //     debStatusOff.style.display = '';
+  //     debBody.callMethod('slideUp', ['fast']);
+  //   }
+  // });
 
 
   Debregisters.init(emu);
@@ -106,16 +118,52 @@ run() async
   Debinstflow.init(emu);
   Debclocks.init(emu);
   Debbuttons.init(emu);
-  Mainbottompanel.init(emu);
+  // Mainbottompanel.init(emu);
   Mainalerts.init(emu);
-  
+
   Keyboard.init(emu);
   Canvas.init(emu);
 
+  // Mainalerts.init(emu);
+  tmp_pdcs = await Nav.init(emu);
+
+  print(tmp_pdcs);
+
   var mainGameBoyState = Html.querySelector('#mainGameBoyState');
-  emu.listener('EmulationStatus').forEach((mode){
-        mainGameBoyState.text = mode.toString().substring(20);
+
+  var mainRomName = Html.querySelector('#mainRomName');
+  emu.listener('EmulationStatus').forEach((modeRaw){
+        final mode = GameBoyExternalMode.values[modeRaw.index];
+        final name = 'Plokemon Violet super cool version 5.55';
+
+        try {
+          if (mode == GameBoyExternalMode.Absent)
+            mainRomName.text = '';
+          else if (name.length > 20)
+            mainRomName.text = name.substring(0, 20) + '...';
+          else
+            mainRomName.text = name;
+          mainGameBoyState.text = '(' + mode.toString().substring(20) + ')';
+        } catch (e) {
+          print(e);
+        }
       });
+
+
+
+  // final Html.ElementList<Html.AnchorElement> panelAnchors = Html.querySelectorAll('.navbar .nav > li > a');
+
+  // panelAnchors.onClick.forEach((Html.MouseEvent ev) {
+  //   Ft.log('main.dart', 'panelAnchors#onClick');
+
+  //   final Html.AnchorElement tar = ev.target;
+  //   tar.parent.classes.add('active');
+  //   print(tar.parent.runtimeType);
+  //   panelAnchors.where((Html.AnchorElement a) => a != tar).forEach((Html.AnchorElement a) {
+  //     a.parent.classes.remove('active');
+  //   });
+  // });
+
 
   Ft.log('main.dart', 'run#initJqTooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);
@@ -138,8 +186,12 @@ void test_endianess(){
 
 main()
 {
+  Async.runZoned((){
+    run();
+  }, onError: (_, st) {
+    Ft.logerr('main.dart', 'main#uncaught', [st]);
+  });
   // Emulator.debugRomHeader();
   // test_endianess();
-  run().catchError((e) => print('main:\tError:\n$e'));
   return ;
 }
