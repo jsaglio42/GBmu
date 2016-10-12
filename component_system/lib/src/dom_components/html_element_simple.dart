@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 13:28:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:44:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:57:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,7 +30,7 @@ abstract class HtmlElementSimple {
 
   // CONSTRUCTION *********************************************************** **
   void hes_init(elt) {
-    Ft.log('HtmlElementSimple', 'hes_init');
+    // Ft.log('HtmlElementSimple', 'hes_init');
     _elt = elt;
   }
 

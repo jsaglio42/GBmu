@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:25:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 19:01:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -224,7 +224,6 @@ abstract class Emulation implements Worker.AWorker {
 
   Async.Future<Gameboy.GameBoy> _assembleGameBoy(RequestEmuStart req) async
   {
-    try {
     Ft.log('WorkerEmu', '_assembleGameBoy', [req]);
 
     final Idb.Database idb = await _futureDatabaseOfName(req.idb);
@@ -241,9 +240,6 @@ abstract class Emulation implements Worker.AWorker {
     Ft.log('WorkerEmu', '_assembleGameBoy#got-gb', [gb]);
 
     return gb;
-    } catch(e, st){
-      print(st);
-    }
   }
 
   Async.Future<dynamic> _fieldOfKeys(

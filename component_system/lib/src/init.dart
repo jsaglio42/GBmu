@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 17:48:47 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:34:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -58,7 +58,7 @@ Async.Future init(Emulator.Emulator emu) async {
   new HandlerDraggableCatalyst(pde, pce, pdcs);
 
   // Bridge between data and dom
-  final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs);
+  final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs, emu);
   final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs);
   final PlatformDom pd = new PlatformDom(pcs, pde, pce, pdcs, pc, pch);
 

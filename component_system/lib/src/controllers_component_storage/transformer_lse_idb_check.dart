@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:29:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 18:41:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:59:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -57,12 +57,12 @@ class TransformerLseIdbCheck {
 
   // CALLBACKS ************************************************************** **
   bool _handleDelete(LsEntry e) {
-    Ft.log('TLSEIdbCheck','_handleDelete', [e]);
+    // Ft.log('TLSEIdbCheck','_handleDelete', [e]);
     return true;
   }
 
   Async.Future<LsEntry> _handleNew(LsEntry e) async {
-    Ft.log('TLSEIdbCheck','_handleNew', [e]);
+    // Ft.log('TLSEIdbCheck','_handleNew', [e]);
 
     if (await _pidb.contains(e.type, e.idbid))
       return e;
@@ -73,7 +73,7 @@ class TransformerLseIdbCheck {
   }
 
   Async.Future<Update<LsEntry>> _handleUpdate(Update<LsEntry> u) async {
-    Ft.log('TLSEIdbCheck','_handleUpdate', [u.newValue]);
+    // Ft.log('TLSEIdbCheck','_handleUpdate', [u.newValue]);
 
     if (await _pidb.contains(u.newValue.type, u.newValue.idbid))
       return u;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:26:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 12:49:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:56:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,7 +43,7 @@ abstract class HtmlDropZone implements DomElement {
     };
 
   void hdz_init(Map<bool, Map<bool, String>> classesOpt) {
-    Ft.log('HtmlDropZone', 'hdz_init');
+    // Ft.log('HtmlDropZone', 'hdz_init');
 
     _classesOpt = classesOpt;
     this.jqElt.callMethod('droppable', [new Js.JsObject.jsify({

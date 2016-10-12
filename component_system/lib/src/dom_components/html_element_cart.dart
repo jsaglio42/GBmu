@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 13:35:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 13:37:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:57:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,7 +32,7 @@ abstract class HtmlElementCart {
 
   // CONSTRUCTION *********************************************************** **
   void hec_init(String cartHtml, Html.NodeValidator v) {
-    Ft.log('HtmlElementCart', 'hec_init');
+    // Ft.log('HtmlElementCart', 'hec_init');
     _elt = new Html.Element.html(cartHtml, validator: v);
     _btn = _elt.querySelector('.bg-head-btn');
     _body = _elt.querySelector('.panel-collapse');

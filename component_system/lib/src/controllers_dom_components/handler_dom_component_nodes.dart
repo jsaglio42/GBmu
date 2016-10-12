@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/07 16:30:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 16:48:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 19:00:03 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -42,7 +42,7 @@ class HandlerDomComponentNodes {
 
   // CALLBACKS ************************************************************** **
   void _handleCartEvent(CartEvent<DomCart> ev) {
-    Ft.log('HandlerDCN', '_handleCartEvent', [ev]);
+    // Ft.log('HandlerDCN', '_handleCartEvent', [ev]);
     if (ev.isMove) {
       ev.cart.elt.style.left = '0px';
       ev.cart.elt.style.top = '0px';
@@ -63,7 +63,7 @@ class HandlerDomComponentNodes {
     DomCart ca;
     DomChipSocket s;
 
-    Ft.log('HandlerDCN', '_handleChipEvent', [ev]);
+    // Ft.log('HandlerDCN', '_handleChipEvent', [ev]);
     if (ev.isMove) {
       ev.chip.elt.style.left = '0px';
       ev.chip.elt.style.top = '0px';

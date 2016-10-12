@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:16:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:58:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -99,7 +99,7 @@ class PlatformIndexedDb {
     Idb.Transaction tra;
     bool found = false;
 
-    Ft.log('PlatformIDB', 'contains', [c, id]);
+    // Ft.log('PlatformIDB', 'contains', [c, id]);
     tra = _db.transaction(c.toString(), 'readonly');
 
     await tra.objectStore(c.toString())

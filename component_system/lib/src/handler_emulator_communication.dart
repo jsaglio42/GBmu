@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/12 17:33:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 17:50:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:53:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,10 +39,9 @@ class HandlerEmulatorCommunication {
   HandlerEmulatorCommunication(this._emu, this._pce, this._pdcs) {
     Ft.log('HandlerEC', 'contructor');
 
-    _pce.onCartEvent
-      .where((CartEvent<DomCart> ev) => ev.isGbChange)
-      .forEach(_onGbCartEvent);
-
+    // _pce.onCartEvent
+    //   .where((CartEvent<DomCart> ev) => ev.isGbChange)
+    //   .forEach(_onGbCartEvent);
   }
 
   // CALLBACKS ************************************************************** **
@@ -50,18 +49,18 @@ class HandlerEmulatorCommunication {
     final LsRom dataRom = ev.cart.data;
     LsRam dataRamOpt;
 
-    if (ev.dst is GameBoy) {
-      dataRamOpt = _pdcs.chipOfCartOpt(ev.cart, Ram.v)?.data;
-      _emu.send('EmulationStart',
-          new Emulator.RequestEmuStart(
-              idb:'GBmu_db',
-              romStore: Rom.v.toString(),
-              ramStore: Ram.v.toString(),
-              romKey: dataRom.idbid,
-              ramKeyOpt: dataRamOpt?.idbid));
-    }
-    else
-      _emu.send('EmulationEject', 42);
+    // if (ev.dst is GameBoy) {
+    //   dataRamOpt = _pdcs.chipOfCartOpt(ev.cart, Ram.v)?.data;
+    //   _emu.send('EmulationStart',
+    //       new Emulator.RequestEmuStart(
+    //           idb:'GBmu_db',
+    //           romStore: Rom.v.toString(),
+    //           ramStore: Ram.v.toString(),
+    //           romKey: dataRom.idbid,
+    //           ramKeyOpt: dataRamOpt?.idbid));
+    // }
+    // else
+      // _emu.send('EmulationEject', 42);
   }
 
 
