@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/11 16:27:04 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/14 01:44:27 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,8 +52,6 @@ class GameBoy extends Object
     int executedClocks = 0;
     while(executedClocks < nbClock)
     {
-      this.lastInstPC = this.cpur.PC;
-
       instructionDuration = this.executeInstruction();
       this.updateTimers(instructionDuration);
       this.updateGraphics(instructionDuration);
