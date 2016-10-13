@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/11 18:27:38 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/14 01:09:19 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -47,9 +47,9 @@ class CartMBC1 extends Cartridge.ACartridge  {
     if (_isInRange(memAddr, 0x0000, 0x1FFF))
       _setAccessRAM(v);
     else if (_isInRange(memAddr, 0x2000, 0x3FFF))
-      return _setBankNoROM(v);
+      _setBankNoROM(v);
     else if (_isInRange(memAddr, 0x4000, 0x5FFF))
-      throw _setBankNoRAM(v);
+      _setBankNoRAM(v);
     else if (_isInRange(memAddr, 0x6000, 0x7FFF))
       _setMode(v);
     else
