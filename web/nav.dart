@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 11:46:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 18:30:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,6 +16,7 @@ import 'dart:async' as Async;
 
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
+import 'package:emulator/variants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 import './debugger/deb.dart' as Deb;
 import './options/options.dart' as Opt;
@@ -104,39 +105,35 @@ List<_Panel> _makePanels(Emulator.Emulator emu)
 }
 
 void _onEmulatorEvent(Map<String, dynamic> map) {
+  final EmulatorEvent ev = map['type'];
 
   Ft.log('nav', '_onEmulatorEvent', [map]);
 
+  if (ev is GameBoyEvent)
+    _onGameBoyEvent(ev as GameBoyEvent, map);
+  else {
+    mainRomName.text = '';
+    mainGameBoyState.text = '(Emulator crashed, reload page)';
+  }
 }
 
-// void _updateTopLeftTexts(Emulator.Emulator emu) {
-//   emu.listener('Events').forEach((Map<String, dynamic> map){
-//     final EmulatorEvent mode = EmulatorEvent.values[map['type'].index];
+void _onGameBoyEvent(GameBoyEvent ev, Map<String, dynamic> map) {
+  if (ev.dst is Absent)
+    mainGameBoyState.text = '(Absent)';
+  else if (ev.dst is Crashed)
+    mainGameBoyState.text = '(Game crashed, restart or eject)';
+  else
+    mainGameBoyState.text = '(Emulating)';
 
-//     switch (mode) {
-//       case (EmulatorEvent.GameBoyStart):
-//         if (map['name'].length > 25)
-//           mainRomName.text = map['name'].substring(0, 25) + '...';
-//         else
-//           mainRomName.text = map['name'];
-//         mainGameBoyState.text = '(Emulating)';
-//         break;
-//       case (EmulatorEvent.GameBoyEject):
-//         mainRomName.text = '';
-//         mainGameBoyState.text = '(Absent)';
-//         break;
-//       case (EmulatorEvent.GameBoyCrash):
-//         mainGameBoyState.text = '(Crashed)';
-//         break;
-//       case (EmulatorEvent.EmulatorCrash):
-//         mainRomName.text = '';
-//         mainGameBoyState.text = '(Fully crashed, reload page)';
-//         break;
-//       case (EmulatorEvent.InitError):
-//         break;
-//     }
-//   });
-// }
+  if (ev.src is Absent && ev.dst is! Absent) {
+    if (map['name'].length > 25)
+      mainRomName.text = map['name'].substring(0, 25) + '...';
+    else
+      mainRomName.text = map['name'];
+  }
+  else if (ev.dst is Absent && ev.src is! Absent)
+    mainRomName.text = '';
+}
 
 Async.Future init(Emulator.Emulator emu) async
 {
