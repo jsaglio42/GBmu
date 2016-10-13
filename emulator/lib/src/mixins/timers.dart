@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 18:39:22 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/14 01:18:52 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,7 +45,7 @@ abstract class Timers
 
   void _updateDIV(int nbClock) {
     _counterDIV += nbClock;
-    if (_counterDIV > 256)
+    if (_counterDIV >= 256)
     {
       _counterDIV -= 256;
       final DIV_old = this.tailRam.pull8_unsafe(_addrDIV);
@@ -60,7 +60,7 @@ abstract class Timers
     if (TAC & (0x1 << 2) == 0)
       return ;
     _counterTIMA += nbClock;
-    if (_counterTIMA > _thresholdTIMA)
+    if (_counterTIMA >= _thresholdTIMA)
     {
       _counterTIMA -= _thresholdTIMA;
       _thresholdTIMA = _getTimerFrequency(TAC);
