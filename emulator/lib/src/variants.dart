@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 11:40:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 11:34:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 18:53:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -61,14 +61,16 @@ class Emulating implements GameBoyState {
 }
 
 // EMULATOR'S EVENTS ******************************************************** **
-abstract class EmulatorEvent {}
-abstract class GameBoyEvent {
+abstract class EmulatorEvent {
+  EmulatorEvent get reinstanciate;
+}
+abstract class GameBoyEvent implements EmulatorEvent {
   GameBoyState get src;
   GameBoyState get dst;
 }
-abstract class Error {}
-abstract class Eject {}
-abstract class EmulationBegin {}
+abstract class Error implements EmulatorEvent {}
+abstract class Eject implements GameBoyEvent {}
+abstract class EmulationBegin implements GameBoyEvent {}
 
 // GAMEBOY EVENT - START SUCCESS ************************ **
 class Start implements EmulatorEvent, GameBoyEvent, EmulationBegin {
@@ -77,6 +79,7 @@ class Start implements EmulatorEvent, GameBoyEvent, EmulationBegin {
   String toString() => 'Start';
   GameBoyState get src => Absent.v;
   GameBoyState get dst => Emulating.v;
+  EmulatorEvent get reinstanciate => Start.v;
 }
 
 class CrashedRestart implements EmulatorEvent, GameBoyEvent, EmulationBegin {
@@ -85,6 +88,7 @@ class CrashedRestart implements EmulatorEvent, GameBoyEvent, EmulationBegin {
   String toString() => 'CrashedRestart';
   GameBoyState get src => Crashed.v;
   GameBoyState get dst => Emulating.v;
+  EmulatorEvent get reinstanciate => CrashedRestart.v;
 }
 
 class EmulatingRestart implements EmulatorEvent, GameBoyEvent, EmulationBegin {
@@ -93,6 +97,7 @@ class EmulatingRestart implements EmulatorEvent, GameBoyEvent, EmulationBegin {
   String toString() => 'EmulatingRestart';
   GameBoyState get src => Emulating.v;
   GameBoyState get dst => Emulating.v;
+  EmulatorEvent get reinstanciate => EmulatingRestart.v;
 }
 
 // GAMEBOY EVENT - START FAILURE ************************ **
@@ -102,6 +107,7 @@ class StartError implements EmulatorEvent, GameBoyEvent, Error {
   String toString() => 'StartError';
   GameBoyState get src => Absent.v;
   GameBoyState get dst => Absent.v;
+  EmulatorEvent get reinstanciate => StartError.v;
 }
 
 class CrashedRestartError implements EmulatorEvent, GameBoyEvent, Error {
@@ -110,6 +116,7 @@ class CrashedRestartError implements EmulatorEvent, GameBoyEvent, Error {
   String toString() => 'CrashedRestartError';
   GameBoyState get src => Crashed.v;
   GameBoyState get dst => Absent.v;
+  EmulatorEvent get reinstanciate => CrashedRestartError.v;
 }
 
 class EmulatingRestartError implements EmulatorEvent, GameBoyEvent, Error {
@@ -118,6 +125,7 @@ class EmulatingRestartError implements EmulatorEvent, GameBoyEvent, Error {
   String toString() => 'EmulatingRestartError';
   GameBoyState get src => Emulating.v;
   GameBoyState get dst => Absent.v;
+  EmulatorEvent get reinstanciate => EmulatingRestartError.v;
 }
 
 // GAMEBOY EVENT - EJECT ******************************** **
@@ -127,6 +135,7 @@ class EmulatingEject implements EmulatorEvent, GameBoyEvent, Eject {
   String toString() => 'EmulatingEject';
   GameBoyState get src => Emulating.v;
   GameBoyState get dst => Absent.v;
+  EmulatorEvent get reinstanciate => EmulatingEject.v;
 }
 
 class CrashedEject implements EmulatorEvent, GameBoyEvent, Eject {
@@ -135,6 +144,7 @@ class CrashedEject implements EmulatorEvent, GameBoyEvent, Eject {
   String toString() => 'CrashedEject';
   GameBoyState get src => Crashed.v;
   GameBoyState get dst => Absent.v;
+  EmulatorEvent get reinstanciate => CrashedEject.v;
 }
 
 // GAMEBOY EVENT - MISC. ******************************** **
@@ -144,6 +154,7 @@ class Crash implements EmulatorEvent, GameBoyEvent, Error {
   String toString() => 'Crash';
   GameBoyState get src => Emulating.v;
   GameBoyState get dst => Crashed.v;
+  EmulatorEvent get reinstanciate => Crash.v;
 }
 
 // EMULATOR EVENT - MISC. ******************************* **
@@ -152,4 +163,5 @@ class EmulatorCrash implements EmulatorEvent, Error {
   const EmulatorCrash._();
   static const EmulatorCrash v = const EmulatorCrash._();
   String toString() => 'EmulatorCrash';
+  EmulatorEvent get reinstanciate => EmulatorCrash.v;
 }
