@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 11:24:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 12:28:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,7 +22,6 @@ import 'package:emulator/variants.dart' as V;
 
 abstract class Observer implements Worker.AWorker {
 
-  // Ft.Routine<ObserverExternalMode> _rout;
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
 
@@ -30,13 +29,8 @@ abstract class Observer implements Worker.AWorker {
   DateTime _pollTime;
 
   // EXTERNAL INTERFACE ***************************************************** **
-  // none
-
   // SECONDARY ROUTINES ***************************************************** **
-  // none
-
   // LOOPING ROUTINE ******************************************************** **
-
   void _onSpeedPoll([_]){
     assert(this.gbMode is V.Emulating,
         "_onSpeedPoll with no gameboy");
@@ -59,7 +53,6 @@ abstract class Observer implements Worker.AWorker {
   }
 
   // SIDE EFFECTS CONTROLS ************************************************** **
-
   void _makeLooping()
   {
     Ft.log("WorkerObs", '_makeLooping');
@@ -80,7 +73,6 @@ abstract class Observer implements Worker.AWorker {
   }
 
   // CONSTRUCTION *********************************************************** **
-
   void init_observer()
   {
     Ft.log("WorkerObs", 'init_observer');

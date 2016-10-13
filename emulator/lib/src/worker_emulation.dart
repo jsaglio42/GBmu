@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 12:16:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 12:28:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -70,7 +70,6 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
   int _autoBreakIn;
 
   // EXTERNAL INTERFACE ***************************************************** **
-
   void _onAutoBreakReq(AutoBreakExternalMode abRaw)
   {
     final AutoBreakExternalMode ab = AutoBreakExternalMode.values[abRaw.index];
@@ -149,7 +148,6 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
   }
 
   // SECONDARY ROUTINES ***************************************************** **
-
   void _updateEmulationSpeed(double speed)
   {
     Ft.log("WorkerEmu", '_updateEmulationSpeed', [speed]);
@@ -236,7 +234,6 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
   }
 
   // LOOPING ROUTINE ******************************************************** **
-
   void _onEmulation(_)
   {
     int clockSum;
@@ -321,7 +318,6 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
   }
 
   // SIDE EFFECTS CONTROLS ************************************************** **
-
   void _makeLooping()
   {
     Ft.log("WorkerEmu", '_makeLooping');
@@ -358,7 +354,6 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
   }
 
   // CONSTRUCTION *********************************************************** **
-
   void init_emulation()
   {
     Ft.log("WorkerEmu", 'init_emulation');

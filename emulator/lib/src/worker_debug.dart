@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 12:04:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 12:28:12 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,7 +33,6 @@ abstract class Debug implements Worker.AWorker {
   int _debuggerMemoryAddr = 0;
 
   // EXTERNAL INTERFACE ***************************************************** **
-
   void _onMemoryAddrChangeReq(int addr)
   {
     Ft.log("WorkerDeb", '_onMemoryAddrChangeReq', [addr]);
@@ -72,7 +71,6 @@ abstract class Debug implements Worker.AWorker {
   }
 
   // SECONDARY ROUTINES ***************************************************** **
-
   void _enable()
   {
     assert(this.debMode == DebuggerExternalMode.Dismissed,
@@ -104,7 +102,6 @@ abstract class Debug implements Worker.AWorker {
   }
 
   // LOOPING ROUTINE ******************************************************** **
-
   void _onDebug([_])
   {
     assert(this.gbMode is! V.Absent,
@@ -128,7 +125,6 @@ abstract class Debug implements Worker.AWorker {
   }
 
   // SIDE EFFECTS CONTROLS ************************************************** **
-
   void _makeLooping()
   {
     Ft.log("WorkerDeb", '_makeLooping');
@@ -153,7 +149,6 @@ abstract class Debug implements Worker.AWorker {
   }
 
   // CONSTRUCTION *********************************************************** **
-
   void init_debug([_])
   {
     Ft.log("WorkerDeb", 'init_debug');

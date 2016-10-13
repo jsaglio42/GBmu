@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/13 11:01:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 12:18:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 12:26:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -97,7 +97,5 @@ abstract class EmulationState implements Worker.AWorker {
       'name': gb.c.rom.fileName,
     });
   }
-
-
 
 }
