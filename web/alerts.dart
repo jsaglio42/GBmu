@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/30 08:43:27 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 17:38:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 11:34:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,32 +32,32 @@ final Duration _TIMEOUT_DURATION = new Duration(seconds: 3);
  */
 class _Message {
 
-  final EmulatorEvent type;
-  final String msg;
-  final int id;
-  final static _mapping = <EmulatorEvent, Map>{
-    EmulatorEvent.EmulatorCrash: {
-      'class': 'danger', 'timeout': false, 'name': 'EmuCrash'},
-    EmulatorEvent.InitError: {
-      'class': 'error', 'timeout': false, 'name': 'Error'},
-    EmulatorEvent.GameBoyStart: {
-      'class': 'success', 'timeout': true, 'name': 'Start'},
-    EmulatorEvent.GameBoyEject: {
-      'class': 'info', 'timeout': true, 'name': 'Eject'},
-    EmulatorEvent.GameBoyCrash: {
-      'class': 'danger', 'timeout': false, 'name': 'Crash'},
-  };
+//   final EmulatorEvent type;
+//   final String msg;
+//   final int id;
+//   final static _mapping = <EmulatorEvent, Map>{
+//     EmulatorEvent.EmulatorCrash: {
+//       'class': 'danger', 'timeout': false, 'name': 'EmuCrash'},
+//     EmulatorEvent.InitError: {
+//       'class': 'error', 'timeout': false, 'name': 'Error'},
+//     EmulatorEvent.GameBoyStart: {
+//       'class': 'success', 'timeout': true, 'name': 'Start'},
+//     EmulatorEvent.GameBoyEject: {
+//       'class': 'info', 'timeout': true, 'name': 'Eject'},
+//     EmulatorEvent.GameBoyCrash: {
+//       'class': 'danger', 'timeout': false, 'name': 'Crash'},
+//   };
 
-  _Message(this.type, this.msg, this.id);
+  // _Message(this.type, this.msg, this.id);
 
-  String get alertClass =>
-    'alert-' + _mapping[this.type]['class'];
+//   String get alertClass =>
+//     'alert-' + _mapping[this.type]['class'];
 
-  String get readableType =>
-    _mapping[this.type]['name'][0].toUpperCase() +
-    _mapping[this.type]['name'].substring(1) + ':';
+//   String get readableType =>
+//     _mapping[this.type]['name'][0].toUpperCase() +
+//     _mapping[this.type]['name'].substring(1) + ':';
 
-  bool get timeout => _mapping[this.type]['timeout'];
+//   bool get timeout => _mapping[this.type]['timeout'];
 }
 
 class _Frame {
@@ -131,10 +131,10 @@ class _Data {
 
   _Data(Emulator.Emulator emu)
   {
-    emu.listener('Events').forEach(_onEmulatorEvent);
+    // emu.listener('Events').forEach(_onEmulatorEvent);
 
-    _addMessage(new _Message(
-            EmulatorEvent.GameBoyCrash, 'Salut', _ids++)); //debug
+    // _addMessage(new _Message(
+            // EmulatorEvent.GameBoyCrash, 'Salut', _ids++)); //debug
   }
 
   void refresh()
@@ -163,19 +163,19 @@ class _Data {
     this.refresh();
   }
 
-  void _onEmulatorEvent(Map map)
-  {
-    final EmulatorEvent ev = EmulatorEvent.values[map['type'].index];
-    final _Message msg = new _Message(ev, map['msg'].toString(), _ids++);
+  // void _onEmulatorEvent(Map map)
+  // {
+  //   final EmulatorEvent ev = EmulatorEvent.values[map['type'].index];
+  //   final _Message msg = new _Message(ev, map['msg'].toString(), _ids++);
 
-    if (ev == EmulatorEvent.EmulatorCrash)
-      Ft.logerr('alerts.dart', 'event', [map]);
-    else if (ev == EmulatorEvent.GameBoyCrash)
-      Ft.logwarn('alerts.dart', 'event', [map]);
-    else
-      Ft.log('alerts.dart', 'event', [map]);
-    _addMessage(msg);
-  }
+  //   if (ev == EmulatorEvent.EmulatorCrash)
+  //     Ft.logerr('alerts.dart', 'event', [map]);
+  //   else if (ev == EmulatorEvent.GameBoyCrash)
+  //     Ft.logwarn('alerts.dart', 'event', [map]);
+  //   else
+  //     Ft.log('alerts.dart', 'event', [map]);
+  //   _addMessage(msg);
+  // }
 
 }
 

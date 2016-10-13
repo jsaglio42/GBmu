@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:24:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 11:46:58 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -103,40 +103,46 @@ List<_Panel> _makePanels(Emulator.Emulator emu)
   return l;
 }
 
-void _updateTopLeftTexts(Emulator.Emulator emu) {
-  emu.listener('Events').forEach((Map<String, dynamic> map){
-    final EmulatorEvent mode = EmulatorEvent.values[map['type'].index];
+void _onEmulatorEvent(Map<String, dynamic> map) {
 
-    switch (mode) {
-      case (EmulatorEvent.GameBoyStart):
-        if (map['name'].length > 25)
-          mainRomName.text = map['name'].substring(0, 25) + '...';
-        else
-          mainRomName.text = map['name'];
-        mainGameBoyState.text = '(Emulating)';
-        break;
-      case (EmulatorEvent.GameBoyEject):
-        mainRomName.text = '';
-        mainGameBoyState.text = '(Absent)';
-        break;
-      case (EmulatorEvent.GameBoyCrash):
-        mainGameBoyState.text = '(Crashed)';
-        break;
-      case (EmulatorEvent.EmulatorCrash):
-        mainRomName.text = '';
-        mainGameBoyState.text = '(Fully crashed, reload page)';
-        break;
-      case (EmulatorEvent.InitError):
-        break;
-    }
-  });
+  Ft.log('nav', '_onEmulatorEvent', [map]);
+
 }
+
+// void _updateTopLeftTexts(Emulator.Emulator emu) {
+//   emu.listener('Events').forEach((Map<String, dynamic> map){
+//     final EmulatorEvent mode = EmulatorEvent.values[map['type'].index];
+
+//     switch (mode) {
+//       case (EmulatorEvent.GameBoyStart):
+//         if (map['name'].length > 25)
+//           mainRomName.text = map['name'].substring(0, 25) + '...';
+//         else
+//           mainRomName.text = map['name'];
+//         mainGameBoyState.text = '(Emulating)';
+//         break;
+//       case (EmulatorEvent.GameBoyEject):
+//         mainRomName.text = '';
+//         mainGameBoyState.text = '(Absent)';
+//         break;
+//       case (EmulatorEvent.GameBoyCrash):
+//         mainGameBoyState.text = '(Crashed)';
+//         break;
+//       case (EmulatorEvent.EmulatorCrash):
+//         mainRomName.text = '';
+//         mainGameBoyState.text = '(Fully crashed, reload page)';
+//         break;
+//       case (EmulatorEvent.InitError):
+//         break;
+//     }
+//   });
+// }
 
 Async.Future init(Emulator.Emulator emu) async
 {
   Ft.log('nav.dart', 'init#start', [emu]);
   _panels = _makePanels(emu);
-  _updateTopLeftTexts(emu);
+  emu.listener('Events').forEach(_onEmulatorEvent);
   Deb.init(emu);
   Opt.init(emu);
   await Cs.init(emu);

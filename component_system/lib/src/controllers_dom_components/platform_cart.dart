@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 18:25:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:54:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 11:39:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -53,7 +53,7 @@ class PlatformCart extends Object with _Actions implements _Super {
       .map((v) => v as CartBank)
       .forEach(_onDropReceived);
 
-    _emu.listener('Events').forEach(_onEmulatorEvents);
+    // _emu.listener('Events').forEach(_onEmulatorEvents);
   }
 
   // PUBLIC ***************************************************************** **
@@ -121,13 +121,13 @@ class PlatformCart extends Object with _Actions implements _Super {
     }
   }
 
-  void _onEmulatorEvents(Map<String, dynamic> map){
-    final EmulatorEvent mode = EmulatorEvent.values[map['type'].index];
+ // void _onEmulatorEvents(Map<String, dynamic> map) {
+  //   final EmulatorEvent mode = EmulatorEvent.values[map['type'].index];
 
-    if (mode == EmulatorEvent.InitError) {
-      _detachGbCart();
-    }
-  }
+  //   if (mode == EmulatorEvent.InitError) {
+  //     _detachGbCart();
+  //   }
+  // }
 
   // PRIVATE **************************************************************** **
   void _detachGbCart() {

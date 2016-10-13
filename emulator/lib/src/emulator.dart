@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:11:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 11:31:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,6 +19,7 @@ import 'package:ft/wired_isolate.dart' as Wiso;
 import 'package:emulator/src/worker.dart' as Worker;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
 import "package:emulator/src/mixins/instructions.dart" as Instructions;
+import 'package:emulator/variants.dart' as V;
 
 /*
  * ************************************************************************** **
@@ -99,7 +100,7 @@ class Emulator {
     _wiso.isoErrors
     .forEach((e) {
           _eventsBroadcast.add(<String, dynamic>{
-            'type': EmulatorEvent.EmulatorCrash,
+            'type': V.EmulatorCrash.v,
             'msg': e,
           });
         });

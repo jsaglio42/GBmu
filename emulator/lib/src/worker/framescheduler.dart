@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/30 18:15:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 11:26:12 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,8 +17,8 @@ import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
-
 import 'package:emulator/src/worker.dart' as Worker;
+import 'package:emulator/variants.dart' as V;
 
 abstract class FrameScheduler implements Worker.AWorker {
 
@@ -27,7 +27,7 @@ abstract class FrameScheduler implements Worker.AWorker {
 
   // LOOPING ROUTINE ******************************************************** **
   void _onFrameUpdate([_]){
-    assert(this.gbMode == GameBoyExternalMode.Emulating,
+    assert(this.gbMode is V.Emulating,
         "_onFrameUpdate with no gameboy");
     this.ports.send('FrameUpdate', this.gbOpt.lcdScreen);
     return ;
@@ -46,7 +46,7 @@ abstract class FrameScheduler implements Worker.AWorker {
     Ft.log("WorkerFrame", '_makeDormant');
     assert(!_sub.isPaused, "FrameScheduler: _makeDormant while paused");
     _sub.pause();
-    if (this.gbMode != GameBoyExternalMode.Absent)
+    if (this.gbMode is! V.Absent)
       this.ports.send('FrameUpdate', this.gbOpt.lcdScreen);
   }
 
@@ -59,8 +59,8 @@ abstract class FrameScheduler implements Worker.AWorker {
     _sub = _periodic.listen(_onFrameUpdate);
     _sub.pause();
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Dismissed],
-      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+      [V.Emulating.v, DebuggerExternalMode.Dismissed],
+      [V.Emulating.v, DebuggerExternalMode.Operating,
         PauseExternalMode.Ineffective],
     ]);
     return ;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 10:56:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 11:42:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,10 +16,12 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 
 import 'package:emulator/src/gameboy.dart' as Gameboy;
-import 'package:emulator/src/worker_emulation.dart' as Workeremulation;
-import 'package:emulator/src/worker_debug.dart' as Workerdebug;
-import 'package:emulator/src/worker_observer.dart' as Workerobserver;
+import 'package:emulator/src/worker_emulation.dart' as WEmu;
+import 'package:emulator/src/worker_emulation_state.dart' as WEmuState;
+import 'package:emulator/src/worker_debug.dart' as WDeb;
+import 'package:emulator/src/worker_observer.dart' as WObs;
 import 'package:emulator/src/worker/framescheduler.dart' as WFramescheduler;
+import 'package:emulator/variants.dart' as V;
 
 /** ************************************************************************* **
  ** Worker statuses/events ************************************************** **
@@ -28,27 +30,12 @@ enum DebuggerExternalMode {
   Operating, Dismissed
 }
 
-enum GameBoyExternalMode {
-  Emulating, Crashed, Absent
-}
-
 enum PauseExternalMode {
   Effective, Ineffective
 }
 
 enum AutoBreakExternalMode {
-  Instruction,
-  Frame,
-  Second,
-  None
-}
-
-enum EmulatorEvent {
-  EmulatorCrash,
-  InitError,
-  GameBoyStart,
-  GameBoyCrash,
-  GameBoyEject,
+  Instruction, Frame, Second, None,
 }
 
 /** ************************************************************************* **
@@ -62,7 +49,7 @@ abstract class AWorker {
   final Ft.StatesController sc = new Ft.StatesController();
   Gameboy.GameBoy gbOpt = null;
 
-  GameBoyExternalMode get gbMode => this.sc.getState(GameBoyExternalMode);
+  V.GameBoyState get gbMode => this.sc.getState(V.GameBoyState);
   DebuggerExternalMode get debMode => this.sc.getState(DebuggerExternalMode);
   PauseExternalMode get pauseMode => this.sc.getState(PauseExternalMode);
   AutoBreakExternalMode get abMode => this.sc.getState(AutoBreakExternalMode);
@@ -78,9 +65,10 @@ abstract class AWorker {
  ** No constructors in mixins (impossible). Init mixins with `.init_*()`.
  */
 class Worker extends AWorker
-  with Workeremulation.Emulation
-  , Workerobserver.Observer
-  , Workerdebug.Debug
+  with WEmuState.EmulationState
+  , WEmu.Emulation
+  , WObs.Observer
+  , WDeb.Debug
   , WFramescheduler.FrameScheduler
 {
 

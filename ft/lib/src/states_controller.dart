@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/29 09:22:48 by ngoguey           #+#    #+#             //
-//   Updated: 2016/08/29 10:15:03 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 12:13:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,17 +21,17 @@ class _SideEffect {
 
   _SideEffect(this.enable, this.disable, this._activationCombinations);
 
-  bool activable(Map<Type, dynamic> states)
+  bool activable(StatesController contr)
   {
     return this._activationCombinations
       .any((List cond){
         return cond.every((dynamic state) {
-          var st = states[state.runtimeType];
+          final Type t = contr._typeOfState[state];
+          final st = contr._stateOfType[t];
 
-          if (st == null)
-            return false;
-          else
-            return st == state;
+          assert(t != null && st != null,
+              '_SideEffect <${state.runtimeType}>$state not found ($t, $st)');
+          return st == state;
         });
       });
   }
@@ -40,22 +40,25 @@ class _SideEffect {
 
 class StatesController {
 
-  Map<Type, dynamic> _states = {};
-  List<_SideEffect> _sideEffects = [];
+  final Map<Type, dynamic> _stateOfType = <Type, dynamic>{};
+  final Map<dynamic, Type> _typeOfState = <dynamic, Type>{};
+  final List<_SideEffect> _sideEffects = <_SideEffect>[];
   bool _fired = false;
+
+  // BEFORE FIRE PHASE ****************************************************** **
+  void declareType(Type t, Iterable states, dynamic startState) {
+    _stateOfType[t] = startState;
+    for (var s in states) {
+      _typeOfState[s] = t;
+      print('declareType ${t} ${s} ${_typeOfState[s]} ${_typeOfState[s] == t}');
+    }
+  }
 
   void addSideEffect(
       t_thunk enable, t_thunk disable, List<List> activationCombinations)
   {
     assert(_fired == false, "Adding after firing");
     _sideEffects.add(new _SideEffect(enable, disable, activationCombinations));
-  }
-
-  void setState(dynamic st)
-  {
-    _states[st.runtimeType] = st;
-    if (_fired)
-      _updateSideEffects();
   }
 
   void fire()
@@ -65,10 +68,27 @@ class StatesController {
     _updateSideEffects();
   }
 
+  // AFTER FIRE PHASE ******************************************************* **
+  dynamic getState(Type t)
+  {
+    assert(_stateOfType[t] != null, "states_controller: getState($t)");
+    return _stateOfType[t];
+  }
+
+  void setState(dynamic st)
+  {
+    final Type t = _typeOfState[st];
+
+    assert(_fired);
+    assert(t != null);
+    _stateOfType[t] = st;
+    _updateSideEffects();
+  }
+
   void _updateSideEffects()
   {
     _sideEffects.forEach((_SideEffect se){
-      if (se.activable(_states)) {
+      if (se.activable(this)) {
         if (se.active == false) {
           se.active = true;
           se.enable();
@@ -81,12 +101,6 @@ class StatesController {
         }
       }
     });
-  }
-
-  dynamic getState(Type t)
-  {
-    assert(_states[t] != null, "states_controller: getState($t)");
-    return _states[t];
   }
 
 }
