@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:56:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 15:44:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,10 +82,12 @@ class DomChipSocket extends DomElement
     this.hes_init(elt);
     if (type is Ram)
       this.hdz_init(HtmlDropZone.makeClassesMap(
-              'cart-ram-socket-hover', null, 'cart-ram-socket-active', null));
+              'cart-ram-socket-hover', 'cart-ram-socket-invalid',
+              'cart-ram-socket-active', 'cart-ram-socket-invalid'));
     else
       this.hdz_init(HtmlDropZone.makeClassesMap(
-              'cart-ss-socket-hover', null, 'cart-ss-socket-active', null));
+              'cart-ss-socket-hover', 'cart-ss-socket-invalid',
+              'cart-ss-socket-active', 'cart-ss-socket-invalid'));
   }
 
 }
