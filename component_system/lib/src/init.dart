@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:34:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 14:03:31 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,7 +63,7 @@ Async.Future init(Emulator.Emulator emu) async {
   final PlatformDom pd = new PlatformDom(pcs, pde, pce, pdcs, pc, pch);
 
   // Misc. controllers
-  new HandlerFileAdmission(pcs);
+  new HandlerFileAdmission(pde, pcs);
   new HandlerEmulatorCommunication(emu, pce, pdcs);
 
   // pidb.start: async computation

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/08 13:50:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 13:50:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 13:59:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,8 +32,13 @@ class HandlerDomDragged {
   final PlatformComponentEvents _pce;
   final PlatformDomComponentStorage _pdcs;
 
+  int _docCount = 0;
+  int _cartBodyCount = 0;
+
   // CONSTRUCTION *********************************************************** **
   HandlerDomDragged(this._pde, this._pce, this._pdcs) {
+    final Html.Element _cartBody = Html.querySelector('#cartsBody');
+
     Ft.log('HandlerDomDragged', 'contructor');
 
     _pde.onDragStart.forEach(_onDragStart);
@@ -44,6 +49,14 @@ class HandlerDomDragged {
     _pce.onChipEvent
       .where((ev) => ev.chip == _pdcs.dragged.v)
       .forEach(_handleDraggedChipEvent);
+
+    Html.document.onDragEnter.forEach(_handleDocEnter);
+    Html.document.onDragLeave.forEach(_handleDocLeave);
+    Html.document.onDragOver.forEach(_handleDocOver);
+    Html.document.onDrop.forEach(_handleDocDrop);
+
+    _cartBody.onDragEnter.forEach(_handleCartBodyEnter);
+    _cartBody.onDragLeave.forEach(_handleCartBodyLeave);
   }
 
   // CALLBACKS ************************************************************** **
@@ -83,5 +96,49 @@ class HandlerDomDragged {
       _pdcs.unsetDragged();
     }
   }
+
+  void _handleDocEnter(Html.MouseEvent ev) {
+    if (_docCount == 0)
+      _pde.fileDrag(true);
+    _docCount++;
+  }
+
+  void _handleDocLeave(Html.MouseEvent ev) {
+    _docCount--;
+    if (_docCount == 0)
+      _pde.fileDrag(false);
+  }
+
+  void _handleDocOver(Html.MouseEvent ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+  }
+
+  void _handleDocDrop(Html.MouseEvent ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (_cartBodyCount > 0 && ev.dataTransfer.types.contains('Files'))
+      _pde.cartBodyFilesDrop(ev.dataTransfer.files);
+    _pde.cartBodyHover(false);
+    _pde.fileDrag(false);
+    _cartBodyCount = 0;
+    _docCount = 0;
+  }
+
+  void _handleCartBodyEnter(Html.MouseEvent ev) {
+    if (_cartBodyCount == 0)
+      _pde.cartBodyHover(true);
+    _cartBodyCount++;
+  }
+
+  void _handleCartBodyLeave(Html.MouseEvent ev) {
+    _cartBodyCount--;
+    if (_cartBodyCount == 0)
+      _pde.cartBodyHover(false);
+  }
+
+
+
+
 
 }

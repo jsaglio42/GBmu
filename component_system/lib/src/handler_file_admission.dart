@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 17:33:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 17:34:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 14:04:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,13 +26,14 @@ import 'package:emulator/constants.dart';
 // import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
-// import 'package:component_system/src/include_cdc.dart';
+import 'package:component_system/src/include_cdc.dart';
 
 // http://stackoverflow.com/questions/3144881/how-do-i-detect-a-html5-drag-event-entering-and-leaving-the-window-like-gmail-d
 
 class HandlerFileAdmission {
 
   // ATTRIBUTES ************************************************************* **
+  final PlatformDomEvents _pde;
   final PlatformComponentStorage _pcs;
 
   final Html.Element _target = Html.querySelector('#cartsBody');
@@ -40,69 +41,38 @@ class HandlerFileAdmission {
   int _targetCount = 0;
 
   // CONTRUCTION ************************************************************ **
-  HandlerFileAdmission(this._pcs) {
+  HandlerFileAdmission(this._pde, this._pcs) {
     Ft.log('HandlerFA', 'contructor');
 
-    Html.document.onDragEnter.forEach(_handleDocEnter);
-    Html.document.onDragLeave.forEach(_handleDocLeave);
-    Html.document.onDragOver.forEach(_handleDocOver);
-    Html.document.onDrop.forEach(_handleDocDrop);
-
-    _target.onDragEnter.forEach(_handleTargetEnter);
-    _target.onDragLeave.forEach(_handleTargetLeave);
+    _pde.onFileDrag.forEach(_onFileDrag);
+    _pde.onCartBodyHover.forEach(_onCartBodyHover);
+    _pde.onCartBodyFilesDrop.forEach(_onCartBodyFilesDrop);
   }
 
   // CALLBACKS ************************************************************** **
-  void _handleDocEnter(Html.MouseEvent ev) {
-    if (_docCount == 0)
-      _target.classes.add('active');
-    _docCount++;
-  }
 
-  void _handleDocLeave(Html.MouseEvent ev) {
-    _docCount--;
-    if (_docCount == 0)
+  void _onFileDrag(bool b) {
+    if (b)
+      _target.classes.add('active');
+    else
       _target.classes.remove('active');
   }
 
-  void _handleDocOver(Html.MouseEvent ev) {
-    ev.stopPropagation();
-    ev.preventDefault();
-  }
-
-  void _handleDocDrop(Html.MouseEvent ev) {
-    ev.stopPropagation();
-    ev.preventDefault();
-    _target.classes.remove('active');
-    _target.classes.remove('hover');
-    if (_targetCount > 0) {
-      if (ev.dataTransfer.types.contains('Files')) {
-        ev.dataTransfer.files.forEach((Html.File f) {
-          _processFile(f)
-            .catchError((e, st){
-              print(st);
-              // TODO: show error in alerts
-            });
-        });
-      }
-      else {
-        // TODO: show error in alerts
-      }
-    }
-    _targetCount = 0;
-    _docCount = 0;
-  }
-
-  void _handleTargetEnter(Html.MouseEvent ev) {
-    if (_targetCount == 0)
+  void _onCartBodyHover(bool b) {
+    if (b)
       _target.classes.add('hover');
-    _targetCount++;
+    else
+      _target.classes.remove('hover');
   }
 
-  void _handleTargetLeave(Html.MouseEvent ev) {
-    _targetCount--;
-    if (_targetCount == 0)
-      _target.classes.remove('hover');
+  void _onCartBodyFilesDrop(List<Html.File> files) {
+    files.forEach((Html.File f) {
+      _processFile(f)
+        .catchError((e, st){
+          print(st);
+          // TODO: show error in alerts
+        });
+    });
   }
 
   // PRIVATE **************************************************************** **
