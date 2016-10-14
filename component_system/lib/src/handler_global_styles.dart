@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 14:19:56 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 15:36:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 16:01:53 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -58,6 +58,14 @@ class HandlerGlobalStyles {
   void _onCartEvent(CartEvent<DomCart> ev) {
     if (ev.src is None && _pdcs.cartSystemHovered) {
       ev.cart.btnText.text = ev.cart.data.fileName;
+    }
+    if (ev.src is GameBoy && ev.dst is! GameBoy) {
+      _pdcs.labelRestart.style.visibility = "hidden";
+      _pdcs.labelEject.style.visibility = "hidden";
+    }
+    else if (ev.dst is GameBoy && ev.src is! GameBoy) {
+      _pdcs.labelRestart.style.visibility = "visible";
+      _pdcs.labelEject.style.visibility = "visible";
     }
   }
 

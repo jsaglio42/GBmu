@@ -55,15 +55,6 @@
           <!-- OPTIONS BODY -->
           <div class="row" id="optBody">
             <div class="col-sm-12">
-              <label class="btn btn-info">
-                (re)start<input id="magbut" style="display: none;">
-              </label>
-              <!-- <label class="btn btn-danger">
-                   eject (debug)<input id="ejectbut" style="display: none;">
-                   </label>
-                   <label class="btn btn-danger">
-                   crash (debug)<input id="crashbut" style="display: none;">
-                   </label> -->
               <span id="mainSpeedText">0.00x</span>
               <div id="mainSpeedSlider"></div>
             </div>
@@ -113,15 +104,20 @@
         <!-- cartsContainer-->
         <div class="panel-group col-md-4 col-lg-3" id="cartsContainer">
           <!-- cartsBody -->
-          <div class="row" id="cartsBody">
-            GameBoy Slot:
+          <div id="cartsBody">
+            <label class="btn btn-info" id="label-magbut" style="visibility: hidden;">
+              restart<input id="magbut" style="display: none;">
+            </label>
+            <label class="btn btn-danger" id="label-ejectbut" style="visibility: hidden;">
+              eject<input id="ejectbut" style="display: none;">
+            </label>
             <div id="gb-slot" class="ui-widget-header toplevel-bank"></div>
-            Cart Bank:
+            <!-- Cart Bank: -->
             <div id="accordion" class="ui-widget-header toplevel-bank"></div>
-            Detached Chip Bank:
+            <!-- Detached Chip Bank: -->
             <div id="detached-chip-bank" class="ui-widget-header toplevel-bank"></div>
-            Volcano:
-            Soon...
+            <!-- Volcano: -->
+            <!-- Soon... -->
           </div><!-- /cartsBody -->
         </div><!-- /cartsContainer -->
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/08 13:50:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 15:25:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 16:04:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -38,6 +38,7 @@ class HandlerDomDragged {
   int _docCount = 0;
   int _cartSystemCount = 0;
   int _cartSystemDragCount = 0;
+  bool _persistHover = false;
 
   // CONSTRUCTION *********************************************************** **
   HandlerDomDragged(this._pde, this._pce, this._pdcs) {
@@ -125,26 +126,20 @@ class HandlerDomDragged {
     if (_cartSystemDragCount == 0)
       _actionCartSystemHover(true);
     _cartSystemDragCount++;
-    print('_cartSystemDragCount $_cartSystemDragCount');
   }
 
   void _handleCartSystemLeave(Html.MouseEvent ev) {
     _cartSystemDragCount--;
     if (_cartSystemDragCount == 0)
       _actionCartSystemHover(false);
-    print('_cartSystemDragCount $_cartSystemDragCount');
   }
-
-  bool bonus = false;
 
   void _handleDocDrop(Html.MouseEvent ev) {
     ev.stopPropagation();
     ev.preventDefault();
-    print('_cartSystemDragCount $_cartSystemDragCount DROP');
     if (_cartSystemDragCount > 0 && ev.dataTransfer.types.contains('Files'))
       _pde.cartSystemFilesDrop(ev.dataTransfer.files);
-    // _actionCartSystemHover(false);
-    bonus = true;
+    _persistHover = true;
     _actionFileDrag(false);
     _cartSystemDragCount = 0;
     _docCount = 0;
@@ -152,18 +147,16 @@ class HandlerDomDragged {
 
   // CART SYSTEM ENTER/LEAVE ************************************************ **
   void _handleCartSystemOver(Html.MouseEvent ev) {
-    if (_cartSystemCount == 0 && bonus == false)
+    if (_cartSystemCount == 0 && _persistHover == false)
       _actionCartSystemHover(true);
-    bonus = false;
+    _persistHover = false;
     _cartSystemCount++;
-    print('_cartSystemCount $_cartSystemCount');
   }
 
   void _handleCartSystemOut(Html.MouseEvent ev) {
     _cartSystemCount--;
     if (_cartSystemCount == 0)
       _actionCartSystemHover(false);
-    print('_cartSystemCount $_cartSystemCount');
   }
 
   // PRIVATE **************************************************************** **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 18:25:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 18:21:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 16:06:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -69,6 +69,11 @@ class PlatformCart extends Object with _Actions implements _Super {
       .where((map) => map['type'] is GameBoyEvent)
       .map((map) => map['type'] as GameBoyEvent)
       .forEach(_onGameBoyEvent);
+
+    _pdcs.btnEject.onClick
+      .forEach(_onEjectClick);
+    _pdcs.btnRestart.onClick
+      .forEach(_onRestartClick);
   }
 
   // PUBLIC ***************************************************************** **
@@ -126,7 +131,7 @@ class PlatformCart extends Object with _Actions implements _Super {
   void _onDropReceived(CartBank that) {
     assert(_pdcs.dragged.isSome, '_onDropReceived() with none dragged');
     if (that is DomGameBoySocket)
-      _emulatorRun();
+      _emulatorRun(_pdcs.dragged.v as DomCart);
     else /* if (that is DomDetachedCartBank) */
       _emulatorEject();
   }
@@ -152,13 +157,20 @@ class PlatformCart extends Object with _Actions implements _Super {
     }
   }
 
+  void _onEjectClick(_) {
+    _emulatorEject();
+  }
+
+  void _onRestartClick(_) {
+    _emulatorRun(_pdcs.gbCart.v);
+  }
+
   // PRIVATE **************************************************************** **
   void _emulatorEject() {
     _emu.send('EmulationEject', 42);
   }
 
-  void _emulatorRun() {
-    final DomCart cart = _pdcs.dragged.v as DomCart;
+  void _emulatorRun(DomCart cart) {
     final LsRom dataRom = cart.data;
     LsRam dataRamOpt;
 

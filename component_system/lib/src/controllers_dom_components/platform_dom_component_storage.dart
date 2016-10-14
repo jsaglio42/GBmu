@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 14:53:34 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 16:01:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -76,6 +76,11 @@ class PlatformDomComponentStorage {
 
   bool get cartSystemHovered => _cartSystemHovered;
   bool get fileDragged => _fileDragged;
+
+  final Html.Element labelRestart = Html.querySelector('#label-magbut');
+  final Html.Element labelEject = Html.querySelector('#label-ejectbut');
+  final Html.Element btnRestart = Html.querySelector('#magbut');
+  final Html.Element btnEject = Html.querySelector('#ejectbut');
 
   // Components getters ********************************* **
   // Most of them are linear in time
