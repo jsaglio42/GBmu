@@ -152,6 +152,10 @@ body {
     margin-right: 15px;
 }
 
+.debJumpMem {
+    margin: 5px;
+}
+
 #debColButtons > p {
     display: inline-block;
     margin-right: 5px;

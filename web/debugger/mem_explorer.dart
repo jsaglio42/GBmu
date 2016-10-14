@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 11:58:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:13:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 16:54:57 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 ** Classes
 */
 
-const MEMORY_ROWS = 9;
+const MEMORY_ROWS = 16;
 const MEMORY_COLS = 16;
 final MEMORY_CELLS_COUNT = MEMORY_COLS * MEMORY_ROWS;
 
@@ -37,6 +37,8 @@ class _Data {
 
   final List<_Cell> addrCells = _createAddressCells();
   final List<_Cell> memCells = _createMemoryCells();
+
+  int _currentAddress = 0;
 
   static _createAddressCells() {
     final Html.TableSectionElement tbody = Html.querySelector('#debTbodyMemExplorer');
@@ -75,6 +77,7 @@ void _onMemInfo(Map<String, dynamic> map) {
 void _updateAddrCells(int addr) {
   assert(addr != null , "_updateAddrCells($addr)");
   assert(addr >= 0x0000 && addr <= 0xFFFF, "_updateAddrCells($addr)");
+  _data._currentAddress = addr;
   for (var i = 0; i < _data.addrCells.length; ++i) {
     _data.addrCells[i].elt.text = Ft.toAddressString(addr + i * 0x10, 4);
   }
@@ -103,14 +106,16 @@ void _onMemAddrUpdate(_) {
   final int parsedValue = int.parse(parsedString,
     radix:16,
     onError: (s) => -1);
-  if (parsedValue >= 0x0000 && parsedValue <= 0xFFFF) {
-    final maxRange = 0x10000 - MEMORY_CELLS_COUNT;
-    final adjustedAddr = Math.min(maxRange, parsedValue & 0xFFF0);
-    _emu.send('DebMemAddrChange', adjustedAddr);
-  }
   // Side - effect
+  _sendMemoryAddr(parsedValue);
   _memAddrInput.value = '';
   _memAddrInput.blur();
+  return ;
+}
+
+void _sendMemoryAddr(int addr) {
+  final maxValue = 0x10000 - MEMORY_CELLS_COUNT;
+  _emu.send('DebMemAddrChange', addr.clamp(0, maxValue));
   return ;
 }
 
@@ -120,6 +125,13 @@ void _onMemAddrUpdate(_) {
 
 final _data = new _Data();
 final Html.InputElement _memAddrInput = Html.querySelector('#memory-addr-input');
+final Html.ButtonElement _JumpPREV = Html.querySelector('#memExpJumpPREV');
+final Html.ButtonElement _JumpBGDATA0 = Html.querySelector('#memExpJumpBGDATA0');
+final Html.ButtonElement _JumpBGDATA1 = Html.querySelector('#memExpJumpBGDATA1');
+final Html.ButtonElement _JumpBGMAP0 = Html.querySelector('#memExpJumpBGMAP0');
+final Html.ButtonElement _JumpGBMAP1 = Html.querySelector('#memExpJumpGBMAP1');
+final Html.ButtonElement _JumpOAM = Html.querySelector('#memExpJumpOAM');
+final Html.ButtonElement _JumpNEXT = Html.querySelector('#memExpJumpNEXT');
 Emulator.Emulator _emu;
 
 /*
@@ -129,12 +141,27 @@ Emulator.Emulator _emu;
 void init(Emulator.Emulator emu) {
   Ft.log('mem_explorer.dart', 'init');
   _emu = emu;
-  _data.toString(); /* Tips to instanciate _cells */
+  _data.toString();
+
+  /* Browser side */
+  _memAddrInput.onChange.forEach(_onMemAddrUpdate);
+  _JumpPREV.onClick.forEach(
+    (_) { _sendMemoryAddr(_data._currentAddress - 0x100); });
+  _JumpNEXT.onClick.forEach(
+    (_) { _sendMemoryAddr(_data._currentAddress + 0x100); });
+  _JumpBGDATA0.onClick.forEach((_) { _sendMemoryAddr(0x8000); });
+  _JumpBGDATA1.onClick.forEach((_) { _sendMemoryAddr(0x8800); });
+  _JumpBGMAP0.onClick.forEach((_) { _sendMemoryAddr(0x9800); });
+  _JumpGBMAP1.onClick.forEach((_) { _sendMemoryAddr(0x9C00); });
+  _JumpOAM.onClick.forEach((_) { _sendMemoryAddr(0xFE00); });
+
+  /* Emulator Side */
+  _emu.listener('MemInfo').forEach(_onMemInfo);
+
+  /* init memory cells */
   _onMemInfo({
       'addr' : 0x0000,
       'data' : new List<int>(MEMORY_CELLS_COUNT)
   });
-  _emu.listener('MemInfo').forEach(_onMemInfo);
-  _memAddrInput.onChange.forEach(_onMemAddrUpdate);
   return ;
 }

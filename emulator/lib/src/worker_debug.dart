@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 12:28:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 17:28:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,7 +28,7 @@ abstract class Debug implements Worker.AWorker {
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
 
-  static const int _debuggerMemoryLen = 144; // <- bad, should be initialised by dom
+  static const int _debuggerMemoryLen = 256; // <- bad, should be initialised by dom
   static const int _debuggerInstFlowLen = 7; // <- bad, should be initialised by dom
   int _debuggerMemoryAddr = 0;
 
