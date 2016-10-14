@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 11:40:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 11:30:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,10 +16,8 @@
 
 export 'package:emulator/src/worker.dart'
   show DebuggerExternalMode
-  , GameBoyExternalMode
   , PauseExternalMode
-  , AutoBreakExternalMode
-  , EmulatorEvent;
+  , AutoBreakExternalMode;
 export 'package:emulator/src/hardware/cpu_registers.dart'
   show Reg16
   , Reg8
@@ -35,7 +33,5 @@ export 'package:emulator/src/mixins/joypad.dart'
   show JoypadKey ;
 
 enum DebuggerModeRequest {
-  Toggle,
-  Disable,
-  Enable
+  Toggle, Disable, Enable
 }

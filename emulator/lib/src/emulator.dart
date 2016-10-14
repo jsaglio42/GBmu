@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 11:01:38 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 11:31:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,6 +19,7 @@ import 'package:ft/wired_isolate.dart' as Wiso;
 import 'package:emulator/src/worker.dart' as Worker;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
 import "package:emulator/src/mixins/instructions.dart" as Instructions;
+import 'package:emulator/variants.dart' as V;
 
 /*
  * ************************************************************************** **
@@ -36,7 +37,6 @@ final _mainReceivers = <String, Type>{
   'MemRegInfo' : Uint8List,
   'ClockInfo' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
-  'EmulationStatus' : GameBoyExternalMode,
   'EmulationPause' : int,
   'EmulationResume' : int,
   'DebStatusUpdate' : bool,
@@ -51,6 +51,7 @@ final _workerReceivers = <String, Type>{
   'KeyUpEvent' : JoypadKey,
   'DebStatusRequest' : DebuggerModeRequest,
   'EmulationStart' : RequestEmuStart,
+  'EmulationEject' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
   'EmulationAutoBreak' : AutoBreakExternalMode,
   'EmulationPause' : int,
@@ -69,14 +70,12 @@ class RequestEmuStart {
   final String idb;
   final String romStore;
   final String ramStore;
-  final String ssStore;
 
   final int romKey;
   final int ramKeyOpt;
-  final int ssKeyOpt;
 
-  RequestEmuStart({this.idb, this.romStore, this.ramStore, this.ssStore,
-    this.romKey, this.ramKeyOpt, this.ssKeyOpt});
+  RequestEmuStart({
+    this.idb, this.romStore, this.ramStore, this.romKey, this.ramKeyOpt});
 
 }
 
@@ -101,7 +100,7 @@ class Emulator {
     _wiso.isoErrors
     .forEach((e) {
           _eventsBroadcast.add(<String, dynamic>{
-            'type': EmulatorEvent.EmulatorCrash,
+            'type': V.EmulatorCrash.v,
             'msg': e,
           });
         });

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:08:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 12:48:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:58:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -128,7 +128,7 @@ class PlatformLocalStorage {
     final LsEvent lse = new LsEvent(
         ev.key, oldValue: ev.oldValue, newValue: ev.newValue);
 
-    Ft.log('PlatformLS','_onEvent', [ev]);
+    // Ft.log('PlatformLS','_onEvent', [ev]);
     if (ev.key == null || (ev.oldValue == null && ev.newValue == null)) {
       Ft.logerr('PlatformLS', '_onEvent#unsound-parameters');
       return ;

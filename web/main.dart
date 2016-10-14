@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:17:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:55:54 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,44 +36,11 @@ run() async
 {
   Ft.log('main.dart', 'run');
 
-  // final Html.FileUploadInputElement inBut = Html.querySelector('#inBut');
-  // assert(inBut != null, "no inbut");
-
-  // final reader = new Html.FileReader();
-  // Uint8List lst;
-
-  // inBut.onChange.forEach((_){
-        // reader.readAsArrayBuffer(inBut.files[0]);
-      // });
-  // reader.onLoad.forEach((_){
-        // lst = reader.result;
-      // });
-
-
   var emuFut = Emulator.spawn()
   .catchError((e) => print('main:\tError while creating emulator:\n$e'));
 
   var emu = await emuFut;
   Ft.log('main.dart', 'run#emuCreated');
-
-  var tmp_pdcs;
-
-  Html.querySelector('#magbut')
-  .onClick.listen((_) {
-        Ft.log('main.dart', 'magbut#onClick');
-
-
-        if (tmp_pdcs.gbCart.isSome) {
-          emu.send('EmulationStart',
-              new Emulator.RequestEmuStart(
-                  idb:'GBmu_db',
-                  romStore: V.Rom.v.toString(),
-                  ramStore: V.Ram.v.toString(),
-                  ssStore: V.Ss.v.toString(),
-                  romKey: tmp_pdcs.gbCart.v.data.idbid
-                                           ));
-        }
-      });
 
   // Html.querySelector('#ejectbut')
   // .onClick.listen((_) {
@@ -83,87 +50,18 @@ run() async
   //       });
   //     });
 
-  // Html.querySelector('#crashbut')
-  // .onClick.listen((_) {
-  //       Ft.log('main.dart', 'crashbut#onClick');
-  //       emu.send('Debug', <String, dynamic>{
-  //         'action': 'crash',
-  //       });
-  //     });
-
-
-  // debButtonToggle.onClick.listen((_){
-  //       Ft.log('main.dart', 'debToggle#onClick');
-  //       emu.send('DebStatusRequest', DebuggerModeRequest.Toggle);
-  //     });
-
-  // emu.listener('DebStatusUpdate').forEach((bool enabled) {
-  //   Ft.log('main.dart', 'debStatus#onEvent', [enabled]);
-  //   if (enabled) {
-  //     debStatusOn.style.display = '';
-  //     debStatusOff.style.display = 'none';
-  //     debBody.callMethod('slideDown', ['slow']);
-  //   }
-  //   else {
-  //     debStatusOn.style.display = 'none';
-  //     debStatusOff.style.display = '';
-  //     debBody.callMethod('slideUp', ['fast']);
-  //   }
-  // });
-
-
   Debregisters.init(emu);
   Debmregisters.init(emu);
   Debmexplorer.init(emu);
   Debinstflow.init(emu);
   Debclocks.init(emu);
   Debbuttons.init(emu);
-  // Mainbottompanel.init(emu);
   Mainalerts.init(emu);
 
   Keyboard.init(emu);
   Canvas.init(emu);
 
-  // Mainalerts.init(emu);
-  tmp_pdcs = await Nav.init(emu);
-
-  print(tmp_pdcs);
-
-  var mainGameBoyState = Html.querySelector('#mainGameBoyState');
-
-  var mainRomName = Html.querySelector('#mainRomName');
-  emu.listener('EmulationStatus').forEach((modeRaw){
-        final mode = GameBoyExternalMode.values[modeRaw.index];
-        final name = 'Plokemon Violet super cool version 5.55';
-
-        try {
-          if (mode == GameBoyExternalMode.Absent)
-            mainRomName.text = '';
-          else if (name.length > 20)
-            mainRomName.text = name.substring(0, 20) + '...';
-          else
-            mainRomName.text = name;
-          mainGameBoyState.text = '(' + mode.toString().substring(20) + ')';
-        } catch (e) {
-          print(e);
-        }
-      });
-
-
-
-  // final Html.ElementList<Html.AnchorElement> panelAnchors = Html.querySelectorAll('.navbar .nav > li > a');
-
-  // panelAnchors.onClick.forEach((Html.MouseEvent ev) {
-  //   Ft.log('main.dart', 'panelAnchors#onClick');
-
-  //   final Html.AnchorElement tar = ev.target;
-  //   tar.parent.classes.add('active');
-  //   print(tar.parent.runtimeType);
-  //   panelAnchors.where((Html.AnchorElement a) => a != tar).forEach((Html.AnchorElement a) {
-  //     a.parent.classes.remove('active');
-  //   });
-  // });
-
+  await Nav.init(emu);
 
   Ft.log('main.dart', 'run#initJqTooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 18:25:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 14:53:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 16:06:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,6 +21,8 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:ft/ft.dart' as Ft;
+import 'package:emulator/enums.dart';
+import 'package:emulator/emulator.dart' as Emulator;
 
 import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_ccs.dart';
@@ -29,6 +31,18 @@ import 'package:component_system/src/include_cdc.dart';
 
 part 'platform_cart_parts.dart';
 
+/* External events involving both emulator and cart system:
+ *  Event        Emu req  Emu event             Action
+ * *********************************************************************** *
+ *  GBSocketDrop EmuStart Start                 _actionLoad
+ *  ClickRestart EmuStart CrashedRestartError   _actionUnload(Opened|Closed)
+ *  ClickRestart EmuStart EmulatingRestartError _actionUnload(Opened|Closed)
+ *  DCBankDrop   EmuEject EmulatingEject        _actionUnload(Opened|Closed)
+ *  DCBankDrop   EmuEject CrashedEject          _actionUnload(Opened|Closed)
+ *  LSDelete     EmuEject EmulatingEject        _actionDeleteGameBoy
+ *  LSDelete     EmuEject CrashedEject          _actionDeleteGameBoy
+ */
+
 class PlatformCart extends Object with _Actions implements _Super {
 
   // ATTRIBUTES ************************************************************* **
@@ -36,11 +50,12 @@ class PlatformCart extends Object with _Actions implements _Super {
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
   final PlatformDomComponentStorage _pdcs;
+  final Emulator.Emulator _emu;
 
   HtmlCartClosable _openingOpt;
 
   // CONSTRUCTION *********************************************************** **
-  PlatformCart(this._pcs, this._pde, this._pce, this._pdcs) {
+  PlatformCart(this._pcs, this._pde, this._pce, this._pdcs, this._emu) {
     Ft.log('PlatformCart', 'contructor');
 
     _pde.onCartButtonClicked.forEach(_onCartButtonClicked);
@@ -49,6 +64,16 @@ class PlatformCart extends Object with _Actions implements _Super {
       .where((v) => v is CartBank)
       .map((v) => v as CartBank)
       .forEach(_onDropReceived);
+
+    _emu.listener('Events')
+      .where((map) => map['type'] is GameBoyEvent)
+      .map((map) => map['type'] as GameBoyEvent)
+      .forEach(_onGameBoyEvent);
+
+    _pdcs.btnEject.onClick
+      .forEach(_onEjectClick);
+    _pdcs.btnRestart.onClick
+      .forEach(_onRestartClick);
   }
 
   // PUBLIC ***************************************************************** **
@@ -66,7 +91,7 @@ class PlatformCart extends Object with _Actions implements _Super {
 
   void deleteCart(DomCart that) {
     if (that == _pdcs.gbCart.v)
-      _actionDeleteGameBoy();
+      _emulatorEject();
     else if (that == _pdcs.openedCart.v)
       _actionDeleteOpened();
     else {
@@ -105,21 +130,57 @@ class PlatformCart extends Object with _Actions implements _Super {
 
   void _onDropReceived(CartBank that) {
     assert(_pdcs.dragged.isSome, '_onDropReceived() with none dragged');
-    if (that is DomGameBoySocket) {
+    if (that is DomGameBoySocket)
+      _emulatorRun(_pdcs.dragged.v as DomCart);
+    else /* if (that is DomDetachedCartBank) */
+      _emulatorEject();
+  }
+
+  void _onGameBoyEvent(GameBoyEvent ev) {
+    if (ev.src is Absent && ev.dst is! Absent) {
       _pdcs.openedCart.v.hcc_hideButton();
       _actionLoad();
     }
-    else {
-      _pdcs.gbCart.v.hcc_showButton();
-      if (_pdcs.openedCart.isSome || _openingOpt != null) {
-        _pdcs.gbCart.v.hcc_startClose();
-        _actionUnloadClosed();
+    else if (ev.dst is Absent && ev.src is! Absent) {
+      if (_pdcs.gbCart.v.data.life is Alive) {
+        _pdcs.gbCart.v.hcc_showButton();
+        if (_pdcs.openedCart.isSome || _openingOpt != null) {
+          _pdcs.gbCart.v.hcc_startClose();
+          _actionUnloadClosed();
+        }
+        else
+          _actionUnloadOpened();
       }
-      else
-        _actionUnloadOpened();
+      else /* if (_pdcs.gbCart.v.data.life is Dead) */
+        _actionDeleteGameBoy();
+
     }
   }
 
+  void _onEjectClick(_) {
+    _emulatorEject();
+  }
+
+  void _onRestartClick(_) {
+    _emulatorRun(_pdcs.gbCart.v);
+  }
+
   // PRIVATE **************************************************************** **
+  void _emulatorEject() {
+    _emu.send('EmulationEject', 42);
+  }
+
+  void _emulatorRun(DomCart cart) {
+    final LsRom dataRom = cart.data;
+    LsRam dataRamOpt;
+
+    dataRamOpt = _pdcs.chipOfCartOpt(cart, Ram.v)?.data;
+    _emu.send('EmulationStart', new Emulator.RequestEmuStart(
+            idb:'GBmu_db',
+            romStore: Rom.v.toString(),
+            ramStore: Ram.v.toString(),
+            romKey: dataRom.idbid,
+            ramKeyOpt: dataRamOpt?.idbid));
+  }
 
 }

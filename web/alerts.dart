@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/30 08:43:27 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 17:38:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/13 18:59:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,9 +14,12 @@ import 'dart:js' as Js;
 import 'dart:math' as Math;
 import 'dart:async' as Async;
 import 'dart:html' as Html;
+import "dart:core" hide Error;
+
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/constants.dart';
 import 'package:emulator/enums.dart';
+import 'package:emulator/variants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
 /*
@@ -36,28 +39,27 @@ class _Message {
   final String msg;
   final int id;
   final static _mapping = <EmulatorEvent, Map>{
-    EmulatorEvent.EmulatorCrash: {
-      'class': 'danger', 'timeout': false, 'name': 'EmuCrash'},
-    EmulatorEvent.InitError: {
-      'class': 'error', 'timeout': false, 'name': 'Error'},
-    EmulatorEvent.GameBoyStart: {
-      'class': 'success', 'timeout': true, 'name': 'Start'},
-    EmulatorEvent.GameBoyEject: {
-      'class': 'info', 'timeout': true, 'name': 'Eject'},
-    EmulatorEvent.GameBoyCrash: {
-      'class': 'danger', 'timeout': false, 'name': 'Crash'},
+    Start.v: {'class': 'success', 'timeout': true},
+    CrashedRestart.v: {'class': 'success', 'timeout': true},
+    EmulatingRestart.v: {'class': 'success', 'timeout': true},
+
+    StartError.v: {'class': 'warning', 'timeout': false},
+    CrashedRestartError.v: {'class': 'warning', 'timeout': false},
+    EmulatingRestartError.v: {'class': 'warning', 'timeout': false},
+
+    EmulatingEject.v: {'class': 'info', 'timeout': true},
+    CrashedEject.v: {'class': 'info', 'timeout': true},
+
+    Crash.v: {'class': 'danger', 'timeout': false},
+    EmulatorCrash.v: {'class': 'danger', 'timeout': false},
   };
 
   _Message(this.type, this.msg, this.id);
 
-  String get alertClass =>
-    'alert-' + _mapping[this.type]['class'];
-
-  String get readableType =>
-    _mapping[this.type]['name'][0].toUpperCase() +
-    _mapping[this.type]['name'].substring(1) + ':';
-
+  String get alertClass => 'alert-' + _mapping[this.type]['class'];
+  String get readableType => type.toString() + ':';
   bool get timeout => _mapping[this.type]['timeout'];
+
 }
 
 class _Frame {
@@ -112,7 +114,7 @@ class _Frame {
   void render(_Message msg)
   {
     if (_msgOrNull != null)
-      this.block.classes.remove(msg.alertClass);
+      this.block.classes.remove(_msgOrNull.alertClass);
     this.block.classes.add(msg.alertClass);
     _headerDiv.text = msg.readableType;
     _messageDiv.text = msg.msg;
@@ -129,12 +131,8 @@ class _Data {
   final List<_Frame> _frames = new List<_Frame>();
   int _ids = 0;
 
-  _Data(Emulator.Emulator emu)
-  {
+  _Data(Emulator.Emulator emu) {
     emu.listener('Events').forEach(_onEmulatorEvent);
-
-    _addMessage(new _Message(
-            EmulatorEvent.GameBoyCrash, 'Salut', _ids++)); //debug
   }
 
   void refresh()
@@ -163,18 +161,32 @@ class _Data {
     this.refresh();
   }
 
-  void _onEmulatorEvent(Map map)
-  {
-    final EmulatorEvent ev = EmulatorEvent.values[map['type'].index];
-    final _Message msg = new _Message(ev, map['msg'].toString(), _ids++);
+  void _onEmulatorEvent(Map<String, dynamic> map) {
+    final EmulatorEvent ev = map['type'].reinstanciate;
 
-    if (ev == EmulatorEvent.EmulatorCrash)
+    Ft.log('nav', '_onEmulatorEvent', [map]);
+
+    if (ev is GameBoyEvent)
+      _onGameBoyEvent(ev as GameBoyEvent, map);
+    else {
+      _addMessage(new _Message(ev, map['msg'].toString(), _ids++));
       Ft.logerr('alerts.dart', 'event', [map]);
-    else if (ev == EmulatorEvent.GameBoyCrash)
-      Ft.logwarn('alerts.dart', 'event', [map]);
-    else
+    }
+  }
+
+  void _onGameBoyEvent(GameBoyEvent ev, Map<String, dynamic> map) {
+    if (ev is EmulationBegin) {
+      _addMessage(new _Message(ev, map['name'], _ids++));
       Ft.log('alerts.dart', 'event', [map]);
-    _addMessage(msg);
+    }
+    else if (ev is Eject) {
+      _addMessage(new _Message(ev, map['name'], _ids++));
+      Ft.log('alerts.dart', 'event', [map]);
+    }
+    else if (ev is Error && ev.dst is Absent) {
+      _addMessage(new _Message(ev, map['msg'], _ids++));
+      Ft.logwarn('alerts.dart', 'event', [map]);
+    }
   }
 
 }

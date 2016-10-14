@@ -288,20 +288,26 @@ body {
 }
 
 .gameboy-cartridge .bg-head-btn {
-
     height: 71px;
     background: url(images/sprites.png) 0 0;
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
     border-radius: 0px;
+    padding-top: 24px;
 }
 
 .gameboy-cartridge .bg-head-btn.collapsed {
     height: 53px;
     background: url(images/sprites.png) 0 -18px;
-    background-color: rgba(0, 0, 0, 0.0);
-    border-width: 0px;
-    border-radius: 0px;
+    padding-top: 6px;
+}
+
+.gameboy-cartridge .bg-head-btn .text {
+    color: black;
+    overflow: hidden;
+    font-size: 14px;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: bold;
 }
 
 .gameboy-cartridge .panel-collapse {
@@ -331,17 +337,12 @@ body {
 }
 
 /* CHIP SOCKET ************************************************************** */
+/* RAM **************************************** */
 .cart-ram-socket {
     border: 0px;
     width: 182px;
     height: 49px;
     background-color: rgba(0, 255, 0, 0.0);
-}
-
-.cart-ss-socket {
-    border: 0px;
-    width: 86px;
-    height: 49px;
 }
 
 .cart-ram-socket-active {
@@ -350,18 +351,33 @@ body {
     background:url(images/sprites.png) -282px -92px;
 }
 
+.cart-ram-socket-hover {
+    background:url(images/sprites.png) -533px -92px;
+}
+
+.cart-ram-socket-invalid {
+    background:url(images/sprites.png) -784px -92px;
+}
+
+/* SS ***************************************** */
+.cart-ss-socket {
+    border: 0px;
+    width: 86px;
+    height: 49px;
+}
+
 .cart-ss-socket-active {
     /* height: 71 + 21 + 52  */
     /* witdth: 251 + 31 + 3 */
     background:url(images/sprites.png) -285px -144px;
 }
 
-.cart-ram-socket-hover {
-    background:url(images/sprites.png) -533px -92px;
-}
-
 .cart-ss-socket-hover {
     background:url(images/sprites.png) -536px -144px;
+}
+
+.cart-ss-socket-invalid {
+    background:url(images/sprites.png) -787px -144px;
 }
 
 /* ************************************************************************** */

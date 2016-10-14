@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:01:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 19:01:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:58:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -61,7 +61,7 @@ class TransformerLseDataCheck {
   bool _handleDelete(LsEntry e) {
     final LsEntry current = _pcs.entryOptOfUid(e.uid);
 
-    Ft.log('TLSEDataCheck','_handleDelete', [e]);
+    // Ft.log('TLSEDataCheck','_handleDelete', [e]);
     if (current == null) {
       Ft.logerr('TLSEDataCheck', '_handleDelete#data-race-missing-entry');
       return false;
@@ -83,7 +83,7 @@ class TransformerLseDataCheck {
   bool _handleNew(LsEntry e) {
     final LsEntry current = _pcs.entryOptOfUid(e.uid);
 
-    Ft.log('TLSEDataCheck','_handleNew', [e]);
+    // Ft.log('TLSEDataCheck','_handleNew', [e]);
     if (current != null) {
       Ft.logerr('TLSEDataCheck', '_handleNew#data-race-duplicate-entry');
       return false;
@@ -103,7 +103,7 @@ class TransformerLseDataCheck {
     final LsEntry current = _pcs.entryOptOfUid(e.newValue.uid);
     LsChip cold, cnew;
 
-    Ft.log('TLSEDataCheck','_handleUpdate', [e.newValue]);
+    // Ft.log('TLSEDataCheck','_handleUpdate', [e.newValue]);
     if (current == null) {
       Ft.logerr('TLSEDataCheck', '_handleUpdate#data-race-missing-entry');
       return false;

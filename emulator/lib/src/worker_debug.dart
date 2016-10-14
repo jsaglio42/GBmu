@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 09:37:41 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/13 12:28:12 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,11 +18,10 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 import 'package:emulator/src/globals.dart';
-
 import 'package:emulator/src/worker.dart' as Worker;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
-
 import 'package:emulator/src/mixins/instructions.dart' as Instructions;
+import 'package:emulator/variants.dart' as V;
 
 abstract class Debug implements Worker.AWorker {
 
@@ -34,7 +33,6 @@ abstract class Debug implements Worker.AWorker {
   int _debuggerMemoryAddr = 0;
 
   // EXTERNAL INTERFACE ***************************************************** **
-
   void _onMemoryAddrChangeReq(int addr)
   {
     Ft.log("WorkerDeb", '_onMemoryAddrChangeReq', [addr]);
@@ -42,7 +40,7 @@ abstract class Debug implements Worker.AWorker {
         , '_onMemoryAddrChangeReq: addr not valid');
     _debuggerMemoryAddr = addr;
 
-    if (this.gbMode == GameBoyExternalMode.Emulating
+    if (this.gbMode is V.Emulating
         && this.pauseMode == PauseExternalMode.Effective) {
       this.ports.send('MemInfo',  <String, dynamic> {
         'addr' : _debuggerMemoryAddr,
@@ -73,7 +71,6 @@ abstract class Debug implements Worker.AWorker {
   }
 
   // SECONDARY ROUTINES ***************************************************** **
-
   void _enable()
   {
     assert(this.debMode == DebuggerExternalMode.Dismissed,
@@ -105,10 +102,9 @@ abstract class Debug implements Worker.AWorker {
   }
 
   // LOOPING ROUTINE ******************************************************** **
-
   void _onDebug([_])
   {
-    assert(this.gbMode != GameBoyExternalMode.Absent,
+    assert(this.gbMode is! V.Absent,
         "_onDebug with no gameboy");
 
     final l = new Uint8List(MemReg.values.length);
@@ -129,7 +125,6 @@ abstract class Debug implements Worker.AWorker {
   }
 
   // SIDE EFFECTS CONTROLS ************************************************** **
-
   void _makeLooping()
   {
     Ft.log("WorkerDeb", '_makeLooping');
@@ -142,28 +137,28 @@ abstract class Debug implements Worker.AWorker {
     Ft.log("WorkerDeb", '_makeDormant');
     assert(!_sub.isPaused, "worker_deb: _makeDormant while paused");
     _sub.pause();
-    if (this.gbMode != GameBoyExternalMode.Absent)
+    if (this.gbMode is! V.Absent)
       _onDebug();
   }
 
   void _singleRefresh()
   {
     Ft.log("WorkerDeb", '_singleRefresh');
-    if (this.gbMode != GameBoyExternalMode.Absent)
+    if (this.gbMode is! V.Absent)
       _onDebug();
   }
 
   // CONSTRUCTION *********************************************************** **
-
   void init_debug([_])
   {
     Ft.log("WorkerDeb", 'init_debug');
     _periodic = new Async.Stream.periodic(DEBUG_PERIOD_DURATION);
     _sub = _periodic.listen(_onDebug);
     _sub.pause();
-    this.sc.setState(DebuggerExternalMode.Operating);
+    this.sc.declareType(DebuggerExternalMode, DebuggerExternalMode.values,
+        DebuggerExternalMode.Operating);
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+      [V.Emulating.v, DebuggerExternalMode.Operating,
         PauseExternalMode.Ineffective],
     ]);
     this.sc.addSideEffect(_singleRefresh, (){}, [

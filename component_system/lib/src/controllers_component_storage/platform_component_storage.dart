@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:20:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:58:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -218,14 +218,14 @@ class PlatformComponentStorage {
   LsEntry _handleDelete(LsEntry e) {
     LsEntry old;
 
-    Ft.log('PlatformCS', '_handleDelete', [e]);
+    // Ft.log('PlatformCS', '_handleDelete', [e]);
     old = _entries[e.uid];
     old.kill();
     return old;
   }
 
   LsEntry _handleNew(LsEntry e) {
-    Ft.log('PlatformCS', '_handleNew', [e]);
+    // Ft.log('PlatformCS', '_handleNew', [e]);
     _entries[e.uid] = e;
     return e;
   }
@@ -233,7 +233,7 @@ class PlatformComponentStorage {
   Update<LsEntry> _handleUpdate(Update<LsEntry> u) {
     LsEntry old;
 
-    Ft.log('PlatformCS', '_handleUpdate', [u]);
+    // Ft.log('PlatformCS', '_handleUpdate', [u]);
     old = _entries[u.newValue.uid];
     _entries[u.newValue.uid] = u.newValue;
     return new Update<LsEntry>(oldValue: old, newValue: u.newValue);

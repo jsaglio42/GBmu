@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:09:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 14:36:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -60,6 +60,7 @@ abstract class LsEntry {
   String get valueJson => JSON.encode(_data);
   Life get life => _life;
   int get idbid => _data['idbid'];
+  String get fileName => _data['fileName'];
 
   void kill() {
     assert(_life is Alive, "$runtimeType.kill()");

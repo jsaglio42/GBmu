@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 17:33:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 17:11:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 15:28:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,88 +21,59 @@ import 'dart:convert';
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
+import 'package:emulator/constants.dart';
 
 // import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
-import 'package:emulator/constants.dart';
-// import 'package:component_system/src/include_cdc.dart';
-
-// http://stackoverflow.com/questions/3144881/how-do-i-detect-a-html5-drag-event-entering-and-leaving-the-window-like-gmail-d
+import 'package:component_system/src/include_cdc.dart';
 
 class HandlerFileAdmission {
 
   // ATTRIBUTES ************************************************************* **
+  final PlatformDomEvents _pde;
   final PlatformComponentStorage _pcs;
+  final PlatformDomComponentStorage _pdcs;
 
   final Html.Element _target = Html.querySelector('#cartsBody');
   int _docCount = 0;
   int _targetCount = 0;
 
   // CONTRUCTION ************************************************************ **
-  HandlerFileAdmission(this._pcs) {
+  HandlerFileAdmission(this._pde, this._pcs, this._pdcs) {
     Ft.log('HandlerFA', 'contructor');
 
-    Html.document.onDragEnter.forEach(_handleDocEnter);
-    Html.document.onDragLeave.forEach(_handleDocLeave);
-    Html.document.onDragOver.forEach(_handleDocOver);
-    Html.document.onDrop.forEach(_handleDocDrop);
-
-    _target.onDragEnter.forEach(_handleTargetEnter);
-    _target.onDragLeave.forEach(_handleTargetLeave);
+    _pde.onFileDrag.forEach(_onFileDrag);
+    _pde.onCartSystemHover.forEach(_onCartSystemHover);
+    _pde.onCartSystemFilesDrop.forEach(_onCartSystemFilesDrop);
   }
 
   // CALLBACKS ************************************************************** **
-  void _handleDocEnter(Html.MouseEvent ev) {
-    if (_docCount == 0)
+  void _onFileDrag(bool b) {
+    if (b)
       _target.classes.add('active');
-    _docCount++;
-  }
-
-  void _handleDocLeave(Html.MouseEvent ev) {
-    _docCount--;
-    if (_docCount == 0)
+    else
       _target.classes.remove('active');
   }
 
-  void _handleDocOver(Html.MouseEvent ev) {
-    ev.stopPropagation();
-    ev.preventDefault();
-  }
-
-  void _handleDocDrop(Html.MouseEvent ev) {
-    ev.stopPropagation();
-    ev.preventDefault();
-    _target.classes.remove('active');
-    _target.classes.remove('hover');
-    if (_targetCount > 0) {
-      if (ev.dataTransfer.types.contains('Files')) {
-        ev.dataTransfer.files.forEach((Html.File f) {
-          _processFile(f)
-            .catchError((e, st){
-              print(st);
-              // TODO: show error in alerts
-            });
-        });
-      }
-      else {
-        // TODO: show error in alerts
-      }
+  void _onCartSystemHover(bool b) {
+    if (_pdcs.fileDragged) {
+      if (b)
+        _target.classes.add('hover');
+      else
+        _target.classes.remove('hover');
     }
-    _targetCount = 0;
-    _docCount = 0;
   }
 
-  void _handleTargetEnter(Html.MouseEvent ev) {
-    if (_targetCount == 0)
-      _target.classes.add('hover');
-    _targetCount++;
-  }
-
-  void _handleTargetLeave(Html.MouseEvent ev) {
-    _targetCount--;
-    if (_targetCount == 0)
-      _target.classes.remove('hover');
+  void _onCartSystemFilesDrop(List<Html.File> files) {
+    _target.classes.remove('hover');
+    files.forEach((Html.File f) {
+      _processFile(f)
+        .catchError((e, st){
+          print(st);
+          // TODO: show error in alerts
+        });
+    });
   }
 
   // PRIVATE **************************************************************** **
@@ -127,6 +98,5 @@ class HandlerFileAdmission {
     await reader.onLoad.first;
     return reader.result;
   }
-
 
 }

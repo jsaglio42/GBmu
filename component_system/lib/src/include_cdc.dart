@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 10:56:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 17:42:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 14:20:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,3 +24,5 @@ export './controllers_dom_components/platform_chip.dart';
 export './controllers_dom_components/platform_dom.dart';
 
 export './handler_file_admission.dart';
+export './handler_global_styles.dart';
+export './handler_emulator_communication.dart';

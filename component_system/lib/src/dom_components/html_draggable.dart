@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:21:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 15:08:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:56:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,7 @@ abstract class HtmlDraggable implements DomElement {
 
   // CONSTRUCTION *********************************************************** **
   void hdr_init(int left, int top, int distance, int zIndex) {
-    Ft.log('HtmlDraggable', 'hdr_init');
+    // Ft.log('HtmlDraggable', 'hdr_init');
 
     this.jqElt.callMethod('draggable', [new Js.JsObject.jsify({
       'helper': "original",

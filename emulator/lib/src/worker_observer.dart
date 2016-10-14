@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 09:23:03 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/13 12:28:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,10 +18,10 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 import 'package:emulator/src/worker.dart' as Worker;
+import 'package:emulator/variants.dart' as V;
 
 abstract class Observer implements Worker.AWorker {
 
-  // Ft.Routine<ObserverExternalMode> _rout;
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
 
@@ -29,15 +29,10 @@ abstract class Observer implements Worker.AWorker {
   DateTime _pollTime;
 
   // EXTERNAL INTERFACE ***************************************************** **
-  // none
-
   // SECONDARY ROUTINES ***************************************************** **
-  // none
-
   // LOOPING ROUTINE ******************************************************** **
-
   void _onSpeedPoll([_]){
-    assert(this.gbMode == GameBoyExternalMode.Emulating,
+    assert(this.gbMode is V.Emulating,
         "_onSpeedPoll with no gameboy");
 
     final now = Ft.now();
@@ -58,7 +53,6 @@ abstract class Observer implements Worker.AWorker {
   }
 
   // SIDE EFFECTS CONTROLS ************************************************** **
-
   void _makeLooping()
   {
     Ft.log("WorkerObs", '_makeLooping');
@@ -79,7 +73,6 @@ abstract class Observer implements Worker.AWorker {
   }
 
   // CONSTRUCTION *********************************************************** **
-
   void init_observer()
   {
     Ft.log("WorkerObs", 'init_observer');
@@ -87,8 +80,8 @@ abstract class Observer implements Worker.AWorker {
     _sub = _periodic.listen(_onSpeedPoll);
     _sub.pause();
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Dismissed],
-      [GameBoyExternalMode.Emulating, DebuggerExternalMode.Operating,
+      [V.Emulating.v, DebuggerExternalMode.Dismissed],
+      [V.Emulating.v, DebuggerExternalMode.Operating,
         PauseExternalMode.Ineffective],
     ]);
     return ;

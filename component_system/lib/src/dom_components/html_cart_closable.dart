@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:16:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/04 18:33:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:56:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,7 +32,7 @@ abstract class HtmlCartClosable implements HtmlElementCart, DomElement {
 
   // CONSTRUCTION *********************************************************** **
   void hcc_init() {
-    Ft.log('HtmlCartClosable', 'hcc_init');
+    // Ft.log('HtmlCartClosable', 'hcc_init');
     this.btn.onClick.forEach(_onClick);
     this.jqBody.callMethod('on', ['shown.bs.collapse', _onShown]);
   }

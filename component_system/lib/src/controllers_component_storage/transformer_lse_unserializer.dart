@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:10:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/29 11:11:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:59:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,7 +63,7 @@ class TransformerLseUnserializer {
   void _handleDelete(LsEvent ev, Async.EventSink<LsEntry> sink) {
     LsEntry oldEntry;
 
-    Ft.log('TLSEUnserializer', '_handleDelete', [ev.key]);
+    // Ft.log('TLSEUnserializer', '_handleDelete', [ev.key]);
     try {
       oldEntry = new LsEntry.json_exn(ev.key, ev.oldValue);
     }
@@ -77,7 +77,7 @@ class TransformerLseUnserializer {
   void _handleNew(LsEvent ev, Async.EventSink<LsEntry> sink) {
     LsEntry newEntry;
 
-    Ft.log('TLSEUnserializer','_handleNew', [ev.key]);
+    // Ft.log('TLSEUnserializer','_handleNew', [ev.key]);
     try {
       newEntry = new LsEntry.json_exn(ev.key, ev.newValue);
     }
@@ -91,7 +91,7 @@ class TransformerLseUnserializer {
   void _handleUpdate(LsEvent ev, Async.EventSink<Update<LsEntry>> sink) {
     LsEntry newEntry, oldEntry;
 
-    Ft.log('TLSEUnserializer','_handleNew', [ev.key, ev.newValue]);
+    // Ft.log('TLSEUnserializer','_handleNew', [ev.key, ev.newValue]);
     try {
       newEntry = new LsEntry.json_exn(ev.key, ev.newValue);
       oldEntry = new LsEntry.json_exn(ev.key, ev.oldValue);

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/08 13:50:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 13:50:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 16:04:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,6 +25,9 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
+// http://stackoverflow.com/questions/3144881/how-do-i-detect-a-html5-drag-event-entering-and-leaving-the-window-like-gmail-d
+
+
 class HandlerDomDragged {
 
   // ATTRIBUTES ************************************************************* **
@@ -32,8 +35,15 @@ class HandlerDomDragged {
   final PlatformComponentEvents _pce;
   final PlatformDomComponentStorage _pdcs;
 
+  int _docCount = 0;
+  int _cartSystemCount = 0;
+  int _cartSystemDragCount = 0;
+  bool _persistHover = false;
+
   // CONSTRUCTION *********************************************************** **
   HandlerDomDragged(this._pde, this._pce, this._pdcs) {
+    final Html.Element cartSystem = Html.querySelector('#cartsBody');
+
     Ft.log('HandlerDomDragged', 'contructor');
 
     _pde.onDragStart.forEach(_onDragStart);
@@ -44,6 +54,16 @@ class HandlerDomDragged {
     _pce.onChipEvent
       .where((ev) => ev.chip == _pdcs.dragged.v)
       .forEach(_handleDraggedChipEvent);
+
+    Html.document.onDragEnter.forEach(_handleDocEnter);
+    Html.document.onDragLeave.forEach(_handleDocLeave);
+    Html.document.onDragOver.forEach(_handleDocOver);
+    Html.document.onDrop.forEach(_handleDocDrop);
+
+    cartSystem.onMouseOver.forEach(_handleCartSystemOver);
+    cartSystem.onMouseOut.forEach(_handleCartSystemOut);
+    cartSystem.onDragEnter.forEach(_handleCartSystemEnter);
+    cartSystem.onDragLeave.forEach(_handleCartSystemLeave);
   }
 
   // CALLBACKS ************************************************************** **
@@ -82,6 +102,72 @@ class HandlerDomDragged {
       _pce.draggedChange(new SlotEvent<DomComponent>.Dismissal(ev.chip));
       _pdcs.unsetDragged();
     }
+  }
+
+  // FILE HANDLING ********************************************************** **
+  void _handleDocEnter(Html.MouseEvent ev) {
+    if (_docCount == 0)
+      _actionFileDrag(true);
+    _docCount++;
+  }
+
+  void _handleDocLeave(Html.MouseEvent ev) {
+    _docCount--;
+    if (_docCount == 0)
+      _actionFileDrag(false);
+  }
+
+  void _handleDocOver(Html.MouseEvent ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+  }
+
+  void _handleCartSystemEnter(Html.MouseEvent ev) {
+    if (_cartSystemDragCount == 0)
+      _actionCartSystemHover(true);
+    _cartSystemDragCount++;
+  }
+
+  void _handleCartSystemLeave(Html.MouseEvent ev) {
+    _cartSystemDragCount--;
+    if (_cartSystemDragCount == 0)
+      _actionCartSystemHover(false);
+  }
+
+  void _handleDocDrop(Html.MouseEvent ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (_cartSystemDragCount > 0 && ev.dataTransfer.types.contains('Files'))
+      _pde.cartSystemFilesDrop(ev.dataTransfer.files);
+    _persistHover = true;
+    _actionFileDrag(false);
+    _cartSystemDragCount = 0;
+    _docCount = 0;
+  }
+
+  // CART SYSTEM ENTER/LEAVE ************************************************ **
+  void _handleCartSystemOver(Html.MouseEvent ev) {
+    if (_cartSystemCount == 0 && _persistHover == false)
+      _actionCartSystemHover(true);
+    _persistHover = false;
+    _cartSystemCount++;
+  }
+
+  void _handleCartSystemOut(Html.MouseEvent ev) {
+    _cartSystemCount--;
+    if (_cartSystemCount == 0)
+      _actionCartSystemHover(false);
+  }
+
+  // PRIVATE **************************************************************** **
+  void _actionCartSystemHover(bool b) {
+    _pdcs.cartSystemHovered = b;
+    _pde.cartSystemHover(b);
+  }
+
+  void _actionFileDrag(bool b) {
+    _pdcs.fileDragged = b;
+    _pde.fileDrag(b);
   }
 
 }

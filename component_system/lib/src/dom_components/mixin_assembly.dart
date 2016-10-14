@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 14:15:54 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 15:44:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,7 +33,7 @@ class DomCart extends DomComponent
   DomCart(
       PlatformDomEvents pde, LsRom data, String cartHtml, Html.NodeValidator v)
     : super(pde, data) {
-    Ft.log('DomCart', 'constructor', [pde, data, v]);
+    // Ft.log('DomCart', 'constructor', [pde, data, v]);
     this.hec_init(cartHtml, v);
     this.hcc_init();
     this.hdr_init(125, 143, 75, 99);
@@ -51,7 +51,7 @@ class DomChip extends DomComponent
     Html.ImageElement elt;
     int hCenter;
 
-    Ft.log('DomChip', 'constructor', [pde, data]);
+    // Ft.log('DomChip', 'constructor', [pde, data]);
     if (data.type is Ram) {
       hCenter = 92;
       elt = new Html.ImageElement()
@@ -77,15 +77,17 @@ class DomChipSocket extends DomElement
 
   DomChipSocket(PlatformDomEvents pde, Html.Element elt, Chip type)
     : super(pde) {
-    Ft.log('DomChipSocket', 'constructor');
+    // Ft.log('DomChipSocket', 'constructor');
 
     this.hes_init(elt);
     if (type is Ram)
       this.hdz_init(HtmlDropZone.makeClassesMap(
-              'cart-ram-socket-hover', null, 'cart-ram-socket-active', null));
+              'cart-ram-socket-hover', 'cart-ram-socket-invalid',
+              'cart-ram-socket-active', 'cart-ram-socket-invalid'));
     else
       this.hdz_init(HtmlDropZone.makeClassesMap(
-              'cart-ss-socket-hover', null, 'cart-ss-socket-active', null));
+              'cart-ss-socket-hover', 'cart-ss-socket-invalid',
+              'cart-ss-socket-active', 'cart-ss-socket-invalid'));
   }
 
 }
@@ -100,7 +102,7 @@ class DomGameBoySocket extends DomElement
 
   DomGameBoySocket(PlatformDomEvents pde)
     : super(pde) {
-    Ft.log('DomGameBoySocket', 'constructor', [pde]);
+    // Ft.log('DomGameBoySocket', 'constructor', [pde]);
     this.hes_init(Html.querySelector('#gb-slot'));
     this.hdz_init(HtmlDropZone.makeClassesMap(
             'gameboysocket-hover', null, 'gameboysocket-active', null));
@@ -116,7 +118,7 @@ class DomDetachedCartBank extends DomElement
 
   DomDetachedCartBank(PlatformDomEvents pde)
     : super(pde) {
-    Ft.log('DomDetachedCartBank', 'constructor', [pde]);
+    // Ft.log('DomDetachedCartBank', 'constructor', [pde]);
     this.hes_init(Html.querySelector('#accordion'));
     this.hdz_init(HtmlDropZone.makeClassesMap(
             'accordion-hover', null, 'accordion-active', null));
@@ -132,7 +134,7 @@ class DomDetachedChipBank extends DomElement
 
   DomDetachedChipBank(PlatformDomEvents pde)
     : super(pde) {
-    Ft.log('DomDetachedChipBank', 'constructor', [pde]);
+    // Ft.log('DomDetachedChipBank', 'constructor', [pde]);
     this.hes_init(Html.querySelector('#detached-chip-bank'));
     this.hdz_init(HtmlDropZone.makeClassesMap(
             'chipbank-hover', null, 'chipbank-active', null));

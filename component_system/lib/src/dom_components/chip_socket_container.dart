@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/07 15:07:52 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/07 16:23:47 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/12 18:56:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,7 +32,7 @@ abstract class ChipSocketContainer implements DomElement {
 
   // CONSTRUCTION *********************************************************** **
   void csc_init() {
-    Ft.log('ChipSocketContainer', 'csc_init');
+    // Ft.log('ChipSocketContainer', 'csc_init');
     int i = 0;
 
     _ram = new DomChipSocket(
