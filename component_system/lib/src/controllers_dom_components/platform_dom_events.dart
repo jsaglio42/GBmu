@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:46:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 13:54:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 15:04:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,14 +82,14 @@ class PlatformDomEvents {
   void fileDrag(bool that) => _fileDrag.add(that);
   Async.Stream<bool> get onFileDrag => _fileDrag.stream;
 
-  final Async.StreamController<bool> _cartBodyHover =
+  final Async.StreamController<bool> _cartSystemHover =
     new Async.StreamController<bool>.broadcast();
-  void cartBodyHover(bool that) => _cartBodyHover.add(that);
-  Async.Stream<bool> get onCartBodyHover => _cartBodyHover.stream;
+  void cartSystemHover(bool that) => _cartSystemHover.add(that);
+  Async.Stream<bool> get onCartSystemHover => _cartSystemHover.stream;
 
-  final Async.StreamController<List<Html.File>> _cartBodyFilesDrop =
+  final Async.StreamController<List<Html.File>> _cartSystemFilesDrop =
     new Async.StreamController<List<Html.File>>.broadcast();
-  void cartBodyFilesDrop(List<Html.File> that) => _cartBodyFilesDrop.add(that);
-  Async.Stream<List<Html.File>> get onCartBodyFilesDrop => _cartBodyFilesDrop.stream;
+  void cartSystemFilesDrop(List<Html.File> that) => _cartSystemFilesDrop.add(that);
+  Async.Stream<List<Html.File>> get onCartSystemFilesDrop => _cartSystemFilesDrop.stream;
 
 }

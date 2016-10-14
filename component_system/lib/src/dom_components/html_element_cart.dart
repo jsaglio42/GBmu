@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 13:35:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:57:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 14:44:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,6 +29,7 @@ abstract class HtmlElementCart {
   Html.Element _elt;
   Html.ButtonElement _btn;
   Html.Element _body;
+  Html.DivElement _btnText;
 
   // CONSTRUCTION *********************************************************** **
   void hec_init(String cartHtml, Html.NodeValidator v) {
@@ -36,17 +37,24 @@ abstract class HtmlElementCart {
     _elt = new Html.Element.html(cartHtml, validator: v);
     _btn = _elt.querySelector('.bg-head-btn');
     _body = _elt.querySelector('.panel-collapse');
+    _btnText = _elt.querySelector('.bg-head-btn .text');
   }
 
   // PUBLIC ***************************************************************** **
   Html.Element get elt => _elt;
   Js.JsObject get jsElt => new Js.JsObject.fromBrowserObject(_elt);
   Js.JsObject get jqElt => Js.context.callMethod(r'$', [this.jsElt]);
+
   Html.ButtonElement get btn => _btn;
   Js.JsObject get jsBtn => new Js.JsObject.fromBrowserObject(_btn);
   Js.JsObject get jqBtn => Js.context.callMethod(r'$', [this.jsBtn]);
+
   Html.ButtonElement get body => _body;
   Js.JsObject get jsBody => new Js.JsObject.fromBrowserObject(_body);
   Js.JsObject get jqBody => Js.context.callMethod(r'$', [this.jsBody]);
+
+  Html.DivElement get btnText => _btnText;
+  Js.JsObject get jsBtnText => new Js.JsObject.fromBrowserObject(_btnText);
+  Js.JsObject get jqBtnText => Js.context.callMethod(r'$', [this.jsBtnText]);
 
 }

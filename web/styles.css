@@ -288,20 +288,26 @@ body {
 }
 
 .gameboy-cartridge .bg-head-btn {
-
     height: 71px;
     background: url(images/sprites.png) 0 0;
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
     border-radius: 0px;
+    padding-top: 24px;
 }
 
 .gameboy-cartridge .bg-head-btn.collapsed {
     height: 53px;
     background: url(images/sprites.png) 0 -18px;
-    background-color: rgba(0, 0, 0, 0.0);
-    border-width: 0px;
-    border-radius: 0px;
+    padding-top: 6px;
+}
+
+.gameboy-cartridge .bg-head-btn .text {
+    color: black;
+    overflow: hidden;
+    font-size: 14px;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: bold;
 }
 
 .gameboy-cartridge .panel-collapse {

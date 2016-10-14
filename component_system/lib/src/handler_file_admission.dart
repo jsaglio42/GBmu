@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 17:33:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 14:04:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 15:28:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,29 +28,27 @@ import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-// http://stackoverflow.com/questions/3144881/how-do-i-detect-a-html5-drag-event-entering-and-leaving-the-window-like-gmail-d
-
 class HandlerFileAdmission {
 
   // ATTRIBUTES ************************************************************* **
   final PlatformDomEvents _pde;
   final PlatformComponentStorage _pcs;
+  final PlatformDomComponentStorage _pdcs;
 
   final Html.Element _target = Html.querySelector('#cartsBody');
   int _docCount = 0;
   int _targetCount = 0;
 
   // CONTRUCTION ************************************************************ **
-  HandlerFileAdmission(this._pde, this._pcs) {
+  HandlerFileAdmission(this._pde, this._pcs, this._pdcs) {
     Ft.log('HandlerFA', 'contructor');
 
     _pde.onFileDrag.forEach(_onFileDrag);
-    _pde.onCartBodyHover.forEach(_onCartBodyHover);
-    _pde.onCartBodyFilesDrop.forEach(_onCartBodyFilesDrop);
+    _pde.onCartSystemHover.forEach(_onCartSystemHover);
+    _pde.onCartSystemFilesDrop.forEach(_onCartSystemFilesDrop);
   }
 
   // CALLBACKS ************************************************************** **
-
   void _onFileDrag(bool b) {
     if (b)
       _target.classes.add('active');
@@ -58,14 +56,17 @@ class HandlerFileAdmission {
       _target.classes.remove('active');
   }
 
-  void _onCartBodyHover(bool b) {
-    if (b)
-      _target.classes.add('hover');
-    else
-      _target.classes.remove('hover');
+  void _onCartSystemHover(bool b) {
+    if (_pdcs.fileDragged) {
+      if (b)
+        _target.classes.add('hover');
+      else
+        _target.classes.remove('hover');
+    }
   }
 
-  void _onCartBodyFilesDrop(List<Html.File> files) {
+  void _onCartSystemFilesDrop(List<Html.File> files) {
+    _target.classes.remove('hover');
     files.forEach((Html.File f) {
       _processFile(f)
         .catchError((e, st){

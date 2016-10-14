@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/08 14:16:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 14:53:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,6 +39,9 @@ class PlatformDomComponentStorage {
   Ft.Option<DomCart> _gbCart = new Ft.Option<DomCart>.none();
   Ft.Option<DomComponent> _dragged = new Ft.Option<DomCart>.none();
 
+  bool _cartSystemHovered = false;
+  bool _fileDragged = false;
+
   // CONTRUCTION ************************************************************ **
   PlatformDomComponentStorage(this._dgbs, this._ddcb, this._ddchb);
 
@@ -66,12 +69,20 @@ class PlatformDomComponentStorage {
   DomGameBoySocket get gbSocket => _dgbs;
   DomDetachedCartBank get cartBank => _ddcb;
   DomDetachedChipBank get chipBank => _ddchb;
+
   Ft.Option<DomCart> get openedCart => _openedCart;
   Ft.Option<DomCart> get gbCart => _gbCart;
   Ft.Option<DomComponent> get dragged => _dragged;
 
+  bool get cartSystemHovered => _cartSystemHovered;
+  bool get fileDragged => _fileDragged;
+
   // Components getters ********************************* **
   // Most of them are linear in time
+
+  Iterable<DomCart> get carts =>
+    _components.values.where((DomComponent c) => c is DomCart);
+
   DomCart cartOfSocket(DomChipSocket s) {
     assert(_cartOfSocket[s] != null);
     return _cartOfSocket[s];
@@ -154,6 +165,14 @@ class PlatformDomComponentStorage {
     _dragged = new Ft.Option<DomCart>.none();
   }
 
-  // PRIVATE **************************************************************** **
+  void set cartSystemHovered(bool b) {
+    assert(_cartSystemHovered != b, 'from: cartSystemHovered()');
+    _cartSystemHovered = b;
+  }
+
+  void set fileDragged(bool b) {
+    assert(_fileDragged != b, 'from: fileDragged()');
+    _fileDragged = b;
+  }
 
 }

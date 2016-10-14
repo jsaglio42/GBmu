@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/08 13:50:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 13:59:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/14 15:25:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,6 +25,9 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
+// http://stackoverflow.com/questions/3144881/how-do-i-detect-a-html5-drag-event-entering-and-leaving-the-window-like-gmail-d
+
+
 class HandlerDomDragged {
 
   // ATTRIBUTES ************************************************************* **
@@ -33,11 +36,12 @@ class HandlerDomDragged {
   final PlatformDomComponentStorage _pdcs;
 
   int _docCount = 0;
-  int _cartBodyCount = 0;
+  int _cartSystemCount = 0;
+  int _cartSystemDragCount = 0;
 
   // CONSTRUCTION *********************************************************** **
   HandlerDomDragged(this._pde, this._pce, this._pdcs) {
-    final Html.Element _cartBody = Html.querySelector('#cartsBody');
+    final Html.Element cartSystem = Html.querySelector('#cartsBody');
 
     Ft.log('HandlerDomDragged', 'contructor');
 
@@ -55,8 +59,10 @@ class HandlerDomDragged {
     Html.document.onDragOver.forEach(_handleDocOver);
     Html.document.onDrop.forEach(_handleDocDrop);
 
-    _cartBody.onDragEnter.forEach(_handleCartBodyEnter);
-    _cartBody.onDragLeave.forEach(_handleCartBodyLeave);
+    cartSystem.onMouseOver.forEach(_handleCartSystemOver);
+    cartSystem.onMouseOut.forEach(_handleCartSystemOut);
+    cartSystem.onDragEnter.forEach(_handleCartSystemEnter);
+    cartSystem.onDragLeave.forEach(_handleCartSystemLeave);
   }
 
   // CALLBACKS ************************************************************** **
@@ -97,16 +103,17 @@ class HandlerDomDragged {
     }
   }
 
+  // FILE HANDLING ********************************************************** **
   void _handleDocEnter(Html.MouseEvent ev) {
     if (_docCount == 0)
-      _pde.fileDrag(true);
+      _actionFileDrag(true);
     _docCount++;
   }
 
   void _handleDocLeave(Html.MouseEvent ev) {
     _docCount--;
     if (_docCount == 0)
-      _pde.fileDrag(false);
+      _actionFileDrag(false);
   }
 
   void _handleDocOver(Html.MouseEvent ev) {
@@ -114,31 +121,60 @@ class HandlerDomDragged {
     ev.preventDefault();
   }
 
+  void _handleCartSystemEnter(Html.MouseEvent ev) {
+    if (_cartSystemDragCount == 0)
+      _actionCartSystemHover(true);
+    _cartSystemDragCount++;
+    print('_cartSystemDragCount $_cartSystemDragCount');
+  }
+
+  void _handleCartSystemLeave(Html.MouseEvent ev) {
+    _cartSystemDragCount--;
+    if (_cartSystemDragCount == 0)
+      _actionCartSystemHover(false);
+    print('_cartSystemDragCount $_cartSystemDragCount');
+  }
+
+  bool bonus = false;
+
   void _handleDocDrop(Html.MouseEvent ev) {
     ev.stopPropagation();
     ev.preventDefault();
-    if (_cartBodyCount > 0 && ev.dataTransfer.types.contains('Files'))
-      _pde.cartBodyFilesDrop(ev.dataTransfer.files);
-    _pde.cartBodyHover(false);
-    _pde.fileDrag(false);
-    _cartBodyCount = 0;
+    print('_cartSystemDragCount $_cartSystemDragCount DROP');
+    if (_cartSystemDragCount > 0 && ev.dataTransfer.types.contains('Files'))
+      _pde.cartSystemFilesDrop(ev.dataTransfer.files);
+    // _actionCartSystemHover(false);
+    bonus = true;
+    _actionFileDrag(false);
+    _cartSystemDragCount = 0;
     _docCount = 0;
   }
 
-  void _handleCartBodyEnter(Html.MouseEvent ev) {
-    if (_cartBodyCount == 0)
-      _pde.cartBodyHover(true);
-    _cartBodyCount++;
+  // CART SYSTEM ENTER/LEAVE ************************************************ **
+  void _handleCartSystemOver(Html.MouseEvent ev) {
+    if (_cartSystemCount == 0 && bonus == false)
+      _actionCartSystemHover(true);
+    bonus = false;
+    _cartSystemCount++;
+    print('_cartSystemCount $_cartSystemCount');
   }
 
-  void _handleCartBodyLeave(Html.MouseEvent ev) {
-    _cartBodyCount--;
-    if (_cartBodyCount == 0)
-      _pde.cartBodyHover(false);
+  void _handleCartSystemOut(Html.MouseEvent ev) {
+    _cartSystemCount--;
+    if (_cartSystemCount == 0)
+      _actionCartSystemHover(false);
+    print('_cartSystemCount $_cartSystemCount');
   }
 
+  // PRIVATE **************************************************************** **
+  void _actionCartSystemHover(bool b) {
+    _pdcs.cartSystemHovered = b;
+    _pde.cartSystemHover(b);
+  }
 
-
-
+  void _actionFileDrag(bool b) {
+    _pdcs.fileDragged = b;
+    _pde.fileDrag(b);
+  }
 
 }
