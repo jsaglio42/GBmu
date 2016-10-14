@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 01:18:52 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/15 15:30:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,15 +19,20 @@ import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
+import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
 
-final int _addrDIV = g_memRegInfos[MemReg.DIV.index].address;
-final int _addrTIMA = g_memRegInfos[MemReg.TIMA.index].address;
-final int _addrTMA = g_memRegInfos[MemReg.TMA.index].address;
-final int _addrTAC = g_memRegInfos[MemReg.TAC.index].address;
+abstract class TrapAccessors {
+
+  void resetDIVRegister();
+
+}
 
 abstract class Timers
   implements Hardware.Hardware
-  , Interrupt.InterruptManager {
+  , Tailram.TailRam
+  , Interrupt.InterruptManager
+  , TrapAccessors
+{
 
   int _thresholdTIMA = 1024;
   int _counterTIMA = 0;
@@ -41,6 +46,11 @@ abstract class Timers
     return ;
   }
 
+  void resetDIVRegister() {
+    this.DIV_raw = 0;
+    return ;
+  }
+
   /* Private ******************************************************************/
 
   void _updateDIV(int nbClock) {
@@ -48,15 +58,15 @@ abstract class Timers
     if (_counterDIV >= 256)
     {
       _counterDIV -= 256;
-      final DIV_old = this.tailRam.pull8_unsafe(_addrDIV);
+      final DIV_old = this.DIV;
       final DIV_new = (DIV_old + 1) & 0xFF;
-      this.tailRam.push8_unsafe(_addrDIV, DIV_new);
+      this.DIV_raw = DIV_new;
     }
     return ;
   }
 
   void _updateTIMA(int nbClock) {
-    final int TAC = this.tailRam.pull8_unsafe(_addrTAC);
+    final int TAC = this.TAC;
     if (TAC & (0x1 << 2) == 0)
       return ;
     _counterTIMA += nbClock;
@@ -64,13 +74,13 @@ abstract class Timers
     {
       _counterTIMA -= _thresholdTIMA;
       _thresholdTIMA = _getTimerFrequency(TAC);
-      final int TIMA_old = this.tailRam.pull8_unsafe(_addrTIMA);
+      final int TIMA_old = this.TIMA;
       if (TIMA_old < 0xFF)
-        this.tailRam.push8_unsafe(_addrTIMA, TIMA_old + 1);
+        this.TIMA = TIMA_old + 1;
       else
       {
-        final int TMA = this.tailRam.pull8_unsafe(_addrTMA);
-        this.tailRam.push8_unsafe(_addrTIMA, TMA);
+        final int TMA = this.TMA;
+        this.TIMA = TMA;
         this.requestInterrupt(InterruptType.Timer);
       }
     }

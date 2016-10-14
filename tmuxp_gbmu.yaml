@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/14 14:20:19 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/15 13:32:34 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ environment:
   OPT: ./web/options
   EMU: ./emulator/lib/src/
   HW: ./emulator/lib/src/hardware
+  MIX: ./emulator/lib/src/mixins
   CART: ./emulator/lib/src/cartridge
 
   CS: ./component_system/lib/src
@@ -78,7 +79,7 @@ windows:
 - window_index: 14
   panes: ['e $HW/{data,file_repr,headerdecoder,save_state}.dart']
 - window_index: 15
-  panes: ['e $HW/{cpu_registers,hardware}.dart']
+  panes: ['e $HW/{cpu_registers,registermapping,hardware}.dart']
 - window_index: 16
   panes: ['e $CART/*.dart']
 
@@ -98,37 +99,12 @@ windows:
 - window_index: 26
   panes: ['e $DEB/**.(html|dart)']
 
-
-
-
-
-# ├── hardware
-# │   ├── data.dart
-# │   ├── headerdecoder.dart
-# │   └── registermapping.dart
-
-# │   ├── cpu_registers.dart
-# │   ├── hardware.dart
-
-
-
-
-
-# ├── gameboy.dart
-# ├── mixins
-# │   ├── graphics.dart
-# │   ├── instructions.dart
-# │   ├── instructionsdecoder.dart
-# │   ├── interruptmanager.dart
-# │   ├── joypad.dart
-# │   ├── mmu.dart
-# │   ├── timers.dart
-# │   └── z80.dart
-# ├── cartridge
-# │   ├── cart_mbc1.dart
-# │   ├── cart_romonly.dart
-# │   └── cartridge.dart
-
+- window_index: 11
+  panes: ['e $MIX/{gameboy,z80,mmu}.dart']
+- window_index: 12
+  panes: ['e $MIX/{instructions,instructionsdecoder}.dart']
+- window_index: 13
+  panes: ['e $MIX/{timers,graphics,interruptmanager,joypad}.dart']
 
 # COMPONENT SYSTEM ********************************************************** **
 - window_index: 100

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/11 16:26:33 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/15 15:28:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,13 +18,14 @@ import "package:emulator/src/enums.dart";
 import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/globals.dart';
 
+import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/hardware/registermapping.dart" as Memregisters;
 
 bool _isInRange(int i, int f, int l) => (i >= f && i <= l);
 
 abstract class Mmu
-  implements Hardware.Hardware {
+  implements Hardware.Hardware, Tailram.TailRam {
 
   /* 8-bits *******************************************************************/
   int pull8(int memAddr)
@@ -38,7 +39,7 @@ abstract class Mmu
     else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
       return this.internalRam.pull8_unsafe(memAddr);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
-      return _pull8_IO(memAddr);
+      return this.tr_pull8(memAddr);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
@@ -54,7 +55,7 @@ abstract class Mmu
     else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
       this.internalRam.push8_unsafe(memAddr, v);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
-      _push8_IO(memAddr, v);
+      this.tr_push8(memAddr, v);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
     return ;
@@ -86,76 +87,9 @@ abstract class Mmu
     return lst;
   }
 
-  int pullMemReg(MemReg reg) {
-    final rinfo = g_memRegInfos[reg.index];
-    return _pull8_IO(rinfo.address);
-  }
-
   void pushOnStack16(int v) {
     this.push16(this.cpur.SP - 2, v);
     this.cpur.SP -= 2;
-    return ;
-  }
-
-
-  /* IO trapping routine ******************************************************/
-  int _pull8_IO(int memAddr)
-  {
-    Memregisters.MemRegInfo rinfo = g_memRegInfosByAddress[memAddr];
-    switch(rinfo?.reg)
-    {
-      case (MemReg.P1) : return getJoypadRegister();
-      default: return this.tailRam.pull8_unsafe(memAddr);
-    }
-  }
-
-  void _push8_IO(int memAddr, int v)
-  {
-    Memregisters.MemRegInfo rinfo = g_memRegInfosByAddress[memAddr];
-    switch(rinfo?.reg)
-    {
-      case (MemReg.P1) : return setJoypadRegister(v);
-      case (MemReg.DIV) : return resetDIVRegister();
-      case (MemReg.LY) : return resetLYRegister();
-      case (MemReg.DMA) : return execDMA(memAddr, v);
-      default: return this.tailRam.push8_unsafe(memAddr, v);
-    }
-  }
-
-  /* Joypad */
-  int getJoypadRegister() {
-    if (this.joypadState & 0x100 == 0) // b8 = 0: return directions
-      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0x3F;
-    else // b8 = 1: return buttons
-      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0x3F;
-  }
-
-  void setJoypadRegister(int v) {
-    if (v & 0x10 == 0) // Directions: b8 <- 1
-      this.joypadState &= 0xFF;
-    else if (v & 0x20 == 0) // Buttons: b8 <- 1
-      this.joypadState |= (1 << 8);
-    return ;
-  }
-
-  /* Timers */
-  void resetDIVRegister() {
-    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.DIV.index].address, 0x00);
-    return ;
-  }
-
-  /* LCD */
-  void resetLYRegister() {
-    this.tailRam.push8_unsafe(g_memRegInfos[MemReg.LY.index].address, 0x00);
-    return ;
-  }
-
-  void execDMA(int regAddress, int v) {
-    final int addr = v << 8;
-    for (int i = 0 ; i < 0xA0; i++) {
-      this.tailRam.push8_unsafe(0xFE00 + i, this.pull8(addr + i));
-    }
-    this.tailRam.push8_unsafe(regAddress, v);
     return ;
   }
 

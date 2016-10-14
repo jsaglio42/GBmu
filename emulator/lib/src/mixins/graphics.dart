@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 02:24:43 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/15 15:26:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,6 +21,7 @@ import "package:emulator/src/globals.dart";
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
+import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
 
 enum GraphicMode {
@@ -61,18 +62,18 @@ class GRegisterCurrentInfo {
 
   GRegisterCurrentInfo();
 
-  void init(Data.GbRam tr) {
-    this.LCDC = tr.pull8_unsafe(g_memRegInfos[MemReg.LCDC.index].address);
-    this.STAT = tr.pull8_unsafe(g_memRegInfos[MemReg.STAT.index].address);
-    this.LYC = tr.pull8_unsafe(g_memRegInfos[MemReg.LYC.index].address);
-    this.LY = tr.pull8_unsafe(g_memRegInfos[MemReg.LY.index].address);
-    this.SCY = tr.pull8_unsafe(g_memRegInfos[MemReg.SCY.index].address);
-    this.SCX = tr.pull8_unsafe(g_memRegInfos[MemReg.SCX.index].address);
-    this.WY = tr.pull8_unsafe(g_memRegInfos[MemReg.WY.index].address);
-    this.WX = tr.pull8_unsafe(g_memRegInfos[MemReg.WX.index].address) - 7;
-    this.BGP = tr.pull8_unsafe(g_memRegInfos[MemReg.BGP.index].address);
-    this.OBP0 = tr.pull8_unsafe(g_memRegInfos[MemReg.OBP0.index].address);
-    this.OBP1 = tr.pull8_unsafe(g_memRegInfos[MemReg.OBP1.index].address);
+  void init(Tailram.TailRam tr) {
+    this.LCDC = tr.LCDC;
+    this.STAT = tr.STAT;
+    this.LYC = tr.LYC;
+    this.LY = tr.LY;
+    this.SCY = tr.SCY;
+    this.SCX = tr.SCX;
+    this.WY = tr.WY;
+    this.WX = tr.WX - 7;
+    this.BGP = tr.BGP;
+    this.OBP0 = tr.OBP0;
+    this.OBP1 = tr.OBP1;
     return ;
   }
 
@@ -130,10 +131,19 @@ class GRegisterUpdatedInfo {
 }
 
 /* Mixins that handle graphics ************************************************/
+abstract class TrapAccessors {
+
+  void resetLYRegister();
+  void execDMA(int v);
+
+}
+
 abstract class Graphics
   implements Hardware.Hardware
+  , Tailram.TailRam
   , Mmu.Mmu
-  , Interrupt.InterruptManager {
+  , Interrupt.InterruptManager
+  , TrapAccessors {
 
   /* Used for double buffering */
   Uint8List _buffer = new Uint8List(LCD_DATA_SIZE);
@@ -145,7 +155,7 @@ abstract class Graphics
 
   /* API **********************************************************************/
   void updateGraphics(int nbClock) {
-    _current.init(this.tailRam);
+    _current.init(this);
     _updated.init();
 
     /* will need special routine when enabling */
@@ -167,6 +177,21 @@ abstract class Graphics
   //   _counterScanline = 0;
   //   _updated.mode = GraphicMode.OAM_ACCESS;
   // }
+
+  void resetLYRegister() {
+    this.LY_raw = 0;
+    return ;
+  }
+
+  void execDMA(int v) {
+    final int addr = v << 8;
+
+    for (int i = 0 ; i < 0xA0; i++)
+      // TODO CHECK: `tr_push8` was `tailRam.push8_unsafe`
+      this.tr_push8(0xFE00 + i, this.pull8(addr + i));
+    this.DMA_raw = v;
+    return ;
+  }
 
   /* Private ******************************************************************/
   void _updateGraphicMode(int nbClock) {
@@ -279,9 +304,8 @@ abstract class Graphics
       if ((_current.STAT >> 6) & 0x1 == 1)
         this.requestInterrupt(InterruptType.LCDStat);
     }
-    this.tailRam
-      ..push8_unsafe(g_memRegInfos[MemReg.STAT.index].address, _updated.STAT)
-      ..push8_unsafe(g_memRegInfos[MemReg.LY.index].address, _updated.LY);
+    this.STAT = _updated.STAT;
+    this.LY_raw = _updated.LY;
     return ;
   }
 
@@ -368,12 +392,12 @@ abstract class Graphics
 
     for (int spriteno = 0; spriteno < 40; ++spriteno) {
       int spriteOffset = 0xFE00 + spriteno * 4;
-      int posY = this.tailRam.pull8_unsafe(spriteOffset) - 16;
+      int posY = this.tr_pull8(spriteOffset) - 16;
       int relativeY = _current.LY - posY;
       if (relativeY < 0 || relativeY >= sizeY)
         continue ;
 
-      int info = this.tailRam.pull8_unsafe(spriteOffset + 3);
+      int info = this.tr_pull8(spriteOffset + 3);
       bool priorityIsBG = (info >> 7) & 0x1 == 1;
       bool flipY = (info >> 6) & 0x1 == 1;
       bool flipX = (info >> 5) & 0x1 == 1;
@@ -382,12 +406,12 @@ abstract class Graphics
       if (flipY)
         relativeY = sizeY - 1 - relativeY;
 
-      int tileID = this.tailRam.pull8_unsafe(spriteOffset + 2);
+      int tileID = this.tr_pull8(spriteOffset + 2);
       /* tile address should use sizeY ? TO BE CHECKED */
       int tileAddress = 0x8000 + tileID * 16;
       int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
       int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
-      int posX = this.tailRam.pull8_unsafe(spriteOffset + 1) - 8;
+      int posX = this.tr_pull8(spriteOffset + 1) - 8;
 
       for (int relativeX = 0; relativeX < 8; ++relativeX) {
         int x = posX + relativeX;

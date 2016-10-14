@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 01:44:27 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/15 13:52:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import 'package:emulator/constants.dart';
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 
+import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
 import "package:emulator/src/mixins/graphics.dart" as Graphics;
 import "package:emulator/src/mixins/instructionsdecoder.dart" as Instdecoder;
 import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
@@ -32,6 +33,7 @@ import "package:emulator/src/mixins/z80.dart" as Z80;
 
 class GameBoy extends Object
   with Hardware.Hardware
+  , Tailram.TailRam
   , Graphics.Graphics
   , Instdecoder.InstructionsDecoder
   , Interrupt.InterruptManager

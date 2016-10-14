@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/30 23:20:18 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/15 13:49:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,7 @@ import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
 /*
 * Joypad behaviour is strange, depending on value in b4 and b5, reading to  FF00
 * will return the states of either buttons or directions.
-* There is a private attribute _joypadState that stores the state of all 
+* There is a private attribute _joypadState that stores the state of all
 * and reading from FF00 will build the answer based on this _joypadState.
 * !!! Reading to the Joypad return the complementary of the states (ie 0 = set)
 *
@@ -46,7 +46,7 @@ import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
 *   | 0 +---------+---------+ - R0          |   |
 *   +---+         |         |               | 0 +--- A
 *                C0        C1               +---+
-* 
+*
 */
 
 enum JoypadKey {
@@ -60,9 +60,17 @@ enum JoypadKey {
   Start
 }
 
+abstract class TrapAccessors {
+
+  int getJoypadRegister();
+  void setJoypadRegister(int v);
+
+}
+
 abstract class Joypad
   implements Hardware.Hardware
-  , Interrupt.InterruptManager {
+  , Interrupt.InterruptManager
+{
 
     void keyPress(JoypadKey k) {
       final int bit = (1 << k.index);
@@ -79,5 +87,20 @@ abstract class Joypad
       this.joypadState = (this.joypadState & mask) | state;
       return;
     }
+
+  int getJoypadRegister() {
+    if (this.joypadState & 0x100 == 0) // b8 = 0: return directions
+      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0x3F;
+    else // b8 = 1: return buttons
+      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0x3F;
+  }
+
+  void setJoypadRegister(int v) {
+    if (v & 0x10 == 0) // Directions: b8 <- 1
+      this.joypadState &= 0xFF;
+    else if (v & 0x20 == 0) // Buttons: b8 <- 1
+      this.joypadState |= (1 << 8);
+    return ;
+  }
 
 }

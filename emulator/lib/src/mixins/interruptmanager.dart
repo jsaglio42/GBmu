@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:49:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/15 15:30:40 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,9 +28,6 @@ enum InterruptType {
   Joypad
 }
 
-final int _addrIE = g_memRegInfos[MemReg.IE.index].address;
-final int _addrIF = g_memRegInfos[MemReg.IF.index].address;
-
 abstract class InterruptManager
   implements Hardware.Hardware
   , Mmu.Mmu {
@@ -40,8 +37,8 @@ abstract class InterruptManager
   void handleInterrupts() {
     if (this.ime == false)
       return ;
-    final int IE = this.tailRam.pull8_unsafe(_addrIE);
-    final int IF = this.tailRam.pull8_unsafe(_addrIF);
+    final int IE = this.IE;
+    final int IF = this.IF;
     final int IFandIE = IF & IE;
     if (IFandIE == 0)
       return ;
@@ -51,15 +48,15 @@ abstract class InterruptManager
         return ;
       }
     }
-    return ;    
+    return ;
   }
 
   void requestInterrupt(InterruptType i) {
-    final int IF_old = this.tailRam.pull8_unsafe(_addrIF);
+    final int IF_old = this.IF;
     final int IF_new = IF_old | (1 << i.index);
     this.halt = false;
     this.stop = false;
-    this.tailRam.push8_unsafe(_addrIF, IF_new);
+    this.IF = IF_new;
     return ;
   }
 
@@ -68,9 +65,9 @@ abstract class InterruptManager
   int _vblankno = 0;
   void _serviceInterrupt(InterruptType i) {
     this.ime = false;
-    final int IF_old = this.tailRam.pull8_unsafe(_addrIF);
+    final int IF_old = this.IF;
     final int IF_new = (IF_old & ~(1 << i.index)) & 0xFF;
-    this.tailRam.push8_unsafe(_addrIF, IF_new);
+    this.IF = IF_new;
     this.pushOnStack16(this.cpur.PC);
     switch(i) {
       case (InterruptType.VBlank) :
