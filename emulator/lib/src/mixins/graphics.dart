@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 00:59:58 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/14 02:24:43 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -148,22 +148,25 @@ abstract class Graphics
     _current.init(this.tailRam);
     _updated.init();
 
-    if (!_current.isLCDEnabled)
-    {
-      _updated.LY = 0;
-      _updated.mode = GraphicMode.VBLANK;
-    }
-    else
+    /* will need special routine when enabling */
+    if (_current.isLCDEnabled)
     {
       _updateGraphicMode(nbClock);
       if (_updated.drawLine)
         _drawLine();
       if (_updated.updateScreen)
         _updateScreen();
+      _updateGraphicRegisters();
     }
-    _updateGraphicRegisters();
     return ;
   }
+
+  // to be implemented
+  // void enableScreen(int nbClock) {
+  //   _updated.LY = 0;
+  //   _counterScanline = 0;
+  //   _updated.mode = GraphicMode.OAM_ACCESS;
+  // }
 
   /* Private ******************************************************************/
   void _updateGraphicMode(int nbClock) {

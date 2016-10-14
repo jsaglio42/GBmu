@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/06 10:35:06 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/14 01:44:52 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,6 +36,7 @@ abstract class Z80
   /* Private ******************************************************************/
 
   int _execInst() {
+    this.lastInstPC = this.cpur.PC;
     final op = this.pull8(this.cpur.PC);
     switch (op) {
       case (0x00) : return _NOP();                      //  NOP
