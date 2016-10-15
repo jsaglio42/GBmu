@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 01:44:52 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/15 19:54:25 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,7 @@ abstract class Z80
   /* API **********************************************************************/
 
   int executeInstruction() {
-    if (this.halt || this.stop)
+    if (this.cpur.halt || this.cpur.stop)
       return 4;
     else
       return _execInst();
@@ -1209,25 +1209,25 @@ abstract class Z80
   }
 
   int _HALT() {
-    this.halt = true;
+    this.cpur.halt = true;
     this.cpur.PC += 1;
     return 4;
   }
 
   int _STOP() {
-    this.stop = true;
+    this.cpur.stop = true;
     this.cpur.PC += 1;
     return 4;
   }
 
   int _DI() {
-    this.ime = false;
+    this.cpur.ime = false;
     this.cpur.PC += 1;
     return 4;
   }
 
   int _EI() {
-    this.ime = true;
+    this.cpur.ime = true;
     this.cpur.PC += 1;
     return 4;
   }
@@ -1630,8 +1630,7 @@ abstract class Z80
 
   int _RETI()
   {
-    this.ime = true;
-    // print('*** END OF INTERRUPT ***');
+    this.cpur.ime = true;
     return _RET();
   }
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/15 15:26:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/15 19:51:08 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -46,66 +46,66 @@ final Map<Color, List<int>> _colorMap = new Map.unmodifiable({
 });
 
 /* Small classes used to save data/store info *********************************/
-class GRegisterCurrentInfo {
+// class GRegisterCurrentInfo {
 
-  int LCDC;
-  int STAT;
-  int LYC;
-  int LY;
-  int SCY;
-  int SCX;
-  int WY;
-  int WX;
-  int BGP;
-  int OBP0;
-  int OBP1;
+//   int LCDC;
+//   int STAT;
+//   int LYC;
+//   int LY;
+//   int SCY;
+//   int SCX;
+//   int WY;
+//   int WX;
+//   int BGP;
+//   int OBP0;
+//   int OBP1;
 
-  GRegisterCurrentInfo();
+//   GRegisterCurrentInfo();
 
-  void init(Tailram.TailRam tr) {
-    this.LCDC = tr.LCDC;
-    this.STAT = tr.STAT;
-    this.LYC = tr.LYC;
-    this.LY = tr.LY;
-    this.SCY = tr.SCY;
-    this.SCX = tr.SCX;
-    this.WY = tr.WY;
-    this.WX = tr.WX - 7;
-    this.BGP = tr.BGP;
-    this.OBP0 = tr.OBP0;
-    this.OBP1 = tr.OBP1;
-    return ;
-  }
+//   void init() {
+//     this.LCDC = this.memr.LCDC;
+//     this.STAT = this.memr.STAT;
+//     this.LYC = this.memr.LYC;
+//     this.LY = this.memr.LY;
+//     this.SCY = this.memr.SCY;
+//     this.SCX = this.memr.SCX;
+//     this.WY = this.memr.WY;
+//     this.WX = this.memr.WX - 7;
+//     this.BGP = this.memr.BGP;
+//     this.OBP0 = this.memr.OBP0;
+//     this.OBP1 = this.memr.OBP1;
+//     return ;
+//   }
 
-  bool get isLCDEnabled => (this.LCDC >> 7) & 0x1 == 1;
-  bool get isWindowDisplayEnabled => (this.LCDC >> 5) & 0x1 == 1;
-  bool get isSpriteDisplayEnabled => (this.LCDC >> 1) & 0x1 == 1;
-  bool get isBackgroundDisplayEnabled => (this.LCDC >> 1) & 0x1 == 1;
-  int  get tileMapAddress_BG => (this.LCDC >> 3) & 0x1 == 1 ? 0x9C00 : 0x9800;
-  int  get tileMapAddress_WIN => (this.LCDC >> 6) & 0x1 == 1 ? 0x9C00 : 0x9800;
+//   bool get isLCDEnabled => (this.LCDC >> 7) & 0x1 == 1;
+//   bool get isWindowDisplayEnabled => (this.LCDC >> 5) & 0x1 == 1;
+//   bool get isSpriteDisplayEnabled => (this.LCDC >> 1) & 0x1 == 1;
+//   bool get isBackgroundDisplayEnabled => (this.LCDC >> 1) & 0x1 == 1;
+//   int  get tileMapAddress_BG => (this.LCDC >> 3) & 0x1 == 1 ? 0x9C00 : 0x9800;
+//   int  get tileMapAddress_WIN => (this.LCDC >> 6) & 0x1 == 1 ? 0x9C00 : 0x9800;
 
-  GraphicMode get mode => GraphicMode.values[this.STAT & 0x3];
+//   GraphicMode get mode => GraphicMode.values[this.STAT & 0x3];
 
-  bool isInterruptMonitored(GraphicMode g) {
-    return (this.STAT >> (g.index + 3)) & 0x1 == 1;
-  }
+//   bool isInterruptMonitored(GraphicMode g) {
+//     return (this.STAT >> (g.index + 3)) & 0x1 == 1;
+//   }
 
-  int getTileAddress(int tileID) {
-    assert(tileID & ~0xFF == 0, 'Invalid tileID');
-    if ((this.LCDC >> 4) & 0x1 == 1)
-      return 0x8000 + tileID * 16;
-    else
-      return 0x9000 + tileID.toSigned(8) * 16;
-  }
+//   int getTileAddress(int tileID) {
+//     assert(tileID & ~0xFF == 0, 'Invalid tileID');
+//     if ((this.LCDC >> 4) & 0x1 == 1)
+//       return 0x8000 + tileID * 16;
+//     else
+//       return 0x9000 + tileID.toSigned(8) * 16;
+//   }
 
-  int getColor(int colorID, int palette) {
-    if (colorID == null)
-      return 0;
-    else
-      return (palette >> (2 * colorID)) & 0x3;
-  }
+//   int getColor(int colorID, int palette) {
+//     if (colorID == null)
+//       return 0;
+//     else
+//       return (palette >> (2 * colorID)) & 0x3;
+//   }
 
-}
+// }
 
 /* Small classes used to save updated info ************************************/
 class GRegisterUpdatedInfo {
@@ -119,7 +119,7 @@ class GRegisterUpdatedInfo {
 
     GRegisterUpdatedInfo();
 
-    void init() {
+    void reset() {
       this.drawLine = false;
       this.updateScreen = false;
       this.mode = null;
@@ -145,18 +145,19 @@ abstract class Graphics
   , Interrupt.InterruptManager
   , TrapAccessors {
 
-  /* Used for double buffering */
   Uint8List _buffer = new Uint8List(LCD_DATA_SIZE);
-
-  /* Used to update LCDStatus */
+  
   int _counterScanline = 0;
-  GRegisterCurrentInfo _current = new GRegisterCurrentInfo();
   GRegisterUpdatedInfo _updated = new GRegisterUpdatedInfo();
+
+  List<int> _BGColorIDs = new List<int>(LCD_WIDTH);
+  List<int> _SpriteColors = new List<int>(LCD_WIDTH);
+  List<int> _zbuffer = new List<int>(LCD_WIDTH);
 
   /* API **********************************************************************/
   void updateGraphics(int nbClock) {
-    _current.init(this);
-    _updated.init();
+    // _current.init(this);
+    _updated.reset();
 
     /* will need special routine when enabling */
     if (_current.isLCDEnabled)
@@ -179,7 +180,7 @@ abstract class Graphics
   // }
 
   void resetLYRegister() {
-    this.LY_raw = 0;
+    this.memr.LY = 0;
     return ;
   }
 
@@ -189,7 +190,7 @@ abstract class Graphics
     for (int i = 0 ; i < 0xA0; i++)
       // TODO CHECK: `tr_push8` was `tailRam.push8_unsafe`
       this.tr_push8(0xFE00 + i, this.pull8(addr + i));
-    this.DMA_raw = v;
+    this.memr.DMA = v;
     return ;
   }
 
@@ -304,8 +305,8 @@ abstract class Graphics
       if ((_current.STAT >> 6) & 0x1 == 1)
         this.requestInterrupt(InterruptType.LCDStat);
     }
-    this.STAT = _updated.STAT;
-    this.LY_raw = _updated.LY;
+    this.memr.STAT = _updated.STAT;
+    this.memr.LY = _updated.LY;
     return ;
   }
 
@@ -321,21 +322,21 @@ abstract class Graphics
   }
 
   void _drawLine() {
-    List<int> BGColorIDs = new List<int>.filled(LCD_WIDTH, null);
-    List<int> SpriteColors = new List<int>.filled(LCD_WIDTH, null);
+    _BGColorIDs.fillRange(0, _BGColorIDs.length, null);
+    _SpriteColors.fillRange(0, _SpriteColors.length, null);
 
     // print('Draw Line');
     for (int x = 0; x < LCD_WIDTH; ++x)
     {
-      _setBackgroundColorID(x, BGColorIDs);
-      _setWindowColorID(x, BGColorIDs);
+      _setBackgroundColorID(x);
+      _setWindowColorID(x);
     }
-    _setSpriteColor(BGColorIDs, SpriteColors);
-    _updateScreenBuffer(BGColorIDs, SpriteColors);
+    _setSpriteColor();
+    _updateScreenBuffer();
     return ;
   }
 
-  void _setBackgroundColorID(int x, List<int> BGColorIDs) {
+  void _setBackgroundColorID(int x) {
     // print('Background');
     if (!_current.isBackgroundDisplayEnabled)
       return ;
@@ -353,11 +354,11 @@ abstract class Graphics
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-    BGColorIDs[x] = colorId_l | colorId_h;
+    _BGColorIDs[x] = colorId_l | colorId_h;
     return ;
   }
 
-  void _setWindowColorID(int x, List<int> BGColorIDs) {
+  void _setWindowColorID(int x) {
     // print('Window');
     if (!_current.isWindowDisplayEnabled)
       return ;
@@ -379,14 +380,14 @@ abstract class Graphics
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-    BGColorIDs[x] = colorId_l | colorId_h;
+    _BGColorIDs[x] = colorId_l | colorId_h;
     return ;
   }
 
-  void _setSpriteColor(List<int> BGColorIDs, List<int> SpriteColors) {
+  void _setSpriteColor() {
     if (!_current.isSpriteDisplayEnabled)
       return ;
-    final List<int> zbuffer = new List.filled(LCD_WIDTH, -1);
+    _zbuffer.fillRange(0, _zbuffer.length, -1);
 
     final int sizeY = ((_current.LCDC >> 2) & 0x1 == 1) ? 16 : 8;
 
@@ -421,7 +422,7 @@ abstract class Graphics
           break ;
 
         /* Not sure about BG transparency here; TO BE CHECKED */
-        if (priorityIsBG && BGColorIDs[x] != 0 && BGColorIDs[x] != null)
+        if (priorityIsBG && _BGColorIDs[x] != 0 && BGColorIDs[x] != null)
           continue ;
 
         if (zbuffer[x] >= 0)
@@ -443,24 +444,24 @@ abstract class Graphics
         int colorID = colorId_l | colorId_h;
         if (colorID == 0)
           continue;
-        SpriteColors[x] = _current.getColor(colorID, OBP);
-        zbuffer[x] = spriteno;
+        _SpriteColors[x] = _current.getColor(colorID, OBP);
+        _zbuffer[x] = spriteno;
       }
     }
   }
 
-  void _updateScreenBuffer(List<int> BGColorIDs, List<int> SpriteColors) {
-    assert(BGColorIDs.length == LCD_WIDTH, 'Failure');
-    assert(SpriteColors.length == LCD_WIDTH, 'Failure');
+  void _updateScreenBuffer() {
+    assert(_BGColorIDs.length == LCD_WIDTH, 'Failure');
+    assert(_SpriteColors.length == LCD_WIDTH, 'Failure');
     int BGP = _current.BGP;
     for (int x = 0; x < LCD_WIDTH; ++x)
     {
       Color c;
       int pixelOffset = (_current.LY * LCD_WIDTH + x) * 4;
-      if (SpriteColors[x] != null)
-        c = Color.values[SpriteColors[x]];
+      if (_SpriteColors[x] != null)
+        c = Color.values[_SpriteColors[x]];
       else
-        c = Color.values[_current.getColor(BGColorIDs[x], BGP)];
+        c = Color.values[_current.getColor(_BGColorIDs[x], BGP)];
       List cList = _colorMap[c];
       _buffer[pixelOffset + 0] = cList[0];
       _buffer[pixelOffset + 1] = cList[1];

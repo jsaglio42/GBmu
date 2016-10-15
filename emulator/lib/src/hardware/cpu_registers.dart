@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 16:19:52 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/15 19:17:54 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -46,23 +46,29 @@ class CpuRegs {
   final Uint8List _data;
   final Uint16List _view16;
 
-  /* Constructors *************************************************************/
+  bool ime;
+  bool halt;
+  bool stop;
 
+  /* Constructors *************************************************************/
   CpuRegs.ofUint8List(Uint8List d)
     : _data = d
-    , _view16 = d.buffer.asUint16List()
-  {
+    , _view16 = d.buffer.asUint16List();
+
+  CpuRegs() : this.ofUint8List(new Uint8List(6 * 2));
+
+  /* API **********************************************************************/
+  void reset() {
+    this.ime = true;
+    this.halt = false;
+    this.stop = false;
     this.AF = 0x01B0;
     this.BC = 0x0013;
     this.DE = 0x00D8;
     this.HL = 0x014D;
     this.SP = 0xFFFE;
-    this.PC = 0x0100;
+    this.PC = 0x0100; 
   }
-
-  CpuRegs() : this.ofUint8List(new Uint8List(6 * 2));
-
-  /* API **********************************************************************/
 
   /* Get */
   int get AF => this.pull16(Reg16.AF);

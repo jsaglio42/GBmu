@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/15 15:30:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/15 19:53:45 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -47,7 +47,7 @@ abstract class Timers
   }
 
   void resetDIVRegister() {
-    this.DIV_raw = 0;
+    this.memr.DIV = 0;
     return ;
   }
 
@@ -58,15 +58,15 @@ abstract class Timers
     if (_counterDIV >= 256)
     {
       _counterDIV -= 256;
-      final DIV_old = this.DIV;
+      final DIV_old = this.memr.DIV;
       final DIV_new = (DIV_old + 1) & 0xFF;
-      this.DIV_raw = DIV_new;
+      this.memr.DIV = DIV_new;
     }
     return ;
   }
 
   void _updateTIMA(int nbClock) {
-    final int TAC = this.TAC;
+    final int TAC = this.memr.TAC;
     if (TAC & (0x1 << 2) == 0)
       return ;
     _counterTIMA += nbClock;
@@ -74,13 +74,13 @@ abstract class Timers
     {
       _counterTIMA -= _thresholdTIMA;
       _thresholdTIMA = _getTimerFrequency(TAC);
-      final int TIMA_old = this.TIMA;
+      final int TIMA_old = this.memr.TIMA;
       if (TIMA_old < 0xFF)
-        this.TIMA = TIMA_old + 1;
+        this.memr.TIMA = TIMA_old + 1;
       else
       {
-        final int TMA = this.TMA;
-        this.TIMA = TMA;
+        final int TMA = this.memr.TMA;
+        this.memr.TIMA = TMA;
         this.requestInterrupt(InterruptType.Timer);
       }
     }
