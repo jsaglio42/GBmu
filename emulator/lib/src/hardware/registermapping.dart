@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   mem_registermapping.dart                           :+:      :+:    :+:   //
+//   registermapping.dart                               :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 15:32:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/15 15:12:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/17 15:53:24 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -59,7 +59,7 @@ const int DIVaddr = 0xFF04;
 const int TIMAaddr = 0xFF05;
 const int TMAaddr = 0xFF06;
 const int TACaddr = 0xFF07;
-const int IFaddr = 0xFF0;
+const int IFaddr = 0xFF0F;
 const int LCDCaddr = 0xFF40;
 const int STATaddr = 0xFF41;
 const int SCYaddr = 0xFF42;
@@ -68,22 +68,22 @@ const int LYaddr = 0xFF44;
 const int LYCaddr = 0xFF45;
 const int DMAaddr = 0xFF46;
 const int BGPaddr = 0xFF47;
-const int OBP0addr = 0xFF;
-const int OBP1addr = 0xFF;
-const int WYaddr = 0xFF4;
-const int WXaddr = 0xFF4;
-const int KEY1addr = 0xFF;
-const int VBKaddr = 0xFF4;
-const int HDMA1addr = 0xFF;
-const int HDMA2addr = 0xFF;
-const int HDMA3addr = 0xFF;
-const int HDMA4addr = 0xFF;
-const int HDMA5addr = 0xFF;
+const int OBP0addr = 0xFF48;
+const int OBP1addr = 0xFF49;
+const int WYaddr = 0xFF4A;
+const int WXaddr = 0xFF4B;
+const int KEY1addr = 0xFF4D;
+const int VBKaddr = 0xFF4F;
+const int HDMA1addr = 0xFF51;
+const int HDMA2addr = 0xFF52;
+const int HDMA3addr = 0xFF53;
+const int HDMA4addr = 0xFF54;
+const int HDMA5addr = 0xFF55;
 const int RPaddr = 0xFF56;
 const int BGPIaddr = 0xFF68;
 const int BGPDaddr = 0xFF69;
-const int OBPIaddr = 0xFF6;
-const int OBPDaddr = 0xFF6;
+const int OBPIaddr = 0xFF6A;
+const int OBPDaddr = 0xFF6B;
 const int SVBKaddr = 0xFF70;
 const int IEaddr = 0xFFFF;
 

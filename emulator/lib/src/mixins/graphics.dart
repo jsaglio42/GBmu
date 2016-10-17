@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 15:33:54 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 15:48:34 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -103,7 +103,8 @@ abstract class Graphics
   }
 
   void setLCDCRegister(int v) {
-    if (!this.memr.rLCDC.isLCDEnabled && ((v >> 7) & 0x1 == 1))
+    final bool enabling = ((v >> 7) & 0x1 == 1);
+    if (!this.memr.rLCDC.isLCDEnabled && enabling)
     {
       _counterScanline = 0;
       this.memr.LY = 0;
@@ -139,8 +140,6 @@ abstract class Graphics
       case (GraphicMode.VBLANK) : ; _VBLANK_routine(); break;
       default: assert (false, 'GraphicMode: switch failure');
     }
-    // assert(_updated.LY != null, "LY: Condition Failure");
-    // assert(_updated.mode != null, "Mode: Condition Failure");
   }
 
   /* Switch to VRAM_ACCESS or remain as is */
@@ -148,14 +147,8 @@ abstract class Graphics
     if (_counterScanline >= CLOCK_PER_OAM_ACCESS)
     {
       _counterScanline -= CLOCK_PER_OAM_ACCESS;
-      // _updated.LY = this.memr.LY;
       _updated.mode = GraphicMode.VRAM_ACCESS;
     }
-    // else
-    // {
-    //   _updated.LY = this.memr.LY;
-    //   _updated.mode = this.memr.rSTAT.mode;
-    // }
   }
 
   /* Switch to HBLANK or remain as is */
@@ -163,16 +156,10 @@ abstract class Graphics
     if (_counterScanline >= CLOCK_PER_VRAM_ACCESS)
     {
       _counterScanline -= CLOCK_PER_VRAM_ACCESS;
-      // _updated.LY = this.memr.LY;
       _updated.mode = GraphicMode.HBLANK;
         if (this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.HBLANK))
           this.requestInterrupt(InterruptType.LCDStat);
     }
-    // else
-    // {
-    //   _updated.LY = this.memr.LY;
-    //   _updated.mode = this.memr.rSTAT.mode;
-    // }
   }
 
   /* Switch to OAM_ACCESS/VBLANK or remain as is */
@@ -197,11 +184,6 @@ abstract class Graphics
       }
 
     }
-    // else
-    // {
-    //   _updated.LY = this.memr.LY;
-    //   _updated.mode = this.memr.rSTAT.mode;
-    // }
   }
 
   /* Switch to OAM_ACCESS or remain as is */
@@ -219,16 +201,8 @@ abstract class Graphics
           this.requestInterrupt(InterruptType.LCDStat);
       }
       else
-      {
         _updated.LY = incLY;
-        _updated.mode = this.memr.rSTAT.mode;
-      }
     }
-    // else
-    // {
-    //   _updated.LY = this.memr.LY;
-    //   _updated.mode = this.memr.rSTAT.mode;
-    // }
   }
 
   /* MUST trigger LYC interrupt and push new STAT/LY register */
@@ -255,7 +229,6 @@ abstract class Graphics
   void _updateScreen() {
     List<int> tmp;
 
-    // print('UpdateScreen');
     tmp = _screenBuffer;
     _screenBuffer = this.lcdScreen;
     this.lcdScreen = tmp;
@@ -266,7 +239,6 @@ abstract class Graphics
     _colorIDs_BG.fillRange(0, _colorIDs_BG.length, null);
     _colors_Sprite.fillRange(0, _colors_Sprite.length, null);
 
-    // print('Draw Line');
     for (int x = 0; x < LCD_WIDTH; ++x)
     {
       _setBackgroundColorID(x);
