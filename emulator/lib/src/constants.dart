@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 15:27:33 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 18:14:47 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,13 +52,13 @@ final Duration EMULATION_RESCHEDULE_MIN_DELAY = const Duration(milliseconds: 2);
 
 /* Memory Constant */
 const int TAIL_RAM_LAST = 0xFFFF;
-const int TAIL_RAM_FIRST = 0xFE00;
+const int TAIL_RAM_FIRST = 0xFF00;
 const int TAIL_RAM_SIZE = TAIL_RAM_LAST - TAIL_RAM_FIRST + 1;
 
-const int FORBIDDEN_MEM_LAST = TAIL_RAM_FIRST - 1;
-const int FORBIDDEN_MEM_FIRST = 0xE000;
+const int OAM_LAST = 0xFE9F;
+const int OAM_FIRST = 0xFE00;
 
-const int INTERNAL_RAM_LAST = FORBIDDEN_MEM_FIRST - 1;
+const int INTERNAL_RAM_LAST = 0xDFFF;
 const int INTERNAL_RAM_FIRST = 0xC000;
 const int INTERNAL_RAM_SIZE = INTERNAL_RAM_LAST - INTERNAL_RAM_FIRST + 1;
 

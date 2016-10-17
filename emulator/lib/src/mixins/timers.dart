@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/15 19:53:45 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 19:11:56 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,8 +18,8 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
-import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
+import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
+// import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
 
 abstract class TrapAccessors {
 
@@ -29,30 +29,32 @@ abstract class TrapAccessors {
 
 abstract class Timers
   implements Hardware.Hardware
-  , Tailram.TailRam
-  , Interrupt.InterruptManager
+  , Interrupts.Interrupts
   , TrapAccessors
 {
 
+  int _clockTotal = 0;
   int _thresholdTIMA = 1024;
   int _counterTIMA = 0;
   int _counterDIV = 0;
 
   /* API **********************************************************************/
+  int get clockTotal => _clockTotal;
+
   void updateTimers(int nbClock) {
-    this.clockTotal += nbClock;
+    _clockTotal += nbClock;
     _updateDIV(nbClock);
     _updateTIMA(nbClock);
     return ;
   }
 
+  /* Trap Access */
   void resetDIVRegister() {
     this.memr.DIV = 0;
     return ;
   }
 
   /* Private ******************************************************************/
-
   void _updateDIV(int nbClock) {
     _counterDIV += nbClock;
     if (_counterDIV >= 256)

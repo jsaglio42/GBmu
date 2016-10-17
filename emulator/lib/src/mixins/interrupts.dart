@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   interruptmanager.dart                              :+:      :+:    :+:   //
+//   interrupts.dart                                    :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/15 19:54:42 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 18:58:49 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,7 +28,7 @@ enum InterruptType {
   Joypad
 }
 
-abstract class InterruptManager
+abstract class Interrupts
   implements Hardware.Hardware
   , Mmu.Mmu {
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 12:59:10 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 14:23:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/17 18:16:47 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,7 @@ export 'package:emulator/src/hardware/registermapping.dart';
 
 export 'package:emulator/src/mixins/instructions.dart';
 // export 'package:emulator/src/mixins/instructionsdecoder.dart';
-// export 'package:emulator/src/mixins/interruptmanager.dart';
+// export 'package:emulator/src/mixins/interrupts.dart';
 // export 'package:emulator/src/mixins/joypad.dart';
 // export 'package:emulator/src/mixins/mmu.dart';
 // export 'package:emulator/src/mixins/timers.dart';

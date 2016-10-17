@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   tail_ram.dart                                      :+:      :+:    :+:   //
+//   tailram.dart                                       :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 13:51:16 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 19:03:17 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,14 +19,14 @@ import "package:emulator/src/hardware/registermapping.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/graphics.dart" as Graphics;
+import "package:emulator/src/mixins/oam.dart" as OAM;
 import "package:emulator/src/mixins/joypad.dart" as Joypad;
 import "package:emulator/src/mixins/timers.dart" as Timers;
-
-// WORK IN PROGRESS - NOT LINKED - DOES NOT COMPILE
 
 abstract class TailRam implements Hardware.Hardware
   , Joypad.TrapAccessors
   , Timers.TrapAccessors
+  , OAM.TrapAccessors
   , Graphics.TrapAccessors
 {
 

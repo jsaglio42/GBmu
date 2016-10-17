@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 15:48:34 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 18:48:17 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,8 +20,8 @@ import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/hardware/data.dart" as Data;
-import "package:emulator/src/mixins/interruptmanager.dart" as Interrupt;
-import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
+import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
+// import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
 
 enum GraphicMode {
@@ -66,15 +66,13 @@ abstract class TrapAccessors {
 
   void setLCDCRegister(int v);
   void resetLYRegister();
-  void execDMA(int v);
 
 }
 
 abstract class Graphics
   implements Hardware.Hardware
-  , Tailram.TailRam
   , Mmu.Mmu
-  , Interrupt.InterruptManager
+  , Interrupts.Interrupts
   , TrapAccessors {
   
   int _counterScanline = 0;
@@ -97,7 +95,8 @@ abstract class Graphics
         _drawLine();
       if (_updated.updateScreen)
         _updateScreen();
-      _updateGraphicRegisters();
+      _updateLY();
+      _updateSTAT();
     }
     return ;
   }
@@ -116,16 +115,6 @@ abstract class Graphics
 
   void resetLYRegister() {
     this.memr.LY = 0;
-    return ;
-  }
-
-  void execDMA(int v) {
-    final int addr = v * 0x100;
-
-    for (int i = 0 ; i < 0xA0; i++) {
-      this.tr_push8(0xFE00 + i, this.pull8(addr + i)); // to be changed with struct OAM
-    }
-    this.memr.DMA = v;
     return ;
   }
 
@@ -206,22 +195,25 @@ abstract class Graphics
   }
 
   /* MUST trigger LYC interrupt and push new STAT/LY register */
-  void _updateGraphicRegisters() {
+  void _updateLY() {
+    if (_updated.LY != null)
+      this.memr.LY = _updated.LY;
+  }
+
+  void _updateSTAT() {
+    final bool coincidence = (this.memr.LYC == this.memr.LY);
     final int interrupt_bits = this.memr.STAT & 0xF8;
     final int mode_bits = (_updated.mode == null)
       ? this.memr.rSTAT.mode.index
       : _updated.mode.index;
-    if (this.memr.LYC != _updated.LY)
-      _updated.STAT = mode_bits | interrupt_bits;
-    else
+    if (coincidence)
     {
-      _updated.STAT = mode_bits | interrupt_bits | 0x4;
       if (this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.COINCIDENCE))
-          this.requestInterrupt(InterruptType.LCDStat);
+        this.requestInterrupt(InterruptType.LCDStat);
+      this.memr.STAT = mode_bits | interrupt_bits | 0x4;
     }
-    this.memr.STAT = _updated.STAT;
-    if (_updated.LY != null)
-      this.memr.LY = _updated.LY;
+    else
+      this.memr.STAT = mode_bits | interrupt_bits;
     return ;
   }
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 13:55:34 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 19:14:37 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,6 +52,7 @@ class RegisterLCDC {
     _tileMapID_WIN = (v >> 6) & 0x1;
     _spriteSize = (v >> 2) & 0x1 == 1 ? 16 : 8;
     _value = v;
+    return ;
   }
 
 }
@@ -70,6 +71,7 @@ class RegisterSTAT {
 
 }
 
+/* MemRegs ********************************************************************/
 class MemRegs {
 
   final List<int> _data;
