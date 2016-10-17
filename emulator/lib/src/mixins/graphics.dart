@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 22:15:10 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 22:30:53 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -317,10 +317,10 @@ abstract class Graphics
       else if (s.flipY)
         relativeY = sizeY - 1 - relativeY;
 
-      int tileID = s.tileID;
-      int tileAddress = 0x8000 + tileID * 16; // tile address should use sizeY ? TO BE CHECKED
-      int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
-      int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
+      final int tileID = s.tileID;
+      final int tileAddress = 0x8000 + tileID * 16; // tile address should use sizeY ? TO BE CHECKED
+      final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
+      final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
 
       for (int relativeX = 0; relativeX < 8; ++relativeX) {
         int x = (s.posX - 8) + relativeX;
@@ -344,10 +344,11 @@ abstract class Graphics
           colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
         }
 
-        int colorID = colorId_l | colorId_h;
+        final int colorID = colorId_l | colorId_h;
         if (colorID == 0)
           continue;
-        _colors_Sprite[x] = _getColor(colorID, s.OBP_DMG);
+        final int OBP = (s.OBP_DMG == 0) ? this.memr.OBP0 : this.memr.OBP1;
+        _colors_Sprite[x] = _getColor(colorID, OBP);
         _zBuffer[x] = spriteno;
       }
 
