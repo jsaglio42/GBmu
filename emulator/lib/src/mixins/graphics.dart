@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 18:48:17 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 22:15:10 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,9 +19,8 @@ import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/hardware/data.dart" as Data;
+import "package:emulator/src/hardware/oam.dart" as Oam;
 import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
-// import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
 
 enum GraphicMode {
@@ -66,6 +65,7 @@ abstract class TrapAccessors {
 
   void setLCDCRegister(int v);
   void resetLYRegister();
+  void execDMA(int v);
 
 }
 
@@ -115,6 +115,20 @@ abstract class Graphics
 
   void resetLYRegister() {
     this.memr.LY = 0;
+    return ;
+  }
+
+  void execDMA(int v) {
+    int addr = v * 0x100;
+
+    for (int i = 0 ; i < 40; ++i) {
+      this.oam[i].posY = this.pull8(addr + 0);
+      this.oam[i].posX = this.pull8(addr + 1);
+      this.oam[i].tileID = this.pull8(addr + 2);
+      this.oam[i].attribute = this.pull8(addr + 3);
+      addr += 4;
+    }
+    this.memr.DMA = v;
     return ;
   }
 
@@ -293,49 +307,33 @@ abstract class Graphics
     if (!this.memr.rLCDC.isSpriteDisplayEnabled)
       return ;
     _zBuffer.fillRange(0, _zBuffer.length, -1);
-
     final int sizeY = this.memr.rLCDC.spriteSize;
-
     for (int spriteno = 0; spriteno < 40; ++spriteno) {
-      int spriteOffset = 0xFE00 + spriteno * 4;
-      int posY = this.tr_pull8(spriteOffset) - 16;
-      int relativeY = this.memr.LY - posY;
+      Oam.Sprite s = this.oam[spriteno];
+
+      int relativeY = this.memr.LY - (s.posY - 16);
       if (relativeY < 0 || relativeY >= sizeY)
         continue ;
-
-      int info = this.tr_pull8(spriteOffset + 3);
-      bool priorityIsBG = (info >> 7) & 0x1 == 1;
-      bool flipY = (info >> 6) & 0x1 == 1;
-      bool flipX = (info >> 5) & 0x1 == 1;
-      int OBP = ((info >> 4) & 0x1 == 0) ? this.memr.OBP0 : this.memr.OBP1;
-
-      if (flipY)
+      else if (s.flipY)
         relativeY = sizeY - 1 - relativeY;
 
-      int tileID = this.tr_pull8(spriteOffset + 2);
-      /* tile address should use sizeY ? TO BE CHECKED */
-      int tileAddress = 0x8000 + tileID * 16;
+      int tileID = s.tileID;
+      int tileAddress = 0x8000 + tileID * 16; // tile address should use sizeY ? TO BE CHECKED
       int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
       int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
-      int posX = this.tr_pull8(spriteOffset + 1) - 8;
 
       for (int relativeX = 0; relativeX < 8; ++relativeX) {
-        int x = posX + relativeX;
-        if (x < 0)
-          continue ;
+        int x = (s.posX - 8) + relativeX;
         if (x >= LCD_WIDTH)
           break ;
-
-        /* Not sure about BG transparency here; TO BE CHECKED */
-        if (priorityIsBG && _colorIDs_BG[x] != 0 &&_colorIDs_BG[x] != null)
-          continue ;
-
-        if (_zBuffer[x] >= 0)
+        else if (x < 0
+          || _zBuffer[x] >= 0
+          || (s.priorityIsBG && _colorIDs_BG[x] != 0 &&_colorIDs_BG[x] != null))
           continue ;
 
         int colorId_l;
         int colorId_h;
-        if (flipX)
+        if (s.flipX)
         {
           colorId_l = (tileRow_l >> relativeX) & 0x1 == 1 ? 0x1 : 0x0;
           colorId_h = (tileRow_h >> relativeX) & 0x1 == 1 ? 0x2 : 0x0;
@@ -349,9 +347,10 @@ abstract class Graphics
         int colorID = colorId_l | colorId_h;
         if (colorID == 0)
           continue;
-        _colors_Sprite[x] = _getColor(colorID, OBP);
+        _colors_Sprite[x] = _getColor(colorID, s.OBP_DMG);
         _zBuffer[x] = spriteno;
       }
+
     }
   }
 
@@ -396,6 +395,5 @@ abstract class Graphics
     else
       return (palette >> (2 * colorID)) & 0x3;
   }
-
 
 }

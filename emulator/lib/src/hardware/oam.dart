@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 19:24:56 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 22:14:53 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,12 +15,7 @@ import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
 
-import "package:emulator/src/hardware/registermapping.dart";
-
-import "package:emulator/src/hardware/hardware.dart" as Hardware;
-
 /* Sprites ********************************************************************/
-
 class Sprite {
 
   Sprite();
@@ -59,18 +54,14 @@ class Sprite {
 }
 
 /* OAM ************************************************************************/
+class OAM {
 
-abstract class OAM
-  implements Hardware.Hardware
-  , IMmu, TrapAccessors
-{
-
-  final List<Sprite> _oam = new List.generate(40, (i) => new Sprite());
+  final List<Sprite> _data = new List.generate(40, (i) => new Sprite());
 
   /* ACCESSORS ****************************************************************/
-  int oam_pull8(int memAddr) {
+  int pull8(int memAddr) {
     memAddr -= OAM_FIRST;
-    Sprite s = _oam[memAddr ~/ 4];
+    Sprite s = _data[memAddr ~/ 4];
     switch (memAddr % 4) {
       case (0) : return s.posY;
       case (1) : return s.posX;
@@ -80,9 +71,9 @@ abstract class OAM
     }
   }
 
-  void oam_push8(int memAddr, int v) {
+  void push8(int memAddr, int v) {
     memAddr -= OAM_FIRST;
-    Sprite s = _oam[memAddr ~/ 4];
+    Sprite s = _data[memAddr ~/ 4];
     switch (memAddr % 4) {
       case (0) : s.posY = v; break;
       case (1) : s.posX = v; break;
@@ -93,33 +84,6 @@ abstract class OAM
     return ;
   }
 
-  /* Trap Access */
-  void execDMA(int v) {
-    int addr = v * 0x100;
-
-    for (int i = 0 ; i < 40; ++i) {
-      _oam[i].posY = this.pull8(addr + 0);
-      _oam[i].posX = this.pull8(addr + 1);
-      _oam[i].tileID = this.pull8(addr + 2);
-      _oam[i].attribute = this.pull8(addr + 3);
-      addr += 4;
-    }
-    this.memr.DMA = v;
-    return ;
-  }
+  Sprite operator[](int i) => _data[i];
 
 }
-
-abstract class TrapAccessors {
-
-  void execDMA(int v);
-
-}
-
-abstract class IMmu {
-
-  int pull8(int memAddr);
-  void push8(int memAddr, int v);
-
-}
-

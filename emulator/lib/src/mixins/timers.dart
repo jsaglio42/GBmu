@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 19:11:56 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 19:42:33 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,7 +19,6 @@ import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
-// import "package:emulator/src/mixins/tail_ram.dart" as Tailram;
 
 abstract class TrapAccessors {
 

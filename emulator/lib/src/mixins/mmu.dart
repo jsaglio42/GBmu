@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 19:12:09 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 21:59:10 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,7 +18,6 @@ import "package:emulator/src/enums.dart";
 import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/globals.dart';
 
-import "package:emulator/src/mixins/oam.dart" as OAM;
 import "package:emulator/src/mixins/tailram.dart" as Tailram;
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/hardware/registermapping.dart" as Memregisters;
@@ -27,7 +26,6 @@ bool _isInRange(int i, int f, int l) => (i >= f && i <= l);
 
 abstract class Mmu
   implements Hardware.Hardware
-  , OAM.OAM
   , Tailram.TailRam {
 
   /* 8-bits *******************************************************************/
@@ -42,11 +40,11 @@ abstract class Mmu
     else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
       return this.internalRam.pull8_unsafe(memAddr);
     else if (_isInRange(memAddr, OAM_FIRST, OAM_LAST))
-      return this.oam_pull8(memAddr);
+      return this.oam.pull8(memAddr);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
       return this.tr_pull8(memAddr);
-    else
-      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+    // else
+    //   throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
 
   void push8(int memAddr, int v)
@@ -60,11 +58,11 @@ abstract class Mmu
     else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
       this.internalRam.push8_unsafe(memAddr, v);
     else if (_isInRange(memAddr, OAM_FIRST, OAM_LAST))
-      return this.oam_push8(memAddr, v);
+      return this.oam.push8(memAddr, v);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
       this.tr_push8(memAddr, v);
-    else
-      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+    // else
+    //   throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
     return ;
   }
 

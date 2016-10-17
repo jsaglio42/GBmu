@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/17 19:13:59 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 21:58:00 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,6 +18,7 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
 import "package:emulator/src/hardware/mem_registers.dart" as Memregs;
+import "package:emulator/src/hardware/oam.dart" as Oam;
 import "package:emulator/src/hardware/data.dart" as Data;
 
 abstract class Hardware {
@@ -30,7 +31,8 @@ abstract class Hardware {
   final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
   final Memregs.MemRegs memr = new Memregs.MemRegs();
 
-  /* Memory */
+  final Oam.OAM oam = new Oam.OAM();
+
   final internalRam = new Data.GbRam(INTERNAL_RAM_FIRST, INTERNAL_RAM_SIZE);
   final videoRam = new Data.GbRam(VIDEO_RAM_FIRST, VIDEO_RAM_SIZE);
 
