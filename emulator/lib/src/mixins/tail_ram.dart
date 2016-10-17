@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/15 19:31:41 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 13:51:16 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -55,19 +55,11 @@ abstract class TailRam implements Hardware.Hardware
     _data[0xFF26 - TAIL_RAM_FIRST] = 0xF1;
   }
 
-  // ACCESSORS ************************************************************** **
-  // SPECIAL ACCESSORS ************************ **
-  // int get P1 => this.getJoypadRegister();
-  // void set P1(int v) {this.setJoypadRegister(v);}
-  // void set DIV(int v) {this.resetDIVRegister();}
-  // void set LY(int v) {this.resetLYRegister();}
-  // void set DMA(int v) {this.execDMA(v);}
-
-  // ADDRESS ACCESSORS ************************ **
-  /* Add specific getter here */
+  /* ACCESSORS ****************************************************************/
   int tr_pull8(int memAddr) {
     switch (memAddr) {
-      case (P1addr): return this.memr.P1;
+      case (P1addr): return this.getJoypadRegister();
+
       case (SBaddr): return this.memr.SB;
       case (SCaddr): return this.memr.SC;
       case (DIVaddr): return this.memr.DIV;
@@ -105,24 +97,24 @@ abstract class TailRam implements Hardware.Hardware
     }
   }
 
-  /* Add specific setter here */
   void tr_push8(int memAddr, int v) {
     switch (memAddr) {
-      case (P1addr): this.memr.P1 = v; break ;
+      case (P1addr): this.setJoypadRegister(v); break ;
+      case (DIVaddr): this.resetDIVRegister(); break ;
+      case (LCDCaddr): this.setLCDCRegister(v); break ;
+      case (LYaddr): this.resetLYRegister(); break ;
+      case (DMAaddr): this.execDMA(v); break ;
+
       case (SBaddr): this.memr.SB = v; break ;
       case (SCaddr): this.memr.SC = v; break ;
-      case (DIVaddr): this.memr.DIV = v; break ;
       case (TIMAaddr): this.memr.TIMA = v; break ;
       case (TMAaddr): this.memr.TMA = v; break ;
       case (TACaddr): this.memr.TAC = v; break ;
       case (IFaddr): this.memr.IF = v; break ;
-      case (LCDCaddr): this.memr.LCDC = v; break ;
       case (STATaddr): this.memr.STAT = v; break ;
       case (SCYaddr): this.memr.SCY = v; break ;
       case (SCXaddr): this.memr.SCX = v; break ;
-      case (LYaddr): this.memr.LY = v; break ;
       case (LYCaddr): this.memr.LYC = v; break ;
-      case (DMAaddr): this.memr.DMA = v; break ;
       case (BGPaddr): this.memr.BGP = v; break ;
       case (OBP0addr): this.memr.OBP0 = v; break ;
       case (OBP1addr): this.memr.OBP1 = v; break ;
@@ -146,9 +138,11 @@ abstract class TailRam implements Hardware.Hardware
     }
   }
 
-  /* Add specific getter here */
-  int tr_pullMemReg(MemReg r) {
-    return this.memr.pull8(r);
+  int pullMemReg(MemReg r) {
+    switch (r) {
+      case (MemReg.P1) : return this.getJoypadRegister();
+      default : return this.memr.pull8(r);
+    }
   }
 
 }

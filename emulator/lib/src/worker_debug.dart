@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/15 13:45:53 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/17 12:46:14 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -112,7 +112,7 @@ abstract class Debug implements Worker.AWorker {
     final Gameboy.GameBoy gb = this.gbOpt;
     this.ports.send('RegInfo', gb.cpur);
     it.forEach((r, i) {
-      l[r.index] = gb.tr_pullMemReg(r);
+      l[r.index] = gb.pullMemReg(r);
     });
     this.ports.send('MemInfo',  <String, dynamic> {
       'addr' : _debuggerMemoryAddr,
