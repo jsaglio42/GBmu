@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/15 19:30:39 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 15:32:40 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,7 +25,7 @@ abstract class Hardware {
   Cartridge.ACartridge _c;
   Cartridge.ACartridge get c => _c;
 
-  Uint8List lcdScreen = new Uint8List(LCD_DATA_SIZE);
+  List<int> lcdScreen = new List<int>(LCD_SIZE);
 
   final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
   final Memregs.MemRegs memr = new Memregs.MemRegs();
@@ -55,7 +55,7 @@ abstract class Hardware {
   void initHardware(Cartridge.ACartridge c) {
     assert(_c == null, "Hardware: Cartridge already initialised");
     _c = c;
-    lcdScreen.fillRange(0, lcdScreen.length, 0xFF);
+    lcdScreen.fillRange(0, lcdScreen.length, 0x00);
     this.cpur.reset();
     this.memr.reset();
     return ;

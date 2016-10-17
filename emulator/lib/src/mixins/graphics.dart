@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 13:59:26 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 15:33:54 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -37,20 +37,6 @@ enum GraphicInterrupt {
   OAM_ACCESS,
   COINCIDENCE
 }
-
-enum Color {
-  White,
-  LightGrey,
-  DarkGrey,
-  Black
-}
-
-final Map<Color, List<int>> _colorMap = new Map.unmodifiable({
-  Color.White : [0xFF, 0xFF, 0xFF, 0xFF],
-  Color.LightGrey : [0xAA, 0xAA, 0xAA, 0xFF],
-  Color.DarkGrey : [0x55, 0x55, 0x55, 0x55],
-  Color.Black : [0x00, 0x00, 0x00, 0xFF]
-});
 
 /* Small classes used to save updated info ************************************/
 class GRegisterUpdatedInfo {
@@ -90,15 +76,15 @@ abstract class Graphics
   , Mmu.Mmu
   , Interrupt.InterruptManager
   , TrapAccessors {
-
-  Uint8List _buffer = new Uint8List(LCD_DATA_SIZE);
   
   int _counterScanline = 0;
   GRegisterUpdatedInfo _updated = new GRegisterUpdatedInfo();
 
-  List<int> _BGColorIDs = new List<int>(LCD_WIDTH);
-  List<int> _SpriteColors = new List<int>(LCD_WIDTH);
-  List<int> _zbuffer = new List<int>(LCD_WIDTH);
+  List<int> _screenBuffer = new List<int>(LCD_SIZE);
+
+  List<int> _colorIDs_BG = new List<int>(LCD_WIDTH);
+  List<int> _colors_Sprite = new List<int>(LCD_WIDTH);
+  List<int> _zBuffer = new List<int>(LCD_WIDTH);
 
   /* API **********************************************************************/
   void updateGraphics(int nbClock) {
@@ -116,9 +102,9 @@ abstract class Graphics
     return ;
   }
 
-  /* Is it working? */
   void setLCDCRegister(int v) {
-    if (((v >> 7) & 0x1 == 1) && !this.memr.rLCDC.isLCDEnabled) {
+    if (!this.memr.rLCDC.isLCDEnabled && ((v >> 7) & 0x1 == 1))
+    {
       _counterScanline = 0;
       this.memr.LY = 0;
       this.memr.STAT = ((this.memr.STAT & ~0x3) | 0x2) & 0xFF;
@@ -135,8 +121,9 @@ abstract class Graphics
   void execDMA(int v) {
     final int addr = v * 0x100;
 
-    for (int i = 0 ; i < 0xA0; i++)
+    for (int i = 0 ; i < 0xA0; i++) {
       this.tr_push8(0xFE00 + i, this.pull8(addr + i)); // to be changed with struct OAM
+    }
     this.memr.DMA = v;
     return ;
   }
@@ -152,8 +139,8 @@ abstract class Graphics
       case (GraphicMode.VBLANK) : ; _VBLANK_routine(); break;
       default: assert (false, 'GraphicMode: switch failure');
     }
-    assert(_updated.LY != null, "LY: Condition Failure");
-    assert(_updated.mode != null, "Mode: Condition Failure");
+    // assert(_updated.LY != null, "LY: Condition Failure");
+    // assert(_updated.mode != null, "Mode: Condition Failure");
   }
 
   /* Switch to VRAM_ACCESS or remain as is */
@@ -161,14 +148,14 @@ abstract class Graphics
     if (_counterScanline >= CLOCK_PER_OAM_ACCESS)
     {
       _counterScanline -= CLOCK_PER_OAM_ACCESS;
-      _updated.LY = this.memr.LY;
+      // _updated.LY = this.memr.LY;
       _updated.mode = GraphicMode.VRAM_ACCESS;
     }
-    else
-    {
-      _updated.LY = this.memr.LY;
-      _updated.mode = this.memr.rSTAT.mode;
-    }
+    // else
+    // {
+    //   _updated.LY = this.memr.LY;
+    //   _updated.mode = this.memr.rSTAT.mode;
+    // }
   }
 
   /* Switch to HBLANK or remain as is */
@@ -176,16 +163,16 @@ abstract class Graphics
     if (_counterScanline >= CLOCK_PER_VRAM_ACCESS)
     {
       _counterScanline -= CLOCK_PER_VRAM_ACCESS;
-      _updated.LY = this.memr.LY;
+      // _updated.LY = this.memr.LY;
       _updated.mode = GraphicMode.HBLANK;
         if (this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.HBLANK))
           this.requestInterrupt(InterruptType.LCDStat);
     }
-    else
-    {
-      _updated.LY = this.memr.LY;
-      _updated.mode = this.memr.rSTAT.mode;
-    }
+    // else
+    // {
+    //   _updated.LY = this.memr.LY;
+    //   _updated.mode = this.memr.rSTAT.mode;
+    // }
   }
 
   /* Switch to OAM_ACCESS/VBLANK or remain as is */
@@ -210,11 +197,11 @@ abstract class Graphics
       }
 
     }
-    else
-    {
-      _updated.LY = this.memr.LY;
-      _updated.mode = this.memr.rSTAT.mode;
-    }
+    // else
+    // {
+    //   _updated.LY = this.memr.LY;
+    //   _updated.mode = this.memr.rSTAT.mode;
+    // }
   }
 
   /* Switch to OAM_ACCESS or remain as is */
@@ -237,17 +224,19 @@ abstract class Graphics
         _updated.mode = this.memr.rSTAT.mode;
       }
     }
-    else
-    {
-      _updated.LY = this.memr.LY;
-      _updated.mode = this.memr.rSTAT.mode;
-    }
+    // else
+    // {
+    //   _updated.LY = this.memr.LY;
+    //   _updated.mode = this.memr.rSTAT.mode;
+    // }
   }
 
   /* MUST trigger LYC interrupt and push new STAT/LY register */
   void _updateGraphicRegisters() {
     final int interrupt_bits = this.memr.STAT & 0xF8;
-    final int mode_bits = _updated.mode.index;
+    final int mode_bits = (_updated.mode == null)
+      ? this.memr.rSTAT.mode.index
+      : _updated.mode.index;
     if (this.memr.LYC != _updated.LY)
       _updated.STAT = mode_bits | interrupt_bits;
     else
@@ -264,18 +253,18 @@ abstract class Graphics
 
   /* Drawing functions ********************************************************/
   void _updateScreen() {
-    Uint8List tmp;
+    List<int> tmp;
 
     // print('UpdateScreen');
-    tmp = _buffer;
-    _buffer = this.lcdScreen;
+    tmp = _screenBuffer;
+    _screenBuffer = this.lcdScreen;
     this.lcdScreen = tmp;
     return ;
   }
 
   void _drawLine() {
-    _BGColorIDs.fillRange(0, _BGColorIDs.length, null);
-    _SpriteColors.fillRange(0, _SpriteColors.length, null);
+    _colorIDs_BG.fillRange(0, _colorIDs_BG.length, null);
+    _colors_Sprite.fillRange(0, _colors_Sprite.length, null);
 
     // print('Draw Line');
     for (int x = 0; x < LCD_WIDTH; ++x)
@@ -306,7 +295,7 @@ abstract class Graphics
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-    _BGColorIDs[x] = colorId_l | colorId_h;
+    _colorIDs_BG[x] = colorId_l | colorId_h;
     return ;
   }
 
@@ -332,14 +321,14 @@ abstract class Graphics
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-    _BGColorIDs[x] = colorId_l | colorId_h;
+    _colorIDs_BG[x] = colorId_l | colorId_h;
     return ;
   }
 
   void _setSpriteColor() {
     if (!this.memr.rLCDC.isSpriteDisplayEnabled)
       return ;
-    _zbuffer.fillRange(0, _zbuffer.length, -1);
+    _zBuffer.fillRange(0, _zBuffer.length, -1);
 
     final int sizeY = this.memr.rLCDC.spriteSize;
 
@@ -374,10 +363,10 @@ abstract class Graphics
           break ;
 
         /* Not sure about BG transparency here; TO BE CHECKED */
-        if (priorityIsBG && _BGColorIDs[x] != 0 && _BGColorIDs[x] != null)
+        if (priorityIsBG && _colorIDs_BG[x] != 0 &&_colorIDs_BG[x] != null)
           continue ;
 
-        if (_zbuffer[x] >= 0)
+        if (_zBuffer[x] >= 0)
           continue ;
 
         int colorId_l;
@@ -396,29 +385,23 @@ abstract class Graphics
         int colorID = colorId_l | colorId_h;
         if (colorID == 0)
           continue;
-        _SpriteColors[x] = _getColor(colorID, OBP);
-        _zbuffer[x] = spriteno;
+        _colors_Sprite[x] = _getColor(colorID, OBP);
+        _zBuffer[x] = spriteno;
       }
     }
   }
 
   void _updateScreenBuffer() {
-    assert(_BGColorIDs.length == LCD_WIDTH, 'Failure');
-    assert(_SpriteColors.length == LCD_WIDTH, 'Failure');
-    int BGP = this.memr.BGP;
+    assert(_colorIDs_BG.length == LCD_WIDTH, 'Failure');
+    assert(_colors_Sprite.length == LCD_WIDTH, 'Failure');
+    final int BGP = this.memr.BGP;
+    final int pixelStart = this.memr.LY * LCD_WIDTH;
     for (int x = 0; x < LCD_WIDTH; ++x)
     {
-      Color c;
-      int pixelOffset = (this.memr.LY * LCD_WIDTH + x) * 4;
-      if (_SpriteColors[x] != null)
-        c = Color.values[_SpriteColors[x]];
+      if (_colors_Sprite[x] != null)
+        _screenBuffer[pixelStart + x] = _colors_Sprite[x];
       else
-        c = Color.values[_getColor(_BGColorIDs[x], BGP)];
-      List cList = _colorMap[c];
-      _buffer[pixelOffset + 0] = cList[0];
-      _buffer[pixelOffset + 1] = cList[1];
-      _buffer[pixelOffset + 2] = cList[2];
-      _buffer[pixelOffset + 3] = cList[3];
+        _screenBuffer[pixelStart + x] = _getColor(_colorIDs_BG[x], BGP);
     }
     return ;
   }
@@ -445,7 +428,7 @@ abstract class Graphics
 
   int _getColor(int colorID, int palette) {
     if (colorID == null)
-      return 0;
+      return 0x00;
     else
       return (palette >> (2 * colorID)) & 0x3;
   }
