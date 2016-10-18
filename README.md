@@ -32,7 +32,7 @@ pub serve
 
 ### Ressources
 ```sh
-curl -O https://projects.intra.42.fr/uploads/document/document/323/ressources.tgz
+curl -O https://projects.intra.42.fr/uploads/document/document/323/ressources.tgz && tar -zxf ressources.tgz && mv ressources/roms .
 ```
 
 ### Gameboy / Emulation
