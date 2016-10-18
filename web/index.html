@@ -69,36 +69,6 @@
           </div> <!-- /OPTIONS BODY -->
         </div> <!-- /OPTIONS CONTAINER -->
 
-        <!-- DEBUGGER CONTAINER-->
-        <div class="col-lg-12"  id="debContainer">
-          <!-- DEBUGGER BODY -->
-          <div class="row" id="debBody">
-
-            <div class="col-lg-12" id="debColClock"></div>
-            <div class="col-sm-12" id="debColButtons">
-              <button type="button" class="btn btn-success debStatusButton" style="display: none">Resume</button>
-              <button type="button" class="btn btn-warning debStatusButton">Pause</button>
-              <p><b>Auto-break:</b></p>
-              <form>
-                <label class="radio-inline"><input type="radio" name="optradio" value='0'>Instruction</label>
-                <label class="radio-inline"><input type="radio" name="optradio" value='1'>Frame</label>
-                <label class="radio-inline"><input type="radio" name="optradio" value='2'>Second</label>
-                <label class="radio-inline"><input type="radio" name="optradio" value='3' checked>None</label>
-              </form>
-            </div>
-
-            <div class="col-sm-8">
-              <div class="row">
-                <div class="col-sm-4" id="debColRegisters"></div>
-                <div class="col-sm-8" id="debColInstructionFlow"></div>
-              </div>
-              <div class="row" id="debColMemoryExplorer"></div>
-            </div>
-            <div class="col-sm-4" id="debColMemRegisters"></div>
-          </div><!-- /#debBody -->
-        </div><!-- /#debContainer -->
-
-
         <!-- cartsContainer-->
         <div class="panel-group col-md-4 col-lg-3" id="cartsContainer">
           <!-- cartsBody -->
@@ -138,6 +108,34 @@
         </div>
 
 
+        <!-- DEBUGGER CONTAINER-->
+        <div class="col-lg-12"  id="debContainer">
+          <!-- DEBUGGER BODY -->
+          <div class="row" id="debBody">
+
+            <div class="col-lg-12" id="debColClock"></div>
+            <div class="col-sm-12" id="debColButtons">
+              <button type="button" class="btn btn-success debStatusButton" style="display: none">Resume</button>
+              <button type="button" class="btn btn-warning debStatusButton">Pause</button>
+              <p><b>Auto-break:</b></p>
+              <form>
+                <label class="radio-inline"><input type="radio" name="optradio" value='0'>Instruction</label>
+                <label class="radio-inline"><input type="radio" name="optradio" value='1'>Frame</label>
+                <label class="radio-inline"><input type="radio" name="optradio" value='2'>Second</label>
+                <label class="radio-inline"><input type="radio" name="optradio" value='3' checked>None</label>
+              </form>
+            </div>
+
+            <div class="col-sm-8">
+              <div class="row">
+                <div class="col-sm-4" id="debColRegisters"></div>
+                <div class="col-sm-8" id="debColInstructionFlow"></div>
+              </div>
+              <div class="row" id="debColMemoryExplorer"></div>
+            </div>
+            <div class="col-sm-4" id="debColMemRegisters"></div>
+          </div><!-- /#debBody -->
+        </div><!-- /#debContainer -->
 
       </div><!-- /MAIN SPACE -->
     </div><!-- /MAIN CONTAINER -->
