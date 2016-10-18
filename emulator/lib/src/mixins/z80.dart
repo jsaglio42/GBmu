@@ -829,9 +829,8 @@ abstract class Z80
   /* ADD **********************************************************************/
   int _ADD_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
-    final int calculated = l + r;
-    final int result = calculated & 0xFF;
-    this.cpur.cy = (calculated > 0xFF) ? 1 : 0;
+    final int result = (l + r) & 0xFF;
+    this.cpur.cy = (l + r > 0xFF) ? 1 : 0;
     this.cpur.h = ((l & 0xF) + (r & 0xF) > 0xF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
@@ -840,11 +839,10 @@ abstract class Z80
 
   int _ADC_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
-    // r += this.cpur.cy;
-    final int calculated = l + r + this.cpur.cy;
-    final int result = calculated & 0xFF;
-    this.cpur.cy = (calculated > 0xFF) ? 1 : 0;
-    this.cpur.h = ((l & 0xF) + (r & 0xF) + this.cpur.cy > 0xF) ? 1 : 0;
+    final int cy_save = this.cpur.cy;
+    final int result = (l + r + cy_save) & 0xFF;
+    this.cpur.cy = (l + r + cy_save > 0xFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xF) + (r & 0xF) + cy_save > 0xF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
@@ -917,8 +915,7 @@ abstract class Z80
   /* SUB **********************************************************************/
   int _SUB_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
-    final int calculated = l - r;
-    final int result = calculated & 0xFF;
+    final int result = (l - r) & 0xFF;
     this.cpur.cy = (l < r) ? 1 : 0;
     this.cpur.h = ((l & 0x0F) < (r & 0x0F)) ? 1 : 0;
     this.cpur.n = 1;
@@ -928,11 +925,10 @@ abstract class Z80
 
   int _SBC_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
-    r += this.cpur.cy;
-    final int calculated = l - r;
-    final int result = calculated & 0xFF;
-    this.cpur.cy = (l < r) ? 1 : 0;
-    this.cpur.h = ((l & 0x0F) < (r & 0x0F)) ? 1 : 0;
+    final int cy_save = this.cpur.cy;
+    final int result = l - (r + cy_save) & 0xFF;
+    this.cpur.cy = (l < r + cy_save) ? 1 : 0;
+    this.cpur.h = ((l & 0x0F) < (r & 0x0F) + cy_save) ? 1 : 0;
     this.cpur.n = 1;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
@@ -1028,8 +1024,7 @@ abstract class Z80
   /* Logical AND */
   int _AND_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
-    final int calculated = l & r;
-    final int result = calculated & 0xFF;
+    final int result = (l & r) & 0xFF;
     this.cpur.cy = 0;
     this.cpur.h = 1;
     this.cpur.n = 0;
@@ -1061,8 +1056,7 @@ abstract class Z80
   /* Logical OR */
   int _OR_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
-    final int calculated = l | r;
-    final int result = calculated & 0xFF;
+    final int result = (l | r) & 0xFF;
     this.cpur.cy = 0;
     this.cpur.h = 0;
     this.cpur.n = 0;
@@ -1094,8 +1088,7 @@ abstract class Z80
   /* Logical XOR */
   int _XOR_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
-    final int calculated = l ^ r;
-    final int result = calculated & 0xFF;
+    final int result = (l ^ r) & 0xFF;
     this.cpur.cy = 0;
     this.cpur.h = 0;
     this.cpur.n = 0;
@@ -1127,8 +1120,7 @@ abstract class Z80
   /* 16-bits ALU **************************************************************/
   int _ADD16_calculate(int l, int r) {
     assert((l & ~0xFFFF == 0) && (r & ~0xFFFF == 0));
-    final int calculated = l + r;
-    final int result = calculated & 0xFFFF;
+    final int result = (l + r) & 0xFFFF;
     this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
     this.cpur.h = ((l & 0xFF) + (r & 0xFF) > 0xFF) ? 1 : 0;
     return result;
