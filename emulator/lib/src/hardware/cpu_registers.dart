@@ -77,7 +77,7 @@ class CpuRegs {
   int get HL => this.pull16(Reg16.HL);
   int get SP => this.pull16(Reg16.SP);
   int get PC => this.pull16(Reg16.PC);
-  // int get F => this.pull8(Reg8.F);
+  int get F => this.pull8(Reg8.F);
   int get A => this.pull8(Reg8.A);
   int get C => this.pull8(Reg8.C);
   int get B => this.pull8(Reg8.B);
@@ -101,7 +101,7 @@ class CpuRegs {
   void set HL(int v) {this.push16(Reg16.HL, v);}
   void set SP(int v) {this.push16(Reg16.SP, v);}
   void set PC(int v) {this.push16(Reg16.PC, v);}
-  void set F(int v) {this.push8(Reg8.F, v);}
+  /* No setter for flag F */
   void set A(int v) {this.push8(Reg8.A, v);}
   void set C(int v) {this.push8(Reg8.C, v);}
   void set B(int v) {this.push8(Reg8.B, v);}
