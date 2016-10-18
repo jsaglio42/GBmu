@@ -1363,7 +1363,7 @@ abstract class Z80
 
   int _SRA(Reg8 r) { /* Shift Right but bit-7 is not changed */
     final val = this.cpur.pull8(r);
-    final newbit = 0;
+    final newbit = (val >> 7) & 0x1;
     final res = _SR_calculate(val, newbit);
     this.cpur.push8(r, res);
     this.cpur.PC += 2;
