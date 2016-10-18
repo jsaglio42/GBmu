@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 12:28:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 14:54:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -130,7 +130,7 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
   }
 
   void _onExtractRamReq(EventExtractRam ev) async {
-    Ft.log("WorkerEmu", '_onExtractRamReq');
+    Ft.log("WorkerEmu", '_onExtractRamReq', [ev.ramKey]);
     assert(this.gbMode != V.Absent, "_onExtractRamReq with no gameboy");
 
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
@@ -186,6 +186,9 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
 
   Async.Future<Gameboy.GameBoy> _assembleGameBoy(RequestEmuStart req) async
   {
+    Cartridge.ACartridge c;
+
+
     Ft.log('WorkerEmu', '_assembleGameBoy', [req]);
 
     final Idb.Database idb = await _futureDatabaseOfName(req.idb);
@@ -195,7 +198,14 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
         await _fieldOfKeys(idb, req.romStore, req.romKey));
     Ft.log('WorkerEmu', '_assembleGameBoy#got-rom', [rom]);
 
-    final Cartridge.ACartridge c = new Cartridge.ACartridge(rom);
+    if (req.ramKeyOpt != null) {
+      Data.Ram ram = new Data.Ram.unserialize(
+          await _fieldOfKeys(idb, req.ramStore, req.ramKeyOpt));
+      Ft.log('WorkerEmu', '_assembleGameBoy#got-ram', [ram]);
+      c = new Cartridge.ACartridge(rom, optionalRam: ram);
+    }
+    else
+      c = new Cartridge.ACartridge(rom);
     Ft.log('WorkerEmu', '_assembleGameBoy#got-cartridge', [c]);
 
     final Gameboy.GameBoy gb = new Gameboy.GameBoy(c);
@@ -249,12 +259,14 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
     Idb.Transaction tra;
 
     tra = idb.transaction(storeName, 'readwrite');
-
     await tra.objectStore(storeName)
     .openCursor(key: fieldKey)
     .take(1)
     .forEach((Idb.CursorWithValue cur) {
-      cur.value['data'] = data;
+      final m = new Map.from(cur.value);
+
+      m['data'] = data;
+      cur.update(m);
     });
     return tra.completed;
   }
