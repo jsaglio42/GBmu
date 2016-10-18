@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 11:35:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 16:44:06 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -182,7 +182,7 @@ class ChipEvent<T, C> {
   C get dstCartOpt {
     if (dst is Attached) {
       if (this is ChipEventCart2<T, C>)
-        return (this as ChipEventCart2<T, C>).oldCart;
+        return (this as ChipEventCart2<T, C>).newCart;
       else
         return (this as ChipEventCart<T, C>).cart;
     }

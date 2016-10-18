@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 18:25:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 11:42:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 17:48:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,12 +50,14 @@ class PlatformCart extends Object with _Actions implements _Super {
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
   final PlatformDomComponentStorage _pdcs;
+  final PlatformEmulatorContacts _pec;
   final Emulator.Emulator _emu;
 
   HtmlCartClosable _openingOpt;
 
   // CONSTRUCTION *********************************************************** **
-  PlatformCart(this._pcs, this._pde, this._pce, this._pdcs, this._emu) {
+  PlatformCart(
+      this._pcs, this._pde, this._pce, this._pdcs, this._pec, this._emu) {
     Ft.log('PlatformCart', 'contructor');
 
     _pde.onCartButtonClicked.forEach(_onCartButtonClicked);
@@ -91,7 +93,7 @@ class PlatformCart extends Object with _Actions implements _Super {
 
   void deleteCart(DomCart that) {
     if (that == _pdcs.gbCart.v)
-      _emulatorEject();
+      _extractEject();
     else if (that == _pdcs.openedCart.v)
       _actionDeleteOpened();
     else {
@@ -131,9 +133,9 @@ class PlatformCart extends Object with _Actions implements _Super {
   void _onDropReceived(CartBank that) {
     assert(_pdcs.dragged.isSome, '_onDropReceived() with none dragged');
     if (that is DomGameBoySocket)
-      _emulatorRun(_pdcs.dragged.v as DomCart);
+      _pec.requestStart(_pdcs.dragged.v as DomCart);
     else /* if (that is DomDetachedCartBank) */
-      _emulatorEject();
+      _extractEject();
   }
 
   void _onGameBoyEvent(GameBoyEvent ev) {
@@ -153,34 +155,33 @@ class PlatformCart extends Object with _Actions implements _Super {
       }
       else /* if (_pdcs.gbCart.v.data.life is Dead) */
         _actionDeleteGameBoy();
-
     }
   }
 
   void _onEjectClick(_) {
-    _emulatorEject();
+    _pec.requestEject();
   }
 
   void _onRestartClick(_) {
-    _emulatorRun(_pdcs.gbCart.v);
+    assert(_pdcs.gbCart.isSome, '_onRestartClick() with none in gb');
+    _extractStart();
   }
 
   // PRIVATE **************************************************************** **
-  void _emulatorEject() {
-    _emu.send('EmulationEject', 42);
+  void _extractStart() {
+    final DomChip ramOpt = _pdcs.chipOfCartOpt(_pdcs.gbCart.v, Ram.v);
+
+    if (ramOpt != null)
+      _pec.requestRamExtraction(ramOpt.data.idbid);
+    _pec.requestStart(_pdcs.gbCart.v as DomCart);
   }
 
-  void _emulatorRun(DomCart cart) {
-    final LsRom dataRom = cart.data;
-    LsRam dataRamOpt;
+  void _extractEject() {
+    final DomChip ramOpt = _pdcs.chipOfCartOpt(_pdcs.gbCart.v, Ram.v);
 
-    dataRamOpt = _pdcs.chipOfCartOpt(cart, Ram.v)?.data;
-    _emu.send('EmulationStart', new Emulator.RequestEmuStart(
-            idb:'GBmu_db',
-            romStore: Rom.v.toString(),
-            ramStore: Ram.v.toString(),
-            romKey: dataRom.idbid,
-            ramKeyOpt: dataRamOpt?.idbid));
+    if (ramOpt != null)
+      _pec.requestRamExtraction(ramOpt.data.idbid);
+    _pec.requestEject();
   }
 
 }

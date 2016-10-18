@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 12:37:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 17:59:08 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,10 +39,10 @@ class PlatformChip extends Object with _Actions implements _Super
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
   final PlatformDomComponentStorage _pdcs;
-  final Emulator.Emulator _emu;
+  final PlatformEmulatorContacts _pec;
 
   // CONSTRUCTION *********************************************************** **
-  PlatformChip(this._pcs, this._pde, this._pce, this._pdcs, this._emu) {
+  PlatformChip(this._pcs, this._pde, this._pce, this._pdcs, this._pec) {
     Ft.log('PlatformChip', 'contructor');
 
     _pde.onDropReceived
@@ -111,7 +111,7 @@ class PlatformChip extends Object with _Actions implements _Super
     }
   }
 
-  void _onExtractRamClick(_) async {
+  Async.Future _onExtractRamClick(_) async {
     assert(_pdcs.gbCart.isSome, '_onExtractRamClick() with none in gb');
 
     final LsRom romData = _pdcs.gbCart.v.data;
@@ -119,11 +119,7 @@ class PlatformChip extends Object with _Actions implements _Super
       new Emulator.Ram.emptyDetail(romData.fileName, romData.ramSize);
     final LsRam unsafeRamData = await _pcs.newRamBound(ram, romData);
 
-    _emu.send('ExtractRam', new Emulator.EventExtractRam(
-            'GBmu_db', Ram.v.toString(), unsafeRamData.idbid));
-
+    _pec.requestRamExtraction(unsafeRamData.idbid);
   }
-
-  // PRIVATE **************************************************************** **
 
 }

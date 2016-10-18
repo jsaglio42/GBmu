@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 11:42:49 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 16:18:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -57,14 +57,15 @@ Async.Future init(Emulator.Emulator emu) async {
   new HandlerDropZoneCatalyst(pde, pce, pdcs);
   new HandlerDraggableCatalyst(pde, pce, pdcs);
 
+  final PlatformEmulatorContacts pec = new PlatformEmulatorContacts(pde, pce, pdcs, emu);
+
   // Bridge between data and dom
-  final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs, emu);
-  final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs, emu);
+  final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs, pec, emu);
+  final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs, pec);
   final PlatformDom pd = new PlatformDom(pcs, pde, pce, pdcs, pc, pch);
 
   // Misc. controllers
   new HandlerFileAdmission(pde, pcs, pdcs);
-  new HandlerEmulatorCommunication(emu, pce, pdcs);
   new HandlerGlobalStyles(pde, pce, pdcs);
 
   // pidb.start: async computation

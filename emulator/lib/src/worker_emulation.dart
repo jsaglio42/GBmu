@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 14:54:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 17:34:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -133,10 +133,12 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
     Ft.log("WorkerEmu", '_onExtractRamReq', [ev.ramKey]);
     assert(this.gbMode != V.Absent, "_onExtractRamReq with no gameboy");
 
+    final c = this.gbOpt.c.ram.rawData;
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
     Ft.log('WorkerEmu', '_onExtractRamReq#got-idb', [idb]);
 
-    _setDataOfField(idb, ev.ramStore, ev.ramKey, this.gbOpt.c.ram.rawData);
+    await _setDataOfField(idb, ev.ramStore, ev.ramKey, c);
+    Ft.log("WorkerEmu", '_onExtractRamReq#done');
   }
 
   void _onKeyDown(JoypadKey kc){
@@ -220,9 +222,9 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
     final Async.Completer compl = new Async.Completer.sync();
     final req = idbf.callMethod('open', [name]);
 
-    Ft.log('WorkerEmu', '_futureDatabaseOfName', [name]);
+    // Ft.log('WorkerEmu', '_futureDatabaseOfName', [name]);
     req['onsuccess'] = (ev){
-      Ft.log('WorkerEmu', '_onSuccess', [ev]);
+      // Ft.log('WorkerEmu', '_onSuccess', [ev]);
       compl.complete(ev.target.result);
       new Async.Future.delayed(new Duration(milliseconds: 5), (){});
     };
