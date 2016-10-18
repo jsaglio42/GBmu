@@ -23,7 +23,6 @@ import "package:emulator/src/mixins/joypad.dart" as Joypad;
 import "package:emulator/src/mixins/timers.dart" as Timers;
 
 abstract class TailRam implements Hardware.Hardware
-  , Joypad.TrapAccessors
   , Timers.TrapAccessors
   , Graphics.TrapAccessors
 {
@@ -56,8 +55,7 @@ abstract class TailRam implements Hardware.Hardware
   /* ACCESSORS ****************************************************************/
   int tr_pull8(int memAddr) {
     switch (memAddr) {
-      case (P1addr): return this.getJoypadRegister();
-
+      case (P1addr): return this.memr.P1;
       case (SBaddr): return this.memr.SB;
       case (SCaddr): return this.memr.SC;
       case (DIVaddr): return this.memr.DIV;
@@ -97,12 +95,12 @@ abstract class TailRam implements Hardware.Hardware
 
   void tr_push8(int memAddr, int v) {
     switch (memAddr) {
-      case (P1addr): this.setJoypadRegister(v); break ;
       case (DIVaddr): this.resetDIVRegister(); break ;
       case (LCDCaddr): this.setLCDCRegister(v); break ;
       case (LYaddr): this.resetLYRegister(); break ;
       case (DMAaddr): this.execDMA(v); break ;
 
+      case (P1addr): this.memr.P1 = v; break ;
       case (SBaddr): this.memr.SB = v; break ;
       case (SCaddr): this.memr.SC = v; break ;
       case (TIMAaddr): this.memr.TIMA = v; break ;

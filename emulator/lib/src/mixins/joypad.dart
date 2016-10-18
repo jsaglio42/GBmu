@@ -26,26 +26,25 @@ import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
 *
 * Wiring of Joypad input:              Implementation via joypadState:
 *
-*                                         joypadState
-*   FF00H                                   +---+
-*   +---+                                   | 8 +--- Direction = 0 | Buttons = 1
-*   | 7 |                                   |---|
-*   |   |                                   | 7 +--- Down
-*   | 6 |                                   |   |
-*   |   |                                   | 6 +--- Up
-*   | 5 +-------------------+               |   |
-*   |   |                   |               | 5 +--- Left
-*   | 4 +---------+         |               |   |
-*   |   |    Down |   Start |               | 4 +--- Right
-*   | 3 +---------+---------+ - R3          |   |
-*   |   |      Up |  Select |               | 3 +--- Start
-*   | 2 +---------+---------+ - R2          |   |
-*   |   |    Left |       B |               | 2 +--- Select
-*   | 1 +---------+---------+ - R1          |   |
-*   |   |   Right |       A |               | 1 +--- B
-*   | 0 +---------+---------+ - R0          |   |
-*   +---+         |         |               | 0 +--- A
-*                C0        C1               +---+
+*   FF00H                                  joypadState
+*   +---+                                   +---+
+*   | 7 |                                   | 7 +--- Start
+*   |   |                                   |   |
+*   | 6 |                                   | 6 +--- Select
+*   |   |                                   |   |
+*   | 5 +-------------------+               | 5 +--- B
+*   |   |                   |               |   |
+*   | 4 +---------+         |               | 4 +--- A
+*   |   |    Down |   Start |               |   |
+*   | 3 +---------+---------+ - R3          | 3 +--- Down
+*   |   |      Up |  Select |               |   |
+*   | 2 +---------+---------+ - R2          | 2 +--- Up
+*   |   |    Left |       B |               |   |
+*   | 1 +---------+---------+ - R1          | 1 +--- Left
+*   |   |   Right |       A |               |   |
+*   | 0 +---------+---------+ - R0          | 0 +--- Right
+*   +---+         |         |               +---+
+*                C0        C1              
 *
 */
 
@@ -60,49 +59,21 @@ enum JoypadKey {
   Start
 }
 
-abstract class TrapAccessors {
-
-  int getJoypadRegister();
-  void setJoypadRegister(int v);
-
-}
-
 abstract class Joypad
   implements Hardware.Hardware
   , Interrupts.Interrupts
 {
 
     void keyPress(JoypadKey k) {
-      // final int bit = (1 << k.index);
-      if (this.memr.P1.getBit(k.index) == 0)
+      if (this.memr.rP1.getBit(k.index) == 0)
         this.requestInterrupt(InterruptType.Joypad);
-      this.memr.P1.setBit(k.index);
+      this.memr.rP1.setBit(k.index);
       return ;
     }
 
     void keyRelease(JoypadKey k) {
-      // final int state = 0x100 & _joypadState;
-      // final int bit = (1 << k.index);
-      // final int mask = ~bit & 0xFF;
-      this.memr.P1.unsetBit(k.index);
-      // _joypadState = (_joypadState & mask) | state;
+      this.memr.rP1.unsetBit(k.index);
       return;
     }
-
-  // int getJoypadRegister() {
-  //   this.memr.P1;
-  //   if (_joypadState & 0x100 == 0) // b8 = 0: return directions
-  //     return ~((0x0F & (_joypadState >> 0)) | 0x10) & 0x3F;
-  //   else // b8 = 1: return buttons
-  //     return ~((0x0F & (_joypadState >> 4)) | 0x20) & 0x3F;
-  // }
-
-  // void setJoypadRegister(int v) {
-  //   if (v & 0x10 == 0) // Directions: b8 <- 1
-  //     _joypadState &= 0xFF;
-  //   else if (v & 0x20 == 0) // Buttons: b8 <- 1
-  //     _joypadState |= (1 << 8);
-  //   return ;
-  // }
 
 }

@@ -79,11 +79,14 @@ class RegisterP1 {
   int joypadState = 0;
 
   int get value {
-    
+    if (returnDirections)
+      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0x3F;
+    else
+      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0x3F;
   }
 
   int set value (int v) {
-    if (v & 0x10)
+    if (v & 0x10 == 0x00)
       this.returnDirections = true;
     else
       this.returnDirections = false;
@@ -131,7 +134,7 @@ class MemRegs {
   }
   
   /* RAW ACCESSORS *****************************/
-  int get P1 => this.P1.value;
+  int get P1 => this.rP1.value;
   int get SB => _data[MemReg.SB.index];
   int get SC => _data[MemReg.SC.index];
   int get DIV => _data[MemReg.DIV.index];
@@ -166,7 +169,7 @@ class MemRegs {
   int get SVBK => _data[MemReg.SVBK.index];
   int get IE => _data[MemReg.IE.index];
 
-  void set P1(int v) { this.P1.value; = v; }
+  void set P1(int v) { this.rP1.value = v; }
   void set SB(int v) { _data[MemReg.SB.index] = v; }
   void set SC(int v) { _data[MemReg.SC.index] = v; }
   void set DIV(int v) { _data[MemReg.DIV.index] = v; }
@@ -201,12 +204,12 @@ class MemRegs {
   void set SVBK(int v) { _data[MemReg.SVBK.index] = v; }
   void set IE(int v) { _data[MemReg.IE.index] = v; }
 
-  int pullMemReg(MemReg r) {
+  int pull8(MemReg r) {
     switch (r) {
       case (MemReg.P1) : return this.P1;
       case (MemReg.LCDC) : return this.LCDC;
       case (MemReg.STAT) : return this.STAT;
-      default : return this.memr.pull8(r);
+      default : return _data[r.index];
     }
   }
 
