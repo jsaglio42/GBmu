@@ -39,6 +39,8 @@ abstract class Mmu
       return this.videoRam.pull8_unsafe(memAddr);
     else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
       return this.internalRam.pull8_unsafe(memAddr);
+    else if (_isInRange(memAddr, ECHO_RAM_FIRST, ECHO_RAM_LAST))
+      return this.internalRam.pull8_unsafe(memAddr - ECHO_RAM_OFFSET);
     else if (_isInRange(memAddr, OAM_FIRST, OAM_LAST))
       return this.oam.pull8(memAddr);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
@@ -57,8 +59,10 @@ abstract class Mmu
       this.videoRam.push8_unsafe(memAddr, v);
     else if (_isInRange(memAddr, INTERNAL_RAM_FIRST, INTERNAL_RAM_LAST))
       this.internalRam.push8_unsafe(memAddr, v);
+    else if (_isInRange(memAddr, ECHO_RAM_FIRST, ECHO_RAM_LAST))
+      this.internalRam.push8_unsafe(memAddr - ECHO_RAM_OFFSET, v);
     else if (_isInRange(memAddr, OAM_FIRST, OAM_LAST))
-      return this.oam.push8(memAddr, v);
+      this.oam.push8(memAddr, v);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
       this.tr_push8(memAddr, v);
     // else
