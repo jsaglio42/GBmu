@@ -71,6 +71,41 @@ class RegisterSTAT {
 
 }
 
+class RegisterP1 {
+
+  RegisterP1();
+
+  bool returnDirections = false;
+  int joypadState = 0;
+
+  int get value {
+    
+  }
+
+  int set value (int v) {
+    if (v & 0x10)
+      this.returnDirections = true;
+    else
+      this.returnDirections = false;
+  }
+
+  int getBit(int index) {
+    return (this.joypadState >> index) & 0x1;
+  }
+
+  void setBit(int index) {
+    this.joypadState |= (1 << index);
+    return ;
+  }
+
+  void unsetBit(int index) {
+    this.joypadState &= ~(1 << index);
+    return ;
+  }
+
+
+}
+
 /* MemRegs ********************************************************************/
 class MemRegs {
 
@@ -82,8 +117,9 @@ class MemRegs {
   MemRegs() : this.ofList(new List<int>.filled(g_memRegInfos.length, 0));
 
   /* API **********************************************************************/
-  RegisterLCDC  rLCDC = new RegisterLCDC();
-  RegisterSTAT  rSTAT = new RegisterSTAT();
+  RegisterLCDC rLCDC = new RegisterLCDC();
+  RegisterSTAT rSTAT = new RegisterSTAT();
+  RegisterP1 rP1 = new RegisterP1();
 
   void reset() {
    for (MemRegInfo mrinfo in g_memRegInfos) {
@@ -95,7 +131,7 @@ class MemRegs {
   }
   
   /* RAW ACCESSORS *****************************/
-  int get P1 => _data[MemReg.P1.index];
+  int get P1 => this.P1.value;
   int get SB => _data[MemReg.SB.index];
   int get SC => _data[MemReg.SC.index];
   int get DIV => _data[MemReg.DIV.index];
@@ -130,7 +166,7 @@ class MemRegs {
   int get SVBK => _data[MemReg.SVBK.index];
   int get IE => _data[MemReg.IE.index];
 
-  void set P1(int v) { _data[MemReg.P1.index] = v; }
+  void set P1(int v) { this.P1.value; = v; }
   void set SB(int v) { _data[MemReg.SB.index] = v; }
   void set SC(int v) { _data[MemReg.SC.index] = v; }
   void set DIV(int v) { _data[MemReg.DIV.index] = v; }
@@ -165,6 +201,13 @@ class MemRegs {
   void set SVBK(int v) { _data[MemReg.SVBK.index] = v; }
   void set IE(int v) { _data[MemReg.IE.index] = v; }
 
-  int pull8(MemReg r) => _data[r.index];
+  int pullMemReg(MemReg r) {
+    switch (r) {
+      case (MemReg.P1) : return this.P1;
+      case (MemReg.LCDC) : return this.LCDC;
+      case (MemReg.STAT) : return this.STAT;
+      default : return this.memr.pull8(r);
+    }
+  }
 
 }

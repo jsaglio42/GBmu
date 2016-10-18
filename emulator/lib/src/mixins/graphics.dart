@@ -317,6 +317,7 @@ abstract class Graphics
       else if (s.flipY)
         relativeY = sizeY - 1 - relativeY;
 
+
       final int tileID = s.tileID;
       final int tileAddress = 0x8000 + tileID * 16; // tile address should use sizeY ? TO BE CHECKED
       final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);

@@ -72,37 +72,37 @@ abstract class Joypad
   , Interrupts.Interrupts
 {
 
-    int _joypadState = 0x0;
-
     void keyPress(JoypadKey k) {
-      final int bit = (1 << k.index);
-      if (_joypadState & bit == 0)
+      // final int bit = (1 << k.index);
+      if (this.memr.P1.getBit(k.index) == 0)
         this.requestInterrupt(InterruptType.Joypad);
-      _joypadState |= bit;
+      this.memr.P1.setBit(k.index);
       return ;
     }
 
     void keyRelease(JoypadKey k) {
-      final int state = 0x100 & _joypadState;
-      final int bit = (1 << k.index);
-      final int mask = ~bit & 0xFF;
-      _joypadState = (_joypadState & mask) | state;
+      // final int state = 0x100 & _joypadState;
+      // final int bit = (1 << k.index);
+      // final int mask = ~bit & 0xFF;
+      this.memr.P1.unsetBit(k.index);
+      // _joypadState = (_joypadState & mask) | state;
       return;
     }
 
-  int getJoypadRegister() {
-    if (_joypadState & 0x100 == 0) // b8 = 0: return directions
-      return ~((0x0F & (_joypadState >> 0)) | 0x10) & 0x3F;
-    else // b8 = 1: return buttons
-      return ~((0x0F & (_joypadState >> 4)) | 0x20) & 0x3F;
-  }
+  // int getJoypadRegister() {
+  //   this.memr.P1;
+  //   if (_joypadState & 0x100 == 0) // b8 = 0: return directions
+  //     return ~((0x0F & (_joypadState >> 0)) | 0x10) & 0x3F;
+  //   else // b8 = 1: return buttons
+  //     return ~((0x0F & (_joypadState >> 4)) | 0x20) & 0x3F;
+  // }
 
-  void setJoypadRegister(int v) {
-    if (v & 0x10 == 0) // Directions: b8 <- 1
-      _joypadState &= 0xFF;
-    else if (v & 0x20 == 0) // Buttons: b8 <- 1
-      _joypadState |= (1 << 8);
-    return ;
-  }
+  // void setJoypadRegister(int v) {
+  //   if (v & 0x10 == 0) // Directions: b8 <- 1
+  //     _joypadState &= 0xFF;
+  //   else if (v & 0x20 == 0) // Buttons: b8 <- 1
+  //     _joypadState |= (1 << 8);
+  //   return ;
+  // }
 
 }

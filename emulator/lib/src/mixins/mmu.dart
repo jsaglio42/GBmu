@@ -45,8 +45,8 @@ abstract class Mmu
       return this.oam.pull8(memAddr);
     else if (_isInRange(memAddr, TAIL_RAM_FIRST, TAIL_RAM_LAST))
       return this.tr_pull8(memAddr);
-    // else
-    //   throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+    else
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
 
   void push8(int memAddr, int v)

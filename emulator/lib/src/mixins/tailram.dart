@@ -136,11 +136,4 @@ abstract class TailRam implements Hardware.Hardware
     }
   }
 
-  int pullMemReg(MemReg r) {
-    switch (r) {
-      case (MemReg.P1) : return this.getJoypadRegister();
-      default : return this.memr.pull8(r);
-    }
-  }
-
 }
