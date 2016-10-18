@@ -310,7 +310,7 @@ abstract class Z80
       case (0xEF) : return _RST_28H();                  //  RST 28H
 
       case (0xF0) : return _LD_A_n();                   //  LD A, (0xFF+n)
-      case (0xF1) : return _POP(Reg16.AF);              //  POP AF
+      case (0xF1) : return _POP_AF();                   //  POP AF
       case (0xF2) : return _LD_A_C();                   //  LD A, (0xFF+C)
       case (0xF3) : return _DI();                       //  DI
       case (0xF4) : return _NOP();                      //  0xF4: N/A
@@ -817,14 +817,22 @@ abstract class Z80
     return 12;
   }
 
+  int _POP_AF() {
+    final int val = this.pull16(this.cpur.SP);
+    this.cpur.AF = val & 0xFFF0;
+    this.cpur.SP += 2;
+    this.cpur.PC += 1;
+    return 12;
+  }
+
   /* 8-bits ALU ***************************************************************/
   /* ADD **********************************************************************/
   int _ADD_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
     final int calculated = l + r;
     final int result = calculated & 0xFF;
-    this.cpur.cy = ((l + r) > 0xFF) ? 1 : 0;
-    this.cpur.h = ((l & 0x0F) + (r & 0x0F) > 0x0F) ? 1 : 0;
+    this.cpur.cy = (calculated > 0xFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xF) + (r & 0xF) > 0xF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;
@@ -832,11 +840,11 @@ abstract class Z80
 
   int _ADC_calculate(int l, int r) {
     assert((l & ~0xFF == 0) && (r & ~0xFF == 0));
-    r += this.cpur.cy;
-    final int calculated = l + r;
+    // r += this.cpur.cy;
+    final int calculated = l + r + this.cpur.cy;
     final int result = calculated & 0xFF;
-    this.cpur.cy = ((l + r) > 0xFF) ? 1 : 0;
-    this.cpur.h = ((l & 0x0F) + (r & 0x0F) > 0x0F) ? 1 : 0;
+    this.cpur.cy = (calculated > 0xFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xF) + (r & 0xF) + this.cpur.cy > 0xF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = (result == 0) ? 0x1 : 0x0;
     return result;

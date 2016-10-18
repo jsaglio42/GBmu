@@ -77,7 +77,7 @@ class CpuRegs {
   int get HL => this.pull16(Reg16.HL);
   int get SP => this.pull16(Reg16.SP);
   int get PC => this.pull16(Reg16.PC);
-  int get F => this.pull8(Reg8.F);
+  // int get F => this.pull8(Reg8.F);
   int get A => this.pull8(Reg8.A);
   int get C => this.pull8(Reg8.C);
   int get B => this.pull8(Reg8.B);
