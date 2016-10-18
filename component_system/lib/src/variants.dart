@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/24 12:12:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 11:44:01 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 11:35:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -166,6 +166,30 @@ class ChipEvent<T, C> {
   bool get isDetachedChange => src is Detached || dst is Detached;
 
   String toString() => 'ChipEvent.$_ev';
+
+  // Implemented to counterbalance the poor choice in the design of this class
+  C get srcCartOpt {
+    if (src is Attached) {
+      if (this is ChipEventCart2<T, C>)
+        return (this as ChipEventCart2<T, C>).oldCart;
+      else
+        return (this as ChipEventCart<T, C>).cart;
+    }
+    else
+      return null;
+  }
+
+  C get dstCartOpt {
+    if (dst is Attached) {
+      if (this is ChipEventCart2<T, C>)
+        return (this as ChipEventCart2<T, C>).oldCart;
+      else
+        return (this as ChipEventCart<T, C>).cart;
+    }
+    else
+      return null;
+  }
+
 }
 
 class ChipEventCart<T, C> extends ChipEvent<T, C> {

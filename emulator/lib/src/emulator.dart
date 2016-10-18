@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 15:16:04 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/18 14:03:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,7 @@ import 'dart:typed_data';
 import 'dart:async' as Async;
 
 import 'package:emulator/enums.dart';
+import 'package:emulator/src/events.dart';
 import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 import 'package:emulator/src/worker.dart' as Worker;
@@ -56,6 +57,7 @@ final _workerReceivers = <String, Type>{
   'EmulationAutoBreak' : AutoBreakExternalMode,
   'EmulationPause' : int,
   'EmulationResume' : int,
+  'ExtractRam' : EventExtractRam,
   'DebMemAddrChange' : int,
   'Debug' : <String, dynamic>{}.runtimeType,
 };

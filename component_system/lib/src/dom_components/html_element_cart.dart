@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 13:35:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 14:44:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 10:53:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,7 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-abstract class HtmlElementCart {
+abstract class HtmlElementCart implements DomComponent {
 
   // ATTRIBUTES ************************************************************* **
   Html.Element _elt;
@@ -38,6 +38,7 @@ abstract class HtmlElementCart {
     _btn = _elt.querySelector('.bg-head-btn');
     _body = _elt.querySelector('.panel-collapse');
     _btnText = _elt.querySelector('.bg-head-btn .text');
+    _btnText.text = this.data.fileName;
   }
 
   // PUBLIC ***************************************************************** **

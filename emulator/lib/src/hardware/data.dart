@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 18:15:06 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 12:01:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -119,7 +119,7 @@ class Ram extends AData
   with AReadOperation, AWriteOperation, FileReprData {
 
   // CONSTRUCTION *********************************************************** **
-  // Only called once in DOM, when an external file is loaded
+  // Only called in DOM, when an external file is loaded
   Ram.ofFile(String fileName, Uint8List data)
     : super(0, data) {
     _frd_init(fileName);
@@ -140,11 +140,22 @@ class Ram extends AData
     Ft.log('Ram', 'ctor.empty', [this.fileName, this.terseData]);
   }
 
+  // Only called from DOM, when an extraction is requested
+  Ram.emptyDetail(String romName, int size)
+    : super(0, new Uint8List(size)) {
+    _frd_init(FileRepr.ramNameOfRomName(romName));
+    Ft.log('Ram', 'ctor.emptyDetail', [this.fileName, this.terseData]);
+  }
+
   // FROM FILEREPRDATA ****************************************************** **
   V.Component get type => V.Ram.v;
 
   Map<String, dynamic> get terseData => <String, dynamic>{
     'size': this.size,
   };
+
+  // FROM FILEREPRDATA ****************************************************** **
+  // Used by WorkerEmu to push data to indexedDb
+  Uint8List get rawData => _data;
 
 }

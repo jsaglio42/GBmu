@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 12:59:10 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 18:16:47 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/18 14:03:31 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,7 @@
 
 // export 'package:emulator/src/constants.dart';
 export 'package:emulator/src/emulator.dart';
+export 'package:emulator/src/events.dart';
 // export 'package:emulator/src/enums.dart';
 // export 'package:emulator/src/gameboy.dart';
 // export 'package:emulator/src/globals.dart';

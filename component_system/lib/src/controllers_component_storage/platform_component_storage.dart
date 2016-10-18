@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:58:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 12:36:58 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -102,7 +102,7 @@ class PlatformComponentStorage {
     .where((LsChip c) => c.isBound && c.romUid.v == dst.uid)
     .isNotEmpty;
 
-  Async.Future newRom(Emulator.Rom r) async {
+  Async.Future<LsRom> newRom(Emulator.Rom r) async {
     Ft.log('PlatformCS', 'newRom', [r]);
 
     final int uid = _makeUid();
@@ -110,9 +110,10 @@ class PlatformComponentStorage {
     final LsRom e = new LsRom.ofRom(uid, idbid, r);
 
     _pls.add(e);
+    return e;
   }
 
-  Async.Future newRam(Emulator.Ram r) async {
+  Async.Future<LsRam> newRam(Emulator.Ram r) async {
     Ft.log('PlatformCS', 'newRam', [r]);
 
     final int uid = _makeUid();
@@ -120,9 +121,22 @@ class PlatformComponentStorage {
     final LsRam e = new LsRam.ofRam(uid, idbid, r);
 
     _pls.add(e);
+    return e;
   }
 
-  Async.Future newSs(Emulator.Ss ss) async {
+  Async.Future<LsRam> newRamBound(Emulator.Ram r, LsRom rom) async {
+    Ft.log('PlatformCS', 'newRamBound', [r]);
+
+    final int uid = _makeUid();
+    final int idbid = await _pidb.add(Ram.v, r);
+    final LsRam eUnbound = new LsRam.ofRam(uid, idbid, r);
+    final LsRam e = new LsChip.bind(eUnbound, rom.uid);
+
+    _pls.add(e);
+    return e;
+  }
+
+  Async.Future<LsSs> newSs(Emulator.Ss ss) async {
     Ft.log('PlatformCS', 'newSs', [ss]);
 
     final int uid = _makeUid();
@@ -131,6 +145,7 @@ class PlatformComponentStorage {
     final LsSs e = new LsSs.ofSs(uid, idbid, ss);
 
     _pls.add(e);
+    return e;
   }
 
   void bindRam(LsRam c, LsRom dst) {

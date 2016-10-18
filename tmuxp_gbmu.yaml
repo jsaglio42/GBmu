@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/15 13:32:34 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/18 14:03:59 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,9 +57,10 @@ windows:
 
 - window_index: 1
   panes: ['e $WEB/{index.html,styles.css}']
-
 - window_index: 2
   panes: ['e ./emulator/lib/{constants,emulator,enums,variants}.dart']
+- window_index: 3
+  panes: ['e ./emulator/lib/src/events.dart']
 
 - window_index: 4
   panes: ['e $EMU/{emulator,worker,worker_emulation,worker_emulation_state}.dart']

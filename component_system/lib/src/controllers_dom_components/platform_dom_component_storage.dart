@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 16:01:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 11:41:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,7 @@ class PlatformDomComponentStorage {
   Ft.Option<DomCart> _gbCart = new Ft.Option<DomCart>.none();
   Ft.Option<DomComponent> _dragged = new Ft.Option<DomCart>.none();
 
-  bool _cartSystemHovered = false;
+  bool _cartSystemDragHovered = false;
   bool _fileDragged = false;
 
   // CONTRUCTION ************************************************************ **
@@ -74,13 +74,15 @@ class PlatformDomComponentStorage {
   Ft.Option<DomCart> get gbCart => _gbCart;
   Ft.Option<DomComponent> get dragged => _dragged;
 
-  bool get cartSystemHovered => _cartSystemHovered;
+  bool get cartSystemDragHovered => _cartSystemDragHovered;
   bool get fileDragged => _fileDragged;
 
   final Html.Element labelRestart = Html.querySelector('#label-magbut');
   final Html.Element labelEject = Html.querySelector('#label-ejectbut');
-  final Html.Element btnRestart = Html.querySelector('#magbut');
-  final Html.Element btnEject = Html.querySelector('#ejectbut');
+  final Html.Element labelExtractRam = Html.querySelector('#label-extractrambut');
+  final Html.InputElement btnRestart = Html.querySelector('#magbut');
+  final Html.InputElement btnEject = Html.querySelector('#ejectbut');
+  final Html.InputElement btnExtractRam = Html.querySelector('#extractrambut');
 
   // Components getters ********************************* **
   // Most of them are linear in time
@@ -170,9 +172,9 @@ class PlatformDomComponentStorage {
     _dragged = new Ft.Option<DomCart>.none();
   }
 
-  void set cartSystemHovered(bool b) {
-    assert(_cartSystemHovered != b, 'from: cartSystemHovered()');
-    _cartSystemHovered = b;
+  void set cartSystemDragHovered(bool b) {
+    assert(_cartSystemDragHovered != b, 'from: cartSystemDragHovered()');
+    _cartSystemDragHovered = b;
   }
 
   void set fileDragged(bool b) {

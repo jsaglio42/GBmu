@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 12:28:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 12:28:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,6 +21,7 @@ import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
+import 'package:emulator/src/events.dart';
 
 import 'package:emulator/src/worker.dart' as Worker;
 import 'package:emulator/src/worker_emulation_state.dart' as WEmuState;
@@ -124,9 +125,18 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
   void _onEjectReq(_)
   {
     Ft.log("WorkerEmu", '_onEjectReq');
-    assert(this.gbMode != V.Absent,
-        "_onEjectReq with no gameboy");
+    assert(this.gbMode != V.Absent, "_onEjectReq with no gameboy");
     this.es_eject(this.gbOpt.c.rom.fileName);
+  }
+
+  void _onExtractRamReq(EventExtractRam ev) async {
+    Ft.log("WorkerEmu", '_onExtractRamReq');
+    assert(this.gbMode != V.Absent, "_onExtractRamReq with no gameboy");
+
+    final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
+    Ft.log('WorkerEmu', '_onExtractRamReq#got-idb', [idb]);
+
+    _setDataOfField(idb, ev.ramStore, ev.ramKey, this.gbOpt.c.ram.rawData);
   }
 
   void _onKeyDown(JoypadKey kc){
@@ -174,24 +184,6 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
       this.ports.send('EmulationResume', 42);
   }
 
-  Async.Future<Idb.Database> _futureDatabaseOfName(String name) {
-    final idbf = Js.context['indexedDB'];
-    final Async.Completer compl = new Async.Completer.sync();
-    final req = idbf.callMethod('open', [name]);
-
-    Ft.log('WorkerEmu', '_futureDatabaseOfName', [name]);
-    req['onsuccess'] = (ev){
-      Ft.log('WorkerEmu', '_onSuccess', [ev]);
-      compl.complete(ev.target.result);
-      new Async.Future.delayed(new Duration(milliseconds: 5), (){});
-    };
-    req['onerror'] = (ev){
-      compl.completeError('Database error: ${ev.target.errorCode}');
-      new Async.Future.delayed(new Duration(milliseconds: 5), (){});
-    };
-    return compl.future;
-  }
-
   Async.Future<Gameboy.GameBoy> _assembleGameBoy(RequestEmuStart req) async
   {
     Ft.log('WorkerEmu', '_assembleGameBoy', [req]);
@@ -212,6 +204,25 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
     return gb;
   }
 
+  // DATABASE INTERACTIONS ******************** **
+  Async.Future<Idb.Database> _futureDatabaseOfName(String name) {
+    final idbf = Js.context['indexedDB'];
+    final Async.Completer compl = new Async.Completer.sync();
+    final req = idbf.callMethod('open', [name]);
+
+    Ft.log('WorkerEmu', '_futureDatabaseOfName', [name]);
+    req['onsuccess'] = (ev){
+      Ft.log('WorkerEmu', '_onSuccess', [ev]);
+      compl.complete(ev.target.result);
+      new Async.Future.delayed(new Duration(milliseconds: 5), (){});
+    };
+    req['onerror'] = (ev){
+      compl.completeError('Database error: ${ev.target.errorCode}');
+      new Async.Future.delayed(new Duration(milliseconds: 5), (){});
+    };
+    return compl.future;
+  }
+
   Async.Future<dynamic> _fieldOfKeys(
       Idb.Database idb, String storeName, int fieldKey) async {
     Idb.Transaction tra;
@@ -220,17 +231,32 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
     tra = idb.transaction(storeName, 'readonly');
 
     await tra.objectStore(storeName)
-      .openCursor(key: fieldKey)
-      .take(1)
-      .forEach((Idb.CursorWithValue cur) {
-        serialized = cur.value;
-      });
+    .openCursor(key: fieldKey)
+    .take(1)
+    .forEach((Idb.CursorWithValue cur) {
+      serialized = cur.value;
+    });
     return tra.completed.then((_) {
         if (serialized == null)
           throw new Exception('Missing $storeName#$fieldKey');
         else
           return serialized;
         });
+  }
+
+  Async.Future _setDataOfField(
+      Idb.Database idb, String storeName, int fieldKey, Uint8List data) async {
+    Idb.Transaction tra;
+
+    tra = idb.transaction(storeName, 'readwrite');
+
+    await tra.objectStore(storeName)
+    .openCursor(key: fieldKey)
+    .take(1)
+    .forEach((Idb.CursorWithValue cur) {
+      cur.value['data'] = data;
+    });
+    return tra.completed;
   }
 
   // LOOPING ROUTINE ******************************************************** **
@@ -375,7 +401,8 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
       ..listener('EmulationResume').forEach(_onResumeReq)
       ..listener('KeyDownEvent').forEach(_onKeyDown)
       ..listener('KeyUpEvent').forEach(_onKeyUp)
-      ..listener('EmulationEject').forEach(_onEjectReq);
+      ..listener('EmulationEject').forEach(_onEjectReq)
+      ..listener('ExtractRam').forEach(_onExtractRamReq);
   }
 
 }

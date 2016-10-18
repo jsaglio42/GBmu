@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 14:19:56 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 16:01:53 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 13:56:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,26 +39,12 @@ class HandlerGlobalStyles {
   HandlerGlobalStyles(this._pde, this._pce, this._pdcs) {
     Ft.log('HandlerGS', 'contructor');
 
-    _pde.onCartSystemHover.forEach(_onCartSystemHover);
     _pce.onCartEvent.forEach(_onCartEvent);
+    _pce.onChipEvent.forEach(_onChipEvent);
   }
 
   // CALLBACKS ************************************************************** **
-  void _onCartSystemHover(bool b) {
-    if (b)
-      _pdcs.carts.forEach((DomCart c){
-        c.btnText.text = c.data.fileName;
-      });
-    else
-      _pdcs.carts.forEach((DomCart c){
-        c.btnText.text = "";
-      });
-  }
-
   void _onCartEvent(CartEvent<DomCart> ev) {
-    if (ev.src is None && _pdcs.cartSystemHovered) {
-      ev.cart.btnText.text = ev.cart.data.fileName;
-    }
     if (ev.src is GameBoy && ev.dst is! GameBoy) {
       _pdcs.labelRestart.style.visibility = "hidden";
       _pdcs.labelEject.style.visibility = "hidden";
@@ -67,8 +53,23 @@ class HandlerGlobalStyles {
       _pdcs.labelRestart.style.visibility = "visible";
       _pdcs.labelEject.style.visibility = "visible";
     }
+    if (ev.dst is GameBoy && _pdcs.chipOfCartOpt(ev.cart, Ram.v) == null)
+      _pdcs.labelExtractRam.style.visibility = "visible";
+    else
+      _pdcs.labelExtractRam.style.visibility = "hidden";
+  }
+
+  void _onChipEvent(ChipEvent<DomChip, DomCart> ev) {
+    if (ev.chip.data.type is Ram) {
+      if (ev.src is Attached && ev.srcCartOpt == _pdcs.gbCart.v)
+        _pdcs.labelExtractRam.style.visibility = "visible";
+      else if (ev.dst is Attached && ev.dstCartOpt == _pdcs.gbCart.v)
+        _pdcs.labelExtractRam.style.visibility = "hidden";
+    }
   }
 
   // PRIVATE **************************************************************** **
+
+
 
 }

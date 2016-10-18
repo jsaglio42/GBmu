@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 17:33:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 15:28:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 10:54:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -44,7 +44,7 @@ class HandlerFileAdmission {
     Ft.log('HandlerFA', 'contructor');
 
     _pde.onFileDrag.forEach(_onFileDrag);
-    _pde.onCartSystemHover.forEach(_onCartSystemHover);
+    _pde.onCartSystemFileHover.forEach(_onCartSystemFileHover);
     _pde.onCartSystemFilesDrop.forEach(_onCartSystemFilesDrop);
   }
 
@@ -56,7 +56,7 @@ class HandlerFileAdmission {
       _target.classes.remove('active');
   }
 
-  void _onCartSystemHover(bool b) {
+  void _onCartSystemFileHover(bool b) {
     if (_pdcs.fileDragged) {
       if (b)
         _target.classes.add('hover');

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 15:27:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/18 11:42:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -59,7 +59,7 @@ Async.Future init(Emulator.Emulator emu) async {
 
   // Bridge between data and dom
   final PlatformCart pc = new PlatformCart(pcs, pde, pce, pdcs, emu);
-  final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs);
+  final PlatformChip pch = new PlatformChip(pcs, pde, pce, pdcs, emu);
   final PlatformDom pd = new PlatformDom(pcs, pde, pce, pdcs, pc, pch);
 
   // Misc. controllers
