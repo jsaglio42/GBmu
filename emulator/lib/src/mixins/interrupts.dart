@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   interruptmanager.dart                              :+:      :+:    :+:   //
+//   interrupts.dart                                    :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/05 17:49:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/17 18:58:49 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,20 +28,17 @@ enum InterruptType {
   Joypad
 }
 
-final int _addrIE = g_memRegInfos[MemReg.IE.index].address;
-final int _addrIF = g_memRegInfos[MemReg.IF.index].address;
-
-abstract class InterruptManager
+abstract class Interrupts
   implements Hardware.Hardware
   , Mmu.Mmu {
 
   /* API **********************************************************************/
 
   void handleInterrupts() {
-    if (this.ime == false)
+    if (this.cpur.ime == false)
       return ;
-    final int IE = this.tailRam.pull8_unsafe(_addrIE);
-    final int IF = this.tailRam.pull8_unsafe(_addrIF);
+    final int IE = this.memr.IE;
+    final int IF = this.memr.IF;
     final int IFandIE = IF & IE;
     if (IFandIE == 0)
       return ;
@@ -51,32 +48,27 @@ abstract class InterruptManager
         return ;
       }
     }
-    return ;    
+    return ;
   }
 
   void requestInterrupt(InterruptType i) {
-    final int IF_old = this.tailRam.pull8_unsafe(_addrIF);
+    final int IF_old = this.memr.IF;
     final int IF_new = IF_old | (1 << i.index);
-    this.halt = false;
-    this.stop = false;
-    this.tailRam.push8_unsafe(_addrIF, IF_new);
+    this.cpur.halt = false;
+    this.cpur.stop = false;
+    this.memr.IF = IF_new;
     return ;
   }
 
   /* Private */
-
-  int _vblankno = 0;
   void _serviceInterrupt(InterruptType i) {
-    this.ime = false;
-    final int IF_old = this.tailRam.pull8_unsafe(_addrIF);
+    this.cpur.ime = false;
+    final int IF_old = this.memr.IF;
     final int IF_new = (IF_old & ~(1 << i.index)) & 0xFF;
-    this.tailRam.push8_unsafe(_addrIF, IF_new);
+    this.memr.IF = IF_new;
     this.pushOnStack16(this.cpur.PC);
     switch(i) {
-      case (InterruptType.VBlank) :
-        // print('VBLANK NO: ${_vblankno++}');
-        this.cpur.PC = 0x0040;
-        break ;
+      case (InterruptType.VBlank) : this.cpur.PC = 0x0040; break ;
       case (InterruptType.LCDStat) : this.cpur.PC = 0x0048 ; break ;
       case (InterruptType.Timer) : this.cpur.PC = 0x0050 ; break ;
       case (InterruptType.Serial) : this.cpur.PC = 0x0058 ; break ;

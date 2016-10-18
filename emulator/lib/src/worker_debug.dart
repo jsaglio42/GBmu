@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 17:28:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/17 22:36:18 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -97,7 +97,6 @@ abstract class Debug implements Worker.AWorker {
 
   List<Instructions.Instruction>   _buildInstList(Gameboy.GameBoy gb)
   {
-    Ft.log("WorkerDeb", '_buildInstList', [gb]);
     return gb.pullInstructionList(_debuggerInstFlowLen);
   }
 

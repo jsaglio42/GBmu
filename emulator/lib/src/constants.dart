@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 14:21:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/17 18:14:47 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,13 +52,13 @@ final Duration EMULATION_RESCHEDULE_MIN_DELAY = const Duration(milliseconds: 2);
 
 /* Memory Constant */
 const int TAIL_RAM_LAST = 0xFFFF;
-const int TAIL_RAM_FIRST = 0xFE00;
+const int TAIL_RAM_FIRST = 0xFF00;
 const int TAIL_RAM_SIZE = TAIL_RAM_LAST - TAIL_RAM_FIRST + 1;
 
-const int FORBIDDEN_MEM_LAST = TAIL_RAM_FIRST - 1;
-const int FORBIDDEN_MEM_FIRST = 0xE000;
+const int OAM_LAST = 0xFE9F;
+const int OAM_FIRST = 0xFE00;
 
-const int INTERNAL_RAM_LAST = FORBIDDEN_MEM_FIRST - 1;
+const int INTERNAL_RAM_LAST = 0xDFFF;
 const int INTERNAL_RAM_FIRST = 0xC000;
 const int INTERNAL_RAM_SIZE = INTERNAL_RAM_LAST - INTERNAL_RAM_FIRST + 1;
 
@@ -78,7 +78,8 @@ const int CARTRIDGE_ROM_SIZE = CARTRIDGE_ROM_LAST - CARTRIDGE_ROM_FIRST + 1;
 /* LCD Constant */
 const int LCD_WIDTH = 160;
 const int LCD_HEIGHT = 144;
-const int LCD_DATA_SIZE = LCD_HEIGHT * LCD_WIDTH * 4;
+const int LCD_SIZE = LCD_HEIGHT * LCD_WIDTH;
+const int LCD_DATA_SIZE = LCD_SIZE * 4;
 
 /* LCD Mode constants */
 const int CLOCK_PER_OAM_ACCESS = 80;

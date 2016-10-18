@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 11:30:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/17 18:16:40 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,10 +27,14 @@ export 'package:emulator/src/hardware/headerdecoder.dart'
   , CartridgeType;
 export 'package:emulator/src/hardware/registermapping.dart'
   show MemReg;
-export 'package:emulator/src/mixins/interruptmanager.dart'
+export 'package:emulator/src/mixins/interrupts.dart'
   show InterruptType ;
 export 'package:emulator/src/mixins/joypad.dart'
   show JoypadKey ;
+export 'package:emulator/src/mixins/graphics.dart'
+  show GraphicInterrupt
+  , GraphicMode;
+
 
 enum DebuggerModeRequest {
   Toggle, Disable, Enable
