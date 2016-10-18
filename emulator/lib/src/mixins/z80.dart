@@ -793,8 +793,8 @@ abstract class Z80
   int _LD_HL_SP_e() {
     final int l = this.cpur.SP;
     final int r = this.pull8(this.cpur.PC + 1).toSigned(8);
-    this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
-    this.cpur.h = ((l & 0xFF) + r > 0xFF) ? 1 : 0;
+    this.cpur.cy = ((l & 0xFF) + (r & 0xFF) > 0xFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xF) + (r & 0xF) > 0xF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = 0;
     this.cpur.HL = (l + r) & 0xFFFF;
@@ -1122,7 +1122,7 @@ abstract class Z80
     assert((l & ~0xFFFF == 0) && (r & ~0xFFFF == 0));
     final int result = (l + r) & 0xFFFF;
     this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
-    this.cpur.h = ((l & 0xFF) + (r & 0xFF) > 0xFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xFFF) + (r & 0xFFF) > 0xFFF) ? 1 : 0;
     return result;
   }
 
@@ -1137,8 +1137,8 @@ abstract class Z80
   int _ADD_SP_e() {
     final int l = this.cpur.SP;
     final int r = this.pull8(this.cpur.PC + 1).toSigned(8);
-    this.cpur.cy = ((l + r) > 0xFFFF) ? 1 : 0;
-    this.cpur.h = ((l & 0xFF) + r > 0xFF) ? 1 : 0;
+    this.cpur.cy = ((l & 0xFF) + (r & 0xFF) > 0xFF) ? 1 : 0;
+    this.cpur.h = ((l & 0xF) + (r & 0xF) > 0xF) ? 1 : 0;
     this.cpur.n = 0;
     this.cpur.z = 0;
     this.cpur.SP = (l + r) & 0xFFFF;
@@ -1419,7 +1419,7 @@ abstract class Z80
 
   int _SRA_HL() { /* Shift Right but bit-7 is not changed */
     final val = this.pull8(this.cpur.HL);
-    final newbit = 0;
+    final newbit = (val >> 7) & 0x1;
     final res = _SR_calculate(val, newbit);
     this.push8(this.cpur.HL, res);
     this.cpur.PC += 2;
