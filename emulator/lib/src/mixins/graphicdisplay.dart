@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 16:27:35 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 16:42:58 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -41,18 +41,19 @@ abstract class GraphicDisplay
     final int y = this.lcd.lineNo;
     for (int x = 0; x < LCD_WIDTH; ++x)
     {
-      _setBackgroundColorID(x, y);
-      _setWindowColorID(x, y);
+      this.lcd.bgColorIDs[x] = _useWindowColorID(x, y)
+        ? _getWindowColorID(x, y)
+        : _getBackgroundColorID(x, y);
     }
     _setSpriteColors(y);
     _updateScreenBuffer(y);
     return ;
   }
 
-  void _setBackgroundColorID(int x, int y) {
+  int _getBackgroundColorID(int x, int y) {
     // print('Background');
     if (!this.memr.rLCDC.isBackgroundDisplayEnabled)
-      return ;
+      return (null);
     final int posY = (y + this.memr.SCY) & 0xFF;
     final int posX =  (x + this.memr.SCX) & 0xFF;
     final int tileY = posY ~/ 8;
@@ -67,20 +68,13 @@ abstract class GraphicDisplay
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-    this.lcd.bgColorIDs[x] = colorId_l | colorId_h;
-    return ;
+    return (colorId_l | colorId_h);
   }
 
-  void _setWindowColorID(int x, int y) {
+  int _getWindowColorID(int x, int y) {
     // print('Window');
-    if (!this.memr.rLCDC.isWindowDisplayEnabled)
-      return ;
     final int posY = y - this.memr.WY;
-    if (posY < 0 || posY >= LCD_HEIGHT)
-      return ;
     final int posX =  x - (this.memr.WX - 7);
-    if (posX < 0 || posX >= LCD_WIDTH)
-      return ;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
     final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_WIN);
@@ -93,8 +87,7 @@ abstract class GraphicDisplay
     final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-    this.lcd.bgColorIDs[x] = colorId_l | colorId_h;
-    return ;
+    return (colorId_l | colorId_h);
   }
 
   void _setSpriteColors(int y) {
@@ -191,7 +184,7 @@ abstract class GraphicDisplay
       return (palette >> (2 * colorID)) & 0x3;
   }
 
-  bool _useWindowColor(int x, int y) {
+  bool _useWindowColorID(int x, int y) {
     if (!this.memr.rLCDC.isWindowDisplayEnabled)
       return false;
     final int posY = y - this.memr.WY;
