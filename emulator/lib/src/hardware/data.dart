@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 12:01:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 20:34:08 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,7 @@ abstract class AData {
 /* ReadOperation **************************************************************/
 abstract class AReadOperation implements AData {
 
-  int pull8_unsafe(int addr) {
+  int pull8(int addr) {
     addr -= memOffset;
     if (addr < 0 || addr >= this.size)
       throw new Exception("Read Operation: $addr out of ${this.toString()}");
@@ -62,7 +62,7 @@ abstract class AWriteOperation implements AData {
 
   void clear() { _data.fillRange(0, this.size, 0); }
 
-  void push8_unsafe(int addr, int v) {
+  void push8(int addr, int v) {
     assert ((v & ~0xFF) == 0, "Write Operation: data limited to 1byte");
     addr -= memOffset;
     if (addr < 0 || addr >= this.size)

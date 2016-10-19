@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 14:14:34 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 20:34:37 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,7 @@ import 'package:emulator/src/globals.dart';
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/hardware/registermapping.dart" as Memregisters;
 
-import "package:emulator/src/mixins/tailram.dart" as Tailram;
+import "package:emulator/src/mixins/tailrammanager.dart" as Tailram;
 
 abstract class Mmu
   implements Hardware.Hardware
@@ -35,11 +35,11 @@ abstract class Mmu
     else if (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST)
       return this.c.pull8_Ram(memAddr);
     else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
-      return this.videoRam.pull8_unsafe(memAddr);
+      return this.videoRam.pull8(memAddr);
     else if (INTERNAL_RAM_FIRST <= memAddr && memAddr <= INTERNAL_RAM_LAST)
-      return this.internalRam.pull8_unsafe(memAddr);
+      return this.internalRam.pull8(memAddr);
     else if (ECHO_RAM_FIRST <= memAddr && memAddr <= ECHO_RAM_LAST)
-      return this.internalRam.pull8_unsafe(memAddr - ECHO_RAM_OFFSET);
+      return this.internalRam.pull8(memAddr - ECHO_RAM_OFFSET);
     else if (OAM_FIRST <= memAddr && memAddr <= OAM_LAST)
       return this.oam.pull8(memAddr);
     else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
@@ -55,11 +55,11 @@ abstract class Mmu
     else if (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST)
       this.c.push8_Ram(memAddr, v);
     else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
-      this.videoRam.push8_unsafe(memAddr, v);
+      this.videoRam.push8(memAddr, v);
     else if (INTERNAL_RAM_FIRST <= memAddr && memAddr <= INTERNAL_RAM_LAST)
-      this.internalRam.push8_unsafe(memAddr, v);
+      this.internalRam.push8(memAddr, v);
     else if (ECHO_RAM_FIRST <= memAddr && memAddr <= ECHO_RAM_LAST)
-      this.internalRam.push8_unsafe(memAddr - ECHO_RAM_OFFSET, v);
+      this.internalRam.push8(memAddr - ECHO_RAM_OFFSET, v);
     else if (OAM_FIRST <= memAddr && memAddr <= OAM_LAST)
       this.oam.push8(memAddr, v);
     else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)

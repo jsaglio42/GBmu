@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 18:37:41 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 19:53:25 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,12 +20,12 @@ import "package:emulator/src/hardware/registermapping.dart";
 /* MemRegs ********************************************************************/
 class MemRegs {
 
-  final List<int> _data;
+  final Uint8List _data;
 
   /* Constructors *************************************************************/
-  MemRegs.ofList(List<int> l) : _data = l;
+  MemRegs.ofList(Uint8List l) : _data = l;
 
-  MemRegs() : this.ofList(new List<int>.filled(g_memRegInfos.length, 0));
+  MemRegs() : this.ofList(new Uint8List(g_memRegInfos.length));
 
   /* API **********************************************************************/
   RegisterP1 rP1 = new RegisterP1();

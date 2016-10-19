@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 17:06:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 13:55:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 20:34:05 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -250,7 +250,7 @@ _toValueFunc _makeMapGetterFunction(RomHeaderField f, Map<int, dynamic> map)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: Out of bound');
     else {
-      final v = rom.pull8_unsafe(info.address);
+      final v = rom.pull8(info.address);
       if (map.containsKey(v) == false)
         throw new Exception('Rom Header: ${info.name}: Unknown id');
       return map[v];
@@ -265,7 +265,7 @@ _toValueFunc _makeByteGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull8_unsafe(info.address);
+      return rom.pull8(info.address);
   };
 }
 
@@ -276,8 +276,8 @@ _toValueFunc _makeWordGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull8_unsafe(info.address)
-        | rom.pull8_unsafe(info.address + 1) << 8;
+      return rom.pull8(info.address)
+        | rom.pull8(info.address + 1) << 8;
   };
 }
 _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
@@ -287,10 +287,10 @@ _toValueFunc _makeDWordGetterFunction(RomHeaderField f)
     if (_fieldOutOfBound(rom, info))
       throw new Exception('Rom Header: ${info.name}: Out of bound');
     else
-      return rom.pull8_unsafe(info.address)
-        | rom.pull8_unsafe(info.address + 1) << 8
-        | rom.pull8_unsafe(info.address + 2) << 16
-        | rom.pull8_unsafe(info.address + 3) << 24;
+      return rom.pull8(info.address)
+        | rom.pull8(info.address + 1) << 8
+        | rom.pull8(info.address + 2) << 16
+        | rom.pull8(info.address + 3) << 24;
   };
 }
 _toValueFunc _makeByteListGetterFunction(RomHeaderField f)
@@ -410,7 +410,7 @@ bool _isNintendoLogoValid(HeaderDecoder rom)
 // main(){
 //   Rom rom = new Rom(new Uint8List(10));
 //   Ram ram = new Ram(new Uint8List(10));
-//   print(rom.pull8_unsafe(2));
+//   print(rom.pull8(2));
 //   ram.push8(2,2);
 //   debugRomHeader();
 //   return ;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/15 19:54:25 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 19:09:08 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -1165,12 +1165,20 @@ abstract class Z80
   /* Miscellaneous ************************************************************/
   int _DAA() {
     int result = this.cpur.A;
-    int l_corr = (this.cpur.n == 0) ? 0x06 : -0x06;
-    int h_corr = (this.cpur.n == 0) ? 0x60 : -0x60;
-    if (this.cpur.h == 1 || (this.cpur.A & 0xF) > 9)
-      result += l_corr;
-    if (this.cpur.cy == 1 || this.cpur.A > 0x9F)
-      result += h_corr;
+    if (this.cpur.n == 0)
+    {
+        if (this.cpur.h == 1 || (result & 0xF) > 9)
+            result += 0x06;
+        if (this.cpur.cy == 1 || result > 0x9F)
+            result += 0x60;
+    }
+    else
+    {
+        if (this.cpur.h == 1)
+            result -= 0x06;
+        if (this.cpur.cy == 1)
+            result -= 0x60;
+    }
     this.cpur.A = result & 0xFF;
     this.cpur.cy = (result < 0 || result > 0xFF) ? 0x1 : 0x0;
     this.cpur.h = 0;

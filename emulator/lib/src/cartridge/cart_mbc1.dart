@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 13:35:46 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 20:34:11 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,12 +31,12 @@ class CartMBC1 extends Cartridge.ACartridge  {
   @override int pull8_Rom(int memAddr) {
     memAddr -= CARTRIDGE_ROM_FIRST;
     if (0x0000 <= memAddr && memAddr <= 0x3FFF)
-      return this.rom.pull8_unsafe(memAddr);
+      return this.rom.pull8(memAddr);
     else
     {
       final int bankno = _bankno_ROM | (1 - _mode) * (_bankno_RAM << 6);
       final int bankOffset = 0x4000 * (bankno - 1);
-      return this.rom.pull8_unsafe(bankOffset + memAddr);
+      return this.rom.pull8(bankOffset + memAddr);
     }
   }
 
@@ -59,7 +59,7 @@ class CartMBC1 extends Cartridge.ACartridge  {
       throw new Exception('pull8_Ram: RAM not enabled');
     memAddr -= CARTRIDGE_RAM_FIRST;
     final int bankOffset = 0x2000 * _bankno_RAM * _mode;
-    return this.ram.pull8_unsafe(bankOffset + memAddr);
+    return this.ram.pull8(bankOffset + memAddr);
   }
 
   @override void push8_Ram(int memAddr, int v) {
@@ -67,7 +67,7 @@ class CartMBC1 extends Cartridge.ACartridge  {
       return ;
     memAddr -= CARTRIDGE_RAM_FIRST;
     final int bankOffset = 0x2000 * _bankno_RAM * _mode;
-    this.ram.push8_unsafe(bankOffset + memAddr, v);
+    this.ram.push8(bankOffset + memAddr, v);
     return ;
   }
 

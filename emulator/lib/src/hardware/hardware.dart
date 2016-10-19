@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/19 14:23:12 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 20:35:13 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,11 +16,15 @@ import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
+import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/hardware/lcd.dart" as Lcd;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
 import "package:emulator/src/hardware/mem_registers.dart" as Memregs;
+
+import "package:emulator/src/hardware/internalram.dart" as Iram;
+import "package:emulator/src/hardware/videoram.dart" as Vram;
 import "package:emulator/src/hardware/oam.dart" as Oam;
-import "package:emulator/src/hardware/data.dart" as Data;
+import "package:emulator/src/hardware/tailram.dart" as Tram;
 
 abstract class Hardware {
 
@@ -34,11 +38,10 @@ abstract class Hardware {
   final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
   final Memregs.MemRegs memr = new Memregs.MemRegs();
 
-  final internalRam = new Data.GbRam(INTERNAL_RAM_FIRST, INTERNAL_RAM_SIZE);
-  final tailRam = new Data.GbRam(TAIL_RAM_FIRST, TAIL_RAM_SIZE);
-
-  final videoRam = new Data.GbRam(VIDEO_RAM_FIRST, VIDEO_RAM_SIZE);
+  final Vram.VideoRam videoRam = new Vram.VideoRam();
+  final Iram.InternalRam internalRam = new Iram.InternalRam();
   final Oam.OAM oam = new Oam.OAM();
+  final Tram.TailRam tailRam = new Tram.TailRam();
 
   /* Debuging tools */
   int lastInstPC = 0x00;

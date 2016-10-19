@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   tailram.dart                                       :+:      :+:    :+:   //
+//   tailrammanager.dart                                :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 16:18:17 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 20:35:36 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,7 +26,7 @@ abstract class TrapAccessor {
   void tr_push8(int memAddr, int v);
 }
 
-abstract class TailRam
+abstract class TailRamManager
   implements Hardware.Hardware
   , Mmu.Mmu
   , Interrupt.Interrupts {
@@ -68,7 +68,7 @@ abstract class TailRam
       case (OBPDaddr): return this.memr.OBPD;
       case (SVBKaddr): return this.memr.SVBK;
       case (IEaddr): return this.memr.IE;
-      default: return this.tailRam.pull8_unsafe(memAddr);
+      default: return this.tailRam.pull8(memAddr);
     }
   }
 
@@ -127,7 +127,7 @@ abstract class TailRam
       case (OBPDaddr): this.memr.OBPD = v; break ;
       case (SVBKaddr): this.memr.SVBK = v; break ;
       case (IEaddr): this.memr.IE = v; break ;
-      default: this.tailRam.push8_unsafe(memAddr, v); break ;
+      default: this.tailRam.push8(memAddr, v); break ;
     }
   }
 

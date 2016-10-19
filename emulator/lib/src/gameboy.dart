@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 16:16:12 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 20:03:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,13 +22,11 @@ import "package:emulator/src/hardware/hardware.dart" as Hardware;
 
 import "package:emulator/src/mixins/instructionsdecoder.dart" as Instdecoder;
 import "package:emulator/src/mixins/z80.dart" as Z80;
-
 import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
 import "package:emulator/src/mixins/joypad.dart" as Joypad;
 import "package:emulator/src/mixins/timers.dart" as Timers;
-
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
-import "package:emulator/src/mixins/tailram.dart" as Tailram;
+import "package:emulator/src/mixins/tailrammanager.dart" as Tailram;
 import "package:emulator/src/mixins/graphicstatemachine.dart" as GStateMachine;
 import "package:emulator/src/mixins/graphicdisplay.dart" as GDisplay;
 
@@ -42,7 +40,7 @@ class GameBoy extends Object
   , Joypad.Joypad
   , Timers.Timers
   , Mmu.Mmu
-  , Tailram.TailRam
+  , Tailram.TailRamManager
   , GStateMachine.GraphicStateMachine
   , GDisplay.GraphicDisplay
 {

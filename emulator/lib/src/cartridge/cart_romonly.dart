@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/11 16:23:17 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 20:34:08 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,7 @@ class CartRomOnly extends Cartridge.ACartridge  {
 
   @override int pull8_Rom(int memAddr) {
     memAddr -= CARTRIDGE_ROM_FIRST;
-    return this.rom.pull8_unsafe(memAddr);
+    return this.rom.pull8(memAddr);
   }
 
   @override void push8_Rom(int memAddr, int v) {

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 16:42:58 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 20:34:02 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -60,12 +60,12 @@ abstract class GraphicDisplay
     final int tileX = posX ~/ 8;
     final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
     
-    final int tileID = this.videoRam.pull8_unsafe(tileIDAddress);
+    final int tileID = this.videoRam.pull8(tileIDAddress);
     final int tileAddress = _getTileAddress(tileID, this.memr.rLCDC.tileDataID);
     final int relativeY = posY % 8;
     final int relativeX = posX % 8;
-    final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
-    final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
+    final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
+    final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
     return (colorId_l | colorId_h);
@@ -79,12 +79,12 @@ abstract class GraphicDisplay
     final int tileX = posX ~/ 8;
     final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_WIN);
     
-    final int tileID = this.videoRam.pull8_unsafe(tileIDAddress);
+    final int tileID = this.videoRam.pull8(tileIDAddress);
     final int tileAddress = _getTileAddress(tileID, this.memr.rLCDC.tileDataID);
     final int relativeY = posY % 8;
     final int relativeX = posX % 8;
-    final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
-    final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
+    final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
+    final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
     final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
     return (colorId_l | colorId_h);
@@ -107,8 +107,8 @@ abstract class GraphicDisplay
 
       final int tileID = s.tileID;
       final int tileAddress = 0x8000 + tileID * 16; // tile address should use sizeY ? TO BE CHECKED
-      final int tileRow_l = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2);
-      final int tileRow_h = this.videoRam.pull8_unsafe(tileAddress + relativeY * 2 + 1);
+      final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
+      final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
 
       for (int relativeX = 0; relativeX < 8; ++relativeX) {
         int x = (s.posX - 8) + relativeX;
