@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 18:58:49 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 13:55:16 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -37,9 +37,7 @@ abstract class Interrupts
   void handleInterrupts() {
     if (this.cpur.ime == false)
       return ;
-    final int IE = this.memr.IE;
-    final int IF = this.memr.IF;
-    final int IFandIE = IF & IE;
+    final int IFandIE = this.memr.IE & this.memr.IF;
     if (IFandIE == 0)
       return ;
     for (InterruptType it in InterruptType.values) {
@@ -52,20 +50,16 @@ abstract class Interrupts
   }
 
   void requestInterrupt(InterruptType i) {
-    final int IF_old = this.memr.IF;
-    final int IF_new = IF_old | (1 << i.index);
     this.cpur.halt = false;
     this.cpur.stop = false;
-    this.memr.IF = IF_new;
+    this.memr.IF |= (1 << i.index);
     return ;
   }
 
   /* Private */
   void _serviceInterrupt(InterruptType i) {
     this.cpur.ime = false;
-    final int IF_old = this.memr.IF;
-    final int IF_new = (IF_old & ~(1 << i.index)) & 0xFF;
-    this.memr.IF = IF_new;
+    this.memr.IF = (this.memr.IF & ~(1 << i.index));
     this.pushOnStack16(this.cpur.PC);
     switch(i) {
       case (InterruptType.VBlank) : this.cpur.PC = 0x0040; break ;

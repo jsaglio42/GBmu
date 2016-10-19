@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 19:14:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 14:55:18 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,7 +17,200 @@ import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/hardware/registermapping.dart";
 
-/* Specific Registers */
+/* MemRegs ********************************************************************/
+class MemRegs {
+
+  final List<int> _data;
+
+  /* Constructors *************************************************************/
+  MemRegs.ofList(List<int> l) : _data = l;
+
+  MemRegs() : this.ofList(new List<int>.filled(g_memRegInfos.length, 0));
+
+  /* API **********************************************************************/
+  RegisterP1 rP1 = new RegisterP1();
+  RegisterDIV rDIV = new RegisterDIV();
+  RegisterTIMA rTIMA = new RegisterTIMA();
+  RegisterLCDC rLCDC = new RegisterLCDC();
+  RegisterSTAT rSTAT = new RegisterSTAT();
+  RegisterTAC rTAC = new RegisterTAC();
+
+  void reset() {
+   for (MemRegInfo mrinfo in g_memRegInfos) {
+      this.push8(mrinfo.reg, mrinfo.initValue);
+    }
+    return ;
+  }
+  
+  /* Getters */
+  int get P1 => this.rP1.value;
+  int get DIV => this.rDIV.value;
+  int get TIMA => this.rTIMA.value;
+  int get TAC => this.rTAC.value;
+  int get LCDC => this.rLCDC.value;
+  int get STAT => this.rSTAT.value;
+
+  int get SB => _data[MemReg.SB.index];
+  int get SC => _data[MemReg.SC.index];
+  int get TMA => _data[MemReg.TMA.index];
+  int get IF => _data[MemReg.IF.index];
+  int get SCY => _data[MemReg.SCY.index];
+  int get SCX => _data[MemReg.SCX.index];
+  int get LY => _data[MemReg.LY.index];
+  int get LYC => _data[MemReg.LYC.index];
+  int get DMA => _data[MemReg.DMA.index];
+  int get BGP => _data[MemReg.BGP.index];
+  int get OBP0 => _data[MemReg.OBP0.index];
+  int get OBP1 => _data[MemReg.OBP1.index];
+  int get WY => _data[MemReg.WY.index];
+  int get WX => _data[MemReg.WX.index];
+  int get KEY1 => _data[MemReg.KEY1.index];
+  int get VBK => _data[MemReg.VBK.index];
+  int get HDMA1 => _data[MemReg.HDMA1.index];
+  int get HDMA2 => _data[MemReg.HDMA2.index];
+  int get HDMA3 => _data[MemReg.HDMA3.index];
+  int get HDMA4 => _data[MemReg.HDMA4.index];
+  int get HDMA5 => _data[MemReg.HDMA5.index];
+  int get RP => _data[MemReg.RP.index];
+  int get BGPI => _data[MemReg.BGPI.index];
+  int get BGPD => _data[MemReg.BGPD.index];
+  int get OBPI => _data[MemReg.OBPI.index];
+  int get OBPD => _data[MemReg.OBPD.index];
+  int get SVBK => _data[MemReg.SVBK.index];
+  int get IE => _data[MemReg.IE.index];
+
+  /* Setters */
+  void set P1(int v) { this.rP1.value = v; }
+  void set DIV(int v) { this.rDIV.value = v; }
+  void set TIMA(int v) { this.rTIMA.value = v; }
+  void set TAC(int v) { this.rTAC.value = v; }
+  void set LCDC(int v) { this.rLCDC.value = v; }
+  void set STAT(int v) { this.rSTAT.value = v; }
+
+  void set SB(int v) { _data[MemReg.SB.index] = v; }
+  void set SC(int v) { _data[MemReg.SC.index] = v; }
+  void set TMA(int v) { _data[MemReg.TMA.index] = v; }
+  void set IF(int v) { _data[MemReg.IF.index] = v; }
+  void set SCY(int v) { _data[MemReg.SCY.index] = v; }
+  void set SCX(int v) { _data[MemReg.SCX.index] = v; }
+  void set LY(int v) { _data[MemReg.LY.index] = v; }
+  void set LYC(int v) { _data[MemReg.LYC.index] = v; }
+  void set DMA(int v) { _data[MemReg.DMA.index] = v; }
+  void set BGP(int v) { _data[MemReg.BGP.index] = v; }
+  void set OBP0(int v) { _data[MemReg.OBP0.index] = v; }
+  void set OBP1(int v) { _data[MemReg.OBP1.index] = v; }
+  void set WY(int v) { _data[MemReg.WY.index] = v; }
+  void set WX(int v) { _data[MemReg.WX.index] = v; }
+  void set KEY1(int v) { _data[MemReg.KEY1.index] = v; }
+  void set VBK(int v) { _data[MemReg.VBK.index] = v; }
+  void set HDMA1(int v) { _data[MemReg.HDMA1.index] = v; }
+  void set HDMA2(int v) { _data[MemReg.HDMA2.index] = v; }
+  void set HDMA3(int v) { _data[MemReg.HDMA3.index] = v; }
+  void set HDMA4(int v) { _data[MemReg.HDMA4.index] = v; }
+  void set HDMA5(int v) { _data[MemReg.HDMA5.index] = v; }
+  void set RP(int v) { _data[MemReg.RP.index] = v; }
+  void set BGPI(int v) { _data[MemReg.BGPI.index] = v; }
+  void set BGPD(int v) { _data[MemReg.BGPD.index] = v; }
+  void set OBPI(int v) { _data[MemReg.OBPI.index] = v; }
+  void set OBPD(int v) { _data[MemReg.OBPD.index] = v; }
+  void set SVBK(int v) { _data[MemReg.SVBK.index] = v; }
+  void set IE(int v) { _data[MemReg.IE.index] = v; }
+
+  int pull8(MemReg r) {
+    switch (r) {
+      case (MemReg.P1) : return this.P1;
+      case (MemReg.DIV) : return this.DIV;
+      case (MemReg.TIMA) : return this.TIMA;
+      case (MemReg.TAC) : return this.TAC;
+      case (MemReg.LCDC) : return this.LCDC;
+      case (MemReg.STAT) : return this.STAT;
+      default : return _data[r.index];
+    }
+  }
+
+  int push8(MemReg r, int v) {
+    switch (r) {
+      case (MemReg.P1) : this.P1 = v; break ;
+      case (MemReg.DIV) : this.DIV = v; break ;
+      case (MemReg.TIMA) : this.TIMA = v; break ;
+      case (MemReg.TAC) : this.TAC = v; break ;
+      case (MemReg.LCDC) : this.LCDC = v; break ;
+      case (MemReg.STAT) : this.STAT = v; break ;
+      default : _data[r.index] = v; break ;
+    }
+  }
+
+}
+
+/* Specific Registers *********************************************************/
+
+/*
+* Depending on last writen value in b4 and b5, reading to FF00 will return the
+* states of either buttons or directions.
+* The attribute joypadState stores the state of all keys.
+* Reading from FF00 will build the answer based on joypadState.
+* !!! Reading to the Joypad return the complementary of the states (ie 0 = set)
+*
+* Wiring of Joypad input:              Implementation via joypadState:
+*
+*   FF00H                                  joypadState
+*   +---+                                   +---+
+*   | 7 |                                   | 7 +--- Start
+*   |   |                                   |   |
+*   | 6 |                                   | 6 +--- Select
+*   |   |                                   |   |
+*   | 5 +-------------------+               | 5 +--- B
+*   |   |                   |               |   |
+*   | 4 +---------+         |               | 4 +--- A
+*   |   |    Down |   Start |               |   |
+*   | 3 +---------+---------+ - R3          | 3 +--- Down
+*   |   |      Up |  Select |               |   |
+*   | 2 +---------+---------+ - R2          | 2 +--- Up
+*   |   |    Left |       B |               |   |
+*   | 1 +---------+---------+ - R1          | 1 +--- Left
+*   |   |   Right |       A |               |   |
+*   | 0 +---------+---------+ - R0          | 0 +--- Right
+*   +---+         |         |               +---+
+*                C0        C1
+*/
+class RegisterP1 {
+
+  RegisterP1();
+
+  bool returnDirections = false;
+  int joypadState = 0;
+
+  int get value {
+    if (returnDirections)
+      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0x3F;
+    else
+      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0x3F;
+  }
+
+  int set value (int v) {
+    if (v & 0x10 == 0x0)
+      this.returnDirections = true;
+    else
+      this.returnDirections = false;
+  }
+
+  int getKey(JoypadKey k) {
+    return (this.joypadState >> k.index) & 0x1;
+  }
+
+  void setKey(JoypadKey k) {
+    this.joypadState |= (1 << k.index);
+    return ;
+  }
+
+  void unsetKey(JoypadKey k) {
+    this.joypadState &= ~(1 << k.index);
+    return ;
+  }
+
+}
+
+/* LCDC ***********************************************************************/
 class RegisterLCDC {
 
   RegisterLCDC();
@@ -57,13 +250,27 @@ class RegisterLCDC {
 
 }
 
+/* STAT ***********************************************************************/
 class RegisterSTAT {
 
   RegisterSTAT();
 
   int value;
+  int counter = 0;
+
+  /* Set value to avoid messing with modes/coincidence ???*/
 
   GraphicMode get mode => GraphicMode.values[this.value & 0x3];
+  void set mode(GraphicMode gm) {
+    this.value = (this.value & ~0x3) | gm.index;
+  }
+
+  void set coincidence (bool coincidence) {
+    if (coincidence)
+      this.value = (this.value | (1 << 2));
+    else
+      this.value = (this.value & ~(1 << 2));
+  } 
 
   bool isInterruptMonitored(GraphicInterrupt i) {
     return (this.value >> (i.index + 3)) & 0x1 == 1;
@@ -71,146 +278,44 @@ class RegisterSTAT {
 
 }
 
-class RegisterP1 {
+/* TIMERS *********************************************************************/
+class RegisterDIV {
 
-  RegisterP1();
+  RegisterDIV();
 
-  bool returnDirections = false;
-  int joypadState = 0;
-
-  int get value {
-    if (returnDirections)
-      return ~((0x0F & (this.joypadState >> 0)) | 0x10) & 0x3F;
-    else
-      return ~((0x0F & (this.joypadState >> 4)) | 0x20) & 0x3F;
-  }
-
-  int set value (int v) {
-    if (v & 0x10 == 0x00)
-      this.returnDirections = true;
-    else
-      this.returnDirections = false;
-  }
-
-  int getBit(int index) {
-    return (this.joypadState >> index) & 0x1;
-  }
-
-  void setBit(int index) {
-    this.joypadState |= (1 << index);
-    return ;
-  }
-
-  void unsetBit(int index) {
-    this.joypadState &= ~(1 << index);
-    return ;
-  }
-
+  int value;
+  int counter = 0;
 
 }
 
-/* MemRegs ********************************************************************/
-class MemRegs {
+class RegisterTIMA {
 
-  final List<int> _data;
+  RegisterTIMA();
 
-  /* Constructors *************************************************************/
-  MemRegs.ofList(List<int> l) : _data = l;
+  int value;
 
-  MemRegs() : this.ofList(new List<int>.filled(g_memRegInfos.length, 0));
+  int counter = 0;
+  int threshold = 1024;
 
-  /* API **********************************************************************/
-  RegisterLCDC rLCDC = new RegisterLCDC();
-  RegisterSTAT rSTAT = new RegisterSTAT();
-  RegisterP1 rP1 = new RegisterP1();
+}
 
-  void reset() {
-   for (MemRegInfo mrinfo in g_memRegInfos) {
-      _data[mrinfo.reg.index] = mrinfo.initValue;
-    }
-    this.LCDC = 0x91;
-    this.STAT = 0x00;
-    return ;
-  }
-  
-  /* RAW ACCESSORS *****************************/
-  int get P1 => this.rP1.value;
-  int get SB => _data[MemReg.SB.index];
-  int get SC => _data[MemReg.SC.index];
-  int get DIV => _data[MemReg.DIV.index];
-  int get TIMA => _data[MemReg.TIMA.index];
-  int get TMA => _data[MemReg.TMA.index];
-  int get TAC => _data[MemReg.TAC.index];
-  int get IF => _data[MemReg.IF.index];
-  int get LCDC => this.rLCDC.value;
-  int get STAT => this.rSTAT.value;
-  int get SCY => _data[MemReg.SCY.index];
-  int get SCX => _data[MemReg.SCX.index];
-  int get LY => _data[MemReg.LY.index];
-  int get LYC => _data[MemReg.LYC.index];
-  int get DMA => _data[MemReg.DMA.index];
-  int get BGP => _data[MemReg.BGP.index];
-  int get OBP0 => _data[MemReg.OBP0.index];
-  int get OBP1 => _data[MemReg.OBP1.index];
-  int get WY => _data[MemReg.WY.index];
-  int get WX => _data[MemReg.WX.index];
-  int get KEY1 => _data[MemReg.KEY1.index];
-  int get VBK => _data[MemReg.VBK.index];
-  int get HDMA1 => _data[MemReg.HDMA1.index];
-  int get HDMA2 => _data[MemReg.HDMA2.index];
-  int get HDMA3 => _data[MemReg.HDMA3.index];
-  int get HDMA4 => _data[MemReg.HDMA4.index];
-  int get HDMA5 => _data[MemReg.HDMA5.index];
-  int get RP => _data[MemReg.RP.index];
-  int get BGPI => _data[MemReg.BGPI.index];
-  int get BGPD => _data[MemReg.BGPD.index];
-  int get OBPI => _data[MemReg.OBPI.index];
-  int get OBPD => _data[MemReg.OBPD.index];
-  int get SVBK => _data[MemReg.SVBK.index];
-  int get IE => _data[MemReg.IE.index];
+class  RegisterTAC {
 
-  void set P1(int v) { this.rP1.value = v; }
-  void set SB(int v) { _data[MemReg.SB.index] = v; }
-  void set SC(int v) { _data[MemReg.SC.index] = v; }
-  void set DIV(int v) { _data[MemReg.DIV.index] = v; }
-  void set TIMA(int v) { _data[MemReg.TIMA.index] = v; }
-  void set TMA(int v) { _data[MemReg.TMA.index] = v; }
-  void set TAC(int v) { _data[MemReg.TAC.index] = v; }
-  void set IF(int v) { _data[MemReg.IF.index] = v; }
-  void set LCDC(int v) { this.rLCDC.value = v; }
-  void set STAT(int v) { this.rSTAT.value = v; }
-  void set SCY(int v) { _data[MemReg.SCY.index] = v; }
-  void set SCX(int v) { _data[MemReg.SCX.index] = v; }
-  void set LY(int v) { _data[MemReg.LY.index] = v; }
-  void set LYC(int v) { _data[MemReg.LYC.index] = v; }
-  void set DMA(int v) { _data[MemReg.DMA.index] = v; }
-  void set BGP(int v) { _data[MemReg.BGP.index] = v; }
-  void set OBP0(int v) { _data[MemReg.OBP0.index] = v; }
-  void set OBP1(int v) { _data[MemReg.OBP1.index] = v; }
-  void set WY(int v) { _data[MemReg.WY.index] = v; }
-  void set WX(int v) { _data[MemReg.WX.index] = v; }
-  void set KEY1(int v) { _data[MemReg.KEY1.index] = v; }
-  void set VBK(int v) { _data[MemReg.VBK.index] = v; }
-  void set HDMA1(int v) { _data[MemReg.HDMA1.index] = v; }
-  void set HDMA2(int v) { _data[MemReg.HDMA2.index] = v; }
-  void set HDMA3(int v) { _data[MemReg.HDMA3.index] = v; }
-  void set HDMA4(int v) { _data[MemReg.HDMA4.index] = v; }
-  void set HDMA5(int v) { _data[MemReg.HDMA5.index] = v; }
-  void set RP(int v) { _data[MemReg.RP.index] = v; }
-  void set BGPI(int v) { _data[MemReg.BGPI.index] = v; }
-  void set BGPD(int v) { _data[MemReg.BGPD.index] = v; }
-  void set OBPI(int v) { _data[MemReg.OBPI.index] = v; }
-  void set OBPD(int v) { _data[MemReg.OBPD.index] = v; }
-  void set SVBK(int v) { _data[MemReg.SVBK.index] = v; }
-  void set IE(int v) { _data[MemReg.IE.index] = v; }
+  int _value;
 
-  int pull8(MemReg r) {
-    switch (r) {
-      case (MemReg.P1) : return this.P1;
-      case (MemReg.LCDC) : return this.LCDC;
-      case (MemReg.STAT) : return this.STAT;
-      default : return _data[r.index];
+  int get value => _value;
+  int set value(int v) { _value = v & 0x7; }
+
+  int get frequency {
+    switch(this.value & 0x3) {
+      case (0): return 1024;
+      case (1): return 16;
+      case (2): return 64;
+      case (3): return 256;
+      default : assert(false, '_getTimerFrequency: switch failure');
     }
   }
 
 }
+
+

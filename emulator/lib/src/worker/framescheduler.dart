@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 11:26:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 13:45:06 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,7 +29,7 @@ abstract class FrameScheduler implements Worker.AWorker {
   void _onFrameUpdate([_]){
     assert(this.gbMode is V.Emulating,
         "_onFrameUpdate with no gameboy");
-    this.ports.send('FrameUpdate', this.gbOpt.lcdScreen);
+    this.ports.send('FrameUpdate', this.gbOpt.lcd.screen);
     return ;
   }
 
@@ -47,7 +47,7 @@ abstract class FrameScheduler implements Worker.AWorker {
     assert(!_sub.isPaused, "FrameScheduler: _makeDormant while paused");
     _sub.pause();
     if (this.gbMode is! V.Absent)
-      this.ports.send('FrameUpdate', this.gbOpt.lcdScreen);
+      this.ports.send('FrameUpdate', this.gbOpt.lcd.screen);
   }
 
   // CONSTRUCTION *********************************************************** **

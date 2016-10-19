@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 21:54:03 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 16:16:12 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,7 +29,8 @@ import "package:emulator/src/mixins/timers.dart" as Timers;
 
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
 import "package:emulator/src/mixins/tailram.dart" as Tailram;
-import "package:emulator/src/mixins/graphics.dart" as Graphics;
+import "package:emulator/src/mixins/graphicstatemachine.dart" as GStateMachine;
+import "package:emulator/src/mixins/graphicdisplay.dart" as GDisplay;
 
 /* Gameboy ********************************************************************/
 
@@ -42,7 +43,8 @@ class GameBoy extends Object
   , Timers.Timers
   , Mmu.Mmu
   , Tailram.TailRam
-  , Graphics.Graphics
+  , GStateMachine.GraphicStateMachine
+  , GDisplay.GraphicDisplay
 {
 
   /* Constructor */
@@ -59,7 +61,7 @@ class GameBoy extends Object
     {
       instructionDuration = this.executeInstruction();
       this.updateTimers(instructionDuration);
-      this.updateGraphics(instructionDuration);
+      _updateGraphics(instructionDuration);
       executedClocks += instructionDuration;
       this.handleInterrupts();
 
@@ -67,6 +69,15 @@ class GameBoy extends Object
         break ;
     }
     return (executedClocks);
+  }
+
+  int _updateGraphics(int instructionDuration) {
+    if (this.memr.rLCDC.isLCDEnabled)
+    {
+      this.lcd.resetDrawingInfo();
+      this.updateGraphicMode(instructionDuration);
+      this.updateDisplay();
+    }
   }
 
 }
