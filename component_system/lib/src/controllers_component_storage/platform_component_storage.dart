@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 12:36:58 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 18:00:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -131,6 +131,18 @@ class PlatformComponentStorage {
     final int idbid = await _pidb.add(Ram.v, r);
     final LsRam eUnbound = new LsRam.ofRam(uid, idbid, r);
     final LsRam e = new LsChip.bind(eUnbound, rom.uid);
+
+    _pls.add(e);
+    return e;
+  }
+
+  Async.Future<LsSs> newSsBound(Emulator.Ss ss, int slot, LsRom rom) async {
+    Ft.log('PlatformCS', 'newSsBound', [ss]);
+
+    final int uid = _makeUid();
+    final int idbid = await _pidb.add(Ss.v, ss);
+    final LsSs eUnbound = new LsSs.ofSs(uid, idbid, ss);
+    final LsSs e = new LsChip.bind(eUnbound, rom.uid, slot);
 
     _pls.add(e);
     return e;

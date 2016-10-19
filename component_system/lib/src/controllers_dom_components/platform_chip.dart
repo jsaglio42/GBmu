@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 17:59:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 18:42:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -89,6 +89,28 @@ class PlatformChip extends Object with _Actions implements _Super
       assert(false, 'updateChip#unreachable');
   }
 
+  void extractSs(int slot) {
+    DomChip ss;
+
+    if (_pdcs.gbCart.isSome) {
+      ss = _pdcs.chipOfCartOpt(_pdcs.gbCart.v, Ss.v, slot);
+      if (ss != null)
+        _extractSs(ss.data);
+      else
+        _extractNewSs(slot);
+    }
+  }
+
+  void installSs(int slot) {
+    DomChip ss;
+
+    if (_pdcs.gbCart.isSome) {
+      ss = _pdcs.chipOfCartOpt(_pdcs.gbCart.v, Ss.v, slot);
+      if (ss != null)
+        _installSs(ss.data);
+    }
+  }
+
   // CALLBACKS ************************************************************** **
   // The almighty function that has the view on:
   //   The chip-socket, the cart, and the dragged chip.
@@ -121,5 +143,27 @@ class PlatformChip extends Object with _Actions implements _Super
 
     _pec.requestRamExtraction(unsafeRamData.idbid);
   }
+
+  // PRIVATE **************************************************************** **
+  void _installSs(LsSs ss) {
+    Ft.log('PlatformChip', '_installSs', [ss]);
+    _pec.requestSsInstallation(ss.idbid);
+  }
+
+  void _extractSs(LsSs ss) {
+    Ft.log('PlatformChip', '_extractSs', [ss]);
+    _pec.requestSsExtraction(ss.idbid);
+  }
+
+  Async.Future _extractNewSs(int slot) async {
+    Ft.log('PlatformChip', '_extractNewSs', [slot]);
+
+    final LsRom romData = _pdcs.gbCart.v.data;
+    final Emulator.Ss ss =
+      new Emulator.Ss.emptyDetail(romData.fileName, romData.globalChecksum);
+    final LsSs unsafeSsData = await _pcs.newSsBound(ss, slot, romData);
+
+    _pec.requestSsExtraction(unsafeSsData.idbid);
+   }
 
 }

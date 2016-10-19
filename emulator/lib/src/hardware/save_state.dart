@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 13:55:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:13:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 17:54:08 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -40,17 +40,24 @@ class Ss extends Object
 
   // Only called from Emulator, on emulation start request, with data from Idb
   Ss.unserialize(Map<String, dynamic> serialization)
-    : serialization['fileName'] as String {
+    : _fileName = serialization['fileName'] as String {
     _romGlobalChecksum = serialization['romGlobalChecksum'] as int;
     Ft.log('Ss', 'ctor.unserialize', [this.fileName, this.terseData]);
   }
 
   // Only called from Emulator, on gameboy snapshot required
   Ss.ofGameBoy(GameBoy.GameBoy gb)
-    : _fileName = FileRepr.ssNameOfRomName(gb.c.rom.fileName) {
+    : _fileName = Data.FileRepr.ssNameOfRomName(gb.c.rom.fileName) {
     _romGlobalChecksum =
       gb.c.rom.pullHeaderValue(RomHeaderField.Global_Checksum);
     Ft.log('Ss', 'ctor.ofGameBoy', [this.fileName, this.terseData]);
+  }
+
+  // Only called from DOM, when an extraction is requested
+  Ss.emptyDetail(String romName, int romGlobalChecksum)
+    : _fileName = Data.FileRepr.ssNameOfRomName(romName) {
+    _romGlobalChecksum = romGlobalChecksum;
+    Ft.log('Ss', 'ctor.emptyDetail', [this.fileName, this.terseData]);
   }
 
   // FROM FILEREPR ********************************************************** **

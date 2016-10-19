@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 14:36:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 17:59:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -102,8 +102,8 @@ class LsChip extends LsEntry {
   factory LsChip.bind(LsChip c, int romUid, [int slot]) {
     final Map<String, dynamic> data = new Map.from(c._data);
 
-    assert(c.life is Alive, "LsChip.bind($c)");
-    assert((c.type is Ss) == (slot != null), "LsChip.bind($c)");
+    assert(c.life is Alive, "LsChip.bind($c, $romUid, $slot)");
+    assert((c.type is Ss) == (slot != null), "LsChip.bind($c, $romUid, $slot)");
     data['romUid'] = romUid;
     if (c.type is Ram)
       return new LsRam._unsafe(c.uid, Alive.v, data);

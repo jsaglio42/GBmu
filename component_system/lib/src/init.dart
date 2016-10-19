@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 16:18:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 16:59:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import 'dart:convert';
 
 import 'package:ft/ft.dart' as Ft;
 
+import 'package:component_system/src/cs.dart';
 import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_ccs.dart';
 import 'package:component_system/src/include_dc.dart';
@@ -32,7 +33,7 @@ import 'package:emulator/emulator.dart' as Emulator;
  *   {"idbid":1,"_ramSize":400,"_globalChecksum":8173}
  */
 
-Async.Future init(Emulator.Emulator emu) async {
+Async.Future<Cs> init(Emulator.Emulator emu) async {
   Ft.log('Component_System', 'init', [emu]);
 
   // Component storage interactions (local storage/indexedDb)
@@ -81,5 +82,5 @@ Async.Future init(Emulator.Emulator emu) async {
   /* await */ pls.start();
 
   Ft.log('Component_System', 'init#done');
-  return ;
+  return new Cs(pde, pch);
 }

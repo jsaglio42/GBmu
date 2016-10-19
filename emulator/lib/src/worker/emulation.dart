@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:09:50 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 16:59:20 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,6 +25,7 @@ import 'package:emulator/src/events.dart';
 
 import 'package:emulator/src/worker/worker.dart' as Worker;
 import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
+import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
@@ -52,7 +53,9 @@ final Map<AutoBreakExternalMode, int> _autoBreakClocks = {
   AutoBreakExternalMode.Second: GB_CPU_FREQ_INT,
 };
 
-abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
+abstract class Emulation
+  implements Worker.AWorker, WEmuState.EmulationState, WEmuIddb.EmulationIddb
+{
 
   Async.Stream _fut;
   Async.StreamSubscription _sub;
@@ -108,7 +111,7 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
 
     Ft.log("WorkerEmu", '_onEmulationStartReq');
     try {
-      gb = await _assembleGameBoy(req);
+      gb = await this.ei_assembleGameBoy(req);
     }
     catch (e, st) {
       this.es_startFailure(e.toString(), st.toString());
@@ -129,16 +132,19 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
     this.es_eject(this.gbOpt.c.rom.fileName);
   }
 
-  void _onExtractRamReq(EventExtractRam ev) async {
-    Ft.log("WorkerEmu", '_onExtractRamReq', [ev.ramKey]);
-    assert(this.gbMode != V.Absent, "_onExtractRamReq with no gameboy");
+  void _onExtractRamReq(EventIdb ev) {
+    Ft.log("WorkerEmu", '_onExtractRamReq', [ev.key]);
+    this.ei_extractRam(ev);
+  }
 
-    final c = this.gbOpt.c.ram.rawData;
-    final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
-    Ft.log('WorkerEmu', '_onExtractRamReq#got-idb', [idb]);
+  void _onExtractSsReq(EventIdb ev) {
+    Ft.log("WorkerEmu", '_onExtractSsReq', [ev.key]);
+    this.ei_extractSs(ev);
+  }
 
-    await _setDataOfField(idb, ev.ramStore, ev.ramKey, c);
-    Ft.log("WorkerEmu", '_onExtractRamReq#done');
+  void _onInstallSsReq(EventIdb ev) {
+    Ft.log("WorkerEmu", '_onInstallSsReq', [ev.key]);
+    this.ei_installSs(ev);
   }
 
   void _onKeyDown(JoypadKey kc){
@@ -184,93 +190,6 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
       this.ports.send('EmulationPause', 42);
     else
       this.ports.send('EmulationResume', 42);
-  }
-
-  Async.Future<Gameboy.GameBoy> _assembleGameBoy(RequestEmuStart req) async
-  {
-    Cartridge.ACartridge c;
-
-
-    Ft.log('WorkerEmu', '_assembleGameBoy', [req]);
-
-    final Idb.Database idb = await _futureDatabaseOfName(req.idb);
-    Ft.log('WorkerEmu', '_assembleGameBoy#got-idb', [idb]);
-
-    final Data.Rom rom = new Data.Rom.unserialize(
-        await _fieldOfKeys(idb, req.romStore, req.romKey));
-    Ft.log('WorkerEmu', '_assembleGameBoy#got-rom', [rom]);
-
-    if (req.ramKeyOpt != null) {
-      Data.Ram ram = new Data.Ram.unserialize(
-          await _fieldOfKeys(idb, req.ramStore, req.ramKeyOpt));
-      Ft.log('WorkerEmu', '_assembleGameBoy#got-ram', [ram]);
-      c = new Cartridge.ACartridge(rom, optionalRam: ram);
-    }
-    else
-      c = new Cartridge.ACartridge(rom);
-    Ft.log('WorkerEmu', '_assembleGameBoy#got-cartridge', [c]);
-
-    final Gameboy.GameBoy gb = new Gameboy.GameBoy(c);
-    Ft.log('WorkerEmu', '_assembleGameBoy#got-gb', [gb]);
-
-    return gb;
-  }
-
-  // DATABASE INTERACTIONS ******************** **
-  Async.Future<Idb.Database> _futureDatabaseOfName(String name) {
-    final idbf = Js.context['indexedDB'];
-    final Async.Completer compl = new Async.Completer.sync();
-    final req = idbf.callMethod('open', [name]);
-
-    // Ft.log('WorkerEmu', '_futureDatabaseOfName', [name]);
-    req['onsuccess'] = (ev){
-      // Ft.log('WorkerEmu', '_onSuccess', [ev]);
-      compl.complete(ev.target.result);
-      new Async.Future.delayed(new Duration(milliseconds: 5), (){});
-    };
-    req['onerror'] = (ev){
-      compl.completeError('Database error: ${ev.target.errorCode}');
-      new Async.Future.delayed(new Duration(milliseconds: 5), (){});
-    };
-    return compl.future;
-  }
-
-  Async.Future<dynamic> _fieldOfKeys(
-      Idb.Database idb, String storeName, int fieldKey) async {
-    Idb.Transaction tra;
-    dynamic serialized;
-
-    tra = idb.transaction(storeName, 'readonly');
-
-    await tra.objectStore(storeName)
-    .openCursor(key: fieldKey)
-    .take(1)
-    .forEach((Idb.CursorWithValue cur) {
-      serialized = cur.value;
-    });
-    return tra.completed.then((_) {
-        if (serialized == null)
-          throw new Exception('Missing $storeName#$fieldKey');
-        else
-          return serialized;
-        });
-  }
-
-  Async.Future _setDataOfField(
-      Idb.Database idb, String storeName, int fieldKey, Uint8List data) async {
-    Idb.Transaction tra;
-
-    tra = idb.transaction(storeName, 'readwrite');
-    await tra.objectStore(storeName)
-    .openCursor(key: fieldKey)
-    .take(1)
-    .forEach((Idb.CursorWithValue cur) {
-      final m = new Map.from(cur.value);
-
-      m['data'] = data;
-      cur.update(m);
-    });
-    return tra.completed;
   }
 
   // LOOPING ROUTINE ******************************************************** **
@@ -416,7 +335,9 @@ abstract class Emulation implements Worker.AWorker, WEmuState.EmulationState {
       ..listener('KeyDownEvent').forEach(_onKeyDown)
       ..listener('KeyUpEvent').forEach(_onKeyUp)
       ..listener('EmulationEject').forEach(_onEjectReq)
-      ..listener('ExtractRam').forEach(_onExtractRamReq);
+      ..listener('ExtractRam').forEach(_onExtractRamReq)
+      ..listener('ExtractSs').forEach(_onExtractSsReq)
+      ..listener('InstallSs').forEach(_onInstallSsReq);
   }
 
 }

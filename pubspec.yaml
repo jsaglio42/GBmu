@@ -13,8 +13,11 @@ dependencies:
     path: ./component_system
 transformers:
 - $dart2js:
+    $exclude: test
     checked: true
     # minify: true
+    sourceMaps: true
+    verbose: true
     environment:
       FTLOG: 'true'
     commandLineOptions: [--enable-diagnostic-colors, --show-package-warnings, --assert-message]

@@ -6,28 +6,22 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/07 13:08:05 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 17:18:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
 
 import 'package:emulator/enums.dart';
-
 import 'package:emulator/emulator.dart' as Emulator;
+import 'package:component_system/cs.dart' as Cs;
 
 Emulator.Emulator _emu;
+Cs.Cs _cs;
 
-void init(Emulator.Emulator emu) {
-  _emu = emu;
-  Html.window.onKeyDown
-    .listen((keyEvent) => _onKeyDown(keyEvent.keyCode));
-  Html.window.onKeyUp
-    .listen((keyEvent) => _onKeyUp(keyEvent.keyCode));
-  return ;
-}
-
-Map<int, JoypadKey> keySettings = <int, JoypadKey>{
+// Private ****************************************************************** **
+/* Store the status of button: (false = released, true = pressed) */
+Map<int, dynamic> _keySettings = <int, dynamic>{
   75 : JoypadKey.A,
   76 : JoypadKey.B,
   16 : JoypadKey.Select,
@@ -35,36 +29,77 @@ Map<int, JoypadKey> keySettings = <int, JoypadKey>{
   70 : JoypadKey.Right,
   83 : JoypadKey.Left,
   69 : JoypadKey.Up,
-  68 : JoypadKey.Down
-};
+  68 : JoypadKey.Down,
+}
+  ..addAll(Cs.g_keyMapping);
 
-/* Private ********************************************************************/
-/* Store the status of button: (false = released, true = pressed) */
-Map<JoypadKey, bool> _keyState = <JoypadKey, bool>{
-  JoypadKey.A : false,
-  JoypadKey.B : false,
-  JoypadKey.Select : false,
-  JoypadKey.Start : false,
-  JoypadKey.Right : false,
-  JoypadKey.Left : false,
-  JoypadKey.Up : false,
-  JoypadKey.Down : false
-};
+Map<dynamic, int> _reverseKeySettings;
 
-void _onKeyDown(int eventKeyCode){
-  JoypadKey key = keySettings[eventKeyCode];
-  if (key == null || _keyState[key] == true)
-    return ;
-  _keyState[key] = true;
-  _emu.send('KeyDownEvent', key);
+Map<JoypadKey, bool> _keyState = new Map<dynamic, bool>.fromIterable(
+    _keySettings.values.where((v) => v is JoypadKey),
+    key:(v) => v, value: (_) => false);
+
+// ************************************************************************** **
+
+void _updateRevMap() {
+  _reverseKeySettings = new Map<dynamic, int>.fromIterables(
+      _keySettings.values, _keySettings.keys);
+}
+
+void _onKeyDown(Html.KeyboardEvent ev){
+  final int eventKeyCode = ev.keyCode;
+  final key = _keySettings[eventKeyCode];
+
+  if (key != null) {
+    if (key is JoypadKey && _keyState[key] == false) {
+      _keyState[key] = true;
+      _emu.send('KeyDownEvent', key);
+    }
+    ev.preventDefault();
+  }
   return ;
 }
 
-void _onKeyUp(int eventKeyCode){
-  JoypadKey key = keySettings[eventKeyCode];
-  if (key == null || _keyState[key] == false)
-    return ;
-  _keyState[key] = false;
-  _emu.send('KeyUpEvent', key);
+void _onKeyUp(Html.KeyboardEvent ev){
+  final int eventKeyCode = ev.keyCode;
+  final key = _keySettings[eventKeyCode];
+
+  if (key != null) {
+    if (key is JoypadKey) {
+      if (_keyState[key] == true) {
+        _keyState[key] = false;
+        _emu.send('KeyUpEvent', key as JoypadKey);
+      }
+    }
+    else /* if (key is Cs.KeyboardAction) */
+      _cs.key(key as Cs.KeyboardAction);
+    ev.preventDefault();
+  }
+  return ;
+}
+
+void _updateKey(JoypadKey k, int code) { //Unused yet
+  final key = _keySettings[eventKeyCode];
+
+  if (key != null) {
+    // TODO: issue error
+  }
+  else {
+    if (!_keySettings.removeValue(k))
+      assert(false, "from: _updateKey");
+    _keySettings[code] = k;
+    _keyState[k] = false;
+    _updateRevMap();
+  }
+}
+
+// ************************************************************************** **
+
+void init(Emulator.Emulator emu, Cs.Cs cs) {
+  _emu = emu;
+  _cs = cs;
+  _updateRevMap();
+  Html.window.onKeyDown.forEach(_onKeyDown);
+  Html.window.onKeyUp.forEach(_onKeyUp);
   return ;
 }

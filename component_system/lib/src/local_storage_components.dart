@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:16 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:10:05 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 17:57:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -134,7 +134,7 @@ class LsSs extends LsChip {
 
     if (new _EntryInvalid<int>()(value, 'idbid') ||
         new _EntryInvalid<String>()(value, 'fileName') ||
-        !value['fileName'].endsWith(RAM_EXTENSION) ||
+        !value['fileName'].endsWith(SS_EXTENSION) ||
         new _EntryInvalid<int>()(value, 'romGlobalChecksum')
         )
       throw new Exception('Bad JSON $value');
@@ -142,7 +142,7 @@ class LsSs extends LsChip {
   }
 
   LsSs.ofSs(int uid, int idbid, Emulator.Ss ss)
-    : super._unsafe(uid, Ram.v, Alive.v, <String, dynamic>{
+    : super._unsafe(uid, Ss.v, Alive.v, <String, dynamic>{
       'idbid': idbid,
       'fileName': ss.fileName,
       'romGlobalChecksum': ss.romGlobalChecksum,

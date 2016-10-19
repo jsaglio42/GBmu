@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:12:18 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 16:58:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -57,7 +57,9 @@ final _workerReceivers = <String, Type>{
   'EmulationAutoBreak' : AutoBreakExternalMode,
   'EmulationPause' : int,
   'EmulationResume' : int,
-  'ExtractRam' : EventExtractRam,
+  'ExtractRam' : EventIdb,
+  'ExtractSs' : EventIdb,
+  'InstallSs' : EventIdb,
   'DebMemAddrChange' : int,
   'Debug' : <String, dynamic>{}.runtimeType,
 };

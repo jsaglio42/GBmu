@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/18 15:59:47 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 18:00:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 18:49:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -80,8 +80,18 @@ class PlatformEmulatorContacts {
   }
 
   void requestRamExtraction(int idbid) {
-    _emu.send('ExtractRam', new Emulator.EventExtractRam(
+    _emu.send('ExtractRam', new Emulator.EventIdb(
             'GBmu_db', Ram.v.toString(), idbid));
+  }
+
+  void requestSsExtraction(int idbid) {
+    _emu.send('ExtractSs', new Emulator.EventIdb(
+            'GBmu_db', Ss.v.toString(), idbid));
+  }
+
+  void requestSsInstallation(int idbid) {
+    _emu.send('InstallSs', new Emulator.EventIdb(
+            'GBmu_db', Ss.v.toString(), idbid));
   }
 
   // CALLBACKS ************************************************************** **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 18:30:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/19 17:03:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 import './debugger/deb.dart' as Deb;
 import './options/options.dart' as Opt;
 
-import 'package:component_system/cs.dart' as Cs;
+// import 'package:component_system/cs.dart' as Cs;
 
 typedef void _callback_t();
 
@@ -76,7 +76,6 @@ class _Panel {
 var _panels;
 var mainGameBoyState = Html.querySelector('#mainGameBoyState');
 var mainRomName = Html.querySelector('#mainRomName');
-
 
 List<_Panel> _makePanels(Emulator.Emulator emu)
 {
@@ -140,9 +139,5 @@ Async.Future init(Emulator.Emulator emu) async
   Ft.log('nav.dart', 'init#start', [emu]);
   _panels = _makePanels(emu);
   emu.listener('Events').forEach(_onEmulatorEvent);
-  Deb.init(emu);
-  Opt.init(emu);
-  await Cs.init(emu);
-  Ft.log('nav.dart', 'init#done', [emu]);
   return;
 }

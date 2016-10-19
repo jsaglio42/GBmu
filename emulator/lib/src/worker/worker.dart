@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:10:02 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 17:00:01 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,6 +18,7 @@ import 'package:ft/wired_isolate.dart' as Wiso;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker/emulation.dart' as WEmu;
 import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
+import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;
 import 'package:emulator/src/worker/debug.dart' as WDeb;
 import 'package:emulator/src/worker/observer.dart' as WObs;
 import 'package:emulator/src/worker/framescheduler.dart' as WFramescheduler;
@@ -66,6 +67,7 @@ abstract class AWorker {
  */
 class Worker extends AWorker
   with WEmuState.EmulationState
+  , WEmuIddb.EmulationIddb
   , WEmu.Emulation
   , WObs.Observer
   , WDeb.Debug
