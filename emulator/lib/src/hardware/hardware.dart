@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/19 20:35:13 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 23:08:28 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -41,7 +41,7 @@ abstract class Hardware {
   final Vram.VideoRam videoRam = new Vram.VideoRam();
   final Iram.InternalRam internalRam = new Iram.InternalRam();
   final Oam.OAM oam = new Oam.OAM();
-  final Tram.TailRam tailRam = new Tram.TailRam();
+  final Tram.TailRam tailram = new Tram.TailRam();
 
   /* Debuging tools */
   int lastInstPC = 0x00;
@@ -62,7 +62,7 @@ abstract class Hardware {
     this.lcd.reset();
     this.cpur.reset();
     this.memr.reset();
-    /* SET TAIL RAM VALUES LOL */
+    this.tailram.reset();
     return ;
   }
 

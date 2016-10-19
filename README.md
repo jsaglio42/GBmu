@@ -9,13 +9,20 @@ pub serve
 
 # BUG
 
-- Lot of crash when playing with the debugger)
-- Debugger seem partly blocked when closed and re-opened
+- Bug display with roms and debugger
 
 # To DOs: Checks
 
-- Check operands where a signed byte 'e' is added
-- Check timer loop if CPU halted or stopped
+Gameboy emulator:
+- Fix DAA operations (and check cpu_inst rom)
+- Check cpu_timming
+- VideoRam to handle GBC
+- Internal to handle GBC
+- MBC3
+- MBC5
+- MBC5
+- BIOS mode (startup routine)
+- Display for GBC
 
 # To DOs: Features
 
@@ -26,7 +33,6 @@ pub serve
 	- joypadState ?
 - Reorganise Memory Registers per category (Mode/Port, Interrupt, LCD, Timers ...)
 - Add overlay for instructions (display extra info like duration, flag modified ...) ?
-
 
 # Useful links:
 

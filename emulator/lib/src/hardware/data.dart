@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 20:34:08 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 23:04:55 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -59,8 +59,6 @@ abstract class AReadOperation implements AData {
 
 /* WriteOperation *************************************************************/
 abstract class AWriteOperation implements AData {
-
-  void clear() { _data.fillRange(0, this.size, 0); }
 
   void push8(int addr, int v) {
     assert ((v & ~0xFF) == 0, "Write Operation: data limited to 1byte");

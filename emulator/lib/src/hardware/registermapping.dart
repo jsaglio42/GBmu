@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 15:32:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 15:53:24 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 23:03:22 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,40 +52,40 @@ enum MemReg {
   IE,
 }
 
-const int P1addr = 0xFF00;
-const int SBaddr = 0xFF01;
-const int SCaddr = 0xFF02;
-const int DIVaddr = 0xFF04;
-const int TIMAaddr = 0xFF05;
-const int TMAaddr = 0xFF06;
-const int TACaddr = 0xFF07;
-const int IFaddr = 0xFF0F;
-const int LCDCaddr = 0xFF40;
-const int STATaddr = 0xFF41;
-const int SCYaddr = 0xFF42;
-const int SCXaddr = 0xFF43;
-const int LYaddr = 0xFF44;
-const int LYCaddr = 0xFF45;
-const int DMAaddr = 0xFF46;
-const int BGPaddr = 0xFF47;
-const int OBP0addr = 0xFF48;
-const int OBP1addr = 0xFF49;
-const int WYaddr = 0xFF4A;
-const int WXaddr = 0xFF4B;
-const int KEY1addr = 0xFF4D;
-const int VBKaddr = 0xFF4F;
-const int HDMA1addr = 0xFF51;
-const int HDMA2addr = 0xFF52;
-const int HDMA3addr = 0xFF53;
-const int HDMA4addr = 0xFF54;
-const int HDMA5addr = 0xFF55;
-const int RPaddr = 0xFF56;
-const int BGPIaddr = 0xFF68;
-const int BGPDaddr = 0xFF69;
-const int OBPIaddr = 0xFF6A;
-const int OBPDaddr = 0xFF6B;
-const int SVBKaddr = 0xFF70;
-const int IEaddr = 0xFFFF;
+const int addr_P1 = 0xFF00;
+const int addr_SB = 0xFF01;
+const int addr_SC = 0xFF02;
+const int addr_DIV = 0xFF04;
+const int addr_TIMA = 0xFF05;
+const int addr_TMA = 0xFF06;
+const int addr_TAC = 0xFF07;
+const int addr_IF = 0xFF0F;
+const int addr_LCDC = 0xFF40;
+const int addr_STAT = 0xFF41;
+const int addr_SCY = 0xFF42;
+const int addr_SCX = 0xFF43;
+const int addr_LY = 0xFF44;
+const int addr_LYC = 0xFF45;
+const int addr_DMA = 0xFF46;
+const int addr_BGP = 0xFF47;
+const int addr_OBP0 = 0xFF48;
+const int addr_OBP1 = 0xFF49;
+const int addr_WY = 0xFF4A;
+const int addr_WX = 0xFF4B;
+const int addr_KEY1 = 0xFF4D;
+const int addr_VBK = 0xFF4F;
+const int addr_HDMA1 = 0xFF51;
+const int addr_HDMA2 = 0xFF52;
+const int addr_HDMA3 = 0xFF53;
+const int addr_HDMA4 = 0xFF54;
+const int addr_HDMA5 = 0xFF55;
+const int addr_RP = 0xFF56;
+const int addr_BGPI = 0xFF68;
+const int addr_BGPD = 0xFF69;
+const int addr_OBPI = 0xFF6A;
+const int addr_OBPD = 0xFF6B;
+const int addr_SVBK = 0xFF70;
+const int addr_IE = 0xFFFF;
 
 class MemRegInfo {
 
@@ -107,78 +107,73 @@ class MemRegInfo {
 
 }
 
-final Map<int, MemRegInfo> g_memRegInfosByAddress = new Map<int, MemRegInfo>
-  .fromIterable(g_memRegInfos
-    , key: (rinfo) => rinfo.address
-    , value: (rinfo) => rinfo);
-
 const List<MemRegInfo> g_memRegInfos = const <MemRegInfo>[
-  const MemRegInfo(MemReg.P1, 0xFF00, false, 0,
+  const MemRegInfo(MemReg.P1, addr_P1, false, 0,
       'P1', 'Port/Mode', 'Joypad'),
-  const MemRegInfo(MemReg.SB, 0xFF01, false, 0,
+  const MemRegInfo(MemReg.SB, addr_SB, false, 0,
       'SB', 'Port/Mode', 'Serial Transfer Data'),
-  const MemRegInfo(MemReg.SC, 0xFF02, false, 0,
+  const MemRegInfo(MemReg.SC, addr_SC, false, 0,
       'SC', 'Port/Mode', 'Serial Transfer Control'),
-  const MemRegInfo(MemReg.DIV, 0xFF04, false, 0,
+  const MemRegInfo(MemReg.DIV, addr_DIV, false, 0,
       'DIV', 'Timer', 'Divider Register'),
-  const MemRegInfo(MemReg.TIMA, 0xFF05, false, 0,
+  const MemRegInfo(MemReg.TIMA, addr_TIMA, false, 0,
       'TIMA', 'Timer', 'Timer Counter'),
-  const MemRegInfo(MemReg.TMA, 0xFF06, false, 0,
+  const MemRegInfo(MemReg.TMA, addr_TMA, false, 0,
       'TMA', 'Timer', 'Timer Modulo'),
-  const MemRegInfo(MemReg.TAC, 0xFF07, false, 0,
+  const MemRegInfo(MemReg.TAC, addr_TAC, false, 0,
       'TAC', 'Timer', 'Timer Control'),
-  const MemRegInfo(MemReg.IF, 0xFF0F, false, 0,
+  const MemRegInfo(MemReg.IF, addr_IF, false, 0,
       'IF', 'Interrupt', 'Interrupt Flag'),
-  const MemRegInfo(MemReg.LCDC, 0xFF40, false, 0x91,
+  const MemRegInfo(MemReg.LCDC, addr_LCDC, false, 0x91,
       'LCDC', 'LCD Display', 'LCD Control'),
-  const MemRegInfo(MemReg.STAT, 0xFF41, false, 0,
+  const MemRegInfo(MemReg.STAT, addr_STAT, false, 0,
       'STAT', 'LCD Display', 'LCDC Status'),
-  const MemRegInfo(MemReg.SCY, 0xFF42, false, 0,
+  const MemRegInfo(MemReg.SCY, addr_SCY, false, 0,
       'SCY', 'LCD Display', 'Scroll Y'),
-  const MemRegInfo(MemReg.SCX, 0xFF43, false, 0,
+  const MemRegInfo(MemReg.SCX, addr_SCX, false, 0,
       'SCX', 'LCD Display', 'Scroll X'),
-  const MemRegInfo(MemReg.LY, 0xFF44, false, 0,
+  const MemRegInfo(MemReg.LY, addr_LY, false, 0,
       'LY', 'LCD Display', 'LCDC Y-Coordinate'),
-  const MemRegInfo(MemReg.LYC, 0xFF45, false, 0,
+  const MemRegInfo(MemReg.LYC, addr_LYC, false, 0,
       'LYC', 'LCD Display', 'LY Compare'),
-  const MemRegInfo(MemReg.DMA, 0xFF46, false, 0,
+  const MemRegInfo(MemReg.DMA, addr_DMA, false, 0,
       'DMA', 'LCD Display', 'Direct Memory Access'),
-  const MemRegInfo(MemReg.BGP, 0xFF47, false, 0xFC,
+  const MemRegInfo(MemReg.BGP, addr_BGP, false, 0xFC,
       'BGP', 'LCD Display', 'Background Palette data'),
-  const MemRegInfo(MemReg.OBP0, 0xFF48, false, 0XFF,
+  const MemRegInfo(MemReg.OBP0, addr_OBP0, false, 0XFF,
       'OBP0', 'LCD Display', 'Object Palette 0 Data'),
-  const MemRegInfo(MemReg.OBP1, 0xFF49, false, 0XFF,
+  const MemRegInfo(MemReg.OBP1, addr_OBP1, false, 0XFF,
       'OBP1', 'LCD Display', 'Object Palette 1 Data'),
-  const MemRegInfo(MemReg.WY, 0xFF4A, false, 0,
+  const MemRegInfo(MemReg.WY, addr_WY, false, 0,
       'WY', 'LCD Display', 'Window Y Position'),
-  const MemRegInfo(MemReg.WX, 0xFF4B, false, 0,
+  const MemRegInfo(MemReg.WX, addr_WX, false, 0,
       'WX', 'LCD Display', 'Window X Position minus 7'),
-  const MemRegInfo(MemReg.KEY1, 0xFF4D, true, 0,
+  const MemRegInfo(MemReg.KEY1, addr_KEY1, true, 0,
       'KEY1', 'Port/Mode', 'Prepare Speed Switch'),
-  const MemRegInfo(MemReg.VBK, 0xFF4F, true, 0,
+  const MemRegInfo(MemReg.VBK, addr_VBK, true, 0,
       'VBK', 'Bank Control', 'VRAM Bank'),
-  const MemRegInfo(MemReg.HDMA1, 0xFF51, true, 0,
+  const MemRegInfo(MemReg.HDMA1, addr_HDMA1, true, 0,
       'HDMA1', 'LCD Display', 'New DMA Source, High'),
-  const MemRegInfo(MemReg.HDMA2, 0xFF52, true, 0,
+  const MemRegInfo(MemReg.HDMA2, addr_HDMA2, true, 0,
       'HDMA2', 'LCD Display', 'New DMA Source, Low'),
-  const MemRegInfo(MemReg.HDMA3, 0xFF53, true, 0,
+  const MemRegInfo(MemReg.HDMA3, addr_HDMA3, true, 0,
       'HDMA3', 'LCD Display', 'New DMA Destination, High'),
-  const MemRegInfo(MemReg.HDMA4, 0xFF54, true, 0,
+  const MemRegInfo(MemReg.HDMA4, addr_HDMA4, true, 0,
       'HDMA4', 'LCD Display', 'New DMA Destination, Low'),
-  const MemRegInfo(MemReg.HDMA5, 0xFF55, true, 0,
+  const MemRegInfo(MemReg.HDMA5, addr_HDMA5, true, 0,
       'HDMA5', 'LCD Display', 'New DMA Length/Mode/Start'),
-  const MemRegInfo(MemReg.RP, 0xFF56, true, 0,
+  const MemRegInfo(MemReg.RP, addr_RP, true, 0,
       'RP', 'Port/Mode', 'Infrared Communications Port'),
-  const MemRegInfo(MemReg.BGPI, 0xFF68, true, 0,
+  const MemRegInfo(MemReg.BGPI, addr_BGPI, true, 0,
       'BGPI', 'LCD Display', 'Background Palette Index'),
-  const MemRegInfo(MemReg.BGPD, 0xFF69, true, 0,
+  const MemRegInfo(MemReg.BGPD, addr_BGPD, true, 0,
       'BGPD', 'LCD Display', 'Background Palette Data'),
-  const MemRegInfo(MemReg.OBPI, 0xFF6A, true, 0,
+  const MemRegInfo(MemReg.OBPI, addr_OBPI, true, 0,
       'OBPI', 'LCD Display', 'Sprite Palette Index'),
-  const MemRegInfo(MemReg.OBPD, 0xFF6B, true, 0,
+  const MemRegInfo(MemReg.OBPD, addr_OBPD, true, 0,
       'OBPD', 'LCD Display', 'Sprite Palette Data'),
-  const MemRegInfo(MemReg.SVBK, 0xFF70, true, 0,
+  const MemRegInfo(MemReg.SVBK, addr_SVBK, true, 0,
       'SVBK', 'Bank Control', 'WRAM Bank'),
-  const MemRegInfo(MemReg.IE, 0xFFFF, false, 0,
+  const MemRegInfo(MemReg.IE, addr_IE, false, 0,
       'IE', 'Interrupt', 'Interrupt Enable'),
 ];
