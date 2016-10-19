@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 01:09:19 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 13:35:46 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,8 +17,6 @@ import "package:emulator/src/constants.dart";
 
 import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
-
-bool _isInRange(int i, int f, int l) => (i >= f && i <= l);
 
 class CartMBC1 extends Cartridge.ACartridge  {
 
@@ -32,7 +30,7 @@ class CartMBC1 extends Cartridge.ACartridge  {
 
   @override int pull8_Rom(int memAddr) {
     memAddr -= CARTRIDGE_ROM_FIRST;
-    if (_isInRange(memAddr, 0x0000, 0x3FFF))
+    if (0x0000 <= memAddr && memAddr <= 0x3FFF)
       return this.rom.pull8_unsafe(memAddr);
     else
     {
@@ -44,13 +42,13 @@ class CartMBC1 extends Cartridge.ACartridge  {
 
   @override void push8_Rom(int memAddr, int v) {
     memAddr -= CARTRIDGE_ROM_FIRST;
-    if (_isInRange(memAddr, 0x0000, 0x1FFF))
+    if (0x0000 <= memAddr && memAddr <= 0x1FFF)
       _setAccessRAM(v);
-    else if (_isInRange(memAddr, 0x2000, 0x3FFF))
+    else if (0x2000 <= memAddr && memAddr <= 0x3FFF)
       _setBankNoROM(v);
-    else if (_isInRange(memAddr, 0x4000, 0x5FFF))
+    else if (0x4000 <= memAddr && memAddr <= 0x5FFF)
       _setBankNoRAM(v);
-    else if (_isInRange(memAddr, 0x6000, 0x7FFF))
+    else if (0x6000 <= memAddr && memAddr <= 0x7FFF)
       _setMode(v);
     else
       throw new Exception('MBC1: cannot access address ${Ft.toAddressString(memAddr, 4)}');

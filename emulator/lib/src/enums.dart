@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 18:16:40 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 14:18:30 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,7 @@ export 'package:emulator/src/mixins/interrupts.dart'
   show InterruptType ;
 export 'package:emulator/src/mixins/joypad.dart'
   show JoypadKey ;
-export 'package:emulator/src/mixins/graphics.dart'
+export 'package:emulator/src/mixins/graphicstatemachine.dart'
   show GraphicInterrupt
   , GraphicMode;
 

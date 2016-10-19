@@ -111,7 +111,7 @@ abstract class Debug implements Worker.AWorker {
     final Gameboy.GameBoy gb = this.gbOpt;
     this.ports.send('RegInfo', gb.cpur);
     it.forEach((r, i) {
-      l[r.index] = gb.pullMemReg(r);
+      l[r.index] = gb.memr.pull8(r);
     });
     this.ports.send('MemInfo',  <String, dynamic> {
       'addr' : _debuggerMemoryAddr,

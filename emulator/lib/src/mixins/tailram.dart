@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 21:55:08 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 16:18:17 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,46 +18,23 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/hardware/registermapping.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/graphics.dart" as Graphics;
-import "package:emulator/src/mixins/joypad.dart" as Joypad;
-import "package:emulator/src/mixins/timers.dart" as Timers;
+import "package:emulator/src/mixins/mmu.dart" as Mmu;
+import "package:emulator/src/mixins/interrupts.dart" as Interrupt;
 
-abstract class TailRam implements Hardware.Hardware
-  , Joypad.TrapAccessors
-  , Timers.TrapAccessors
-  , Graphics.TrapAccessors
-{
+abstract class TrapAccessor {
+  int tr_pull8(int memAddr);
+  void tr_push8(int memAddr, int v);
+}
 
-  final Uint8List _data = new Uint8List(TAIL_RAM_SIZE);
+abstract class TailRam
+  implements Hardware.Hardware
+  , Mmu.Mmu
+  , Interrupt.Interrupts {
 
-  // CONSTRUCTION *********************************************************** **
-  void init_tailRam() {
-    _data.fillRange(0, data.length, 0);
-    _data[0xFF10 - TAIL_RAM_FIRST] = 0x80;
-    _data[0xFF11 - TAIL_RAM_FIRST] = 0xBF;
-    _data[0xFF12 - TAIL_RAM_FIRST] = 0xF3;
-    _data[0xFF14 - TAIL_RAM_FIRST] = 0xBF;
-    _data[0xFF16 - TAIL_RAM_FIRST] = 0x3F;
-    _data[0xFF17 - TAIL_RAM_FIRST] = 0x00;
-    _data[0xFF19 - TAIL_RAM_FIRST] = 0xBF;
-    _data[0xFF1A - TAIL_RAM_FIRST] = 0x7F;
-    _data[0xFF1B - TAIL_RAM_FIRST] = 0xFF;
-    _data[0xFF1C - TAIL_RAM_FIRST] = 0x9F;
-    _data[0xFF1E - TAIL_RAM_FIRST] = 0xBF;
-    _data[0xFF20 - TAIL_RAM_FIRST] = 0xFF;
-    _data[0xFF21 - TAIL_RAM_FIRST] = 0x00;
-    _data[0xFF22 - TAIL_RAM_FIRST] = 0x00;
-    _data[0xFF23 - TAIL_RAM_FIRST] = 0xBF;
-    _data[0xFF24 - TAIL_RAM_FIRST] = 0x77;
-    _data[0xFF25 - TAIL_RAM_FIRST] = 0xF3;
-    _data[0xFF26 - TAIL_RAM_FIRST] = 0xF1;
-  }
-
-  /* ACCESSORS ****************************************************************/
+  /* Getters ******************************************************************/
   int tr_pull8(int memAddr) {
     switch (memAddr) {
-      case (P1addr): return this.getJoypadRegister();
-
+      case (P1addr): return this.memr.P1;
       case (SBaddr): return this.memr.SB;
       case (SCaddr): return this.memr.SC;
       case (DIVaddr): return this.memr.DIV;
@@ -91,28 +68,46 @@ abstract class TailRam implements Hardware.Hardware
       case (OBPDaddr): return this.memr.OBPD;
       case (SVBKaddr): return this.memr.SVBK;
       case (IEaddr): return this.memr.IE;
-      default: return _data[memAddr - TAIL_RAM_FIRST];
+      default: return this.tailRam.pull8_unsafe(memAddr);
     }
   }
 
   void tr_push8(int memAddr, int v) {
     switch (memAddr) {
-      case (P1addr): this.setJoypadRegister(v); break ;
-      case (DIVaddr): this.resetDIVRegister(); break ;
-      case (LCDCaddr): this.setLCDCRegister(v); break ;
-      case (LYaddr): this.resetLYRegister(); break ;
-      case (DMAaddr): this.execDMA(v); break ;
-
-      case (SBaddr): this.memr.SB = v; break ;
-      case (SCaddr): this.memr.SC = v; break ;
-      case (TIMAaddr): this.memr.TIMA = v; break ;
+      /* Timers */
+      case (DIVaddr):
+        this.memr.DIV = 0;
+        this.memr.rDIV.counter = 0;
+        break ;
+      case (TIMAaddr):
+        this.memr.TIMA = v;
+        this.memr.rTIMA.counter = 0; // Needed ???
+        break ;
       case (TMAaddr): this.memr.TMA = v; break ;
       case (TACaddr): this.memr.TAC = v; break ;
+      /* Graphics */
+      case (LYaddr):
+        this.memr.LY = 0;
+        _updateCoincidence(this.memr.LYC == this.memr.LY);
+        break ;
+      case (LYCaddr):
+        this.memr.LYC = v;
+        _updateCoincidence(this.memr.LYC == this.memr.LY);
+        break ;
+      case (STATaddr):
+        print('push STAT $v');
+        this.memr.STAT = v;
+        _updateCoincidence(this.memr.LYC == this.memr.LY);
+        break;
+      case (DMAaddr): _execDMA(v); break ;
+      case (LCDCaddr): _setLCDCRegister(v); break ;
+      /* Regular */
+      case (P1addr): this.memr.P1 = v; break ;
+      case (SBaddr): this.memr.SB = v; break ;
+      case (SCaddr): this.memr.SC = v; break ;
       case (IFaddr): this.memr.IF = v; break ;
-      case (STATaddr): this.memr.STAT = v; break ;
       case (SCYaddr): this.memr.SCY = v; break ;
       case (SCXaddr): this.memr.SCX = v; break ;
-      case (LYCaddr): this.memr.LYC = v; break ;
       case (BGPaddr): this.memr.BGP = v; break ;
       case (OBP0addr): this.memr.OBP0 = v; break ;
       case (OBP1addr): this.memr.OBP1 = v; break ;
@@ -132,15 +127,47 @@ abstract class TailRam implements Hardware.Hardware
       case (OBPDaddr): this.memr.OBPD = v; break ;
       case (SVBKaddr): this.memr.SVBK = v; break ;
       case (IEaddr): this.memr.IE = v; break ;
-      default: _data[memAddr - TAIL_RAM_FIRST] = v; break ;
+      default: this.tailRam.push8_unsafe(memAddr, v); break ;
     }
   }
 
-  int pullMemReg(MemReg r) {
-    switch (r) {
-      case (MemReg.P1) : return this.getJoypadRegister();
-      default : return this.memr.pull8(r);
+  /* Specific routines ********************************************************/
+  void _setLCDCRegister(int v) {
+    final bool enabling = ((v >> 7) & 0x1 == 1);
+    if (!this.memr.rLCDC.isLCDEnabled && enabling)
+    {
+      this.memr.rSTAT.counter = 0;
+      this.memr.rSTAT.mode = GraphicMode.OAM_ACCESS;
+      this.memr.LY = 0;
+      _updateCoincidence(this.memr.LY == this.memr.LYC);
     }
+    this.memr.LCDC = v;
+    return ;
+  }
+
+  void _execDMA(int v) {
+    int addr = v * 0x100;
+
+    for (int i = 0 ; i < 40; ++i) {
+      this.oam[i].posY = this.pull8(addr + 0);
+      this.oam[i].posX = this.pull8(addr + 1);
+      this.oam[i].tileID = this.pull8(addr + 2);
+      this.oam[i].attribute = this.pull8(addr + 3);
+      addr += 4;
+    }
+    this.memr.DMA = v;
+    return ;
+  }
+
+  /* BE CAREFUL THE SAME FUNCTION IS IS GRAPHIC -> TO UPDATE */
+  /* Generaly, LY, LYC and STAT are linked and should be updated together
+  * ASK FOR EXPLANATION */
+  void _updateCoincidence(bool coincidence) {
+    this.memr.rSTAT.coincidence = coincidence;
+    if (coincidence
+      && this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.COINCIDENCE))
+      this.requestInterrupt(InterruptType.LCDStat);
+    return ;
   }
 
 }
