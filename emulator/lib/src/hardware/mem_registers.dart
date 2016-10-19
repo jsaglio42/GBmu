@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 14:55:18 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/19 18:37:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -255,25 +255,29 @@ class RegisterSTAT {
 
   RegisterSTAT();
 
-  int value;
   int counter = 0;
 
-  /* Set value to avoid messing with modes/coincidence ???*/
+  int _value = 0;
+  int get value => _value;
+  int set value(int v) {
+    final int lowbits = _value & 0x7;
+    _value = (v & ~0x7) | lowbits;
+  } /* Set value to avoid messing with modes/coincidence ???*/
 
-  GraphicMode get mode => GraphicMode.values[this.value & 0x3];
+  GraphicMode get mode => GraphicMode.values[_value & 0x3];
   void set mode(GraphicMode gm) {
-    this.value = (this.value & ~0x3) | gm.index;
+    _value = (_value & ~0x3) | gm.index;
   }
 
   void set coincidence (bool coincidence) {
     if (coincidence)
-      this.value = (this.value | (1 << 2));
+      _value = (_value | (1 << 2));
     else
-      this.value = (this.value & ~(1 << 2));
+      _value = (_value & ~(1 << 2));
   } 
 
   bool isInterruptMonitored(GraphicInterrupt i) {
-    return (this.value >> (i.index + 3)) & 0x1 == 1;
+    return (_value >> (i.index + 3)) & 0x1 == 1;
   }
 
 }
@@ -307,7 +311,7 @@ class  RegisterTAC {
   int set value(int v) { _value = v & 0x7; }
 
   int get frequency {
-    switch(this.value & 0x3) {
+    switch(_value & 0x3) {
       case (0): return 1024;
       case (1): return 16;
       case (2): return 64;
