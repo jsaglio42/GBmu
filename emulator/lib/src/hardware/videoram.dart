@@ -66,7 +66,7 @@ class VideoRam {
 
   /***** Getters ***************************************************************/
   int pull8_TileData(int offset, int bankID) {
-    assert(offset & ~0x17FF == 0, 'pull8_TileData: offset not valid $offset');
+    assert(offset >= 0 && offset < 0x1800, 'pull8_TileData: offset not valid $offset');
     assert(bankID & ~0x1 == 0, 'pull8_TileData: bankID not valid $bankID');
     final int tileNo = offset ~/ 16;
     final int line = offset % 16;
@@ -85,7 +85,7 @@ class VideoRam {
 
   /***** Setters **************************************************************/
   void push8_TileData(int offset, int bankID, int v) {
-    assert(offset & ~0x17FF == 0, 'push8_TileData: offset not valid $offset');
+    assert(offset >= 0 && offset < 0x1800, 'push8_TileData: offset not valid $offset');
     assert(bankID & ~0x1 == 0, 'push8_TileData: bankID not valid $bankID');
     final int tileNo = offset ~/ 16;
     final int line = offset % 16;
@@ -94,13 +94,13 @@ class VideoRam {
   }
 
   void push8_TileID(int offset, int v) {
-    assert(offset & ~0x7FF == 0, 'push8_TileID: offset not valid $offset');
+    assert(offset >= 0 && offset < 0x800, 'push8_TileID: offset not valid $offset');
     _mapTileID[offset] = v;
     return ;
   }
 
   void push8_TileInfo(int offset, int v) {
-    assert(offset & ~0x7FF == 0, 'push8_TileInfo: offset not valid $offset');
+    assert(offset >= 0 && offset < 0x800, 'push8_TileInfo: offset not valid $offset');
     _mapTileInfo[offset].value = v;
     return ;
   }
