@@ -55,6 +55,9 @@ const int TAIL_RAM_LAST = 0xFFFF;
 const int TAIL_RAM_FIRST = 0xFF00;
 const int TAIL_RAM_SIZE = TAIL_RAM_LAST - TAIL_RAM_FIRST + 1;
 
+const int FORBIDDEN_LAST = 0xFEFF;
+const int FORBIDDEN_FIRST = 0xFEA0;
+
 const int OAM_LAST = 0xFE9F;
 const int OAM_FIRST = 0xFE00;
 

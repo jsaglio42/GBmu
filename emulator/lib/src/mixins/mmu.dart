@@ -43,6 +43,8 @@ abstract class Mmu
       return this.internalRam.pull8(memAddr - ECHO_RAM_OFFSET);
     else if (memAddr <= OAM_LAST)
       return this.oam.pull8(memAddr);
+    else if (memAddr <= FORBIDDEN_LAST)
+      return 0x00;
     else if (memAddr <= TAIL_RAM_LAST)
       return this.tr_pull8(memAddr);
     else
@@ -65,11 +67,12 @@ abstract class Mmu
       this.internalRam.push8(memAddr - ECHO_RAM_OFFSET, v);
     else if (memAddr <= OAM_LAST)
       this.oam.push8(memAddr, v);
+    else if (memAddr <= FORBIDDEN_LAST)
+      return ;
     else if (memAddr <= TAIL_RAM_LAST)
       this.tr_push8(memAddr, v);
-    // else
-    // throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
-    return ;
+    else
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
 
   /* 16-bits *******************************************************************/
