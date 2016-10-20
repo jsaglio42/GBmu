@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 19:09:08 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/20 16:15:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -1164,27 +1164,44 @@ abstract class Z80
 
   /* Miscellaneous ************************************************************/
   int _DAA() {
-    int result = this.cpur.A;
     if (this.cpur.n == 0)
-    {
-        if (this.cpur.h == 1 || (result & 0xF) > 9)
-            result += 0x06;
-        if (this.cpur.cy == 1 || result > 0x9F)
-            result += 0x60;
-    }
+      _DAA_Add();
     else
-    {
-        if (this.cpur.h == 1)
-            result -= 0x06;
-        if (this.cpur.cy == 1)
-            result -= 0x60;
-    }
-    this.cpur.A = result & 0xFF;
-    this.cpur.cy = (result < 0 || result > 0xFF) ? 0x1 : 0x0;
+      _DAA_Sub();
+    this.cpur.z = (this.cpur.A == 0) ? 1 : 0;
     this.cpur.h = 0;
-    this.cpur.z = (this.cpur.A == 0) ? 0x1 : 0x0;
     this.cpur.PC += 1;
     return 4;
+  }
+
+  void _DAA_Add()
+  {
+    int a = this.cpur.A;
+
+    if ((this.cpur.h == 1) || (a & 0x0f) > 0x9)
+      a += 0x06;
+    if ((this.cpur.cy == 1) || (a & 0x1f0) > 0x90) {
+      this.cpur.A = (a + 0x60) & 0xff;
+      this.cpur.cy = 1;
+    }
+    else {
+      this.cpur.A = a & 0xff;
+      this.cpur.cy = 0;
+    }
+  }
+
+  void _DAA_Sub()
+  {
+    int cy;
+
+    cy = 0;
+    if (this.cpur.h == 1)
+      this.cpur.A = (this.cpur.A - 0x06) & 0xff;
+    if (this.cpur.cy == 1) {
+      this.cpur.A = (this.cpur.A - 0x60) & 0xff;
+      cy = 1;
+    }
+    this.cpur.cy = cy;
   }
 
   int _CPL() {
