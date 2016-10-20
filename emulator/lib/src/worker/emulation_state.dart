@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   worker_emulation_state.dart                        :+:      :+:    :+:   //
+//   emulation_state.dart                               :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/13 11:01:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 12:26:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 11:09:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,7 +22,7 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 
-import 'package:emulator/src/worker.dart' as Worker;
+import 'package:emulator/src/worker/worker.dart' as Worker;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;

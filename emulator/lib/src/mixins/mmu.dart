@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 20:34:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/20 11:11:40 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,7 +19,7 @@ import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/globals.dart';
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/hardware/registermapping.dart" as Memregisters;
+import "package:emulator/src/hardware/mem_registers_info.dart" as Memregisters;
 
 import "package:emulator/src/mixins/tailrammanager.dart" as Tailram;
 
