@@ -30,15 +30,17 @@ class CartMBC1 extends Cartridge.ACartridge  {
 
   @override int pull8_Rom(int memAddr) {
     memAddr -= CARTRIDGE_ROM_FIRST;
-    assert(memAddr & ~0x3FFF == 0, 'push8_Rom: invalid memAddr $memAddr');
+    assert(memAddr & ~0x3FFF == 0, 'pull8_Rom: invalid memAddr $memAddr');
     if (memAddr <= 0x3FFF)
       return this.rom.pull8(memAddr);
-    else
+    else if (memAddr <= 0x7FFF)
     {
       final int bankno = _bankno_ROM | (1 - _mode) * (_bankno_RAM << 6);
       final int bankOffset = 0x4000 * (bankno - 1);
       return this.rom.pull8(bankOffset + memAddr);
     }
+    else
+      throw new Exception('CartMBC1: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
 
   @override void push8_Rom(int memAddr, int v) {
@@ -52,6 +54,8 @@ class CartMBC1 extends Cartridge.ACartridge  {
       _setBankNoRAM(v);
     else if (memAddr <= 0x7FFF)
       _setMode(v);
+    else
+      throw new Exception('CartMBC1: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
 
   @override int pull8_Ram(int memAddr) {
@@ -64,7 +68,7 @@ class CartMBC1 extends Cartridge.ACartridge  {
 
   @override void push8_Ram(int memAddr, int v) {
     if (!_enableRAM)
-      // throw new Exception('pull8_Ram: RAM not enabled');
+      // throw new Exception('push8_Ram: RAM not enabled');
       return ;
     memAddr -= CARTRIDGE_RAM_FIRST;
     final int bankOffset = 0x2000 * _bankno_RAM * _mode;

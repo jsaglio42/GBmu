@@ -67,9 +67,9 @@ abstract class GraphicDisplay
     // final int relativeY = posY % 8;
     // final int relativeX = posX % 8;
 
-    // final int tileID = this.videoRam.getTileID(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
-    // final TileInfo tinfo = this.videoRam.getTileInfo(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
-    // final Tile tile = this.videoRam.getTile(tileID, tinfo.bankno, this.memr.rLCDC.tileDataID);
+    // final int tileID = this.videoram.getTileID(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
+    // final TileInfo tinfo = this.videoram.getTileInfo(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
+    // final Tile tile = this.videoram.getTile(tileID, tinfo.bankno, this.memr.rLCDC.tileDataID);
 
     // return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
 
@@ -79,12 +79,12 @@ abstract class GraphicDisplay
     // final int tileX = posX ~/ 8;
     // final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
     
-    // final int tileID = this.videoRam.pull8(tileIDAddress);
+    // final int tileID = this.videoram.pull8(tileIDAddress);
     // final int tileAddress = _getTileAddress(tileID, this.memr.rLCDC.tileDataID);
     // final int relativeY = posY % 8;
     // final int relativeX = posX % 8;
-    // final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
-    // final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
+    // final int tileRow_l = this.videoram.pull8(tileAddress + relativeY * 2);
+    // final int tileRow_h = this.videoram.pull8(tileAddress + relativeY * 2 + 1);
     // final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     // final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
     // return (colorId_l | colorId_h);
@@ -102,12 +102,12 @@ abstract class GraphicDisplay
     // final int tileX = posX ~/ 8;
     // final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_WIN);
     
-    // final int tileID = this.videoRam.pull8(tileIDAddress);
+    // final int tileID = this.videoram.pull8(tileIDAddress);
     // final int tileAddress = _getTileAddress(tileID, this.memr.rLCDC.tileDataID);
     // final int relativeY = posY % 8;
     // final int relativeX = posX % 8;
-    // final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
-    // final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
+    // final int tileRow_l = this.videoram.pull8(tileAddress + relativeY * 2);
+    // final int tileRow_h = this.videoram.pull8(tileAddress + relativeY * 2 + 1);
     // final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
     // final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
     // return (colorId_l | colorId_h);
@@ -118,9 +118,9 @@ abstract class GraphicDisplay
     final int tileY = mapY ~/ 8;
     final int relativeX = mapX % 8;
     final int relativeY = mapY % 8;
-    final int tileID = this.videoRam.getTileID(tileX, tileY, tileMapID);
-    final TileInfo tinfo = this.videoRam.getTileInfo(tileX, tileY, tileMapID);
-    final Tile tile = this.videoRam.getTile(tileID, tinfo.bankID, tileMapID);
+    final int tileID = this.videoram.getTileID(tileX, tileY, tileMapID);
+    final TileInfo tinfo = this.videoram.getTileInfo(tileX, tileY, tileMapID);
+    final Tile tile = this.videoram.getTile(tileID, tinfo.bankID, tileMapID);
     return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
   }
 
@@ -148,7 +148,7 @@ abstract class GraphicDisplay
         tileID = s.tileID | 0x01;
       }
 
-      final Tile tile = this.videoRam.getTile(tileID, s.info.bankID, 0);
+      final Tile tile = this.videoram.getTile(tileID, s.info.bankID, 0);
 
       for (int relativeX = 0; relativeX < 8; ++relativeX) {
         int x = (s.posX - 8) + relativeX;
@@ -162,8 +162,8 @@ abstract class GraphicDisplay
 
       // final int tileID = s.tileID;
       // final int tileAddress = 0x8000 + tileID * 16; // tile address should use sizeY ? TO BE CHECKED
-      // final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
-      // final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
+      // final int tileRow_l = this.videoram.pull8(tileAddress + relativeY * 2);
+      // final int tileRow_h = this.videoram.pull8(tileAddress + relativeY * 2 + 1);
 
       // for (int relativeX = 0; relativeX < 8; ++relativeX) {
       //   int x = (s.posX - 8) + relativeX;

@@ -23,14 +23,24 @@ const TILE_PER_MAP = 32 * 32;
 
 class VideoRam {
 
-  final List<Tile> _tileData
-    = new List.generate(TILE_PER_BANK * 2, (i) => new Tile());
-  final List<int> _tileMap
-    = new List.filled(TILE_PER_MAP * 2, 0);
-  final List<TileInfo> _tileInfoMap
-    = new List.generate(TILE_PER_MAP * 2, (i) => new TileInfo());
+  final List<Tile> _tileData = new List<Tile>();
+  final List<int> _tileMap = new List<int>();
+  final List<TileInfo> _tileInfoMap = new List<TileInfo>();
 
   /* API *********************************************************************/
+  void reset() {
+    _tileData.clear();
+    _tileMap.clear();
+    _tileInfoMap.clear();
+    for (int i; i < 2 * TILE_PER_BANK; ++i) {
+      _tileData.add(new Tile());
+    }
+    for (int i; i < 2 * TILE_PER_MAP; ++i) {
+      _tileMap.add(0);
+      _tileInfoMap.add(new TileInfo());
+    }
+  }
+
   int getTileID(int tileX, int tileY, int tileMapID) {
     assert (tileX >= 0 && tileX <= 32, 'getTileID: invalid tileX');
     assert (tileY >= 0 && tileY <= 32, 'getTileID: invalid tileY');

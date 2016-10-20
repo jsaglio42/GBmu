@@ -19,12 +19,12 @@ import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/globals.dart';
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/hardware/mem_registers_info.dart" as Memregisters;
-
 import "package:emulator/src/mixins/tailrammanager.dart" as Tailram;
+import "package:emulator/src/mixins/videorammanager.dart" as Videoram;
 
 abstract class Mmu
   implements Hardware.Hardware
+  , Videoram.TrapAccessor 
   , Tailram.TrapAccessor {
 
   /* 8-bits *******************************************************************/

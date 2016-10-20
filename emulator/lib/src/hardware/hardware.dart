@@ -38,7 +38,7 @@ abstract class Hardware {
   final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
   final Memregs.MemRegs memr = new Memregs.MemRegs();
 
-  final Vram.VideoRam videoRam = new Vram.VideoRam();
+  final Vram.VideoRam videoram = new Vram.VideoRam();
   final Iram.InternalRam internalRam = new Iram.InternalRam();
   final Oam.OAM oam = new Oam.OAM();
   final Tram.TailRam tailram = new Tram.TailRam();
@@ -63,6 +63,7 @@ abstract class Hardware {
     this.cpur.reset();
     this.memr.reset();
     this.tailram.reset();
+    this.videoram.reset();
     return ;
   }
 

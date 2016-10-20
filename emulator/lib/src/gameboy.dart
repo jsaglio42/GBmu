@@ -26,6 +26,7 @@ import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
 import "package:emulator/src/mixins/joypad.dart" as Joypad;
 import "package:emulator/src/mixins/timers.dart" as Timers;
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
+import "package:emulator/src/mixins/videorammanager.dart" as Videoram;
 import "package:emulator/src/mixins/tailrammanager.dart" as Tailram;
 import "package:emulator/src/mixins/graphicstatemachine.dart" as GStateMachine;
 import "package:emulator/src/mixins/graphicdisplay.dart" as GDisplay;
@@ -40,6 +41,7 @@ class GameBoy extends Object
   , Joypad.Joypad
   , Timers.Timers
   , Mmu.Mmu
+  , Videoram.VideoRamManager
   , Tailram.TailRamManager
   , GStateMachine.GraphicStateMachine
   , GDisplay.GraphicDisplay
