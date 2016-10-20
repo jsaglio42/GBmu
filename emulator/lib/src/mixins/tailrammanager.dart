@@ -152,7 +152,7 @@ abstract class TailRamManager
       this.oam[i].posY = this.pull8(addr + 0);
       this.oam[i].posX = this.pull8(addr + 1);
       this.oam[i].tileID = this.pull8(addr + 2);
-      this.oam[i].attribute = this.pull8(addr + 3);
+      this.oam[i].info.value = this.pull8(addr + 3);
       addr += 4;
     }
     this.memr.DMA = v;

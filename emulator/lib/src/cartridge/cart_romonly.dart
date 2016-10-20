@@ -27,6 +27,7 @@ class CartRomOnly extends Cartridge.ACartridge  {
   }
 
   @override void push8_Rom(int memAddr, int v) {
+    // throw new Exception('ROM_ONLY: RAM Operation not supported');
     return ;
   }
 

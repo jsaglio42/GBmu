@@ -15,18 +15,18 @@ import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
 
-/* Sprites ********************************************************************/
+/* TileInfo ********************************************************************/
 class TileInfo {
 
   TileInfo();
 
-  int _value = 0
+  int _value = 0;
 
   bool _priorityIsBG = false;
   bool _flipY = false;
   bool _flipX = false;
   int _OBP_DMG = 0;
-  int _tileBank_CGB = 0;
+  int _bankID = 0;
   int _OBP_CGB = 0;
 
   int get value => _value;
@@ -35,7 +35,7 @@ class TileInfo {
     _flipY = (v >> 6) & 0x1 == 1;
     _flipX = (v >> 5) & 0x1 == 1;
     _OBP_DMG = (v >> 4) & 0x1;
-    _tileBank_CGB = (v >> 3) & 0x1;
+    _bankID = (v >> 3) & 0x1;
     _OBP_CGB = v & 0x7;
     _value = v;
     return ;
@@ -45,7 +45,7 @@ class TileInfo {
   bool get flipY => _flipY;
   bool get flipX => _flipX;
   int get OBP_DMG => _OBP_DMG;
-  int get tileBank_CGB => _tileBank_CGB;
+  int get bankID => _bankID;
   int get OBP_CGB => _OBP_CGB;
 
 }

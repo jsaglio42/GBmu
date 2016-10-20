@@ -15,37 +15,19 @@ import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
 
-/* Sprites ********************************************************************/
-class TileInfo {
+/* Tile ************************************************************************/
+class Tile {
 
-  Uint8List _data[8 * 8];
+  List<int> _data = new List.filled(8 * 8, 0);
 
-  int _value = 0
-
-  bool _priorityIsBG = false;
-  bool _flipY = false;
-  bool _flipX = false;
-  int _OBP_DMG = 0;
-  int _tileBank_CGB = 0;
-  int _OBP_CGB = 0;
-
-  int get value => _value;
-  void set value(int v) {
-    _priorityIsBG = (v >> 7) & 0x1 == 1;
-    _flipY = (v >> 6) & 0x1 == 1;
-    _flipX = (v >> 5) & 0x1 == 1;
-    _OBP_DMG = (v >> 4) & 0x1;
-    _tileBank_CGB = (v >> 3) & 0x1;
-    _OBP_CGB = v & 0x7;
-    _value = v;
-    return ;
+  int getColorID(int x, int y, bool flipX, bool flipY) {
+    if (flipX)
+      x = 7 - x;
+    if (flipY)
+      y = 7 - y;
+    return _data[y * 8 + x];
   }
 
-  bool get priorityIsBG => _priorityIsBG;
-  bool get flipY => _flipY;
-  bool get flipX => _flipX;
-  int get OBP_DMG => _OBP_DMG;
-  int get tileBank_CGB => _tileBank_CGB;
-  int get OBP_CGB => _OBP_CGB;
+  // push DATA
 
 }
