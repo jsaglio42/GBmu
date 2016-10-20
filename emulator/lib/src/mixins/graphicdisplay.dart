@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 20:34:02 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/20 11:53:14 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -54,21 +54,35 @@ abstract class GraphicDisplay
     // print('Background');
     if (!this.memr.rLCDC.isBackgroundDisplayEnabled)
       return (null);
+
     final int posY = (y + this.memr.SCY) & 0xFF;
     final int posX =  (x + this.memr.SCX) & 0xFF;
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
-    final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
-    
-    final int tileID = this.videoRam.pull8(tileIDAddress);
-    final int tileAddress = _getTileAddress(tileID, this.memr.rLCDC.tileDataID);
     final int relativeY = posY % 8;
     final int relativeX = posX % 8;
-    final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
-    final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
-    final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
-    final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-    return (colorId_l | colorId_h);
+
+    final int tileID = this.videoRam.getTileID(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
+    final TileInfo tinfo = this.videoRam.getTileInfo(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
+    final Tile tile = this.videoRam.getTile(tileID, tinfo.bankno, this.memr.rLCDC.tileDataID);
+
+    return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
+
+    // final int posY = (y + this.memr.SCY) & 0xFF;
+    // final int posX =  (x + this.memr.SCX) & 0xFF;
+    // final int tileY = posY ~/ 8;
+    // final int tileX = posX ~/ 8;
+    // final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_BG);
+    
+    // final int tileID = this.videoRam.pull8(tileIDAddress);
+    // final int tileAddress = _getTileAddress(tileID, this.memr.rLCDC.tileDataID);
+    // final int relativeY = posY % 8;
+    // final int relativeX = posX % 8;
+    // final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
+    // final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
+    // final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
+    // final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
+    // return (colorId_l | colorId_h);
   }
 
   int _getWindowColorID(int x, int y) {
@@ -77,17 +91,30 @@ abstract class GraphicDisplay
     final int posX =  x - (this.memr.WX - 7);
     final int tileY = posY ~/ 8;
     final int tileX = posX ~/ 8;
-    final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_WIN);
-    
-    final int tileID = this.videoRam.pull8(tileIDAddress);
-    final int tileAddress = _getTileAddress(tileID, this.memr.rLCDC.tileDataID);
     final int relativeY = posY % 8;
     final int relativeX = posX % 8;
-    final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
-    final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
-    final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
-    final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-    return (colorId_l | colorId_h);
+
+    final int tileID = this.videoRam.getTileID(tileX, tileY, this.memr.rLCDC.tileMapID_WIN);
+    final TileInfo tinfo = this.videoRam.getTileInfo(tileX, tileY, this.memr.rLCDC.tileMapID_WIN);
+    final Tile tile = this.videoRam.getTile(tileID, tinfo.bankno, this.memr.rLCDC.tileDataID);
+
+    return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
+  
+    // final int posY = y - this.memr.WY;
+    // final int posX =  x - (this.memr.WX - 7);
+    // final int tileY = posY ~/ 8;
+    // final int tileX = posX ~/ 8;
+    // final int tileIDAddress = _getTileIDAddress(tileX, tileY, this.memr.rLCDC.tileMapID_WIN);
+    
+    // final int tileID = this.videoRam.pull8(tileIDAddress);
+    // final int tileAddress = _getTileAddress(tileID, this.memr.rLCDC.tileDataID);
+    // final int relativeY = posY % 8;
+    // final int relativeX = posX % 8;
+    // final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
+    // final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
+    // final int colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
+    // final int colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
+    // return (colorId_l | colorId_h);
   }
 
   void _setSpriteColors(int y) {
@@ -104,11 +131,13 @@ abstract class GraphicDisplay
       else if (s.flipY)
         relativeY = sizeY - 1 - relativeY;
 
+      int tileID;
+      if (relativeY < 8)
+        tileID = s.tileID & 0xFE;
+      else
+        tileID = s.tileID | 0x01;
 
-      final int tileID = s.tileID;
-      final int tileAddress = 0x8000 + tileID * 16; // tile address should use sizeY ? TO BE CHECKED
-      final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
-      final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
+      final Tile tile = this.videoRam.getTile(tileID, s.info.bankno, 0);
 
       for (int relativeX = 0; relativeX < 8; ++relativeX) {
         int x = (s.posX - 8) + relativeX;
@@ -118,24 +147,39 @@ abstract class GraphicDisplay
           || this.lcd.zBuffer[x] >= 0
           || (s.priorityIsBG && this.lcd.bgColorIDs[x] != 0 && this.lcd.bgColorIDs[x] != null))
           continue ;
+        final int colorID = tile.getColorID(relativeX, re)
 
-        int colorId_l;
-        int colorId_h;
-        if (s.flipX)
-        {
-          colorId_l = (tileRow_l >> relativeX) & 0x1 == 1 ? 0x1 : 0x0;
-          colorId_h = (tileRow_h >> relativeX) & 0x1 == 1 ? 0x2 : 0x0;
-        }
-        else
-        {
-          colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
-          colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
-        }
+      // final int tileID = s.tileID;
+      // final int tileAddress = 0x8000 + tileID * 16; // tile address should use sizeY ? TO BE CHECKED
+      // final int tileRow_l = this.videoRam.pull8(tileAddress + relativeY * 2);
+      // final int tileRow_h = this.videoRam.pull8(tileAddress + relativeY * 2 + 1);
 
-        final int colorID = colorId_l | colorId_h;
-        if (colorID == 0)
-          continue;
-        final int OBP = (s.OBP_DMG == 0) ? this.memr.OBP0 : this.memr.OBP1;
+      // for (int relativeX = 0; relativeX < 8; ++relativeX) {
+      //   int x = (s.posX - 8) + relativeX;
+      //   if (x >= LCD_WIDTH)
+      //     break ;
+      //   else if (x < 0
+      //     || this.lcd.zBuffer[x] >= 0
+      //     || (s.priorityIsBG && this.lcd.bgColorIDs[x] != 0 && this.lcd.bgColorIDs[x] != null))
+      //     continue ;
+
+      //   int colorId_l;
+      //   int colorId_h;
+      //   if (s.flipX)
+      //   {
+      //     colorId_l = (tileRow_l >> relativeX) & 0x1 == 1 ? 0x1 : 0x0;
+      //     colorId_h = (tileRow_h >> relativeX) & 0x1 == 1 ? 0x2 : 0x0;
+      //   }
+      //   else
+      //   {
+      //     colorId_l = (tileRow_l >> (7 - relativeX)) & 0x1 == 1 ? 0x1 : 0x0;
+      //     colorId_h = (tileRow_h >> (7 - relativeX)) & 0x1 == 1 ? 0x2 : 0x0;
+      //   }
+
+      //   final int colorID = colorId_l | colorId_h;
+      //   if (colorID == 0)
+      //     continue;
+      //   final int OBP = (s.OBP_DMG == 0) ? this.memr.OBP0 : this.memr.OBP1;
         this.lcd.spriteColors[x] = _getColor(colorID, OBP);
         this.lcd.zBuffer[x] = spriteno;
       }
