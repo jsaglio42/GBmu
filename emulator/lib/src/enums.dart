@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 14:18:30 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/20 11:11:42 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,7 +14,7 @@
  * This file should be fully imported for convenience
  */
 
-export 'package:emulator/src/worker.dart'
+export 'package:emulator/src/worker/worker.dart'
   show DebuggerExternalMode
   , PauseExternalMode
   , AutoBreakExternalMode;
@@ -25,7 +25,7 @@ export 'package:emulator/src/hardware/cpu_registers.dart'
 export 'package:emulator/src/hardware/headerdecoder.dart'
   show RomHeaderField
   , CartridgeType;
-export 'package:emulator/src/hardware/registermapping.dart'
+export 'package:emulator/src/hardware/mem_registers_info.dart'
   show MemReg;
 export 'package:emulator/src/mixins/interrupts.dart'
   show InterruptType ;

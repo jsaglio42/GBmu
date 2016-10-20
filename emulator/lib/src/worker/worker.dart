@@ -6,20 +6,20 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 11:42:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 11:10:02 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:async' as Async;
-// import 'dart:typed_data';
+
 import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 
 import 'package:emulator/src/gameboy.dart' as Gameboy;
-import 'package:emulator/src/worker_emulation.dart' as WEmu;
-import 'package:emulator/src/worker_emulation_state.dart' as WEmuState;
-import 'package:emulator/src/worker_debug.dart' as WDeb;
-import 'package:emulator/src/worker_observer.dart' as WObs;
+import 'package:emulator/src/worker/emulation.dart' as WEmu;
+import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
+import 'package:emulator/src/worker/debug.dart' as WDeb;
+import 'package:emulator/src/worker/observer.dart' as WObs;
 import 'package:emulator/src/worker/framescheduler.dart' as WFramescheduler;
 import 'package:emulator/variants.dart' as V;
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/20 12:59:10 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 14:03:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 11:14:30 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,7 +28,7 @@ export 'package:emulator/src/hardware/data.dart';
 export 'package:emulator/src/hardware/save_state.dart';
 // export 'package:emulator/src/hardware/hardware.dart';
 // export 'package:emulator/src/hardware/headerdecoder.dart';
-export 'package:emulator/src/hardware/registermapping.dart';
+export 'package:emulator/src/hardware/mem_registers_info.dart';
 
 export 'package:emulator/src/mixins/instructions.dart';
 // export 'package:emulator/src/mixins/instructionsdecoder.dart';
@@ -38,7 +38,7 @@ export 'package:emulator/src/mixins/instructions.dart';
 // export 'package:emulator/src/mixins/timers.dart';
 // export 'package:emulator/src/mixins/z80.dart';
 
-// export 'package:emulator/src/worker.dart';
-// export 'package:emulator/src/worker_debug.dart';
-// export 'package:emulator/src/worker_emulation.dart';
-// export 'package:emulator/src/worker_observer.dart';
+// export 'package:emulator/src/worker/worker.dart';
+// export 'package:emulator/src/worker/debug.dart';
+// export 'package:emulator/src/worker/emulation.dart';
+// export 'package:emulator/src/worker/observer.dart';

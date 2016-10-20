@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 23:04:55 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/20 11:18:10 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -68,18 +68,6 @@ abstract class AWriteOperation implements AData {
     else
       this._data[addr] = v;
   }
-
-}
-
-// Ram internal to GameBoy ************************************************** **
-class GbRam extends AData
-  with AReadOperation, AWriteOperation {
-
-  GbRam.ofUint8List(int memOffset, Uint8List l)
-    : super(memOffset, l);
-
-  GbRam(int memOffset, int size)
-    : super(memOffset, new Uint8List(size));
 
 }
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 14:03:44 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 11:12:18 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,7 +17,7 @@ import 'package:emulator/enums.dart';
 import 'package:emulator/src/events.dart';
 import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
-import 'package:emulator/src/worker.dart' as Worker;
+import 'package:emulator/src/worker/worker.dart' as Worker;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
 import "package:emulator/src/mixins/instructions.dart" as Instructions;
 import 'package:emulator/variants.dart' as V;

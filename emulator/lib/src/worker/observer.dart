@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   worker_observer.dart                               :+:      :+:    :+:   //
+//   observer.dart                                      :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 12:28:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 11:09:34 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,7 +17,7 @@ import 'package:ft/ft.dart' as Ft;
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
-import 'package:emulator/src/worker.dart' as Worker;
+import 'package:emulator/src/worker/worker.dart' as Worker;
 import 'package:emulator/variants.dart' as V;
 
 abstract class Observer implements Worker.AWorker {

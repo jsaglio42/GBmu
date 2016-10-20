@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   worker_debug.dart                                  :+:      :+:    :+:   //
+//   debug.dart                                         :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/17 22:36:18 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/20 11:09:36 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,7 +18,7 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 import 'package:emulator/src/globals.dart';
-import 'package:emulator/src/worker.dart' as Worker;
+import 'package:emulator/src/worker/worker.dart' as Worker;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/mixins/instructions.dart' as Instructions;
 import 'package:emulator/variants.dart' as V;

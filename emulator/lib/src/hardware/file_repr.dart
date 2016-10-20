@@ -6,13 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 12:48:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 16:15:52 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 11:17:27 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 part of gbmu_data;
 
-// Interface for classes representing files (Ram, Rom, Ss)
+/* Interface for classes representing files (Ram, Rom, Ss) */
 abstract class FileRepr {
 
   V.Component get type;
@@ -35,7 +35,7 @@ abstract class FileRepr {
 
 }
 
-// Specialization of FileRepr for AData classes (Ram, Rom)
+/* Specialization of FileRepr for AData classes (Ram, Rom) */
 abstract class FileReprData implements AData, FileRepr {
 
   // ATTRIBUTES ************************************************************* **
