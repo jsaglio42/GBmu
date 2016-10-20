@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 15:44:19 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 17:55:31 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -48,21 +48,20 @@ class DomChip extends DomComponent
 
   DomChip(PlatformDomEvents pde, LsChip data)
     : super(pde, data) {
-    Html.ImageElement elt;
     int hCenter;
+    final Html.DivElement elt = new Html.DivElement();
+    final Html.DivElement txt = new Html.DivElement();
 
     // Ft.log('DomChip', 'constructor', [pde, data]);
+    txt.text = data.fileName;
+    elt.nodes = [txt];
     if (data.type is Ram) {
       hCenter = 92;
-      elt = new Html.ImageElement()
-        ..classes.addAll(["cart-ram-bis", "ui-widget-content"]);
-      elt.setAttribute('src', 'images/gb_ram.png');
+      elt.classes.addAll(["cart-ram-bis", "ui-widget-content"]);
     }
     else {
       hCenter = 44;
-      elt = new Html.ImageElement()
-        ..classes.addAll(["cart-ss-bis", "ui-widget-content"]);
-      elt.setAttribute('src', 'images/gb_ss.png');
+      elt.classes.addAll(["cart-ss-bis", "ui-widget-content"]);
     }
     this.hes_init(elt);
     this.hdr_init(hCenter, 26, 20, 100);

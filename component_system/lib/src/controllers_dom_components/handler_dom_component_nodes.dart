@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/07 16:30:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 19:00:03 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 18:04:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,11 +50,12 @@ class HandlerDomComponentNodes {
     if (ev.isNew || ev.isUnload)
       _pdcs.cartBank.elt.nodes.add(ev.cart.elt);
     else if (ev.isLoad)
-      _pdcs.gbSocket.elt.nodes = [ev.cart.elt];
+      _pdcs.gbSocket.elt.nodes.add(ev.cart.elt);
     else if (ev.isDeleteOpened || ev.isDeleteClosed)
       _pdcs.cartBank.elt.nodes.remove(ev.cart.elt);
-    else if (ev.isDeleteGameBoy)
-      _pdcs.gbSocket.elt.nodes = [];
+    else if (ev.isDeleteGameBoy) {
+      _pdcs.gbSocket.elt.nodes.removeLast();
+    }
     // else: Don't act on Open & Close
   }
 

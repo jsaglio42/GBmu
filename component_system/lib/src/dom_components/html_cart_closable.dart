@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/18 17:16:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:56:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 17:24:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,17 +29,22 @@ abstract class HtmlCartClosable implements HtmlElementCart, DomElement {
 
   // ATTRIBUTES ************************************************************* **
   bool _abort = false;
+  final Ft.BinaryToggle _buttonShown = Ft.checkedOnlyBinaryToggle(true);
+  final Ft.BinaryToggle _closing = Ft.checkedOnlyBinaryToggle(false);
 
   // CONSTRUCTION *********************************************************** **
   void hcc_init() {
     // Ft.log('HtmlCartClosable', 'hcc_init');
     this.btn.onClick.forEach(_onClick);
     this.jqBody.callMethod('on', ['shown.bs.collapse', _onShown]);
+    this.jqBody.callMethod('on', ['hidden.bs.collapse', _onHidden]);
   }
 
   // PUBLIC ***************************************************************** **
   void hcc_startClose() {
-    assert(__opened.toggleFalseValid(), 'hcc_startClose() invalid');
+    assert(__opened.toggleFalseValid(), 'hcc_startClose() while closed');
+    if (!_closing.toggleTrueValid())
+      assert(false, 'hcc_startClose() while closing');
     this.jqBody.callMethod('collapse', ["hide"]);
     this.btn.classes.add('collapsed');
   }
@@ -51,16 +56,15 @@ abstract class HtmlCartClosable implements HtmlElementCart, DomElement {
   }
 
   void hcc_showButton() {
-    assert(__buttonShown.toggleTrueValid(), 'hcc_showButton() invalid');
+    if (!_buttonShown.toggleTrueValid())
+      assert(false, 'hcc_showButton() invalid');
     assert(__opened.state == true, 'hcc_showButton() invalid open state');
-    //TODO: make mouse ignore button
-    this.btn.disabled = false;
   }
 
   void hcc_hideButton() {
-    assert(__buttonShown.toggleFalseValid(), 'hcc_hideButton() invalid');
+    if (!_buttonShown.toggleFalseValid())
+      assert(false, 'hcc_hideButton() invalid');
     assert(__opened.state == true, 'hcc_hideButton() invalid open state');
-    this.btn.disabled = true;
   }
 
   void hcc_abort() {
@@ -70,7 +74,8 @@ abstract class HtmlCartClosable implements HtmlElementCart, DomElement {
 
   // CALLBACKS ************************************************************** **
   void _onClick(_) {
-    this.pde.cartButtonClicked(this);
+    if (_buttonShown.state && !_closing.state)
+      this.pde.cartButtonClicked(this);
   }
 
   void _onShown(_) {
@@ -82,8 +87,12 @@ abstract class HtmlCartClosable implements HtmlElementCart, DomElement {
       this.pde.cartDoneOpening(this);
   }
 
+  void _onHidden(_) {
+    if (!_closing.toggleFalseValid())
+      assert(false, 'HtmlCartClosable._onHidden while not closing');
+  }
+
   // INVARIANTS ************************************************************* **
   final Ft.BinaryToggle __opened = Ft.checkedOnlyBinaryToggle(false);
-  final Ft.BinaryToggle __buttonShown = Ft.checkedOnlyBinaryToggle(true);
 
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 14:19:56 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 16:24:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 18:33:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,31 +45,54 @@ class HandlerGlobalStyles {
 
   // CALLBACKS ************************************************************** **
   void _onCartEvent(CartEvent<DomCart> ev) {
+    if (ev.src is None || ev.dst is None) {
+      if (_pdcs.hasCarts) {
+        _pdcs.labelNoCart.style.display = "none";
+        if (_pdcs.gbCart.isNone)
+          _pdcs.labelGameBoySocketEmpty.style.display = "";
+      }
+      else {
+        _pdcs.labelNoCart.style.display = "";
+        _pdcs.labelGameBoySocketEmpty.style.display = "none";
+      }
+    }
     if (ev.src is GameBoy && ev.dst is! GameBoy) {
       _pdcs.labelRestart.style.visibility = "hidden";
       _pdcs.labelEject.style.visibility = "hidden";
+      _pdcs.labelExtractRam.style.visibility = "hidden";
+      _pdcs.labelGameBoySocketEmpty.style.display = "";
     }
     else if (ev.dst is GameBoy && ev.src is! GameBoy) {
       _pdcs.labelRestart.style.visibility = "visible";
       _pdcs.labelEject.style.visibility = "visible";
+      _pdcs.labelGameBoySocketEmpty.style.display = "none";
+      if (_pdcs.chipOfCartOpt(ev.cart, Ram.v) != null ||
+          (ev.cart.data as LsRom).ramSize == 0)
+        _pdcs.labelExtractRam.style.visibility = "hidden";
+      else
+        _pdcs.labelExtractRam.style.visibility = "visible";
     }
-    if (ev.dst is GameBoy && _pdcs.chipOfCartOpt(ev.cart, Ram.v) == null)
-      _pdcs.labelExtractRam.style.visibility = "visible";
-    else
-      _pdcs.labelExtractRam.style.visibility = "hidden";
   }
 
   void _onChipEvent(ChipEvent<DomChip, DomCart> ev) {
     if (ev.chip.data.type is Ram) {
-      if (ev.src is Attached && ev.srcCartOpt == _pdcs.gbCart.v)
-        _pdcs.labelExtractRam.style.visibility = "visible";
+      if (ev.src is Attached && ev.srcCartOpt == _pdcs.gbCart.v) {
+        if ((ev.chip.data as LsRam).size == 0)
+          _pdcs.labelExtractRam.style.visibility = "hidden";
+        else
+          _pdcs.labelExtractRam.style.visibility = "visible";
+      }
       else if (ev.dst is Attached && ev.dstCartOpt == _pdcs.gbCart.v)
         _pdcs.labelExtractRam.style.visibility = "hidden";
+    }
+    if (ev.src is None || ev.dst is None) {
+      if (_pdcs.hasChips)
+        _pdcs.labelNoChip.style.display = "none";
+      else
+        _pdcs.labelNoChip.style.display = "";
     }
   }
 
   // PRIVATE **************************************************************** **
-
-
 
 }

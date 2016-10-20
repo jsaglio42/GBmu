@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 11:41:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/20 18:19:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -84,11 +84,24 @@ class PlatformDomComponentStorage {
   final Html.InputElement btnEject = Html.querySelector('#ejectbut');
   final Html.InputElement btnExtractRam = Html.querySelector('#extractrambut');
 
+  final Html.Element labelGameBoySocketEmpty = Html.querySelector('#label-gbsocket-empty');
+  final Html.Element labelNoCart = Html.querySelector('#label-no-cart');
+  final Html.Element labelNoChip = Html.querySelector('#label-no-chip');
+
   // Components getters ********************************* **
   // Most of them are linear in time
 
   Iterable<DomCart> get carts =>
     _components.values.where((DomComponent c) => c is DomCart);
+
+  Iterable<DomCart> get chips =>
+    _components.values.where((DomComponent c) => c is! DomCart);
+
+  bool get hasCarts =>
+    this.carts.isNotEmpty;
+
+  bool get hasChips =>
+    this.chips.isNotEmpty;
 
   DomCart cartOfSocket(DomChipSocket s) {
     assert(_cartOfSocket[s] != null);
