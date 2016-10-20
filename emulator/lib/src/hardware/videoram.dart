@@ -66,27 +66,27 @@ class VideoRam {
 
   /***** Getters ***************************************************************/
   int pull8_TileData(int offset, int bankID) {
-    assert(offset & ~0x17FF == 0, 'pull8_TileData: offset nor valid $offset');
-    assert(offset & ~0x1 == 0, 'pull8_TileData: bankID nor valid $bankID');
+    assert(offset & ~0x17FF == 0, 'pull8_TileData: offset not valid $offset');
+    assert(bankID & ~0x1 == 0, 'pull8_TileData: bankID not valid $bankID');
     final int tileNo = offset ~/ 16;
     final int line = offset % 16;
     return _tileData[bankID * TILE_PER_MAP + tileNo][line];
   }
 
   int pull8_TileID(int offset) {
-    assert(offset & ~0x7FF == 0, 'pull8_TileID: offset nor valid $offset');
+    assert(offset & ~0x7FF == 0, 'pull8_TileID: offset not valid $offset');
     return _mapTileID[offset];
   }
 
   int pull8_TileInfo(int offset) {
-    assert(offset & ~0x7FF == 0, 'pull8_TileInfo: offset nor valid $offset');
+    assert(offset & ~0x7FF == 0, 'pull8_TileInfo: offset not valid $offset');
     return _mapTileInfo[offset].value;
   }
 
   /***** Setters **************************************************************/
   void push8_TileData(int offset, int bankID, int v) {
-    assert(offset & ~0x17FF == 0, 'push8_TileData: offset nor valid $offset');
-    assert(offset & ~0x1 == 0, 'push8_TileData: bankID nor valid $bankID');
+    assert(offset & ~0x17FF == 0, 'push8_TileData: offset not valid $offset');
+    assert(bankID & ~0x1 == 0, 'push8_TileData: bankID not valid $bankID');
     final int tileNo = offset ~/ 16;
     final int line = offset % 16;
     _tileData[bankID * TILE_PER_MAP + tileNo][line] = v;
@@ -94,13 +94,13 @@ class VideoRam {
   }
 
   void push8_TileID(int offset, int v) {
-    assert(offset & ~0x7FF == 0, 'push8_TileID: offset nor valid $offset');
+    assert(offset & ~0x7FF == 0, 'push8_TileID: offset not valid $offset');
     _mapTileID[offset] = v;
     return ;
   }
 
   void push8_TileInfo(int offset, int v) {
-    assert(offset & ~0x7FF == 0, 'push8_TileInfo: offset nor valid $offset');
+    assert(offset & ~0x7FF == 0, 'push8_TileInfo: offset not valid $offset');
     _mapTileInfo[offset].value = v;
     return ;
   }
