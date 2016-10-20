@@ -18,16 +18,24 @@ import "package:emulator/src/enums.dart";
 /* Tile ************************************************************************/
 class Tile {
 
-  List<int> _data = new List.filled(8 * 8, 0);
+  List<int> _colorIDs = new List.filled(8 * 8, 0);
+  List<int> _values = new List.filled(8 * 2, 0);
 
   int getColorID(int x, int y, bool flipX, bool flipY) {
     if (flipX)
       x = 7 - x;
     if (flipY)
       y = 7 - y;
-    return _data[y * 8 + x];
+    return _colorIDs[y * 8 + x];
   }
 
-  // push DATA
+  int operator[](int i){
+    return _values[i];
+  }
+
+  int operator[]=(int i, int v){
+    _values[i] = v;
+    // ADJUST COLORS HERE
+  }
 
 }

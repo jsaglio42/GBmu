@@ -20,6 +20,8 @@ import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 
+final int MAP_OFFSET = 0x1800;
+
 abstract class TrapAccessor {
   int vr_pull8(int memAddr);
   void vr_push8(int memAddr, int v);
@@ -32,13 +34,15 @@ abstract class VideoRamManager
   int vr_pull8(int memAddr) {
     memAddr -= VIDEO_RAM_FIRST;
     assert(memAddr & ~0x1FFF == 0, 'vr_pull8: invalid memAddr $memAddr');
-    if (memAddr <= 0x17FF)
-    {
-      return 0xFF;
-    }
+    if (memAddr < MAP_OFFSET)
+      return this.videoram.pull8_TileData(memAddr, this.memr.VBK);
     else if (memAddr <= VIDEO_RAM_LAST)
     {
-      return 0xFF;
+      memAddr -= MAP_OFFSET;
+      if (this.memr.VBK == 0)
+        return this.videoram.pull8_TileID(memAddr);
+      else
+        return this.videoram.pull8_TileInfo(memAddr);
     }
     else
       throw new Exception('vr_pull8: cannot access address ${Ft.toAddressString(memAddr, 4)}');
@@ -47,19 +51,15 @@ abstract class VideoRamManager
   void vr_push8(int memAddr, int v) {
     memAddr -= VIDEO_RAM_FIRST;
     assert(memAddr & ~0x1FFF == 0, 'vr_push8: invalid memAddr $memAddr');
-    if (memAddr <= 0x17FF)
-    {
-      if (this.memr.VBK == 0)
-        return ;// this.c.pull8_Rom(memAddr);
-      else
-        return ;// this.c.pull
-    }
+    if (memAddr < MAP_OFFSET)
+      return this.videoram.push8_TileData(memAddr, this.memr.VBK, v);
     else if (memAddr <= VIDEO_RAM_LAST)
     {
+      memAddr -= MAP_OFFSET;
       if (this.memr.VBK == 0)
-        return ;// this.c.pull8_Rom(memAddr);
+        this.videoram.push8_TileID(memAddr, v);
       else
-        return ;// this.c.pull
+        this.videoram.push8_TileInfo(memAddr, v);
     }
     else
       throw new Exception('vr_push8: cannot access address ${Ft.toAddressString(memAddr, 4)}');
