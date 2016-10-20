@@ -33,10 +33,10 @@ class VideoRam {
     _tileData.clear();
     _mapTileID.clear();
     _mapTileInfo.clear();
-    for (int i; i < 2 * TILE_PER_BANK; ++i) {
+    for (int i = 0; i < 2 * TILE_PER_BANK; ++i) {
       _tileData.add(new Tile());
     }
-    for (int i; i < 2 * TILE_PER_MAP; ++i) {
+    for (int i = 0; i < 2 * TILE_PER_MAP; ++i) {
       _mapTileID.add(0);
       _mapTileInfo.add(new TileInfo());
     }

@@ -33,10 +33,10 @@ abstract class Mmu
     assert(memAddr & ~0xFFFF == 0, 'push8: invalid memAddr $memAddr');
     if (memAddr <= CARTRIDGE_ROM_LAST)
       return this.c.pull8_Rom(memAddr);
-    else if (memAddr <= CARTRIDGE_RAM_LAST)
-      return this.c.pull8_Ram(memAddr);
     else if (memAddr <= VIDEO_RAM_LAST)
       return vr_pull8(memAddr);
+    else if (memAddr <= CARTRIDGE_RAM_LAST)
+      return this.c.pull8_Ram(memAddr);
     else if (memAddr <= INTERNAL_RAM_LAST)
       return this.internalRam.pull8(memAddr);
     else if (memAddr <= ECHO_RAM_LAST)
@@ -55,10 +55,10 @@ abstract class Mmu
     assert(memAddr & ~0xFFFF == 0, 'push8: invalid memAddr $memAddr');
     if (memAddr <= CARTRIDGE_ROM_LAST)
       this.c.push8_Rom(memAddr, v);
-    else if (memAddr <= CARTRIDGE_RAM_LAST)
-      this.c.push8_Ram(memAddr, v);
     else if (memAddr <= VIDEO_RAM_LAST)
       this.vr_push8(memAddr, v);
+    else if (memAddr <= CARTRIDGE_RAM_LAST)
+      this.c.push8_Ram(memAddr, v);
     else if (memAddr <= INTERNAL_RAM_LAST)
       this.internalRam.push8(memAddr, v);
     else if (memAddr <= ECHO_RAM_LAST)
