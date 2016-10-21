@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 17:53:58 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 19:08:52 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -74,7 +74,7 @@ abstract class GraphicDisplay
     final int relativeY = mapY % 8;
     final int tileID = this.videoram.getTileID(tileX, tileY, tileMapID);
     final TileInfo tinfo = this.videoram.getTileInfo(tileX, tileY, tileMapID);
-    final Tile tile = this.videoram.getTile(tileID, tinfo.bankID, tileMapID);
+    final Tile tile = this.videoram.getTile(tileID, tinfo.bankID, this.memr.rLCDC.tileDataSelectID);
     return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
   }
 
@@ -102,7 +102,7 @@ abstract class GraphicDisplay
         tileID = s.tileID | 0x01;
       }
 
-      final Tile tile = this.videoram.getTile(tileID, s.info.bankID, 0);
+      final Tile tile = this.videoram.getTile(tileID, s.info.bankID, 1);
 
       for (int relativeX = 0; relativeX < 8; ++relativeX) {
         int x = (s.posX - 8) + relativeX;
