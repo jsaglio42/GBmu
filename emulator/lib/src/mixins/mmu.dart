@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:11:40 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 16:07:17 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -38,13 +38,13 @@ abstract class Mmu
     else if (memAddr <= CARTRIDGE_RAM_LAST)
       return this.c.pull8_Ram(memAddr);
     else if (memAddr <= INTERNAL_RAM_LAST)
-      return this.internalRam.pull8(memAddr);
+      return this.internalram.pull8(memAddr, this.memr.SVBK);
     else if (memAddr <= ECHO_RAM_LAST)
-      return this.internalRam.pull8(memAddr - ECHO_RAM_OFFSET);
+      return this.internalram.pull8(memAddr - ECHO_RAM_OFFSET, this.memr.SVBK);
     else if (memAddr <= OAM_LAST)
       return this.oam.pull8(memAddr);
     else if (memAddr <= FORBIDDEN_LAST)
-      return 0x00;
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
     else if (memAddr <= TAIL_RAM_LAST)
       return this.tr_pull8(memAddr);
     else
@@ -62,9 +62,9 @@ abstract class Mmu
     else if (memAddr <= CARTRIDGE_RAM_LAST)
       this.c.push8_Ram(memAddr, v);
     else if (memAddr <= INTERNAL_RAM_LAST)
-      this.internalRam.push8(memAddr, v);
+      this.internalram.push8(memAddr, this.memr.SVBK, v);
     else if (memAddr <= ECHO_RAM_LAST)
-      this.internalRam.push8(memAddr - ECHO_RAM_OFFSET, v);
+      this.internalram.push8(memAddr - ECHO_RAM_OFFSET, this.memr.SVBK, v);
     else if (memAddr <= OAM_LAST)
       this.oam.push8(memAddr, v);
     else if (memAddr <= FORBIDDEN_LAST)

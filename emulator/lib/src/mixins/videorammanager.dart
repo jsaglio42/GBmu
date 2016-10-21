@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   tailrammanager.dart                                :+:      :+:    :+:   //
+//   videorammanager.dart                               :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:11:39 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 16:06:55 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,37 +32,31 @@ abstract class VideoRamManager
 
   /* API ***********************************************************************/
   int vr_pull8(int memAddr) {
+    assert(memAddr >= VIDEO_RAM_FIRST && memAddr <= VIDEO_RAM_LAST, 'vr_pull8: invalid memAddr $memAddr');
     memAddr -= VIDEO_RAM_FIRST;
-    assert(memAddr & ~0x1FFF == 0, 'vr_pull8: invalid memAddr $memAddr');
     if (memAddr < MAP_OFFSET)
       return this.videoram.pull8_TileData(memAddr, this.memr.VBK);
-    else if (memAddr <= VIDEO_RAM_LAST)
-    {
-      memAddr -= MAP_OFFSET;
-      if (this.memr.VBK == 0)
-        return this.videoram.pull8_TileID(memAddr);
-      else
-        return this.videoram.pull8_TileInfo(memAddr);
-    }
     else
-      throw new Exception('vr_pull8: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+    {
+      if (this.memr.VBK == 0)
+        return this.videoram.pull8_TileID(memAddr - MAP_OFFSET);
+      else
+        return this.videoram.pull8_TileInfo(memAddr - MAP_OFFSET);
+    }
   }
 
   void vr_push8(int memAddr, int v) {
+    assert(memAddr >= VIDEO_RAM_FIRST && memAddr <= VIDEO_RAM_LAST, 'vr_push8: invalid memAddr $memAddr');
     memAddr -= VIDEO_RAM_FIRST;
-    assert(memAddr & ~0x1FFF == 0, 'vr_push8: invalid memAddr $memAddr');
     if (memAddr < MAP_OFFSET)
       return this.videoram.push8_TileData(memAddr, this.memr.VBK, v);
-    else if (memAddr <= VIDEO_RAM_LAST)
-    {
-      memAddr -= MAP_OFFSET;
-      if (this.memr.VBK == 0)
-        this.videoram.push8_TileID(memAddr, v);
-      else
-        this.videoram.push8_TileInfo(memAddr, v);
-    }
     else
-      throw new Exception('vr_push8: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+    {
+      if (this.memr.VBK == 0)
+        this.videoram.push8_TileID(memAddr - MAP_OFFSET, v);
+      else
+        this.videoram.push8_TileInfo(memAddr - MAP_OFFSET, v);
+    }
   }
 
 }

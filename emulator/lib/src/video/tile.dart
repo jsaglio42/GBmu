@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 14:39:04 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 18:09:44 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,17 +18,15 @@ import "package:emulator/src/enums.dart";
 /* Tile ************************************************************************/
 class Tile {
 
-  List<int> _colorIDs = new List.filled(8 * 8, 0);
-  List<int> _values = new List.filled(8 * 2, 0);
+  Uint8List _colorIDs = new Uint8List(8 * 8);
+  Uint8List _values = new Uint8List(8 * 2);
 
+  /* API */
   int getColorID(int x, int y, bool flipX, bool flipY) {
     if (flipX)
       x = 7 - x;
     if (flipY)
       y = 7 - y;
-    // final int low = (_values[2 * y] >> (7 - x)) & 0x1;
-    // final int high = (_values[2 * y + 1] >> (7 - x)) & 0x1;
-    // return (low | (high << 1));
     return _colorIDs[y * 8 + x];
   }
 
@@ -36,17 +34,23 @@ class Tile {
     return _values[i];
   }
 
-  int operator[]=(int i, int v){
+  void operator[]=(int i, int v){
     _values[i] = v;
-    final int row = i ~/ 2;
-    int low = _values[2 * row];
-    int high = _values[2 * row + 1];
+    _updateLine(i ~/ 2);
+    return ;
+  }
+
+  /* Private */
+  void _updateLine(int line) {
+    int low = _values[2 * line];
+    int high = _values[2 * line + 1];
     for (int x = 0; x < 8; ++x)
     {
-      _colorIDs[8 * row + (7 - x)] = (low & 0x1) | ((high & 0x1) << 1);
+      _colorIDs[8 * line + (7 - x)] = (low & 0x1) | ((high & 0x1) << 1);
       low >>= 1;
       high >>= 1;
     }
+    return ;
   }
 
 }

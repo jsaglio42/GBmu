@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/19 23:08:28 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 15:37:33 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,7 @@ abstract class Hardware {
   final Memregs.MemRegs memr = new Memregs.MemRegs();
 
   final Vram.VideoRam videoram = new Vram.VideoRam();
-  final Iram.InternalRam internalRam = new Iram.InternalRam();
+  final Iram.InternalRam internalram = new Iram.InternalRam();
   final Oam.OAM oam = new Oam.OAM();
   final Tram.TailRam tailram = new Tram.TailRam();
 
@@ -64,6 +64,7 @@ abstract class Hardware {
     this.memr.reset();
     this.tailram.reset();
     this.videoram.reset();
+    this.internalram.reset();
     return ;
   }
 
