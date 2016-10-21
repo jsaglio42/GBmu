@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 16:06:55 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 18:55:51 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -49,7 +49,7 @@ abstract class VideoRamManager
     assert(memAddr >= VIDEO_RAM_FIRST && memAddr <= VIDEO_RAM_LAST, 'vr_push8: invalid memAddr $memAddr');
     memAddr -= VIDEO_RAM_FIRST;
     if (memAddr < MAP_OFFSET)
-      return this.videoram.push8_TileData(memAddr, this.memr.VBK, v);
+      this.videoram.push8_TileData(memAddr, this.memr.VBK, v);
     else
     {
       if (this.memr.VBK == 0)

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 18:20:38 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 18:57:07 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,9 +29,13 @@ class VideoRam {
 
   /* API *********************************************************************/
   void reset() {
-    _tileData.fillRange(0, _tileData.length, new Tile());
-    _mapTileID.fillRange(0, _mapTileID.length, 0);
-    _mapTileInfo.fillRange(0, _mapTileInfo.length, new TileInfo());
+    for (int i = 0; i < 2 * _TILE_PER_BANK; ++i) {
+      _tileData[i] = new Tile();
+    }
+    for (int i = 0; i < 2 * _TILE_PER_MAP; ++i) {
+      _mapTileID[i] = 0;
+      _mapTileInfo[i] = new TileInfo();
+    }
   }
 
   int getTileID(int tileX, int tileY, int tileMapID) {
