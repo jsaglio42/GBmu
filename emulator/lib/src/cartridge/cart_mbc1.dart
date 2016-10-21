@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 20:34:11 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 13:51:04 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,7 +30,7 @@ class CartMBC1 extends Cartridge.ACartridge  {
 
   @override int pull8_Rom(int memAddr) {
     memAddr -= CARTRIDGE_ROM_FIRST;
-    assert(memAddr & ~0x3FFF == 0, 'pull8_Rom: invalid memAddr $memAddr');
+    assert(memAddr & ~0x7FFF == 0, 'pull8_Rom: invalid memAddr $memAddr');
     if (memAddr <= 0x3FFF)
       return this.rom.pull8(memAddr);
     else if (memAddr <= 0x7FFF)

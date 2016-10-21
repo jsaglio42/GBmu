@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:11:39 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 13:53:16 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -95,7 +95,6 @@ abstract class TailRamManager
         _updateCoincidence(this.memr.LYC == this.memr.LY);
         break ;
       case (addr_STAT):
-        print('push STAT $v');
         this.memr.STAT = v;
         _updateCoincidence(this.memr.LYC == this.memr.LY);
         break;

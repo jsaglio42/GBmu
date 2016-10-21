@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:53:13 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 14:39:04 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,6 +26,9 @@ class Tile {
       x = 7 - x;
     if (flipY)
       y = 7 - y;
+    // final int low = (_values[2 * y] >> (7 - x)) & 0x1;
+    // final int high = (_values[2 * y + 1] >> (7 - x)) & 0x1;
+    // return (low | (high << 1));
     return _colorIDs[y * 8 + x];
   }
 
@@ -35,7 +38,15 @@ class Tile {
 
   int operator[]=(int i, int v){
     _values[i] = v;
-    // ADJUST COLORS HERE
+    final int row = i ~/ 2;
+    int low = _values[2 * row];
+    int high = _values[2 * row + 1];
+    for (int x = 0; x < 8; ++x)
+    {
+      _colorIDs[8 * row + (7 - x)] = (low & 0x1) | ((high & 0x1) << 1);
+      low >>= 1;
+      high >>= 1;
+    }
   }
 
 }
