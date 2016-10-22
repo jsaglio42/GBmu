@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:11:41 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 17:39:34 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -220,7 +220,7 @@ class RegisterLCDC {
   bool _isWindowDisplayEnabled;
   bool _isSpriteDisplayEnabled;
   bool _isBackgroundDisplayEnabled;
-  int _tileDataID;
+  int _tileDataSelectID;
   int _tileMapID_BG;
   int _tileMapID_WIN;
   int _spriteSize;
@@ -230,7 +230,7 @@ class RegisterLCDC {
   bool get isWindowDisplayEnabled => _isWindowDisplayEnabled;
   bool get isSpriteDisplayEnabled => _isSpriteDisplayEnabled;
   bool get isBackgroundDisplayEnabled => _isBackgroundDisplayEnabled;
-  int get tileDataID => _tileDataID;
+  int get tileDataSelectID => _tileDataSelectID;
   int get tileMapID_BG => _tileMapID_BG;
   int get tileMapID_WIN => _tileMapID_WIN;
   int get spriteSize => _spriteSize;
@@ -240,7 +240,7 @@ class RegisterLCDC {
     _isBackgroundDisplayEnabled = (v >> 0) & 0x1 == 1;
     _isWindowDisplayEnabled = (v >> 5) & 0x1 == 1;
     _isSpriteDisplayEnabled = (v >> 1) & 0x1 == 1;
-    _tileDataID = (v >> 4) & 0x1;
+    _tileDataSelectID = (v >> 4) & 0x1;
     _tileMapID_BG = (v >> 3) & 0x1;
     _tileMapID_WIN = (v >> 6) & 0x1;
     _spriteSize = (v >> 2) & 0x1 == 1 ? 16 : 8;

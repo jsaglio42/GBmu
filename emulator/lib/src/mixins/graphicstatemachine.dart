@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 18:41:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 15:44:10 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
+import "package:emulator/src/mixins/tailrammanager.dart" as TailRam;
 
 enum GraphicMode {
   HBLANK,
@@ -37,7 +38,8 @@ enum GraphicInterrupt {
 
 abstract class GraphicStateMachine
   implements Hardware.Hardware
-  , Interrupts.Interrupts {
+  , Interrupts.Interrupts
+  , TailRam.TrapAccessor {
 
   /* API **********************************************************************/
   void updateGraphicMode(int nbClock) {
@@ -80,7 +82,7 @@ abstract class GraphicStateMachine
       this.memr.rSTAT.counter -= CLOCK_PER_HBLANK;
       this.lcd.requestDrawLine(this.memr.LY);
       this.memr.LY = this.memr.LY + 1;
-      _updateCoincidence(this.memr.LYC == this.memr.LY);
+      this.updateCoincidence(this.memr.LYC == this.memr.LY);
       if (this.memr.LY < VBLANK_THRESHOLD)
       {
         this.memr.rSTAT.mode = GraphicMode.OAM_ACCESS;
@@ -107,7 +109,7 @@ abstract class GraphicStateMachine
       {
         this.lcd.shouldRefreshScreen = true;
         this.memr.LY = 0;
-        _updateCoincidence(this.memr.LYC == this.memr.LY);
+        this.updateCoincidence(this.memr.LYC == this.memr.LY);
         this.memr.rSTAT.mode = GraphicMode.OAM_ACCESS;
         if (this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.OAM_ACCESS))
           this.requestInterrupt(InterruptType.LCDStat);
@@ -115,18 +117,9 @@ abstract class GraphicStateMachine
       else
       {
         this.memr.LY = incLY;
-        _updateCoincidence(this.memr.LYC == this.memr.LY);
+        this.updateCoincidence(this.memr.LYC == this.memr.LY);
       }
     }
-  }
-
-  /* Should probably be global, and checked when setting LY, LYC, STAT */
-  void _updateCoincidence(bool coincidence) {
-    this.memr.rSTAT.coincidence = coincidence;
-    if (coincidence
-      && this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.COINCIDENCE))
-      this.requestInterrupt(InterruptType.LCDStat);
-    return ;
   }
 
 }

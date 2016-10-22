@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 16:15:34 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/22 12:57:19 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -1165,16 +1165,16 @@ abstract class Z80
   /* Miscellaneous ************************************************************/
   int _DAA() {
     if (this.cpur.n == 0)
-      _DAA_Add();
+      _DAA_add();
     else
-      _DAA_Sub();
+      _DAA_sub();
     this.cpur.z = (this.cpur.A == 0) ? 1 : 0;
     this.cpur.h = 0;
     this.cpur.PC += 1;
     return 4;
   }
 
-  void _DAA_Add()
+  void _DAA_add()
   {
     int a = this.cpur.A;
 
@@ -1190,7 +1190,7 @@ abstract class Z80
     }
   }
 
-  void _DAA_Sub()
+  void _DAA_sub()
   {
     int cy;
 

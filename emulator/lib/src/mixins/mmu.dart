@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:11:40 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 16:07:17 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,30 +19,33 @@ import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/globals.dart';
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/hardware/mem_registers_info.dart" as Memregisters;
-
 import "package:emulator/src/mixins/tailrammanager.dart" as Tailram;
+import "package:emulator/src/mixins/videorammanager.dart" as Videoram;
 
 abstract class Mmu
   implements Hardware.Hardware
+  , Videoram.TrapAccessor 
   , Tailram.TrapAccessor {
 
   /* 8-bits *******************************************************************/
   int pull8(int memAddr)
   {
-    if (CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
+    assert(memAddr & ~0xFFFF == 0, 'push8: invalid memAddr $memAddr');
+    if (memAddr <= CARTRIDGE_ROM_LAST)
       return this.c.pull8_Rom(memAddr);
-    else if (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST)
+    else if (memAddr <= VIDEO_RAM_LAST)
+      return vr_pull8(memAddr);
+    else if (memAddr <= CARTRIDGE_RAM_LAST)
       return this.c.pull8_Ram(memAddr);
-    else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
-      return this.videoRam.pull8(memAddr);
-    else if (INTERNAL_RAM_FIRST <= memAddr && memAddr <= INTERNAL_RAM_LAST)
-      return this.internalRam.pull8(memAddr);
-    else if (ECHO_RAM_FIRST <= memAddr && memAddr <= ECHO_RAM_LAST)
-      return this.internalRam.pull8(memAddr - ECHO_RAM_OFFSET);
-    else if (OAM_FIRST <= memAddr && memAddr <= OAM_LAST)
+    else if (memAddr <= INTERNAL_RAM_LAST)
+      return this.internalram.pull8(memAddr, this.memr.SVBK);
+    else if (memAddr <= ECHO_RAM_LAST)
+      return this.internalram.pull8(memAddr - ECHO_RAM_OFFSET, this.memr.SVBK);
+    else if (memAddr <= OAM_LAST)
       return this.oam.pull8(memAddr);
-    else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
+    else if (memAddr <= FORBIDDEN_LAST)
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+    else if (memAddr <= TAIL_RAM_LAST)
       return this.tr_pull8(memAddr);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
@@ -50,23 +53,26 @@ abstract class Mmu
 
   void push8(int memAddr, int v)
   {
-    if (CARTRIDGE_ROM_FIRST <= memAddr && memAddr <= CARTRIDGE_ROM_LAST)
+    assert(v & ~0xFF == 0, 'push8: invalid value $v');
+    assert(memAddr & ~0xFFFF == 0, 'push8: invalid memAddr $memAddr');
+    if (memAddr <= CARTRIDGE_ROM_LAST)
       this.c.push8_Rom(memAddr, v);
-    else if (CARTRIDGE_RAM_FIRST <= memAddr && memAddr <= CARTRIDGE_RAM_LAST)
+    else if (memAddr <= VIDEO_RAM_LAST)
+      this.vr_push8(memAddr, v);
+    else if (memAddr <= CARTRIDGE_RAM_LAST)
       this.c.push8_Ram(memAddr, v);
-    else if (VIDEO_RAM_FIRST <= memAddr && memAddr <= VIDEO_RAM_LAST)
-      this.videoRam.push8(memAddr, v);
-    else if (INTERNAL_RAM_FIRST <= memAddr && memAddr <= INTERNAL_RAM_LAST)
-      this.internalRam.push8(memAddr, v);
-    else if (ECHO_RAM_FIRST <= memAddr && memAddr <= ECHO_RAM_LAST)
-      this.internalRam.push8(memAddr - ECHO_RAM_OFFSET, v);
-    else if (OAM_FIRST <= memAddr && memAddr <= OAM_LAST)
+    else if (memAddr <= INTERNAL_RAM_LAST)
+      this.internalram.push8(memAddr, this.memr.SVBK, v);
+    else if (memAddr <= ECHO_RAM_LAST)
+      this.internalram.push8(memAddr - ECHO_RAM_OFFSET, this.memr.SVBK, v);
+    else if (memAddr <= OAM_LAST)
       this.oam.push8(memAddr, v);
-    else if (TAIL_RAM_FIRST <= memAddr && memAddr <= TAIL_RAM_LAST)
+    else if (memAddr <= FORBIDDEN_LAST)
+      return ;
+    else if (memAddr <= TAIL_RAM_LAST)
       this.tr_push8(memAddr, v);
-    // else
-    //   throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
-    return ;
+    else
+      throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
 
   /* 16-bits *******************************************************************/
@@ -77,7 +83,7 @@ abstract class Mmu
   }
 
   void push16(int memAddr, int v){
-    assert(v & ~0xFFFF == 0);
+    assert(v & ~0xFFFF == 0, 'push16: invalid value $v');
     this.push8(memAddr, (v & 0xFF));
     this.push8(memAddr + 1, (v >> 8));
     return ;

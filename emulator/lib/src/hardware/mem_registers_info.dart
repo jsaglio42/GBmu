@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/22 15:32:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 09:17:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 15:46:52 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -172,7 +172,7 @@ const List<MemRegInfo> g_memRegInfos = const <MemRegInfo>[
       'OBPI', 'LCD Display', 'Sprite Palette Index'),
   const MemRegInfo(MemReg.OBPD, addr_OBPD, true, 0,
       'OBPD', 'LCD Display', 'Sprite Palette Data'),
-  const MemRegInfo(MemReg.SVBK, addr_SVBK, true, 0,
+  const MemRegInfo(MemReg.SVBK, addr_SVBK, true, 0x1,
       'SVBK', 'Bank Control', 'WRAM Bank'),
   const MemRegInfo(MemReg.IE, addr_IE, false, 0,
       'IE', 'Interrupt', 'Interrupt Enable'),

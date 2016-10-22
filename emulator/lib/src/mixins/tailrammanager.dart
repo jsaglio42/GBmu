@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:11:39 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/21 18:15:46 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,6 +24,7 @@ import "package:emulator/src/mixins/interrupts.dart" as Interrupt;
 abstract class TrapAccessor {
   int tr_pull8(int memAddr);
   void tr_push8(int memAddr, int v);
+  void updateCoincidence(bool coincidence);
 }
 
 abstract class TailRamManager
@@ -81,31 +82,39 @@ abstract class TailRamManager
         break ;
       case (addr_TIMA):
         this.memr.TIMA = v;
-        this.memr.rTIMA.counter = 0; // Needed ???
+        this.memr.rTIMA.counter = 0;
         break ;
       case (addr_TMA): this.memr.TMA = v; break ;
       case (addr_TAC): this.memr.TAC = v; break ;
       /* Graphics */
       case (addr_LY):
         this.memr.LY = 0;
-        _updateCoincidence(this.memr.LYC == this.memr.LY);
+        this.updateCoincidence(this.memr.LYC == this.memr.LY);
         break ;
       case (addr_LYC):
         this.memr.LYC = v;
-        _updateCoincidence(this.memr.LYC == this.memr.LY);
+        this.updateCoincidence(this.memr.LYC == this.memr.LY);
         break ;
       case (addr_STAT):
-        print('push STAT $v');
         this.memr.STAT = v;
-        _updateCoincidence(this.memr.LYC == this.memr.LY);
+        this.updateCoincidence(this.memr.LYC == this.memr.LY);
         break;
       case (addr_DMA): _execDMA(v); break ;
       case (addr_LCDC): _setLCDCRegister(v); break ;
+      /* Interrupts */
+      case (addr_IF): this.memr.IF = (v & 0x1F); break ;
+      case (addr_IE): this.memr.IE = (v & 0x1F); break ;
+      /* Banking */
+      case (addr_VBK):
+        this.memr.VBK = (v & 0x1);
+        break ;
+      case (addr_SVBK):
+        this.memr.SVBK = (v == 0x0) ? 0x1 : (v & 0x7);
+        break ;
       /* Regular */
       case (addr_P1): this.memr.P1 = v; break ;
       case (addr_SB): this.memr.SB = v; break ;
       case (addr_SC): this.memr.SC = v; break ;
-      case (addr_IF): this.memr.IF = v; break ;
       case (addr_SCY): this.memr.SCY = v; break ;
       case (addr_SCX): this.memr.SCX = v; break ;
       case (addr_BGP): this.memr.BGP = v; break ;
@@ -113,8 +122,7 @@ abstract class TailRamManager
       case (addr_OBP1): this.memr.OBP1 = v; break ;
       case (addr_WY): this.memr.WY = v; break ;
       case (addr_WX): this.memr.WX = v; break ;
-      case (addr_KEY1): this.memr.KEY1 = v; break ;
-      case (addr_VBK): this.memr.VBK = v; break ;
+      case (addr_KEY1): this.memr.KEY1 = v; break ; // TO DO
       case (addr_HDMA1): this.memr.HDMA1 = v; break ;
       case (addr_HDMA2): this.memr.HDMA2 = v; break ;
       case (addr_HDMA3): this.memr.HDMA3 = v; break ;
@@ -125,8 +133,6 @@ abstract class TailRamManager
       case (addr_BGPD): this.memr.BGPD = v; break ;
       case (addr_OBPI): this.memr.OBPI = v; break ;
       case (addr_OBPD): this.memr.OBPD = v; break ;
-      case (addr_SVBK): this.memr.SVBK = v; break ;
-      case (addr_IE): this.memr.IE = v; break ;
       default: this.tailram.push8(memAddr, v); break ;
     }
   }
@@ -139,7 +145,7 @@ abstract class TailRamManager
       this.memr.rSTAT.counter = 0;
       this.memr.rSTAT.mode = GraphicMode.OAM_ACCESS;
       this.memr.LY = 0;
-      _updateCoincidence(this.memr.LY == this.memr.LYC);
+      this.updateCoincidence(this.memr.LY == this.memr.LYC);
     }
     this.memr.LCDC = v;
     return ;
@@ -152,17 +158,14 @@ abstract class TailRamManager
       this.oam[i].posY = this.pull8(addr + 0);
       this.oam[i].posX = this.pull8(addr + 1);
       this.oam[i].tileID = this.pull8(addr + 2);
-      this.oam[i].attribute = this.pull8(addr + 3);
+      this.oam[i].info.value = this.pull8(addr + 3);
       addr += 4;
     }
     this.memr.DMA = v;
     return ;
   }
 
-  /* BE CAREFUL THE SAME FUNCTION IS IS GRAPHIC -> TO UPDATE */
-  /* Generaly, LY, LYC and STAT are linked and should be updated together
-  * ASK FOR EXPLANATION */
-  void _updateCoincidence(bool coincidence) {
+  void updateCoincidence(bool coincidence) {
     this.memr.rSTAT.coincidence = coincidence;
     if (coincidence
       && this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.COINCIDENCE))
