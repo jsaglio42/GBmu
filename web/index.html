@@ -54,9 +54,23 @@
         <div class="col-sm-12"  id="optContainer">
           <!-- OPTIONS BODY -->
           <div class="row" id="optBody">
-            <div id="mainSpeedText">0.00x</div>
-            <div id="slider-cont">
-              <div id="mainSpeedSlider"></div>
+            <div class="col-sm-12">
+              <div id="mainSpeedText" class="slider-text">0.00x</div>
+              <div id="speed-slider-cont" class="slider-cont">
+                <div id="mainSpeedSlider"></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+              <div class="slider-text canvas-scale-part">2.00x</div>
+              <div class="slider-cont canvas-scale-part">
+                <div class="slider"></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+              <div class="slider-text canvas-smooth-part">Off</div>
+              <div class="slider-cont canvas-smooth-part">
+                <div class="slider"></div>
+              </div>
             </div>
           </div> <!-- /OPTIONS BODY -->
         </div> <!-- /OPTIONS CONTAINER -->
@@ -94,11 +108,6 @@
         <div class="col-md-8 col-lg-9" id="canvasContainer">
           <div class="row">
             <div class="col-sm-12 text-xs-center">
-              <div id="screenSizeRadioButtons">
-                <label class="radio-inline"><input type="radio" name="optradio" value='1'>x1</label>
-                <label class="radio-inline"><input type="radio" name="optradio" value='2' checked>x2</label>
-                <label class="radio-inline"><input type="radio" name="optradio" value='3'>x3</label>
-              </div>
               <div><canvas id="gameboyScreen"/></div>
             </div>
             <div class="col-sm-offset-2 col-sm-8" id="mainAlertBox"></div>

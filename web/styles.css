@@ -71,29 +71,33 @@ body {
 /* OPTIONS PANEL ************************************************************ */
 /* ************************************************************************** */
 
-/* SPEED SLIDER ************************************************************* */
+#optBody > div {
+    padding: 0 5px;
+}
 
-#mainSpeedText {
+/* SLIDERS ****************************************************************** */
+/* MY CLASSES ********************************* */
+.slider-cont {
+    float: right;
+    margin: 0px auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 27px;
+    padding-left: 13px;
+}
+
+.slider-text {
     padding-top: 15px;
     text-align: right;
-    width: 60px;
     float:left;
 }
 
-#slider-cont {
-    float: right;
-    width: calc(100% - 60px);
-    margin: 0px auto;
-    padding-top: 15px;
-    padding-bottom: 5px;
-    padding-right: 27px;
-    padding-left: 11px;
-}
-
-#mainSpeedSlider {
+.slider-cont > .slider {
     width: 100%;
     background: #BABABA;
 }
+
+/* BOOSTRAP-SLIDER CLASSES ******************** */
 .slider-tick-label {
     width: 50px !important;
     margin-left: -25px !important;
@@ -101,6 +105,44 @@ body {
 
 .slider-tick {
     opacity: 1;
+}
+
+/* SPEED SLIDER ******************************* */
+#speed-slider-cont {
+    width: calc(100% - 60px);
+}
+
+#mainSpeedText {
+    width: 60px;
+}
+
+#mainSpeedSlider {
+    /* width: 100%;
+       background: #BABABA; */
+}
+
+/* CANVAS SCALE SLIDER ************************ */
+.canvas-scale-part.slider-cont {
+    width: calc(100% - 60px);
+}
+
+.canvas-scale-part.slider-text {
+    width: 60px;
+}
+
+.canvas-scale-part.slider-cont > .slider {
+}
+
+/* CANVAS SMOOTH SLIDER *********************** */
+.canvas-smooth-part.slider-cont {
+    width: calc(100% - 100px);
+}
+
+.canvas-smooth-part.slider-text {
+    width: 100px;
+}
+
+.canvas-smooth-part.slider-cont > .slider {
 }
 
 /* ************************************************************************** */

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 17:43:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 12:07:59 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/22 13:30:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,7 +82,6 @@ class _SpeedSlider {
       ],
     });
     _slider = Html.querySelector('#mainSpeedSlider');
-    // _slider.classes.toggle('col-sm-10');
 
     assert(_text != null, "Could not find `text` in DOM");
     assert(param != null, "Could not build `Slider` parameter");
