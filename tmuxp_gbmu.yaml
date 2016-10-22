@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/19 18:07:57 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/22 18:32:03 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,57 +55,183 @@ windows:
     - ps -W | ack -i 'dart.exe' | sed -e 's/^[ \t]*//' | cut -d' ' -f1 | xargs kill -f ; pub get ; pub serve
     - emacs $WEB/main.dart README.md
 
+
 - window_index: 1
   panes: ['e $WEB/{index.html,styles.css}']
+
 - window_index: 2
-  panes: ['e ./emulator/lib/{constants,emulator,enums,variants}.dart']
+  panes:
+    - "e
+web/keyboard.dart
+web/nav.dart
+"
+
 - window_index: 3
-  panes: ['e ./emulator/lib/src/events.dart']
+  panes:
+    - "e
+web/alerts.dart
+"
 
-- window_index: 7
-  panes: ['e $EMU/{worker_emulation,worker_emulation_state,worker_emulation_iddb}.dart']
 - window_index: 4
-  panes: ['e $EMU/{emulator,worker}.dart']
+  panes:
+    - "e
+web/canvas.dart
+web/canvas_scale.dart
+web/canvas_smooth.dart
+"
+
 - window_index: 5
-  panes: ['e $EMU/worker_{debug,observer}.dart $EMU/worker/*.dart']
-- window_index: 6
-  panes: ['e $EMU/{constants,enums,variants,globals}.dart']
+  panes:
+    - "e
+web/options/emulation_speed_codec.dart
+web/options/options.dart
+"
 
-- window_index: 8
-  panes: ['e $WEB/nav.dart $OPT/*.dart']
-- window_index: 9
-  panes: ['e $WEB/{alerts,canvas,keyboard}.dart']
-
-# GAMEBOY ******************************************************************* **
-- window_index: 14
-  panes: ['e $HW/{data,file_repr,headerdecoder,save_state}.dart']
-- window_index: 15
-  panes: ['e $HW/{cpu_registers,registermapping,hardware}.dart']
-- window_index: 16
-  panes: ['e $CART/*.dart']
-
-
-- window_index: 20
+- window_index: 30
   panes: ['e $DEB/{deb.dart,buttons.dart}']
-- window_index: 21
+- window_index: 31
   panes: ['e $DEB/*clock_info*.(html|dart)']
-- window_index: 22
+- window_index: 32
   panes: ['e $DEB/*instruction_flo*.(html|dart)']
-- window_index: 23
+- window_index: 33
   panes: ['e $DEB/*mem_exp*.(html|dart)']
-- window_index: 24
+- window_index: 34
   panes: ['e $DEB/*mem_re*.(html|dart)']
-- window_index: 25
+- window_index: 35
   panes: ['e $DEB/registers.(html|dart)*']
-- window_index: 26
+- window_index: 36
   panes: ['e $DEB/**.(html|dart)']
 
+# GAMEBOY ******************************************************************* **
+
+- window_index: 10
+  panes:
+    - "e
+    emulator/lib/src/emulator.dart
+    emulator/lib/src/gameboy.dart
+    emulator/lib/src/worker/worker.dart
+    "
+
 - window_index: 11
-  panes: ['e $MIX/{gameboy,z80,mmu}.dart']
+  panes:
+    - "e
+    emulator/lib/src/worker/emulation.dart
+    emulator/lib/src/worker/emulation_iddb.dart
+    emulator/lib/src/worker/emulation_state.dart
+    "
+
 - window_index: 12
-  panes: ['e $MIX/{instructions,instructionsdecoder}.dart']
+  panes:
+    - "e
+    emulator/lib/src/worker/debug.dart
+    emulator/lib/src/worker/framescheduler.dart
+    emulator/lib/src/worker/observer.dart
+    "
+
 - window_index: 13
-  panes: ['e $MIX/{timers,graphics,interruptmanager,joypad}.dart']
+  panes:
+    - "e
+    emulator/lib/src/hardware/file_repr.dart
+    emulator/lib/src/hardware/data.dart
+    emulator/lib/src/hardware/save_state.dart
+    emulator/lib/src/hardware/headerdecoder.dart
+    "
+
+- window_index: 14
+  panes:
+    - "e
+    emulator/lib/src/hardware/hardware.dart
+    emulator/lib/src/mixins/mmu.dart
+    "
+
+- window_index: 15
+  panes:
+    - "e
+    emulator/lib/src/cartridge/cart_mbc1.dart
+    emulator/lib/src/cartridge/cart_romonly.dart
+    emulator/lib/src/cartridge/cartridge.dart
+    "
+
+- window_index: 19
+  panes:
+    - "e
+    emulator/lib/constants.dart
+    emulator/lib/emulator.dart
+    emulator/lib/enums.dart
+    emulator/lib/variants.dart
+    "
+
+- window_index: 18
+  panes:
+    - "e
+emulator/lib/src/constants.dart
+emulator/lib/src/enums.dart
+emulator/lib/src/events.dart
+emulator/lib/src/variants.dart
+"
+
+
+- window_index: 21
+  panes:
+    - "e
+emulator/lib/src/mixins/z80.dart
+emulator/lib/src/mixins/instructions.dart
+emulator/lib/src/mixins/instructionsdecoder.dart
+"
+
+- window_index: 22
+  panes:
+    - "e
+emulator/lib/src/mixins/interrupts.dart
+emulator/lib/src/mixins/joypad.dart
+emulator/lib/src/mixins/timers.dart
+"
+
+- window_index: 24
+  panes:
+    - "e
+emulator/lib/src/hardware/cpu_registers.dart
+emulator/lib/src/hardware/mem_registers.dart
+emulator/lib/src/hardware/mem_registers_info.dart
+"
+
+- window_index: 25
+  panes:
+    - "e
+emulator/lib/src/mixins/tailrammanager.dart
+emulator/lib/src/hardware/tailram.dart
+"
+
+- window_index: 26
+  panes:
+    - "e
+emulator/lib/src/hardware/internalram.dart
+emulator/lib/src/hardware/oam.dart
+"
+
+- window_index: 27
+  panes:
+    - "e
+emulator/lib/src/hardware/lcd.dart
+emulator/lib/src/mixins/graphicdisplay.dart
+emulator/lib/src/mixins/graphicstatemachine.dart
+"
+
+- window_index: 28
+  panes:
+    - "e
+emulator/lib/src/video/sprite.dart
+emulator/lib/src/video/tile.dart
+emulator/lib/src/video/tileinfo.dart
+"
+
+- window_index: 29
+  panes:
+    - "e
+emulator/lib/src/hardware/videoram.dart
+emulator/lib/src/mixins/videorammanager.dart
+"
+
 
 # COMPONENT SYSTEM ********************************************************** **
 - window_index: 100
