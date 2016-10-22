@@ -6,8 +6,9 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 18:25:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 12:05:15 by jsaglio          ###   ########.fr       //
 //                                                                            //
+// ************************************************************************** //
 // ************************************************************************** //
 
 import "dart:typed_data";
@@ -39,6 +40,10 @@ class Tile extends Ser.RecursivelySerializable {
     _values[i] = v;
     _updateLine(i ~/ 2);
     return ;
+  }
+
+  String toString() {
+    return _values.toString();
   }
 
   /* Private */

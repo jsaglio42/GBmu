@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 12:54:06 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 21:30:44 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -74,7 +74,8 @@ abstract class GraphicDisplay
     final int relativeY = mapY % 8;
     final int tileID = this.videoram.getTileID(tileX, tileY, tileMapID);
     final TileInfo tinfo = this.videoram.getTileInfo(tileX, tileY, tileMapID);
-    final Tile tile = this.videoram.getTile(tileID, tinfo.bankID, this.memr.rLCDC.tileDataSelectID);
+    final Tile tile = this.videoram.getTile(tileID, 0, this.memr.rLCDC.tileDataSelectID);
+    // final Tile tile = this.videoram.getTile(tileID, tinfo.bankID, this.memr.rLCDC.tileDataSelectID);
     return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
   }
 
@@ -91,11 +92,21 @@ abstract class GraphicDisplay
       if (unsafeY < 0 || unsafeY >= sizeY)
         continue ;
       final int tileID = s.adjustedTileID(sizeY, unsafeY);
-      final Tile tile = this.videoram.getTile(tileID, s.info.bankID, 1);
+      final Tile tile = this.videoram.getTile(tileID, 0, 1);
+      // final Tile tile = this.videoram.getTile(tileID, s.info.bankID, 1);
+
+      // print(tileID);
+      // print(s.info.bankID);
+      // print(tile);
+
+
       final int relativeY = unsafeY % 8;
       for (int relativeX = 0; relativeX < 8; ++relativeX)
       {
         int x = (s.posX - 8) + relativeX;
+        // print(unsafeY);
+        // print(relativeY);
+        // print(x);
         if (x >= LCD_WIDTH)
           break ;
         else if (x < 0
@@ -104,8 +115,10 @@ abstract class GraphicDisplay
           || (s.info.priorityIsBG && this.lcd.bgColorIDs[x] != 0 && this.lcd.bgColorIDs[x] != null))
           continue ;
         final int colorID = tile.getColorID(relativeX, relativeY, s.info.flipX, s.info.flipY);
+        // print('lul');
         if (colorID == 0)
           continue ;
+
         final int OBP = (s.info.OBP_DMG == 0) ? this.memr.OBP0 : this.memr.OBP1;
         this.lcd.spriteColors[x] = _getColor(colorID, OBP);
         this.lcd.zBuffer[x] = spriteno;
