@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 14:57:44 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 12:52:23 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,5 +26,17 @@ class Sprite {
   int posX = 0;
   int tileID = 0;
   TileInfo info = new TileInfo();
+
+  int adjustedTileID(int spriteSize, int row) {
+    if (spriteSize == 16)
+    {
+      if(row < 8)
+        return tileID & 0xFE;
+      else
+        return tileID | 0x01;
+    }
+    else
+      return tileID;
+  }
 
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 19:08:33 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 03:39:01 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -56,7 +56,8 @@ class VideoRam {
     assert (tileID & ~0xFF == 0, 'getTile: invalid tileID');
     assert (bankID & ~0x1 == 0, 'getTile: invalid bankID');
     assert (dataSelectID & ~0x1 == 0, 'getTile: invalid dataSelectID');
-    tileID += (1 - dataSelectID) * (tileID.toSigned(8) + 0x100);
+    if (dataSelectID == 0)
+      tileID = 0x100 + tileID.toSigned(8) ;
     return _tileData[bankID * _TILE_PER_BANK + tileID];
   }
 

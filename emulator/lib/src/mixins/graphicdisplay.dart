@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 19:08:52 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 12:54:06 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -84,40 +84,32 @@ abstract class GraphicDisplay
     Ft.fillBuffer(this.lcd.zBuffer, -1);
 
     final int sizeY = this.memr.rLCDC.spriteSize;
-    for (int spriteno = 0; spriteno < 40; ++spriteno) {
+    for (int spriteno = 0; spriteno < 40; ++spriteno)
+    {
       Sprite s = this.oam[spriteno];
-
-      int relativeY = y - (s.posY - 16);
-      if (relativeY < 0 || relativeY >= sizeY)
+      final int unsafeY = y - (s.posY - 16);
+      if (unsafeY < 0 || unsafeY >= sizeY)
         continue ;
-      else if (s.info.flipY)
-        relativeY = sizeY - 1 - relativeY;
-
-      int tileID;
-      if (relativeY < 8)
-        tileID = s.tileID & 0xFE;
-      else
-      {
-        relativeY -= 8; 
-        tileID = s.tileID | 0x01;
-      }
-
+      final int tileID = s.adjustedTileID(sizeY, unsafeY);
       final Tile tile = this.videoram.getTile(tileID, s.info.bankID, 1);
-
-      for (int relativeX = 0; relativeX < 8; ++relativeX) {
+      final int relativeY = unsafeY % 8;
+      for (int relativeX = 0; relativeX < 8; ++relativeX)
+      {
         int x = (s.posX - 8) + relativeX;
         if (x >= LCD_WIDTH)
           break ;
         else if (x < 0
           || this.lcd.zBuffer[x] >= 0
+          /* To be changed using BG priority as well */
           || (s.info.priorityIsBG && this.lcd.bgColorIDs[x] != 0 && this.lcd.bgColorIDs[x] != null))
           continue ;
         final int colorID = tile.getColorID(relativeX, relativeY, s.info.flipX, s.info.flipY);
+        if (colorID == 0)
+          continue ;
         final int OBP = (s.info.OBP_DMG == 0) ? this.memr.OBP0 : this.memr.OBP1;
         this.lcd.spriteColors[x] = _getColor(colorID, OBP);
         this.lcd.zBuffer[x] = spriteno;
       }
-
     }
   }
 
