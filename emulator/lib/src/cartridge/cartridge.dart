@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:30:40 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 18:39:53 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 12:06:31 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,6 +19,8 @@ import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/cartridge/cart_romonly.dart" as C_RO;
 import "package:emulator/src/cartridge/cart_mbc1.dart" as C_MBC1;
+import "package:emulator/src/cartridge/cart_mbc5.dart" as C_MBC5;
+
 
 /* Cartridge Implementation ****************************************************
 **
@@ -58,11 +60,17 @@ abstract class ACartridge implements Ser.RecursivelySerializable {
         return new C_RO.CartRomOnly.internal(rom, ram);
 
       case (CartridgeType.MBC1) :
-        return new C_MBC1.CartMBC1.internal(rom, ram);
       case (CartridgeType.MBC1_RAM) :
-        return new C_MBC1.CartMBC1.internal(rom, ram);
       case (CartridgeType.MBC1_RAM_BATTERY) :
         return new C_MBC1.CartMBC1.internal(rom, ram);
+
+      case (CartridgeType.MBC5) :
+      case (CartridgeType.MBC5_RAM) :
+      case (CartridgeType.MBC5_RAM_BATTERY) :
+      case (CartridgeType.MBC5_RUMBLE) :
+      case (CartridgeType.MBC5_RUMBLE_RAM) :
+      case (CartridgeType.MBC5_RUMBLE_RAM_BATTERY) :
+        return new C_MBC5.CartMBC5.internal(rom, ram);
 
       default : break ;
     }
