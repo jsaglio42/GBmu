@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:06:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 12:07:13 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -37,7 +37,7 @@ class CartMBC1 extends Cartridge.ACartridge
       return this.rom.pull8(memAddr);
     else if (memAddr <= 0x7FFF)
     {
-      final int bankno = _bankno_ROM | (1 - _mode) * (_bankno_RAM << 6);
+      final int bankno = _bankno_ROM | (1 - _mode) * (_bankno_RAM << 5);
       final int bankOffset = 0x4000 * (bankno - 1);
       return this.rom.pull8(bankOffset + memAddr);
     }
@@ -84,7 +84,8 @@ class CartMBC1 extends Cartridge.ACartridge
   }
 
   void _setMode(int v) {
-    _mode = (v == 0) ? 0x0 : 0x1;
+    assert (v & ~0x1 == 0, '_setMode: mode $v is not valid');
+    _mode = v & 0x1;
   }
 
   void _setBankNoROM(int v) {

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 21:32:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/23 20:04:53 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -75,8 +75,9 @@ abstract class GraphicDisplay
     final int tileID = this.videoram.getTileID(tileX, tileY, tileMapID);
     final TileInfo tinfo = this.videoram.getTileInfo(tileX, tileY, tileMapID);
     final Tile tile = this.videoram.getTile(tileID, 0, this.memr.rLCDC.tileDataSelectID);
+    return tile.getColorID(relativeX, relativeY, false, false);
     // final Tile tile = this.videoram.getTile(tileID, tinfo.bankID, this.memr.rLCDC.tileDataSelectID);
-    return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
+    // return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
   }
 
   void _setSpriteColors(int y) {

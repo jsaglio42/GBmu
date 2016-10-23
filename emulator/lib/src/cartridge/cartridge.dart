@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:30:40 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:06:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 12:07:28 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,6 +19,7 @@ import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/cartridge/cart_romonly.dart" as C_RO;
 import "package:emulator/src/cartridge/cart_mbc1.dart" as C_MBC1;
+import "package:emulator/src/cartridge/cart_mbc2.dart" as C_MBC2;
 import "package:emulator/src/cartridge/cart_mbc5.dart" as C_MBC5;
 
 
@@ -63,6 +64,10 @@ abstract class ACartridge implements Ser.RecursivelySerializable {
       case (CartridgeType.MBC1_RAM) :
       case (CartridgeType.MBC1_RAM_BATTERY) :
         return new C_MBC1.CartMBC1.internal(rom, ram);
+
+      case (CartridgeType.MBC2) :
+      case (CartridgeType.MBC2_BATTERY) :
+        return new C_MBC2.CartMBC2.internal(rom, ram);
 
       case (CartridgeType.MBC5) :
       case (CartridgeType.MBC5_RAM) :
