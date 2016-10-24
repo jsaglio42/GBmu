@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 16:59:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 19:28:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -60,8 +60,6 @@ abstract class Emulation
   Async.Stream _fut;
   Async.StreamSubscription _sub;
 
-  bool _simulateCrash = false;
-
   double _emulationSpeed = 1.0;
   double _clockDeficit;
   double _clockPerRoutineGoal;
@@ -109,7 +107,7 @@ abstract class Emulation
   {
     Gameboy.GameBoy gb;
 
-    Ft.log("WorkerEmu", '_onEmulationStartReq');
+    Ft.log("WorkerEmu", '_onEmulationStartReq', [req]);
     try {
       gb = await this.ei_assembleGameBoy(req);
     }
@@ -168,7 +166,7 @@ abstract class Emulation
   // SECONDARY ROUTINES ***************************************************** **
   void _updateEmulationSpeed(double speed)
   {
-    Ft.log("WorkerEmu", '_updateEmulationSpeed', [speed]);
+    // Ft.log("WorkerEmu", '_updateEmulationSpeed', [speed]);
     assert(!(speed < 0.0), "_updateEmulationSpeed($speed)");
     if (speed.isFinite) {
       _emulationSpeed = speed;
@@ -184,7 +182,7 @@ abstract class Emulation
 
   void _updatePauseMode(PauseExternalMode m)
   {
-    Ft.log("WorkerEmu", '_updatePauseMode', [m]);
+    // Ft.log("WorkerEmu", '_updatePauseMode', [m]);
     this.sc.setState(m);
     if (m == PauseExternalMode.Effective)
       this.ports.send('EmulationPause', 42);
@@ -205,7 +203,7 @@ abstract class Emulation
       clockSum = _emulate(timeLimit, clockLimit);
     }
     catch (e, st) {
-      Ft.logwarn(Ft.typeStr(this), '_onEmulation#try', [e, st]);
+      // Ft.logwarn(Ft.typeStr(this), '_onEmulation#try', [e, st]);
       clockSum = 0;
       error = e;
       stacktrace = st;
@@ -258,11 +256,6 @@ abstract class Emulation
     int clockSum = 0;
     int clockExec;
 
-    if (_simulateCrash) {
-      Ft.log("WorkerEmu", '_emulate#simulateCrash');
-      _simulateCrash = false;
-      throw new Exception('Simulated crash');
-    }
     while (true) {
       if (Ft.now().compareTo(timeLimit) >= 0)
         break ;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 17:03:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 19:30:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -106,7 +106,7 @@ List<_Panel> _makePanels(Emulator.Emulator emu)
 void _onEmulatorEvent(Map<String, dynamic> map) {
   final EmulatorEvent ev = map['type'];
 
-  Ft.log('nav', '_onEmulatorEvent', [map]);
+  Ft.log('nav', '_onEmulatorEvent', [map['type']]);
 
   if (ev is GameBoyEvent)
     _onGameBoyEvent(ev as GameBoyEvent, map);

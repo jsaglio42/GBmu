@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/30 08:43:27 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 18:59:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 19:27:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -164,8 +164,6 @@ class _Data {
   void _onEmulatorEvent(Map<String, dynamic> map) {
     final EmulatorEvent ev = map['type'].reinstanciate;
 
-    Ft.log('nav', '_onEmulatorEvent', [map]);
-
     if (ev is GameBoyEvent)
       _onGameBoyEvent(ev as GameBoyEvent, map);
     else {
@@ -183,9 +181,13 @@ class _Data {
       _addMessage(new _Message(ev, map['name'], _ids++));
       Ft.log('alerts.dart', 'event', [map]);
     }
-    else if (ev is Error && ev.dst is Absent) {
+    else if (ev.dst is Absent){
       _addMessage(new _Message(ev, map['msg'], _ids++));
       Ft.logwarn('alerts.dart', 'event', [map]);
+    }
+    else {
+      _addMessage(new _Message(ev, map['msg'], _ids++));
+      Ft.logerr('alerts.dart', 'event', [map]);
     }
   }
 
