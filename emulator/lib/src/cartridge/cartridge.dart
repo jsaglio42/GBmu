@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:30:40 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/09 13:48:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 18:39:53 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,7 +15,7 @@ import "dart:typed_data";
 import "package:ft/ft.dart" as Ft;
 
 import "package:emulator/src/enums.dart";
-
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/cartridge/cart_romonly.dart" as C_RO;
 import "package:emulator/src/cartridge/cart_mbc1.dart" as C_MBC1;
@@ -29,7 +29,7 @@ import "package:emulator/src/cartridge/cart_mbc1.dart" as C_MBC1;
 **  - TODO: Control the checksums
 */
 
-abstract class ACartridge {
+abstract class ACartridge implements Ser.RecursivelySerializable {
 
   final Data.Rom rom;
   final Data.Ram ram;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 19:27:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 18:52:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -80,7 +80,6 @@ abstract class EmulationIddb implements Worker.AWorker {
     final Ss.Ss c = new Ss.Ss.ofGameBoy(this.gbOpt);
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
 
-    print(c.serialize()['data']); //debug
     await _setDataOfField(idb, ev.store, ev.key, c.serialize()['data']);
   }
 

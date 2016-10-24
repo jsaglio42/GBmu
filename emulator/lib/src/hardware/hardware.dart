@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/24 18:29:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 18:33:53 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -72,6 +72,7 @@ abstract class Hardware implements Ser.RecursivelySerializable {
   // FROM RecursivelySerializable ******************************************* **
   Iterable<Ser.RecursivelySerializable> get serSubdivisions {
     return <Ser.RecursivelySerializable>[
+      this._c,
       this.lcd,
       this.cpur,
       this.memr,

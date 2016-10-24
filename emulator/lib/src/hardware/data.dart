@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 16:58:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 18:45:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,18 +19,20 @@ import 'package:emulator/src/enums.dart';
 import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/variants.dart' as V;
 import "package:emulator/src/hardware/headerdecoder.dart" as Headerdecoder;
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
 part 'package:emulator/src/hardware/file_repr.dart';
 
 /* Data Implementation ********************************************************/
 abstract class AData {
 
-  final int memOffset;
-  final Uint8List _data;
+  int _memOffset;
+  Uint8List _data;
 
-  AData(this.memOffset, this._data);
+  AData(this._memOffset, this._data);
 
   /* API */
+  int get memOffset => _memOffset;
   int get size => _data.length;
   String toString() => '[${memOffset} - ${memOffset + this.size}]';
 
@@ -102,7 +104,9 @@ class Rom extends AData
 
 // Ram ********************************************************************** **
 class Ram extends AData
-  with AReadOperation, AWriteOperation, FileReprData {
+  with AReadOperation, AWriteOperation, FileReprData
+  , Ser.RecursivelySerializable
+{
 
   // CONSTRUCTION *********************************************************** **
   // Only called in DOM, when an external file is loaded
@@ -140,8 +144,20 @@ class Ram extends AData
     'size': this.size,
   };
 
-  // FROM FILEREPRDATA ****************************************************** **
   // Used by WorkerEmu to push data to indexedDb
   Uint8List get rawData => _data;
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('_data', () => _data, (v) {
+            _data = new Uint8List.fromList(v);
+          }),
+    ];
+  }
 
 }
