@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/24 17:07:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 17:24:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,8 +19,8 @@ import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
 import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
-// class LCD extends Ser.RecursivelySerializable {
-class LCD {
+class LCD extends Ser.RecursivelySerializable {
+// class LCD {
 
   /* Screen Double-buffer */
   List<int> screen = new List<int>(LCD_SIZE);
@@ -68,23 +68,38 @@ class LCD {
   void setPixel(int x, int y, int c) {
     this.screenBuffer[y * LCD_WIDTH + x] = c;
   }
-
-  // FROM RecursivelySerializable ******************************************* **
-  // Iterable<Ser.RecursivelySerializable> get serSubdivisions {
-    // return <Ser.RecursivelySerializable>[];
-  // }
-
-  // Iterable<Ser.Field> get serFields {
-    // return <Ser.Field>[
       // new Ser.Field('screen', () => screen, (v) => screen = v),
-      // new Ser.Field('screenBuffer', () => screenBuffer, (v) => screenBuffer = v),
+     // new Ser.Field('screenBuffer', () => screenBuffer, (v) => screenBuffer = v),
       // new Ser.Field('bgColorIDs', () => bgColorIDs, (v) => bgColorIDs = v),
       // new Ser.Field('spriteColors', () => spriteColors, (v) => spriteColors = v),
       // new Ser.Field('zBuffer', () => zBuffer, (v) => zBuffer = v),
       // new Ser.Field('shouldRefreshScreen', () => shouldRefreshScreen, (v) => shouldRefreshScreen = v),
       // new Ser.Field('_shouldDrawLine', () => _shouldDrawLine, (v) => _shouldDrawLine = v),
       // new Ser.Field('_lineNo', () => _lineNo, (v) => _lineNo = v),
-    // ];
-  // }
 
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('screen', () => screen,
+          (v) => this.screen = new List<int>.from(v)),
+      new Ser.Field('screenBuffer', () => screenBuffer,
+          (v) => this.screenBuffer = new List<int>.from(v)),
+      new Ser.Field('bgColorIDs', () => bgColorIDs,
+          (v) => this.bgColorIDs = new List<int>.from(v)),
+      new Ser.Field('spriteColors', () => spriteColors,
+          (v) => this.spriteColors = new List<int>.from(v)),
+      new Ser.Field('zBuffer', () => zBuffer,
+          (v) => this.zBuffer = new List<int>.from(v)),
+      new Ser.Field('shouldRefreshScreen', () => shouldRefreshScreen,
+          (v) => shouldRefreshScreen),
+      new Ser.Field('_shouldDrawLine', () => _shouldDrawLine,
+          (v) => _shouldDrawLine),
+      new Ser.Field('_lineNo', () => _lineNo, (v) => _lineNo),
+    ];
+  }
 }
