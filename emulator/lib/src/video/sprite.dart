@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 12:52:23 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 18:25:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,11 +14,11 @@ import "dart:typed_data";
 import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
-
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 import "package:emulator/src/video/tileinfo.dart";
 
 /* Sprites ********************************************************************/
-class Sprite {
+class Sprite extends Ser.RecursivelySerializable {
 
   Sprite();
 
@@ -37,6 +37,21 @@ class Sprite {
     }
     else
       return tileID;
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[
+      info
+    ];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('posY', () => posY, (v) => posY = v),
+      new Ser.Field('posX', () => posX, (v) => posX = v),
+      new Ser.Field('tileID', () => tileID, (v) => tileID = v),
+    ];
   }
 
 }
