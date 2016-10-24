@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 15:08:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 16:57:55 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -67,11 +67,12 @@ const int ECHO_RAM_OFFSET = ECHO_RAM_FIRST - INTERNAL_RAM_FIRST;
 
 const int INTERNAL_RAM_LAST = 0xDFFF;
 const int INTERNAL_RAM_FIRST = 0xC000;
-const int INTERNAL_RAM_SIZE = INTERNAL_RAM_LAST - INTERNAL_RAM_FIRST + 1;
+const int IRAM_BANK_SIZE = 0x1000;
+const int IRAM_BANK_COUNT = 8;
 
 const int CARTRIDGE_RAM_LAST = 0xBFFF;
 const int CARTRIDGE_RAM_FIRST = 0xA000;
-// const int CARTRIDGE_RAM_SIZE = CARTRIDGE_RAM_LAST - CARTRIDGE_RAM_FIRST + 1;
+const int CRAM_BANK_SIZE = 0x2000;
 
 const int VIDEO_RAM_LAST = 0x9FFF;
 const int VIDEO_RAM_FIRST = 0x8000;
@@ -79,7 +80,7 @@ const int VIDEO_RAM_SIZE = VIDEO_RAM_LAST - VIDEO_RAM_FIRST + 1;
 
 const int CARTRIDGE_ROM_LAST = 0x7FFF;
 const int CARTRIDGE_ROM_FIRST = 0x0000;
-// const int CARTRIDGE_ROM_SIZE = CARTRIDGE_ROM_LAST - CARTRIDGE_ROM_FIRST + 1;
+const int CROM_BANK_SIZE = 0x4000;
 
 
 /* LCD Constant */

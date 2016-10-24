@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/23 18:26:34 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 17:02:15 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,10 +32,7 @@ class CartMBC2 extends Cartridge.ACartridge  {
     if (memAddr <= 0x3FFF)
       return this.rom.pull8(memAddr);
     else if (memAddr <= 0x7FFF)
-    {
-      final int bankOffset = 0x4000 * (_bankno_ROM - 1);
-      return this.rom.pull8(bankOffset + memAddr);
-    }
+      return this.rom.pull8(_getOffsetROM(memAddr));
     else
       throw new Exception('CartMBC2: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
@@ -74,6 +71,10 @@ class CartMBC2 extends Cartridge.ACartridge  {
 
   void _setBankNoROM(int v) {
     _bankno_ROM = v & 0x0F;
+  }
+
+  int _getOffsetROM(int memAddr) {
+    return ((_bankno_ROM * CROM_BANK_SIZE) + (memAddr % CROM_BANK_SIZE));
   }
 
 }

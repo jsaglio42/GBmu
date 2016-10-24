@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:07:13 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 12:11:40 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,11 +36,7 @@ class CartMBC1 extends Cartridge.ACartridge
     if (memAddr <= 0x3FFF)
       return this.rom.pull8(memAddr);
     else if (memAddr <= 0x7FFF)
-    {
-      final int bankno = _bankno_ROM | (1 - _mode) * (_bankno_RAM << 5);
-      final int bankOffset = 0x4000 * (bankno - 1);
-      return this.rom.pull8(bankOffset + memAddr);
-    }
+      return this.rom.pull8(_getOffsetROM(memAddr));
     else
       throw new Exception('CartMBC1: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
@@ -64,8 +60,7 @@ class CartMBC1 extends Cartridge.ACartridge
     if (!_enableRAM)
       throw new Exception('pull8_Ram: RAM not enabled');
     memAddr -= CARTRIDGE_RAM_FIRST;
-    final int bankOffset = 0x2000 * _bankno_RAM * _mode;
-    return this.ram.pull8(bankOffset + memAddr);
+    return this.ram.pull8(_getOffsetRAM(memAddr));
   }
 
   @override void push8_Ram(int memAddr, int v) {
@@ -73,32 +68,41 @@ class CartMBC1 extends Cartridge.ACartridge
       // throw new Exception('push8_Ram: RAM not enabled');
       return ;
     memAddr -= CARTRIDGE_RAM_FIRST;
-    final int bankOffset = 0x2000 * _bankno_RAM * _mode;
-    this.ram.push8(bankOffset + memAddr, v);
+    this.ram.push8(_getOffsetRAM(memAddr), v);
     return ;
   }
 
-  /* Private */
+  /* Private ******************************************************************/
   void _setAccessRAM(int v) {
     _enableRAM = (v & 0xFF == 0xA);
   }
 
   void _setMode(int v) {
     assert (v & ~0x1 == 0, '_setMode: mode $v is not valid');
-    _mode = v & 0x1;
+    _mode = v;
   }
 
   void _setBankNoROM(int v) {
     assert (v & ~0x1F == 0, '_setBankNoRAM: bankno $v is not valid');
-    if (v == 0x00 || v == 0x20 || v == 0x40 || v == 0x60)
-      _bankno_ROM = v + 1;
-    else
-      _bankno_ROM = v;
+    _bankno_ROM = v;
   }
 
   void _setBankNoRAM(int v) {
     assert (v & ~0x3 == 0, '_setBankNoRAM: bankno $v is not valid');
     _bankno_RAM = v;
+  }
+
+  int _getOffsetROM(int memAddr) {
+    final int bankno = _bankno_ROM | (1 - _mode) * (_bankno_RAM << 5);
+    if (bankno == 0x00 || bankno == 0x20 || bankno == 0x40 || bankno == 0x60)
+      return (((bankno + 1) * CROM_BANK_SIZE) + (memAddr % CROM_BANK_SIZE));
+    else
+      return ((bankno * CROM_BANK_SIZE) + (memAddr % CROM_BANK_SIZE));
+  }
+
+  int _getOffsetRAM(int memAddr) {
+    final int bankno = _bankno_RAM * _mode;
+    return ((bankno * CRAM_BANK_SIZE) + (memAddr % CRAM_BANK_SIZE));
   }
 
   // FROM RecursivelySerializable ******************************************* **
