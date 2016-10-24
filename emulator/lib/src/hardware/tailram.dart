@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 23:07:47 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 18:31:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,10 +14,11 @@ import "dart:typed_data";
 import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
-class TailRam {
+class TailRam extends Ser.RecursivelySerializable {
 
-  final Uint8List _data = new Uint8List(TAIL_RAM_SIZE);
+  Uint8List _data = new Uint8List(TAIL_RAM_SIZE);
 
   /* API *********************************************************************/
   void reset() {
@@ -50,6 +51,19 @@ class TailRam {
   int pull8(int memAddr) {
     memAddr -= TAIL_RAM_FIRST;
   	return _data[memAddr];
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('_data', () => _data, (v) {
+            _data = new Uint8List.fromList(v);
+          }),
+    ];
   }
 
 }

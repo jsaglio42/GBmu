@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/22 18:33:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 19:38:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 18:31:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,7 +33,7 @@ abstract class RecursivelySerializable {
     final Map m = {};
     int i = 0;
 
-    Ft.log('$runtimeType', 'recSerialize');
+    // Ft.log('$runtimeType', 'recSerialize');
     for (Field f in this.serFields) {
       m[f._name] = f._get();
     }
@@ -46,7 +46,7 @@ abstract class RecursivelySerializable {
   void recUnserialize(Map m) {
     int i = 0;
 
-    Ft.log('$runtimeType', 'recUnserialize');
+    // Ft.log('$runtimeType', 'recUnserialize');
     if (!_fieldsPresent(m))
       throw new Exception(
           '$runtimeType.unserialialize($m) missing field');
