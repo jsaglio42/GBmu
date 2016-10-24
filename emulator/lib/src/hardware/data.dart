@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 18:45:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 20:11:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -157,6 +157,8 @@ class Ram extends AData
       new Ser.Field('_data', () => _data, (v) {
             _data = new Uint8List.fromList(v);
           }),
+      new Ser.Field('_memOffset', () => _memOffset, (v) => _memOffset = v),
+      new Ser.Field('fileName', () => fileName, (v) => _frd_init(v)),
     ];
   }
 
