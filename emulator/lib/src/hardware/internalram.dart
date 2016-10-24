@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 18:16:21 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 18:26:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,13 +17,14 @@ import "package:ft/ft.dart" as Ft;
 import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
 const int _BANK_SIZE = 0x1000;
 const int _BANK_NO = 8;
 
-class InternalRam {
+class InternalRam extends Ser.RecursivelySerializable {
 
-  final Uint8List _data = new Uint8List(_BANK_NO * _BANK_SIZE);
+  Uint8List _data = new Uint8List(_BANK_NO * _BANK_SIZE);
 
   /* API **********************************************************************/
   void reset() {
@@ -47,6 +48,19 @@ class InternalRam {
       _data[memAddr] = v;
     else
       _data[(bankID - 1) * _BANK_SIZE + memAddr] = v;
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('_data', () => _data, (v) {
+            _data = new Uint8List.fromList(v);
+          }),
+    ];
   }
 
 }
