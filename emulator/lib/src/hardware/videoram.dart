@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 03:39:01 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 17:39:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,17 +15,18 @@ import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
 
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 import "package:emulator/src/video/tile.dart";
 import "package:emulator/src/video/tileinfo.dart";
 
 const _TILE_PER_BANK = 0x180;
 const _TILE_PER_MAP = 0x400;
 
-class VideoRam {
+class VideoRam extends Ser.RecursivelySerializable {
 
-  final List<Tile> _tileData = new List<Tile>(2 * _TILE_PER_BANK);
-  final Uint8List _mapTileID = new Uint8List(2 * _TILE_PER_MAP);
-  final List<TileInfo> _mapTileInfo = new List<TileInfo>(2 * _TILE_PER_MAP);
+  List<Tile> _tileData = new List<Tile>(2 * _TILE_PER_BANK);
+  Uint8List _mapTileID = new Uint8List(2 * _TILE_PER_MAP);
+  List<TileInfo> _mapTileInfo = new List<TileInfo>(2 * _TILE_PER_MAP);
 
   /* API *********************************************************************/
   void reset() {
@@ -100,6 +101,20 @@ class VideoRam {
     assert(offset >= 0 && offset < 0x800, 'push8_TileInfo: offset not valid $offset');
     _mapTileInfo[offset].value = v;
     return ;
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions sync* {
+    yield* _tileData;
+    yield* _mapTileInfo;
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('_mapTileID', () => _mapTileID, (v) {
+            _mapTileID = new Uint8List.fromList(v);
+          }),
+    ];
   }
 
 }

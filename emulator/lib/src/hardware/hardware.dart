@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/24 17:25:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 18:07:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -75,6 +75,7 @@ abstract class Hardware implements Ser.RecursivelySerializable {
       this.cpur,
       this.memr,
       this.lcd,
+      this.videoram,
     ];
   }
 

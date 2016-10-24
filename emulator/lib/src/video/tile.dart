@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 18:31:14 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 17:40:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,9 +14,10 @@ import "dart:typed_data";
 import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
 /* Tile ************************************************************************/
-class Tile {
+class Tile extends Ser.RecursivelySerializable {
 
   Uint8List _colorIDs = new Uint8List(8 * 8);
   Uint8List _values = new Uint8List(8 * 2);
@@ -51,6 +52,22 @@ class Tile {
       high >>= 1;
     }
     return ;
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('_colorIDs', () => _colorIDs, (v) {
+            _colorIDs = new Uint8List.fromList(v);
+          }),
+      new Ser.Field('_values', () => _values, (v) {
+            _values = new Uint8List.fromList(v);
+          }),
+    ];
   }
 
 }
