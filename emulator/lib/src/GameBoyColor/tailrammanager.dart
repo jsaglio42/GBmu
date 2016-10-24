@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 21:11:46 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 21:21:50 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,12 +20,6 @@ import "package:emulator/src/hardware/mem_registers_info.dart";
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
 import "package:emulator/src/mixins/interrupts.dart" as Interrupt;
-
-abstract class TrapAccessor {
-  int tr_pull8(int memAddr);
-  void tr_push8(int memAddr, int v);
-  void updateCoincidence(bool coincidence);
-}
 
 abstract class TailRamManager
   implements Hardware.Hardware

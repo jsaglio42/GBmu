@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 18:55:51 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 21:22:23 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,11 +21,6 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 
 final int MAP_OFFSET = 0x1800;
-
-abstract class TrapAccessor {
-  int vr_pull8(int memAddr);
-  void vr_push8(int memAddr, int v);
-}
 
 abstract class VideoRamManager
   implements Hardware.Hardware {
