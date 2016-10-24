@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 20:03:41 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 19:11:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,6 +19,7 @@ import 'package:emulator/constants.dart';
 
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
 import "package:emulator/src/mixins/instructionsdecoder.dart" as Instdecoder;
 import "package:emulator/src/mixins/z80.dart" as Z80;
@@ -34,9 +35,10 @@ import "package:emulator/src/mixins/graphicdisplay.dart" as GDisplay;
 /* Gameboy ********************************************************************/
 
 class GameBoy extends Object
-  with Hardware.Hardware
+  with Ser.RecursivelySerializable
+  , Hardware.Hardware
   , Instdecoder.InstructionsDecoder
-  , Z80.Z80 
+  , Z80.Z80
   , Interrupts.Interrupts
   , Joypad.Joypad
   , Timers.Timers

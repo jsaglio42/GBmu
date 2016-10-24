@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 17:39:34 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 16:59:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,11 +16,13 @@ import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/hardware/mem_registers_info.dart";
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
 /* MemRegs ********************************************************************/
-class MemRegs {
+class MemRegs extends Ser.RecursivelySerializable {
+// class MemRegs {
 
-  final Uint8List _data;
+  Uint8List _data;
 
   /* Constructors *************************************************************/
   MemRegs.ofList(Uint8List l) : _data = l;
@@ -41,7 +43,7 @@ class MemRegs {
     }
     return ;
   }
-  
+
   /* Getters */
   int get P1 => this.rP1.value;
   int get DIV => this.rDIV.value;
@@ -138,6 +140,20 @@ class MemRegs {
       case (MemReg.STAT) : this.STAT = v; break ;
       default : _data[r.index] = v; break ;
     }
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('_data', () => _data, (v) {
+            _data = new Uint8List.fromList(v);
+            _view16 = _data.buffer.asUint16List();
+          }),
+   ];
   }
 
 }
@@ -274,7 +290,7 @@ class RegisterSTAT {
       _value = (_value | (1 << 2));
     else
       _value = (_value & ~(1 << 2));
-  } 
+  }
 
   bool isInterruptMonitored(GraphicInterrupt i) {
     return (_value >> (i.index + 3)) & 0x1 == 1;
@@ -321,5 +337,3 @@ class  RegisterTAC {
   }
 
 }
-
-

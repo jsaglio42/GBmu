@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/21 15:37:33 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/22 19:39:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,6 +16,7 @@ import "package:emulator/src/globals.dart";
 import "package:emulator/src/enums.dart";
 
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/hardware/lcd.dart" as Lcd;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
@@ -26,7 +27,7 @@ import "package:emulator/src/hardware/videoram.dart" as Vram;
 import "package:emulator/src/hardware/oam.dart" as Oam;
 import "package:emulator/src/hardware/tailram.dart" as Tram;
 
-abstract class Hardware {
+abstract class Hardware implements Ser.RecursivelySerializable {
 
   Cartridge.ACartridge _c;
   Cartridge.ACartridge get c => _c;
@@ -66,6 +67,22 @@ abstract class Hardware {
     this.videoram.reset();
     this.internalram.reset();
     return ;
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[
+      this.cpur,
+      this.memr,
+    ];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('clockTotal', () => clockTotal, (v) => clockTotal = v),
+      new Ser.Field('lastInstPC', () => lastInstPC, (v) => lastInstPC = v),
+      new Ser.Field('_hardbreak', () => _hardbreak, (v) => _hardbreak = v),
+    ];
   }
 
 }

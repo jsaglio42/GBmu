@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 13:55:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 17:54:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/22 19:26:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,25 +29,29 @@ class Ss extends Object
   // ATTRIBUTES ************************************************************* **
   int _romGlobalChecksum;
   final String _fileName;
+  final Map _data;
 
   // CONSTRUCTION *********************************************************** **
   // Only called once in DOM, when an external file is loaded
   Ss.ofFile(String fileName, Uint8List data)
-    : _fileName = fileName {
+    : _fileName = fileName
+    , _data = null { //TODO: Ss.ofFile
     _romGlobalChecksum = 42;
     Ft.log('Ss', 'ctor.ofFile', [this.fileName, this.terseData]);
   }
 
   // Only called from Emulator, on emulation start request, with data from Idb
   Ss.unserialize(Map<String, dynamic> serialization)
-    : _fileName = serialization['fileName'] as String {
+    : _fileName = serialization['fileName'] as String
+    , _data = serialization['data'] {
     _romGlobalChecksum = serialization['romGlobalChecksum'] as int;
     Ft.log('Ss', 'ctor.unserialize', [this.fileName, this.terseData]);
   }
 
   // Only called from Emulator, on gameboy snapshot required
   Ss.ofGameBoy(GameBoy.GameBoy gb)
-    : _fileName = Data.FileRepr.ssNameOfRomName(gb.c.rom.fileName) {
+    : _fileName = Data.FileRepr.ssNameOfRomName(gb.c.rom.fileName)
+    , _data = gb.recSerialize() {
     _romGlobalChecksum =
       gb.c.rom.pullHeaderValue(RomHeaderField.Global_Checksum);
     Ft.log('Ss', 'ctor.ofGameBoy', [this.fileName, this.terseData]);
@@ -55,7 +59,8 @@ class Ss extends Object
 
   // Only called from DOM, when an extraction is requested
   Ss.emptyDetail(String romName, int romGlobalChecksum)
-    : _fileName = Data.FileRepr.ssNameOfRomName(romName) {
+    : _fileName = Data.FileRepr.ssNameOfRomName(romName)
+    , _data = null {
     _romGlobalChecksum = romGlobalChecksum;
     Ft.log('Ss', 'ctor.emptyDetail', [this.fileName, this.terseData]);
   }
@@ -71,9 +76,11 @@ class Ss extends Object
     <String, dynamic>{
       'romGlobalChecksum': _romGlobalChecksum,
       'fileName': _fileName,
+      'data': _data,
     };
 
   // PUBLIC ***************************************************************** **
   int get romGlobalChecksum => _romGlobalChecksum;
 
+  Map get rawData => _data;
 }
