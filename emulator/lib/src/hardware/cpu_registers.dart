@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 19:42:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/23 18:16:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,6 +31,28 @@ import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
  * 4    cy    C   NC   Carry Flag
  * 3-0  -     -   -    Not used (always zero)
  */
+
+
+/* TODO: REmove this comment
+
+
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
+ extends Ser.RecursivelySerializable {
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('ime', () => ime, (v) => ime = v),
+    ];
+  }
+
+
+ */
+
 
 enum Reg16 {
   AF, BC, DE, HL, SP, PC

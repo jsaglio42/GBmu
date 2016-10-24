@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/22 18:32:03 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/23 18:01:29 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -192,6 +192,7 @@ emulator/lib/src/mixins/timers.dart
     - "e
 emulator/lib/src/hardware/cpu_registers.dart
 emulator/lib/src/hardware/mem_registers.dart
+emulator/lib/src/hardware/recurs*.dart
 emulator/lib/src/hardware/mem_registers_info.dart
 "
 

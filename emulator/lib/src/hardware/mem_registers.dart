@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 16:59:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/24 17:07:11 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -144,14 +144,13 @@ class MemRegs extends Ser.RecursivelySerializable {
 
   // FROM RecursivelySerializable ******************************************* **
   Iterable<Ser.RecursivelySerializable> get serSubdivisions {
-    return <Ser.RecursivelySerializable>[];
+    return <Ser.RecursivelySerializable>[rP1, rDIV, rTIMA, rLCDC, rSTAT, rTAC];
   }
 
   Iterable<Ser.Field> get serFields {
     return <Ser.Field>[
       new Ser.Field('_data', () => _data, (v) {
             _data = new Uint8List.fromList(v);
-            _view16 = _data.buffer.asUint16List();
           }),
    ];
   }
@@ -189,7 +188,7 @@ class MemRegs extends Ser.RecursivelySerializable {
 *   +---+         |         |               +---+
 *                C0        C1
 */
-class RegisterP1 {
+class RegisterP1 extends Ser.RecursivelySerializable {
 
   RegisterP1();
 
@@ -224,10 +223,22 @@ class RegisterP1 {
     return ;
   }
 
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('returnDirections', () => returnDirections, (v) => returnDirections = v),
+      new Ser.Field('joypadState', () => joypadState, (v) => joypadState = v),
+    ];
+  }
+
 }
 
 /* LCDC ***********************************************************************/
-class RegisterLCDC {
+class RegisterLCDC extends Ser.RecursivelySerializable {
 
   RegisterLCDC();
 
@@ -264,10 +275,29 @@ class RegisterLCDC {
     return ;
   }
 
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('_value', () => _value, (v) => _value = v),
+      new Ser.Field('_isLCDEnabled', () => _isLCDEnabled, (v) => _isLCDEnabled = v),
+      new Ser.Field('_isWindowDisplayEnabled', () => _isWindowDisplayEnabled, (v) => _isWindowDisplayEnabled = v),
+      new Ser.Field('_isSpriteDisplayEnabled', () => _isSpriteDisplayEnabled, (v) => _isSpriteDisplayEnabled = v),
+      new Ser.Field('_isBackgroundDisplayEnabled', () => _isBackgroundDisplayEnabled, (v) => _isBackgroundDisplayEnabled = v),
+      new Ser.Field('_tileDataSelectID', () => _tileDataSelectID, (v) => _tileDataSelectID = v),
+      new Ser.Field('_tileMapID_BG', () => _tileMapID_BG, (v) => _tileMapID_BG = v),
+      new Ser.Field('_tileMapID_WIN', () => _tileMapID_WIN, (v) => _tileMapID_WIN = v),
+      new Ser.Field('_spriteSize', () => _spriteSize, (v) => _spriteSize = v),
+    ];
+  }
+
 }
 
 /* STAT ***********************************************************************/
-class RegisterSTAT {
+class RegisterSTAT extends Ser.RecursivelySerializable {
 
   RegisterSTAT();
 
@@ -296,19 +326,43 @@ class RegisterSTAT {
     return (_value >> (i.index + 3)) & 0x1 == 1;
   }
 
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('counter', () => counter, (v) => counter = v),
+      new Ser.Field('_value', () => _value, (v) => _value = v),
+    ];
+  }
+
 }
 
 /* TIMERS *********************************************************************/
-class RegisterDIV {
+class RegisterDIV extends Ser.RecursivelySerializable {
 
   RegisterDIV();
 
   int value;
   int counter = 0;
 
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('value', () => value, (v) => value = v),
+      new Ser.Field('counter', () => counter, (v) => counter = v),
+    ];
+  }
+
 }
 
-class RegisterTIMA {
+class RegisterTIMA extends Ser.RecursivelySerializable {
 
   RegisterTIMA();
 
@@ -317,9 +371,22 @@ class RegisterTIMA {
   int counter = 0;
   int threshold = 1024;
 
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('value', () => value, (v) => value = v),
+      new Ser.Field('counter', () => counter, (v) => counter = v),
+      new Ser.Field('threshold', () => threshold, (v) => threshold = v),
+    ];
+  }
+
 }
 
-class  RegisterTAC {
+class RegisterTAC extends Ser.RecursivelySerializable {
 
   int _value;
 
@@ -334,6 +401,17 @@ class  RegisterTAC {
       case (3): return 256;
       default : assert(false, '_getTimerFrequency: switch failure');
     }
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+    return <Ser.RecursivelySerializable>[];
+  }
+
+  Iterable<Ser.Field> get serFields {
+    return <Ser.Field>[
+      new Ser.Field('_value', () => _value, (v) => _value = v),
+    ];
   }
 
 }
