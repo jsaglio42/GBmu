@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 11:58:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/14 16:54:57 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 17:30:04 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -115,7 +115,8 @@ void _onMemAddrUpdate(_) {
 
 void _sendMemoryAddr(int addr) {
   final maxValue = 0x10000 - MEMORY_CELLS_COUNT;
-  _emu.send('DebMemAddrChange', addr.clamp(0, maxValue));
+  if (addr >= 0)
+    _emu.send('DebMemAddrChange', addr.clamp(0, maxValue));
   return ;
 }
 

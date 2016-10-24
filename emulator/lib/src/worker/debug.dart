@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:09:36 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/24 17:21:30 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -40,8 +40,7 @@ abstract class Debug implements Worker.AWorker {
         , '_onMemoryAddrChangeReq: addr not valid');
     _debuggerMemoryAddr = addr;
 
-    if (this.gbMode is V.Emulating
-        && this.pauseMode == PauseExternalMode.Effective) {
+    if (this.gbMode is! V.Absent) {
       this.ports.send('MemInfo',  <String, dynamic> {
         'addr' : _debuggerMemoryAddr,
         'data' : _buildMemoryList(_debuggerMemoryAddr, this.gbOpt)
