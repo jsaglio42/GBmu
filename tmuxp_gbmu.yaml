@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/23 18:01:29 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/25 12:32:47 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -152,6 +152,13 @@ web/options/options.dart
     emulator/lib/src/cartridge/cartridge.dart
     "
 
+- window_index: 16
+  panes:
+    - "e
+    emulator/lib/src/cartridge/cart_mbc2.dart
+    emulator/lib/src/cartridge/cart_mbc5.dart
+    "
+
 - window_index: 19
   panes:
     - "e
@@ -192,7 +199,7 @@ emulator/lib/src/mixins/timers.dart
     - "e
 emulator/lib/src/hardware/cpu_registers.dart
 emulator/lib/src/hardware/mem_registers.dart
-emulator/lib/src/hardware/recurs*.dart
+emulator/lib/src/recurs*.dart
 emulator/lib/src/hardware/mem_registers_info.dart
 "
 

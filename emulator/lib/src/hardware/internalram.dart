@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:13:45 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 12:36:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,7 @@ import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
 class InternalRam extends Ser.RecursivelySerializable {
 
-  final Uint8List _data = new Uint8List(IRAM_BANK_COUNT * IRAM_BANK_SIZE);
+  Uint8List _data = new Uint8List(IRAM_BANK_COUNT * IRAM_BANK_SIZE);
 
   /* API **********************************************************************/
   void reset() {

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 17:02:15 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 12:35:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,11 +14,13 @@ import 'package:ft/ft.dart' as Ft;
 
 import "package:emulator/src/enums.dart";
 import "package:emulator/src/constants.dart";
-
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 
-class CartMBC2 extends Cartridge.ACartridge  {
+class CartMBC2 extends Cartridge.ACartridge
+  with Ser.RecursivelySerializable
+{
 
   int _bankno_ROM = 1;
   bool _enableRAM = false;
@@ -75,6 +77,20 @@ class CartMBC2 extends Cartridge.ACartridge  {
 
   int _getOffsetROM(int memAddr) {
     return ((_bankno_ROM * CROM_BANK_SIZE) + (memAddr % CROM_BANK_SIZE));
+  }
+
+  // FROM RecursivelySerializable ******************************************* **
+  Iterable<Ser.RecursivelySerializable> get serSubdivisions {
+      return <Ser.RecursivelySerializable>[
+        this.ram,
+      ];
+  }
+
+  Iterable<Ser.Field> get serFields {
+      return <Ser.Field>[
+        new Ser.Field('_bankno_ROM', () => _bankno_ROM, (v) => _bankno_ROM = v),
+        new Ser.Field('_enableRAM', () => _enableRAM, (v) => _enableRAM = v),
+      ];
   }
 
 }
