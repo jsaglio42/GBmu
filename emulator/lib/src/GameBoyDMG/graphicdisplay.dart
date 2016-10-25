@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/23 20:04:53 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 14:50:07 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -76,8 +76,6 @@ abstract class GraphicDisplay
     final TileInfo tinfo = this.videoram.getTileInfo(tileX, tileY, tileMapID);
     final Tile tile = this.videoram.getTile(tileID, 0, this.memr.rLCDC.tileDataSelectID);
     return tile.getColorID(relativeX, relativeY, false, false);
-    // final Tile tile = this.videoram.getTile(tileID, tinfo.bankID, this.memr.rLCDC.tileDataSelectID);
-    // return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
   }
 
   void _setSpriteColors(int y) {
@@ -94,7 +92,6 @@ abstract class GraphicDisplay
         continue ;
       final int tileID = s.adjustedTileID(sizeY, unsafeY);
       final Tile tile = this.videoram.getTile(tileID, 0, 1);
-      // final Tile tile = this.videoram.getTile(tileID, s.info.bankID, 1);
 
       final int relativeY = unsafeY % 8;
       for (int relativeX = 0; relativeX < 8; ++relativeX)

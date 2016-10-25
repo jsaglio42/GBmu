@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 21:21:16 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 15:25:43 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,8 +27,9 @@ abstract class TailRamManager
   , Interrupt.Interrupts {
 
   /* Getters ******************************************************************/
-  int tr_pull8(int memAddr) {
-    switch (memAddr) {
+  int tr_pull8(int addr) {
+    assert(addr & ~0xFF == 0, 'tr_pull8: invalid addr $addr');
+    switch (addr) {
       case (addr_P1): return this.memr.P1;
       case (addr_SB): return this.memr.SB;
       case (addr_SC): return this.memr.SC;
@@ -49,26 +50,14 @@ abstract class TailRamManager
       case (addr_OBP1): return this.memr.OBP1;
       case (addr_WY): return this.memr.WY;
       case (addr_WX): return this.memr.WX;
-      case (addr_KEY1): return this.memr.KEY1;
-      case (addr_VBK): return this.memr.VBK;
-      case (addr_HDMA1): return this.memr.HDMA1;
-      case (addr_HDMA2): return this.memr.HDMA2;
-      case (addr_HDMA3): return this.memr.HDMA3;
-      case (addr_HDMA4): return this.memr.HDMA4;
-      case (addr_HDMA5): return this.memr.HDMA5;
-      case (addr_RP): return this.memr.RP;
-      case (addr_BGPI): return this.memr.BGPI;
-      case (addr_BGPD): return this.memr.BGPD;
-      case (addr_OBPI): return this.memr.OBPI;
-      case (addr_OBPD): return this.memr.OBPD;
-      case (addr_SVBK): return this.memr.SVBK;
       case (addr_IE): return this.memr.IE;
-      default: return this.tailram.pull8(memAddr);
+      default: return this.tailram.pull8(addr);
     }
   }
 
-  void tr_push8(int memAddr, int v) {
-    switch (memAddr) {
+  void tr_push8(int addr, int v) {
+    assert(addr & ~0xFF == 0, 'tr_pull8: invalid addr $addr');
+    switch (addr) {
       /* Timers */
       case (addr_DIV):
         this.memr.DIV = 0;
@@ -98,13 +87,6 @@ abstract class TailRamManager
       /* Interrupts */
       case (addr_IF): this.memr.IF = (v & 0x1F); break ;
       case (addr_IE): this.memr.IE = (v & 0x1F); break ;
-      /* Banking */
-      case (addr_VBK):
-        this.memr.VBK = (v & 0x1);
-        break ;
-      case (addr_SVBK):
-        this.memr.SVBK = (v == 0x0) ? 0x1 : (v & 0x7);
-        break ;
       /* Regular */
       case (addr_P1): this.memr.P1 = v; break ;
       case (addr_SB): this.memr.SB = v; break ;
@@ -116,22 +98,11 @@ abstract class TailRamManager
       case (addr_OBP1): this.memr.OBP1 = v; break ;
       case (addr_WY): this.memr.WY = v; break ;
       case (addr_WX): this.memr.WX = v; break ;
-      case (addr_KEY1): this.memr.KEY1 = v; break ; // TO DO
-      case (addr_HDMA1): this.memr.HDMA1 = v; break ;
-      case (addr_HDMA2): this.memr.HDMA2 = v; break ;
-      case (addr_HDMA3): this.memr.HDMA3 = v; break ;
-      case (addr_HDMA4): this.memr.HDMA4 = v; break ;
-      case (addr_HDMA5): this.memr.HDMA5 = v; break ;
-      case (addr_RP): this.memr.RP = v; break ;
-      case (addr_BGPI): this.memr.BGPI = v; break ;
-      case (addr_BGPD): this.memr.BGPD = v; break ;
-      case (addr_OBPI): this.memr.OBPI = v; break ;
-      case (addr_OBPD): this.memr.OBPD = v; break ;
-      default: this.tailram.push8(memAddr, v); break ;
+      default: this.tailram.push8(addr, v); break ;
     }
   }
 
-  /* Specific routines ********************************************************/
+  /* Could be move elsewhere **************************************************/
   void _setLCDCRegister(int v) {
     final bool enabling = ((v >> 7) & 0x1 == 1);
     if (!this.memr.rLCDC.isLCDEnabled && enabling)

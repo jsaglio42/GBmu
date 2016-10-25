@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 21:25:28 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 15:05:42 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,7 @@ import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
-import "package:emulator/src/mixins/trapaccessor.dart" as Trap;
+import "package:emulator/src/mixins/trapaccessors.dart" as Trap;
 
 enum GraphicMode {
   HBLANK,
@@ -39,7 +39,7 @@ enum GraphicInterrupt {
 abstract class GraphicStateMachine
   implements Hardware.Hardware
   , Interrupts.Interrupts
-  , Trap.TailTrap {
+  , Trap.TTailRam {
 
   /* API **********************************************************************/
   void updateGraphicMode(int nbClock) {

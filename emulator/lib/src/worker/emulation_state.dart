@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/13 11:01:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 16:59:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 15:04:13 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,7 +23,9 @@ import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 
 import 'package:emulator/src/worker/worker.dart' as Worker;
-import 'package:emulator/src/gameboy.dart' as Gameboy;
+
+import 'package:emulator/src/GameBoyDMG/gameboy.dart' as Gameboy;
+
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 19:47:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 15:58:47 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,7 +21,7 @@ import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/variants.dart' as V;
 import "package:emulator/src/hardware/headerdecoder.dart" as Headerdecoder;
 import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
-import 'package:emulator/src/gameboy.dart' as GameBoy;
+import 'package:emulator/src/GameBoyDMG/gameboy.dart' as GameBoy;
 
 part 'package:emulator/src/hardware/file_repr.dart';
 part 'package:emulator/src/hardware/save_state.dart';

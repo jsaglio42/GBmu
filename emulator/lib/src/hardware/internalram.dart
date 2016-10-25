@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:36:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 13:14:10 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,9 +30,8 @@ class InternalRam extends Ser.RecursivelySerializable {
   }
 
   int pull8(int memAddr, int bankID) {
-    assert(memAddr >= INTERNAL_RAM_FIRST && memAddr <= INTERNAL_RAM_LAST
+    assert(memAddr >= 0 && memAddr <= 2 * IRAM_BANK_SIZE
       , 'pull8: invalid memAddr $memAddr');
-    memAddr -= INTERNAL_RAM_FIRST;
     if (memAddr < IRAM_BANK_SIZE)
       return _data[memAddr];
     else
@@ -40,9 +39,8 @@ class InternalRam extends Ser.RecursivelySerializable {
   }
 
   void push8(int memAddr, int bankID, int v) {
-    assert(memAddr >= INTERNAL_RAM_FIRST && memAddr <= INTERNAL_RAM_LAST
+    assert(memAddr >= 0 && memAddr <= 2 * IRAM_BANK_SIZE
       , 'pull8: invalid memAddr $memAddr');
-    memAddr -= INTERNAL_RAM_FIRST;
     if (memAddr < IRAM_BANK_SIZE)
       _data[memAddr] = v;
     else
