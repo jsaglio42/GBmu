@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:45:05 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 17:58:19 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,13 +22,19 @@ abstract class InternalRamManager
   implements Hardware.Hardware {
   /* API ***********************************************************************/
   int ir_pull8(int addr) {
-    assert(addr & ~0x1FFF == 0, 'ir_pull8: invalid addr $addr');
-    return (this.internalram.pull8(addr, 0));
+    assert(addr & ~0x1FFF == 0, 'invalid addr $addr');
+    if (addr < IRAM_BANK_SIZE)
+      return (this.internalram.pull8(addr, 0));
+    else
+      return (this.internalram.pull8(addr & 0xFFF, 1));
   }
 
   void ir_push8(int addr, int v) {
-    assert(addr & ~0x1FFF == 0, 'ir_push8: invalid addr $addr');
-    this.internalram.push8(addr, 0, v);
+    assert(addr & ~0x1FFF == 0, 'invalid addr $addr');
+    if (addr < IRAM_BANK_SIZE)
+      return (this.internalram.push8(addr, 0, v));
+    else
+      return (this.internalram.push8(addr & 0xFFF, 1, v));
   }
 
 }

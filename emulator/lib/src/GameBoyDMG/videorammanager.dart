@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:35:08 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 16:31:07 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,7 +31,7 @@ abstract class VideoRamManager
     if (addr < MAP_OFFSET)
       return this.videoram.pull8_TileData(addr, 0);
     else
-      return this.videoram.pull8_TileID(addr - MAP_OFFSET);
+      return this.videoram.pull8_TileID(addr & 0x7FF);
   }
 
   void vr_push8(int addr, int v) {
@@ -39,6 +39,6 @@ abstract class VideoRamManager
     if (addr < MAP_OFFSET)
       this.videoram.push8_TileData(addr, 0, v);
     else
-      this.videoram.push8_TileID(addr - MAP_OFFSET, v);
+      this.videoram.push8_TileID(addr & 0x7FF, v);
     }
 }
