@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 18:31:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 15:49:01 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,14 +43,16 @@ class TailRam extends Ser.RecursivelySerializable {
     this.push8(0xFF26, 0xF1);
   }
 
-  void push8(int memAddr, int v) {
-    memAddr -= TAIL_RAM_FIRST;
-  	_data[memAddr] = v;
+  void push8(int addr, int v) {
+    assert(addr & ~0xFFFF == 0, 'push8: invalid addr $addr');
+    assert(addr >= 0xFF00, 'push8: invalid addr $addr');
+    _data[addr & 0xFF] = v;
   }
 
-  int pull8(int memAddr) {
-    memAddr -= TAIL_RAM_FIRST;
-  	return _data[memAddr];
+  int pull8(int addr) {
+    assert(addr & ~0xFFFF == 0, 'pull8: invalid addr $addr');
+    assert(addr >= 0xFF00, 'pull8: invalid addr $addr');
+    return _data[addr & 0xFF];
   }
 
   // FROM RecursivelySerializable ******************************************* **

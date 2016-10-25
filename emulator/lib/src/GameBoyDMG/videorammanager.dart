@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:13:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 15:35:08 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,7 +35,7 @@ abstract class VideoRamManager
   }
 
   void vr_push8(int addr, int v) {
-    assert(addr & ~0x1FFF == 0, 'vr_pull8: invalid addr $addr');
+    assert(addr & ~0x1FFF == 0, 'vr_push8: invalid addr $addr');
     if (addr < MAP_OFFSET)
       this.videoram.push8_TileData(addr, 0, v);
     else

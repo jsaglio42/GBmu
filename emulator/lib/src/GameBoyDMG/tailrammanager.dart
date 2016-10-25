@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:25:43 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 15:42:59 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,9 +27,10 @@ abstract class TailRamManager
   , Interrupt.Interrupts {
 
   /* Getters ******************************************************************/
-  int tr_pull8(int addr) {
-    assert(addr & ~0xFF == 0, 'tr_pull8: invalid addr $addr');
-    switch (addr) {
+  int tr_pull8(int memAddr) {
+    assert(memAddr >= 0xFF00, 'tr_pull8: invalid memAddr $memAddr');
+    assert(memAddr & ~0xFFFF == 0, 'tr_pull8: invalid memAddr $memAddr');
+    switch (memAddr) {
       case (addr_P1): return this.memr.P1;
       case (addr_SB): return this.memr.SB;
       case (addr_SC): return this.memr.SC;
@@ -51,13 +52,14 @@ abstract class TailRamManager
       case (addr_WY): return this.memr.WY;
       case (addr_WX): return this.memr.WX;
       case (addr_IE): return this.memr.IE;
-      default: return this.tailram.pull8(addr);
+      default: return this.tailram.pull8(memAddr);
     }
   }
 
-  void tr_push8(int addr, int v) {
-    assert(addr & ~0xFF == 0, 'tr_pull8: invalid addr $addr');
-    switch (addr) {
+  void tr_push8(int memAddr, int v) {
+    assert(memAddr >= 0xFF00, 'tr_push8: invalid memAddr $memAddr');
+    assert(memAddr & ~0xFFFF == 0, 'tr_push8: invalid memAddr $memAddr');
+    switch (memAddr) {
       /* Timers */
       case (addr_DIV):
         this.memr.DIV = 0;
@@ -98,7 +100,7 @@ abstract class TailRamManager
       case (addr_OBP1): this.memr.OBP1 = v; break ;
       case (addr_WY): this.memr.WY = v; break ;
       case (addr_WX): this.memr.WX = v; break ;
-      default: this.tailram.push8(addr, v); break ;
+      default: this.tailram.push8(memAddr, v); break ;
     }
   }
 
@@ -117,14 +119,14 @@ abstract class TailRamManager
   }
 
   void _execDMA(int v) {
-    int addr = v * 0x100;
+    int memAddr = v * 0x100;
 
     for (int i = 0 ; i < 40; ++i) {
-      this.oam[i].posY = this.pull8(addr + 0);
-      this.oam[i].posX = this.pull8(addr + 1);
-      this.oam[i].tileID = this.pull8(addr + 2);
-      this.oam[i].info.value = this.pull8(addr + 3);
-      addr += 4;
+      this.oam[i].posY = this.pull8(memAddr + 0);
+      this.oam[i].posX = this.pull8(memAddr + 1);
+      this.oam[i].tileID = this.pull8(memAddr + 2);
+      this.oam[i].info.value = this.pull8(memAddr + 3);
+      memAddr += 4;
     }
     this.memr.DMA = v;
     return ;

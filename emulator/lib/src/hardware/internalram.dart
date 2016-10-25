@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 13:14:10 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 15:37:08 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,26 +29,25 @@ class InternalRam extends Ser.RecursivelySerializable {
     return ;
   }
 
-  int pull8(int memAddr, int bankID) {
-    assert(memAddr >= 0 && memAddr <= 2 * IRAM_BANK_SIZE
-      , 'pull8: invalid memAddr $memAddr');
-    if (memAddr < IRAM_BANK_SIZE)
-      return _data[memAddr];
+  int pull8(int addr, int bankID) {
+    assert(addr & 0x1FFF == 0, 'pull8: invalid addr $addr');
+    if (addr < IRAM_BANK_SIZE)
+      return _data[addr];
     else
-      return _data[_getOffsetIRAM(memAddr, bankID)];
+      return _data[_getOffsetIRAM(addr, bankID)];
   }
 
-  void push8(int memAddr, int bankID, int v) {
-    assert(memAddr >= 0 && memAddr <= 2 * IRAM_BANK_SIZE
-      , 'pull8: invalid memAddr $memAddr');
-    if (memAddr < IRAM_BANK_SIZE)
-      _data[memAddr] = v;
+  void push8(int addr, int bankID, int v) {
+    assert(addr & 0x1FFF == 0, 'push8: invalid addr $addr');
+    if (addr < IRAM_BANK_SIZE)
+      _data[addr] = v;
     else
-      _data[_getOffsetIRAM(memAddr, bankID)] = v;
+      _data[_getOffsetIRAM(addr, bankID)] = v;
   }
 
-  int _getOffsetIRAM(int memAddr, int bankID) {
-    return ((bankID * IRAM_BANK_SIZE) + (memAddr % IRAM_BANK_SIZE));
+  /* Private ******************************************************************/
+  int _getOffsetIRAM(int addr, int bankID) {
+    return ((bankID * IRAM_BANK_SIZE) + (addr % IRAM_BANK_SIZE));
   }
 
   // FROM RecursivelySerializable ******************************************* **

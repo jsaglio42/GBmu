@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 13:18:31 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 15:47:02 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,10 +23,11 @@ class OAM extends Ser.RecursivelySerializable {
   List<Sprite> _data = new List.generate(40, (i) => new Sprite());
 
   /* ACCESSORS ****************************************************************/
-  int pull8(int memAddr) {
-    memAddr -= OAM_FIRST;
-    Sprite s = _data[memAddr ~/ 4];
-    switch (memAddr % 4) {
+  int pull8(int addr) {
+    assert(addr & ~0xFF == 0, 'pull8: invalid addr $addr');
+    assert(addr < 0xA0, 'pull8: invalid addr $addr');
+    Sprite s = _data[addr ~/ 4];
+    switch (addr % 4) {
       case (0) : return s.posY;
       case (1) : return s.posX;
       case (2) : return s.tileID;
@@ -35,10 +36,11 @@ class OAM extends Ser.RecursivelySerializable {
     }
   }
 
-  void push8(int memAddr, int v) {
-    memAddr -= OAM_FIRST;
-    Sprite s = _data[memAddr ~/ 4];
-    switch (memAddr % 4) {
+  void push8(int addr, int v) {
+    assert(addr & ~0xFF == 0, 'push8: invalid addr $addr');
+    assert(addr < 0xA0, 'push8: invalid addr $addr');
+    Sprite s = _data[addr ~/ 4];
+    switch (addr % 4) {
       case (0) : s.posY = v; break;
       case (1) : s.posX = v; break;
       case (2) : s.tileID = v; break;

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:26:41 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 15:44:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -46,7 +46,7 @@ abstract class Mmu
     else if (memAddr <= FORBIDDEN_LAST)
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
     else if (memAddr <= TAIL_RAM_LAST)
-      return this.tr_pull8(memAddr & 0x00FF);
+      return this.tr_pull8(memAddr);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
@@ -70,7 +70,7 @@ abstract class Mmu
     else if (memAddr <= FORBIDDEN_LAST)
       return ;
     else if (memAddr <= TAIL_RAM_LAST)
-      this.tr_push8(memAddr & 0x00FF, v);
+      this.tr_push8(memAddr, v);
     else
       throw new Exception('MMU: cannot access address ${Ft.toAddressString(memAddr, 4)}');
   }
