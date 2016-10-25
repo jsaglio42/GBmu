@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/25 12:10:43 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 15:37:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,7 +50,7 @@ void _onKeyDown(Html.KeyboardEvent ev){
   final int eventKeyCode = ev.keyCode;
   final key = _keySettings[eventKeyCode];
 
-  if (key != null) {
+  if (Html.document.activeElement is! Html.InputElement && key != null) {
     if (key is JoypadKey && _keyState[key] == false) {
       _keyState[key] = true;
       _emu.send('KeyDownEvent', key);
@@ -64,7 +64,7 @@ void _onKeyUp(Html.KeyboardEvent ev){
   final int eventKeyCode = ev.keyCode;
   final key = _keySettings[eventKeyCode];
 
-  if (key != null) {
+  if (Html.document.activeElement is! Html.InputElement && key != null) {
     if (key is JoypadKey) {
       if (_keyState[key] == true) {
         _keyState[key] = false;
