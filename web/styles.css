@@ -377,7 +377,7 @@ body {
     padding-top: 6px;
 }
 
-.gameboy-cartridge .bg-head-btn .text {
+.gameboy-cartridge .bg-head-btn > .text {
     color: black;
     overflow: hidden;
     font-size: 14px;
@@ -410,27 +410,84 @@ body {
 .cart-ram-bis,
 .cart-ss-bis {
     height: 49px;
-    padding-top: 12px;
+    padding-top: 13px;
     padding-left: 11px;
-    padding-right: 6px;
-    padding-bottom: 12px;
-	cursor: pointer;
+    padding-right: 14px;
+    cursor: pointer;
 }
 
 .cart-ss-bis {
-    background: url(images/gb_ss.png) 0 0px;
+    padding-top: 14px;
+    background: url(images/chip_sprites.png) -182px 0px;
     width: 86px;
 }
+
+.cart-ss-bis.over {
+    background: url(images/chip_sprites.png) -182px -49px;
+}
+
+
 .cart-ram-bis {
-    background: url(images/gb_ram.png) 0 0px;
+    background: url(images/chip_sprites.png) 0px 0px;
     width: 182px;
 }
 
-.cart-ram-bis div,
-.cart-ss-bis div {
-    color: grey;
+.cart-ram-bis.over {
+    background: url(images/chip_sprites.png) 0px -49px;
+}
+
+.cart-ram-bis > .text,
+.cart-ss-bis > .text {
+    color: rgba(255, 255, 255, 0.7);
+    /* background-color: red; */
+    /* mix-blend-mode: multiply; */
     white-space: nowrap;
+    text-align: center;
     overflow: hidden;
+    font-size: 13px;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.cart-ss-bis .text {
+    font-size: 11px;
+}
+
+.cart-ram-bis button,
+.cart-ss-bis button {
+    display: block;
+    overflow: hidden;
+    position: absolute;
+    width: 11px;
+    background-color: rgba(255, 0, 0, 0.0);
+    height: 18px;
+    left: 166px;
+    top: 13px;
+    border: 0px;
+}
+
+.cart-ss-bis button {
+    left: 71px;
+}
+
+.cart-ram-bis .list-group {
+    z-index: 100;
+    position: absolute;
+    width: 200px;
+    left: calc(166px + 11px);
+    top: calc(13px + 6px);
+}
+
+.cart-ss-bis .list-group {
+    z-index: 100;
+    position: absolute;
+    width: 200px;
+    left: calc(71px + 11px);
+    top: calc(13px + 6px);
+}
+
+.cart-ram-bis .list-group-item,
+.cart-ss-bis .list-group-item {
     font-size: 14px;
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
     font-weight: bold;

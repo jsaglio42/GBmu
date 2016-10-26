@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 15:05:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 14:38:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 19:53:58 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -94,6 +94,25 @@ class PlatformIndexedDb {
     return tra.completed;
   }
 
+  Async.Future<int> duplicate(Component c, int id) async {
+    Idb.Transaction tra;
+    var data;
+    int index;
+
+    tra = _db.transaction(c.toString(), 'readonly');
+    await tra.objectStore(c.toString())
+    .openCursor(key: id)
+    .take(1)
+    .forEach((Idb.CursorWithValue cur) {
+      data = cur.value;
+    });
+    await tra.completed;
+
+    tra = _db.transaction(c.toString(), 'readwrite');
+    index = await tra.objectStore(c.toString()).add(data);
+    return tra.completed.then((_) => index);
+  }
+
   // Can't open openKeyCursor because of dart lib implementation with webkit
   Async.Future<bool> contains(Component c, int id) async {
     Idb.Transaction tra;
@@ -101,7 +120,6 @@ class PlatformIndexedDb {
 
     // Ft.log('PlatformIDB', 'contains', [c, id]);
     tra = _db.transaction(c.toString(), 'readonly');
-
     await tra.objectStore(c.toString())
     .openCursor(key: id)
     .take(1)
@@ -109,6 +127,21 @@ class PlatformIndexedDb {
       found = true;
     });
     return tra.completed.then((_) => found);
+  }
+
+  Async.Future<Map<String, dynamic>> getRaw(Component c, int id) async {
+    Idb.Transaction tra;
+    var data;
+
+    // Ft.log('PlatformIDB', 'getRaw', [c, id]);
+    tra = _db.transaction(c.toString(), 'readonly');
+    await tra.objectStore(c.toString())
+    .openCursor(key: id)
+    .take(1)
+    .forEach((Idb.CursorWithValue cur) {
+      data = cur.value;
+    });
+    return tra.completed.then((_) => data);
   }
 
   // PRIVATE **************************************************************** **

@@ -6,13 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/07 11:42:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 20:11:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 19:47:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 library gbmu_data;
 
 import "dart:typed_data";
+import "dart:convert";
 import "package:ft/ft.dart" as Ft;
 
 import 'package:emulator/src/enums.dart';
@@ -20,8 +21,10 @@ import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/variants.dart' as V;
 import "package:emulator/src/hardware/headerdecoder.dart" as Headerdecoder;
 import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
+import 'package:emulator/src/gameboy.dart' as GameBoy;
 
 part 'package:emulator/src/hardware/file_repr.dart';
+part 'package:emulator/src/hardware/save_state.dart';
 
 /* Data Implementation ********************************************************/
 abstract class AData {
@@ -75,7 +78,7 @@ abstract class AWriteOperation implements AData {
 
 // Rom ********************************************************************** **
 class Rom extends AData
-  with AReadOperation, Headerdecoder.HeaderDecoder, FileReprData {
+  with AReadOperation, Headerdecoder.HeaderDecoder, FileRepr, FileReprData {
 
   // CONSTRUCTION *********************************************************** **
   // Only called once in DOM, when an external file is loaded
@@ -94,7 +97,6 @@ class Rom extends AData
 
   // FROM FILEREPRDATA ****************************************************** **
   V.Component get type => V.Rom.v;
-
   Map<String, dynamic> get terseData => <String, dynamic>{
     'ramSize': this.pullHeaderValue(RomHeaderField.RAM_Size),
     'globalChecksum': this.pullHeaderValue(RomHeaderField.Global_Checksum),
@@ -104,7 +106,7 @@ class Rom extends AData
 
 // Ram ********************************************************************** **
 class Ram extends AData
-  with AReadOperation, AWriteOperation, FileReprData
+  with AReadOperation, AWriteOperation, FileRepr, FileReprData
   , Ser.RecursivelySerializable
 {
 
@@ -139,13 +141,9 @@ class Ram extends AData
 
   // FROM FILEREPRDATA ****************************************************** **
   V.Component get type => V.Ram.v;
-
   Map<String, dynamic> get terseData => <String, dynamic>{
     'size': this.size,
   };
-
-  // Used by WorkerEmu to push data to indexedDb
-  Uint8List get rawData => _data;
 
   // FROM RecursivelySerializable ******************************************* **
   Iterable<Ser.RecursivelySerializable> get serSubdivisions {

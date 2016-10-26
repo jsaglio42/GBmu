@@ -6,28 +6,17 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 13:55:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 19:26:18 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 19:46:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import 'dart:typed_data';
-
-import "package:ft/ft.dart" as Ft;
-
-import 'package:emulator/src/enums.dart';
-import 'package:emulator/src/hardware/data.dart' as Data;
-import 'package:emulator/src/constants.dart';
-import 'package:emulator/src/variants.dart' as V;
-import 'package:emulator/src/gameboy.dart' as GameBoy;
-
-// TODO: Implement save states
+part of gbmu_data;
 
 // Save State *************************************************************** **
 class Ss extends Object
-  implements Data.FileRepr {
+  with FileRepr {
 
   // ATTRIBUTES ************************************************************* **
-  int _romGlobalChecksum;
   final String _fileName;
   final Map _data;
 
@@ -35,52 +24,43 @@ class Ss extends Object
   // Only called once in DOM, when an external file is loaded
   Ss.ofFile(String fileName, Uint8List data)
     : _fileName = fileName
-    , _data = null { //TODO: Ss.ofFile
-    _romGlobalChecksum = 42;
+    , _data = JSON.decode(ASCII.decode(data)) {
     Ft.log('Ss', 'ctor.ofFile', [this.fileName, this.terseData]);
   }
 
   // Only called from Emulator, on emulation start request, with data from Idb
   Ss.unserialize(Map<String, dynamic> serialization)
-    : _fileName = serialization['fileName'] as String
+    : _fileName = serialization['fileName']
     , _data = serialization['data'] {
-    _romGlobalChecksum = serialization['romGlobalChecksum'] as int;
     Ft.log('Ss', 'ctor.unserialize', [this.fileName, this.terseData]);
   }
 
   // Only called from Emulator, on gameboy snapshot required
   Ss.ofGameBoy(GameBoy.GameBoy gb)
-    : _fileName = Data.FileRepr.ssNameOfRomName(gb.c.rom.fileName)
+    : _fileName = FileRepr.ssNameOfRomName(gb.c.rom.fileName)
     , _data = gb.recSerialize() {
-    _romGlobalChecksum =
+    _data['__romGlobalChecksum'] =
       gb.c.rom.pullHeaderValue(RomHeaderField.Global_Checksum);
     Ft.log('Ss', 'ctor.ofGameBoy', [this.fileName, this.terseData]);
   }
 
   // Only called from DOM, when an extraction is requested
   Ss.emptyDetail(String romName, int romGlobalChecksum)
-    : _fileName = Data.FileRepr.ssNameOfRomName(romName)
-    , _data = null {
-    _romGlobalChecksum = romGlobalChecksum;
+    : _fileName = FileRepr.ssNameOfRomName(romName)
+    , _data = {'__romGlobalChecksum': romGlobalChecksum} {
     Ft.log('Ss', 'ctor.emptyDetail', [this.fileName, this.terseData]);
   }
 
   // FROM FILEREPR ********************************************************** **
   V.Component get type => V.Ss.v;
+  String get fileName => _fileName;
   Map<String, dynamic> get terseData => <String, dynamic>{
-    'romGlobalChecksum': 42,
+    'romGlobalChecksum': this.romGlobalChecksum,
   };
 
-  String get fileName => _fileName;
-  dynamic serialize() =>
-    <String, dynamic>{
-      'romGlobalChecksum': _romGlobalChecksum,
-      'fileName': _fileName,
-      'data': _data,
-    };
 
   // PUBLIC ***************************************************************** **
-  int get romGlobalChecksum => _romGlobalChecksum;
+  int get romGlobalChecksum => _data['__romGlobalChecksum'];
 
-  Map get rawData => _data;
+  dynamic get rawData => _data;
 }

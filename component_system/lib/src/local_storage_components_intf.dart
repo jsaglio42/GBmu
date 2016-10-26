@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 17:59:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 19:12:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -49,6 +49,21 @@ abstract class LsEntry {
       default: throw new Exception('Bad JSON $key');
     }
   }
+
+  factory LsEntry.duplicateUnbound(LsEntry e, int uid, int idbid) {
+    final map = new Map<String, dynamic>.from(e._data)
+      ..remove('slot')
+      ..remove('romUid');
+
+    map['idbid'] = idbid;
+    if (e.type is Rom)
+      return new LsRom._unsafe(uid, Alive.v, map);
+    else if (e.type is Ram)
+      return new LsRam._unsafe(uid, Alive.v, map);
+    else
+      return new LsSs._unsafe(uid, Alive.v, map);
+  }
+
 
   LsEntry._unsafe(this.uid, this.type, this._life, this._data);
 

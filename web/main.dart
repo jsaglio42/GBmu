@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 17:03:01 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 15:36:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,14 +45,6 @@ run() async
 
   var emu = await emuFut;
   Ft.log('main.dart', 'run#emuCreated');
-
-  // Html.querySelector('#ejectbut')
-  // .onClick.listen((_) {
-  //       Ft.log('main.dart', 'ejectbut#onClick');
-  //       emu.send('Debug', <String, dynamic>{
-  //         'action': 'eject',
-  //       });
-  //     });
 
   Debregisters.init(emu);
   Debmregisters.init(emu);

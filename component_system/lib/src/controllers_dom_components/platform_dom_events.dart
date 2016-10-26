@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:46:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 10:46:34 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 19:19:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -77,6 +77,7 @@ class PlatformDomEvents {
   void dropLeft(HtmlDropZone that) => _dropLeft.add(that);
   Async.Stream<HtmlDropZone> get onDropLeft => _dropLeft.stream;
 
+
   final Async.StreamController<bool> _fileDrag =
     new Async.StreamController<bool>.broadcast();
   void fileDrag(bool that) => _fileDrag.add(that);
@@ -91,5 +92,41 @@ class PlatformDomEvents {
     new Async.StreamController<List<Html.File>>.broadcast();
   void cartSystemFilesDrop(List<Html.File> that) => _cartSystemFilesDrop.add(that);
   Async.Stream<List<Html.File>> get onCartSystemFilesDrop => _cartSystemFilesDrop.stream;
+
+
+  final Async.StreamController<DomChip> _chipDropDownClick =
+    new Async.StreamController<DomChip>.broadcast();
+  void chipDropDownClick(DomChip that) => _chipDropDownClick.add(that);
+  Async.Stream<DomChip> get onChipDropDownClick => _chipDropDownClick.stream;
+
+  final Async.StreamController<DomChip> _requestInstallSaveState =
+    new Async.StreamController<DomChip>.broadcast();
+  void requestInstallSaveState(DomChip that) => _requestInstallSaveState.add(that);
+  Async.Stream<DomChip> get onRequestInstallSaveState => _requestInstallSaveState.stream;
+
+  final Async.StreamController<DomChip> _requestExtractSaveState =
+    new Async.StreamController<DomChip>.broadcast();
+  void requestExtractSaveState(DomChip that) => _requestExtractSaveState.add(that);
+  Async.Stream<DomChip> get onRequestExtractSaveState => _requestExtractSaveState.stream;
+
+  final Async.StreamController<DomChip> _requestSaveToFile =
+    new Async.StreamController<DomChip>.broadcast();
+  void requestSaveToFile(DomChip that) => _requestSaveToFile.add(that);
+  Async.Stream<DomChip> get onRequestSaveToFile => _requestSaveToFile.stream;
+
+  final Async.StreamController<DomChip> _requestDetach =
+    new Async.StreamController<DomChip>.broadcast();
+  void requestDetach(DomChip that) => _requestDetach.add(that);
+  Async.Stream<DomChip> get onRequestDetach => _requestDetach.stream;
+
+  final Async.StreamController<DomChip> _requestDuplicate =
+    new Async.StreamController<DomChip>.broadcast();
+  void requestDuplicate(DomChip that) => _requestDuplicate.add(that);
+  Async.Stream<DomChip> get onRequestDuplicate => _requestDuplicate.stream;
+
+  final Async.StreamController<DomChip> _requestDelete =
+    new Async.StreamController<DomChip>.broadcast();
+  void requestDelete(DomChip that) => _requestDelete.add(that);
+  Async.Stream<DomChip> get onRequestDelete => _requestDelete.stream;
 
 }

@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/25 12:32:47 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/26 17:10:08 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -276,7 +276,10 @@ emulator/lib/src/mixins/videorammanager.dart
   panes: ['e $DC/html_{dropzone,draggable}*.dart $DC/chip_socket_container.dart']
 - window_index: 109
   window_name: html elements
-  panes: ['e $DC/html_*{cart,simple}*.dart']
+  panes: ['e $DC/html_*{cart,chip,simple}*.dart']
+
+- window_index: 113
+  panes: ['e $CDC/handler_chip_dropdown_panels.dart']
 
 # CCS
 - window_index: 141

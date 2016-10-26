@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 17:55:31 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 20:28:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,27 +43,19 @@ class DomCart extends DomComponent
 }
 
 class DomChip extends DomComponent
-  with HtmlElementSimple
+  with HtmlElementChip
   , HtmlDraggable {
 
   DomChip(PlatformDomEvents pde, LsChip data)
     : super(pde, data) {
     int hCenter;
-    final Html.DivElement elt = new Html.DivElement();
-    final Html.DivElement txt = new Html.DivElement();
 
     // Ft.log('DomChip', 'constructor', [pde, data]);
-    txt.text = data.fileName;
-    elt.nodes = [txt];
-    if (data.type is Ram) {
+    if (data.type is Ram)
       hCenter = 92;
-      elt.classes.addAll(["cart-ram-bis", "ui-widget-content"]);
-    }
-    else {
+    else
       hCenter = 44;
-      elt.classes.addAll(["cart-ss-bis", "ui-widget-content"]);
-    }
-    this.hes_init(elt);
+    this.hech_init();
     this.hdr_init(hCenter, 26, 20, 100);
   }
 
@@ -90,7 +82,6 @@ class DomChipSocket extends DomElement
   }
 
 }
-
 
 // TOP LEVEL BANKS ********************************************************** **
 class DomGameBoySocket extends DomElement

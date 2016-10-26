@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 14:18:20 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 18:00:13 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 19:54:11 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -102,6 +102,10 @@ class PlatformComponentStorage {
     .where((LsChip c) => c.isBound && c.romUid.v == dst.uid)
     .isNotEmpty;
 
+  Async.Future<dynamic> getRawData(LsEntry e) async =>
+    (await _pidb.getRaw(e.type, e.idbid))['data'];
+
+  // CREATION UNBOUND *********************************** **
   Async.Future<LsRom> newRom(Emulator.Rom r) async {
     Ft.log('PlatformCS', 'newRom', [r]);
 
@@ -124,6 +128,30 @@ class PlatformComponentStorage {
     return e;
   }
 
+  Async.Future<LsSs> newSs(Emulator.Ss ss) async {
+    Ft.log('PlatformCS', 'newSs', [ss]);
+
+    final int uid = _makeUid();
+    final int idbid = await _pidb.add(Ss.v, ss);
+    final int rgcs = ss.romGlobalChecksum;
+    final LsSs e = new LsSs.ofSs(uid, idbid, ss);
+
+    _pls.add(e);
+    return e;
+  }
+
+  Async.Future<LsEntry> duplicate(LsEntry ref) async {
+    Ft.log('PlatformCS', 'duplicate', [ref]);
+
+    final int uid = _makeUid();
+    final int idbid = await _pidb.duplicate(ref.type, ref.idbid);
+    final LsEntry e = new LsEntry.duplicateUnbound(ref, uid, idbid);
+
+    _pls.add(e);
+    return e;
+  }
+
+  // CREATION BOUND ************************************* **
   Async.Future<LsRam> newRamBound(Emulator.Ram r, LsRom rom) async {
     Ft.log('PlatformCS', 'newRamBound', [r]);
 
@@ -148,18 +176,7 @@ class PlatformComponentStorage {
     return e;
   }
 
-  Async.Future<LsSs> newSs(Emulator.Ss ss) async {
-    Ft.log('PlatformCS', 'newSs', [ss]);
-
-    final int uid = _makeUid();
-    final int idbid = await _pidb.add(Ss.v, ss);
-    final int rgcs = ss.romGlobalChecksum;
-    final LsSs e = new LsSs.ofSs(uid, idbid, ss);
-
-    _pls.add(e);
-    return e;
-  }
-
+  // UPDATES ******************************************** **
   void bindRam(LsRam c, LsRom dst) {
     Ft.log('PlatformCS', 'bindRam', [c, dst]);
     if (_entries[c.uid] == null) {
@@ -227,6 +244,7 @@ class PlatformComponentStorage {
     _pls.update(new LsChip.unbind(c));
   }
 
+  // DELETIONS ****************************************** **
   Async.Future delete(LsEntry e) async {
     Ft.log('PlatformCS', 'delete', [e]);
     if (_entries[e.uid] == null) {

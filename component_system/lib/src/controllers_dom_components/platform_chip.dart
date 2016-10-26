@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 18:42:52 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 20:34:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -51,6 +51,12 @@ class PlatformChip extends Object with _Actions implements _Super
       .forEach(_onDropReceived);
     _pdcs.btnExtractRam.onClick
       .forEach(_onExtractRamClick);
+    _pde.onRequestInstallSaveState.forEach(_onRequestInstallSaveState);
+    _pde.onRequestExtractSaveState.forEach(_onRequestExtractSaveState);
+    _pde.onRequestSaveToFile.forEach(_onRequestSaveToFile);
+    _pde.onRequestDetach.forEach(_onRequestDetach);
+    _pde.onRequestDuplicate.forEach(_onRequestDuplicate);
+    _pde.onRequestDelete.forEach(_onRequestDelete);
   }
 
   // PUBLIC ***************************************************************** **
@@ -142,6 +148,46 @@ class PlatformChip extends Object with _Actions implements _Super
     final LsRam unsafeRamData = await _pcs.newRamBound(ram, romData);
 
     _pec.requestRamExtraction(unsafeRamData.idbid);
+  }
+
+  void _onRequestInstallSaveState(DomChip c) {
+    Ft.log('PlatformChip', '_onRequestInstallSaveState', [c]);
+    _installSs(c.data as LsSs);
+  }
+
+  void _onRequestExtractSaveState(DomChip c) {
+    Ft.log('PlatformChip', '_onRequestExtractSaveState', [c]);
+    _extractSs(c.data as LsSs);
+  }
+
+  Async.Future _onRequestSaveToFile(DomChip c) async {
+    final Html.AnchorElement a = new Html.AnchorElement();
+    var data;
+
+    Ft.log('PlatformChip', '_onRequestSaveToFile', [c]);
+    if (c.data.type is Ram)
+      data = await _pcs.getRawData(c.data);
+    else
+      data = JSON.encode(await _pcs.getRawData(c.data));
+    a.href = Html.Url.createObjectUrl(
+        new Html.Blob([data], 'application/octet-stream'));
+    a.download = c.data.fileName;
+    a.click();
+  }
+
+  void _onRequestDetach(DomChip c) {
+    Ft.log('PlatformChip', '_onRequestDetach', [c]);
+    _pcs.unbind(c.data);
+  }
+
+  void _onRequestDuplicate(DomChip c) {
+    Ft.log('PlatformChip', '_onRequestDuplicate', [c]);
+    _pcs.duplicate(c.data);
+  }
+
+  void _onRequestDelete(DomChip c) {
+    Ft.log('PlatformChip', '_onRequestDelete', [c]);
+    _pcs.delete(c.data);
   }
 
   // PRIVATE **************************************************************** **

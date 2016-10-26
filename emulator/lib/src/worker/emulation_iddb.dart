@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 18:52:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 20:37:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,6 @@ import 'package:emulator/src/worker/worker.dart' as Worker;
 import 'package:emulator/src/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
-import 'package:emulator/src/hardware/save_state.dart' as Ss;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
 
@@ -77,7 +76,7 @@ abstract class EmulationIddb implements Worker.AWorker {
   Async.Future ei_extractSs(EventIdb ev) async {
     assert(this.gbMode != V.Absent, "_onExtractSsReq with no gameboy");
 
-    final Ss.Ss c = new Ss.Ss.ofGameBoy(this.gbOpt);
+    final Data.Ss c = new Data.Ss.ofGameBoy(this.gbOpt);
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
 
     await _setDataOfField(idb, ev.store, ev.key, c.serialize()['data']);
@@ -87,11 +86,10 @@ abstract class EmulationIddb implements Worker.AWorker {
     assert(this.gbMode != V.Absent, "_onInstallSsReq with no gameboy");
 
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
-    final Ss.Ss ss = new Ss.Ss.unserialize(
+    final Data.Ss ss = new Data.Ss.unserialize(
         await _fieldOfKeys(idb, ev.store, ev.key));
 
     this.gbOpt.recUnserialize(ss.rawData);
-    //TODO: Install ss into GameBoy
   }
 
   // PRIVATE **************************************************************** **
