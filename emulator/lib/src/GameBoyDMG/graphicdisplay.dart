@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 19:47:28 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 23:11:44 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -90,7 +90,7 @@ abstract class GraphicDisplay
       final int unsafeY = y - (s.posY - 16);
       if (unsafeY < 0 || unsafeY >= sizeY)
         continue ;
-      final int tileID = s.adjustedTileID(sizeY, unsafeY);
+      final int tileID = s.adjustedTileID(sizeY, unsafeY, s.info.flipY);
       final Tile tile = this.videoram.getTile(tileID, 0, 1);
 
       final int relativeY = unsafeY % 8;
