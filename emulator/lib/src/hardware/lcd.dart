@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/26 20:06:54 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 20:49:02 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -37,6 +37,8 @@ class LCD extends Ser.RecursivelySerializable {
   /* API **********************************************************************/
   void reset() {
     Ft.fillBuffer(this.screen, 0x00);
+    Ft.fillBuffer(this.screenBuffer, 0x00);
+    this.resetDrawingInfo();
   }
 
   void resetDrawingInfo() {
