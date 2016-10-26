@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 14:50:07 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 19:47:28 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -41,7 +41,7 @@ abstract class GraphicDisplay
     Ft.fillBuffer(this.lcd.bgColorIDs, null);
     Ft.fillBuffer(this.lcd.spriteColors, null);
 
-    final int y = this.lcd.lineNo;
+    final int y = this.memr.LY;
     for (int x = 0; x < LCD_WIDTH; ++x)
     {
       this.lcd.bgColorIDs[x] = _useWindowColorID(x, y)

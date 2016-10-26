@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 11:15:35 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 19:51:14 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -67,6 +67,7 @@ abstract class GraphicStateMachine
   void _VRAM_routine() {
     if (this.memr.rSTAT.counter >= CLOCK_PER_VRAM_ACCESS)
     {
+      this.lcd.shouldDrawLine = true;
       this.memr.rSTAT.counter -= CLOCK_PER_VRAM_ACCESS;
       this.memr.rSTAT.mode = GraphicMode.HBLANK;
       if (this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.HBLANK))
@@ -79,7 +80,6 @@ abstract class GraphicStateMachine
     if (this.memr.rSTAT.counter >= CLOCK_PER_HBLANK)
     {
       this.memr.rSTAT.counter -= CLOCK_PER_HBLANK;
-      this.lcd.requestDrawLine(this.memr.LY);
       setLYRegister(this.memr.LY + 1);
       if (this.memr.LY < VBLANK_THRESHOLD)
       {
