@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 17:58:19 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 19:08:00 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import "package:emulator/src/hardware/hardware.dart" as Hardware;
 
 abstract class InternalRamManager
   implements Hardware.Hardware {
+
   /* API ***********************************************************************/
   int ir_pull8(int addr) {
     assert(addr & ~0x1FFF == 0, 'invalid addr $addr');

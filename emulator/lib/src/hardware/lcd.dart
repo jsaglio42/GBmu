@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/24 17:24:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 09:43:49 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,6 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
 class LCD extends Ser.RecursivelySerializable {
-// class LCD {
 
   /* Screen Double-buffer */
   List<int> screen = new List<int>(LCD_SIZE);

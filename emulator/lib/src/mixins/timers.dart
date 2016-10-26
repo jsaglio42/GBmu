@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 14:52:19 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 09:41:55 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,12 +18,11 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
+import "package:emulator/src/mixins/shared.dart" as Shared;
 
 abstract class Timers
   implements Hardware.Hardware
-  , Interrupts.Interrupts
-{
+  , Shared.Interrupts {
 
   /* API **********************************************************************/
   void updateTimers(int nbClock) {

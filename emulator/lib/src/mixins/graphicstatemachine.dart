@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:05:42 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 11:15:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,8 +19,7 @@ import "package:emulator/src/constants.dart";
 import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
-import "package:emulator/src/mixins/trapaccessors.dart" as Trap;
+import "package:emulator/src/mixins/shared.dart" as Shared;
 
 enum GraphicMode {
   HBLANK,
@@ -38,8 +37,8 @@ enum GraphicInterrupt {
 
 abstract class GraphicStateMachine
   implements Hardware.Hardware
-  , Interrupts.Interrupts
-  , Trap.TTailRam {
+  , Shared.Interrupts
+  , Shared.TailRam {
 
   /* API **********************************************************************/
   void updateGraphicMode(int nbClock) {
@@ -81,8 +80,7 @@ abstract class GraphicStateMachine
     {
       this.memr.rSTAT.counter -= CLOCK_PER_HBLANK;
       this.lcd.requestDrawLine(this.memr.LY);
-      this.memr.LY = this.memr.LY + 1;
-      this.updateCoincidence(this.memr.LYC == this.memr.LY);
+      setLYRegister(this.memr.LY + 1);
       if (this.memr.LY < VBLANK_THRESHOLD)
       {
         this.memr.rSTAT.mode = GraphicMode.OAM_ACCESS;
@@ -105,19 +103,15 @@ abstract class GraphicStateMachine
     {
       this.memr.rSTAT.counter -= CLOCK_PER_LINE;
       final int incLY = this.memr.LY + 1;
-      if (incLY >= FRAME_THRESHOLD)
+      if (incLY < FRAME_THRESHOLD)
+        this.setLYRegister(incLY);
+      else
       {
         this.lcd.shouldRefreshScreen = true;
-        this.memr.LY = 0;
-        this.updateCoincidence(this.memr.LYC == this.memr.LY);
+        this.setLYRegister(0);
         this.memr.rSTAT.mode = GraphicMode.OAM_ACCESS;
         if (this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.OAM_ACCESS))
           this.requestInterrupt(InterruptType.LCDStat);
-      }
-      else
-      {
-        this.memr.LY = incLY;
-        this.updateCoincidence(this.memr.LYC == this.memr.LY);
       }
     }
   }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 13:55:48 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 09:41:10 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,7 +15,7 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/src/enums.dart';
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
+import "package:emulator/src/mixins/shared.dart" as Shared;
 
 enum JoypadKey {
   Right,
@@ -30,8 +30,7 @@ enum JoypadKey {
 
 abstract class Joypad
   implements Hardware.Hardware
-  , Interrupts.Interrupts
-{
+  , Shared.Interrupts {
 
     void keyPress(JoypadKey k) {
       if (this.memr.rP1.getKey(k) == 0)

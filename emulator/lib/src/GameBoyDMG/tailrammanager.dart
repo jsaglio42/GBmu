@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 17:58:25 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 09:45:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,13 +18,11 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/hardware/mem_registers_info.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/mmu.dart" as Mmu;
-import "package:emulator/src/mixins/interrupts.dart" as Interrupt;
+import "package:emulator/src/mixins/shared.dart" as Shared;
 
 abstract class TailRamManager
   implements Hardware.Hardware
-  , Mmu.Mmu
-  , Interrupt.Interrupts {
+  , Shared.TailRam {
 
   /* Getters ******************************************************************/
   int tr_pull8(int memAddr) {
@@ -72,20 +70,11 @@ abstract class TailRamManager
       case (addr_TMA): this.memr.TMA = v; break ;
       case (addr_TAC): this.memr.TAC = v; break ;
       /* Graphics */
-      case (addr_LY):
-        this.memr.LY = 0;
-        this.updateCoincidence(this.memr.LYC == this.memr.LY);
-        break ;
-      case (addr_LYC):
-        this.memr.LYC = v;
-        this.updateCoincidence(this.memr.LYC == this.memr.LY);
-        break ;
-      case (addr_STAT):
-        this.memr.STAT = v;
-        this.updateCoincidence(this.memr.LYC == this.memr.LY);
-        break;
-      case (addr_DMA): _execDMA(v); break ;
-      case (addr_LCDC): _setLCDCRegister(v); break ;
+      case (addr_LCDC): this.setLCDCRegister(v); break ;
+      case (addr_LYC): this.setLYCRegister(v); break ;
+      case (addr_LY): this.setLYRegister(0); break ;
+      case (addr_STAT): this.setSTATRegister(v); break ;
+      case (addr_DMA): this.setDMARegister(v); break ;
       /* Interrupts */
       case (addr_IF): this.memr.IF = (v & 0x1F); break ;
       case (addr_IE): this.memr.IE = (v & 0x1F); break ;
@@ -102,42 +91,6 @@ abstract class TailRamManager
       case (addr_WX): this.memr.WX = v; break ;
       default: this.tailram.push8(memAddr, v); break ;
     }
-  }
-
-  /* Could be move elsewhere **************************************************/
-  void _setLCDCRegister(int v) {
-    final bool enabling = ((v >> 7) & 0x1 == 1);
-    if (!this.memr.rLCDC.isLCDEnabled && enabling)
-    {
-      this.memr.rSTAT.counter = 0;
-      this.memr.rSTAT.mode = GraphicMode.OAM_ACCESS;
-      this.memr.LY = 0;
-      this.updateCoincidence(this.memr.LY == this.memr.LYC);
-    }
-    this.memr.LCDC = v;
-    return ;
-  }
-
-  void _execDMA(int v) {
-    int memAddr = v * 0x100;
-
-    for (int i = 0 ; i < 40; ++i) {
-      this.oam[i].posY = this.pull8(memAddr + 0);
-      this.oam[i].posX = this.pull8(memAddr + 1);
-      this.oam[i].tileID = this.pull8(memAddr + 2);
-      this.oam[i].info.value = this.pull8(memAddr + 3);
-      memAddr += 4;
-    }
-    this.memr.DMA = v;
-    return ;
-  }
-
-  void updateCoincidence(bool coincidence) {
-    this.memr.rSTAT.coincidence = coincidence;
-    if (coincidence
-      && this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.COINCIDENCE))
-      this.requestInterrupt(InterruptType.LCDStat);
-    return ;
   }
 
 }

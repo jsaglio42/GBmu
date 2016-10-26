@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/23 14:53:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 18:36:57 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 11:16:03 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,13 +19,13 @@ import 'package:emulator/src/constants.dart';
 import 'package:emulator/src/globals.dart';
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/trapaccessors.dart" as Trap;
+import "package:emulator/src/mixins/shared.dart" as Shared;
 
 abstract class Mmu
   implements Hardware.Hardware
-  , Trap.TVideoRam
-  , Trap.TInternalRam
-  , Trap.TTailRam {
+  , Shared.VideoRam
+  , Shared.InternalRam
+  , Shared.TailRam {
 
   /* 8-bits *******************************************************************/
   int pull8(int memAddr)
@@ -132,61 +132,61 @@ abstract class Mmu
 
 }
 
-  // int pull8(int memAddr)
-  // {
-  //   assert(memAddr & ~0xFFFF == 0, 'push8: invalid memAddr $memAddr');
-  //   switch (memAddr & 0xF000)
-  //   {
-  //     /* Cartridge ROM */
-  //     case (0x0000) : case (0x1000) : case (0x2000) : case (0x3000) :
-  //     case (0x4000) : case (0x5000) : case (0x6000) : case (0x7000) :
-  //       return this.c.pull8_Rom(memAddr & 0x7FFF);
+// int pull8(int memAddr)
+// {
+//   assert(memAddr & ~0xFFFF == 0, 'push8: invalid memAddr $memAddr');
+//   switch (memAddr & 0xF000)
+//   {
+//     /* Cartridge ROM */
+//     case (0x0000) : case (0x1000) : case (0x2000) : case (0x3000) :
+//     case (0x4000) : case (0x5000) : case (0x6000) : case (0x7000) :
+//       return this.c.pull8_Rom(memAddr & 0x7FFF);
 
-  //     /* Video RAM */
-  //     case (0x8000) : case (0x9000) :
-  //       return this.vr_pull8(memAddr & 0x1FFF);
+//     /* Video RAM */
+//     case (0x8000) : case (0x9000) :
+//       return this.vr_pull8(memAddr & 0x1FFF);
 
-  //     /* Cartridge RAM */
-  //     case (0xA000) : case (0xB000) :
-  //       return this.c.pull8_Ram(memAddr & 0x1FFF);
+//     /* Cartridge RAM */
+//     case (0xA000) : case (0xB000) :
+//       return this.c.pull8_Ram(memAddr & 0x1FFF);
 
-  //     /* Internal RAM & Echo Ram*/
-  //     case (0xC000) : case (0xD000) :
-  //       return this.ir_pull8(memAddr & 0x1FFF);
+//     /* Internal RAM & Echo Ram*/
+//     case (0xC000) : case (0xD000) :
+//       return this.ir_pull8(memAddr & 0x1FFF);
 
-  //     /* Echo RAM */
-  //     case (0xE000) :
-  //       return this.ir_pull8(memAddr & 0x1FFF);
+//     /* Echo RAM */
+//     case (0xE000) :
+//       return this.ir_pull8(memAddr & 0x1FFF);
 
-  //     case (0xF000) : switch (memAddr & 0x0F00)
-  //     {
-  //       /* Echo RAM */
-  //       case (0x000) : case (0x100) : case (0x200) : case (0x300) :
-  //       case (0x400) : case (0x500) : case (0x600) : case (0x700) :
-  //       case (0x800) : case (0x900) : case (0xA00) : case (0xB00) :
-  //       case (0xC00) : case (0xD00) :
-  //         return this.ir_pull8(memAddr & 0x1FFF);
+//     case (0xF000) : switch (memAddr & 0x0F00)
+//     {
+//       /* Echo RAM */
+//       case (0x000) : case (0x100) : case (0x200) : case (0x300) :
+//       case (0x400) : case (0x500) : case (0x600) : case (0x700) :
+//       case (0x800) : case (0x900) : case (0xA00) : case (0xB00) :
+//       case (0xC00) : case (0xD00) :
+//         return this.ir_pull8(memAddr & 0x1FFF);
 
-  //       case (0xE00) : switch (memAddr & 0x00F0)
-  //       {
-  //         /* OAM */
-  //         case (0x00) : case (0x10) : case (0x20) : case (0x30) : 
-  //         case (0x40) : case (0x50) : case (0x60) : case (0x70) : 
-  //         case (0x80) : case (0x90) :
-  //         return this.oam.pull8(memAddr & 0x00FF);
+//       case (0xE00) : switch (memAddr & 0x00F0)
+//       {
+//         /* OAM */
+//         case (0x00) : case (0x10) : case (0x20) : case (0x30) :
+//         case (0x40) : case (0x50) : case (0x60) : case (0x70) :
+//         case (0x80) : case (0x90) :
+//         return this.oam.pull8(memAddr & 0x00FF);
 
-  //         /* Forbidden */
-  //         default : 
-  //           throw new Exception('MMU: Forbidden $memAddr');
-  //       }
+//         /* Forbidden */
+//         default :
+//           throw new Exception('MMU: Forbidden $memAddr');
+//       }
 
-  //       /* Tail Ram */
-  //       default :
-  //         return this.tr_pull8(memAddr);
-  //     }
+//       /* Tail Ram */
+//       default :
+//         return this.tr_pull8(memAddr);
+//     }
 
-  //   }
-  // }
+//   }
+// }
 
 
 
@@ -229,13 +229,13 @@ abstract class Mmu
 //       case (0xE00) : switch (memAddr & 0x00F0)
 //       {
 //         /* OAM */
-//         case (0x00) : case (0x10) : case (0x20) : case (0x30) : 
-//         case (0x40) : case (0x50) : case (0x60) : case (0x70) : 
+//         case (0x00) : case (0x10) : case (0x20) : case (0x30) :
+//         case (0x40) : case (0x50) : case (0x60) : case (0x70) :
 //         case (0x80) : case (0x90) :
 //         this.oam.push8(memAddr & 0x00FF, v); return ;
 
 //         /* Forbidden */
-//         default : 
+//         default :
 //           return; //throw new Exception('MMU: Forbidden $memAddr');
 //       }
 
