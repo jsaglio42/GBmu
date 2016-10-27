@@ -6,7 +6,7 @@
 #    By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/09/30 13:47:38 by ngoguey           #+#    #+#              #
-#    Updated: 2016/10/27 15:23:24 by ngoguey          ###   ########.fr        #
+#    Updated: 2016/10/27 15:25:26 by ngoguey          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ environment:
   CCS: ./component_system/lib/src/controllers_component_storage
   DC: ./component_system/lib/src/dom_components
   CDC: ./component_system/lib/src/controllers_dom_components
+
 
 windows:
 - window_index: '998'
