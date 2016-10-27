@@ -4,10 +4,9 @@
 /* ************************************************************************** */
 
 body {
-    padding: 5px;
     background: url('images/seamless_rough_plastic_texture_nes_by_blueamnesiac-d4mxqci.png') repeat;
     color: white;
-    padding-top: 50px;
+    padding-top: 51px;
 }
 
 [class*="col-"] {
@@ -38,46 +37,58 @@ body {
 /* PANELS GLOBAL ************************************************************ */
 /* ************************************************************************** */
 
-#debContainer, #optContainer, #cartsContainer {
+#container-main {
+    padding: 0 1px;
+    /* text-align: center; */
 }
 
-#debBody, #optBody, #cartsBody {
-    background-color: rgba(0, 71, 171, 0.2);
+#container-main > .closable {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgba(0, 71, 171, 0.25);
+    max-width: 1100px;
+    /* border-width: 0px 0px 1px 0px; */
+    /* border-radius: 5px; */
+}
+
+#row-option {
     border: 1px solid black;
-    border-radius: 6px;
+    border-width: 0px 0px 1px 0px;
+}
+#row-cartsystem, #row-debugger {
+    border: 1px solid black;
+    border-width: 1px 0px 0px 0px;
 }
 
-#cartsContainer {
+/* #container-main > .closable:last-child { */
+/* border-bottom: none; */
+/* } */
 
-    text-align: left;
+
+@media only screen and (min-width: 1100px) {
+    #container-main > .closable {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
 }
 
-#cartsBody {
-    /* float: left; */
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 20px;
-    display: inline-block;
-    /* margin-left:0; */
-    /* margin-right:0; */
-    /* margin: auto; */
+#container-main > div {
+    margin: 0;
+    margin-top: 1px;
 }
 
-#cartsBody.active {
-    background-color: rgba(0, 200, 0, 0.4);
-}
+/* #cartsBody.active { */
+/* background-color: rgba(0, 200, 0, 0.4); */
+/* } */
 
-#cartsBody.hover {
-    background-color: rgba(0, 200, 0, 0.75);
-}
+/* #cartsBody.hover { */
+/* background-color: rgba(0, 200, 0, 0.75); */
+/* } */
 
 /* ************************************************************************** */
 /* OPTIONS PANEL ************************************************************ */
 /* ************************************************************************** */
 
-#optBody > div {
-    padding: 0 5px;
-}
 
 /* SLIDERS ****************************************************************** */
 /* MY CLASSES ********************************* */
@@ -155,27 +166,27 @@ body {
 
 /* DEB - BODY *************************************************************** */
 
-#debBody > div {
+#row-debugger > div {
 }
 
-#debBody > div:last-child {
+#row-debugger > div:last-child {
 }
 
-#debBody td {
+#row-debugger td {
     font-size: 12px;
     color: #005B79;
 }
 
-#debBody td .debTextHighlight {
+#row-debugger td .debTextHighlight {
     color: #FF1E00;
     background-color: red;
 }
 
-#debBody h4 {
+#row-debugger h4 {
     color: GhostWhite;
 }
 
-#debBody th
+#row-debugger th
 {
     background-color: rgba(81, 144, 165, 1.0); /* strong blue */
 }
@@ -291,12 +302,39 @@ body {
 /* COMPONENT SYSTEM ********************************************************* */
 /* ************************************************************************** */
 
+#row-cartsystem {
+    /* text-align: left; */
+    /* float: left; */
+    /* padding-left: 20px; */
+    /* padding-right: 20px; */
+    padding-bottom: 20px;
+    text-align: center;
+    /* width: 100%; */
+
+    /* display: inline-block; */
+    /* margin-left:0; */
+    /* margin-right:0; */
+    /* margin: auto; */
+}
+
+#row-cartsystem > .col {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#row-cartsystem .button-group {
+    text-align: left;
+    /* align-content: left; */
+    /* display: inline-block; */
+    /* vertical-align: top; */
+}
+
 /* GAMEBOY CART SLOT ******************************************************** */
 #gb-slot {
     background-color: rgba(155, 216, 235, 0.85);
     padding: 7px;
-    width: 265px; /* 251 + padding * 2 */
-    min-height: 143px; /* 287 / 2 */
+    width: calc(251px + 7px * 2); /* 251 + padding * 2 */
+    min-height: calc(287px / 2); /* 287 / 2 */
 }
 
 #gb-slot.gameboysocket-active {
@@ -356,6 +394,7 @@ body {
 
 /* CARTRIDGE **************************************************************** */
 .gameboy-cartridge {
+    margin: 0;
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
 }
@@ -563,8 +602,13 @@ body {
 
 footer {
     border: 1px solid black;
-    border-radius: 6px;
+    /* border-radius: 3px; */
     height: 20px;
     text-align: center;
-    background-color: rgba(0, 71, 171, 0.2);
+    background-color: #101010;
+    /* rgba(0, 31, 71, 0.20); */
+}
+
+footer a {
+    color: #9d9d9d;
 }

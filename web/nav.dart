@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 19:30:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 17:00:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,23 +82,23 @@ List<_Panel> _makePanels(Emulator.Emulator emu)
   final List aLst = Html.querySelectorAll('.navbar .nav > li > a');
   final List<_Panel> l = [];
 
-  l.add(new _Panel(aLst[3], Html.querySelector('#debBody'),
+  l.add(new _Panel(aLst[3], Html.querySelector('#row-debugger'),
           Deb.onOpen, Deb.onClose));
-  l.add(new _Panel(aLst[1], Html.querySelector('#optBody'),
+  l.add(new _Panel(aLst[1], Html.querySelector('#row-option'),
           Opt.onOpen, Opt.onClose));
-  l.add(new _Panel(aLst[0], Html.querySelector('#cartsContainer'),
+  l.add(new _Panel(aLst[0], Html.querySelector('#row-cartsystem'),
           (){
-      Html.querySelector('#canvasContainer')
-        .classes
-        ..add('col-md-8')
-        ..add('col-lg-9')
-        ..remove('col-lg-12');
+      // Html.querySelector('#canvasContainer')
+      //   .classes
+      //   ..add('col-md-8')
+      //   ..add('col-lg-9')
+      //   ..remove('col-lg-12');
     }, (){
-      Html.querySelector('#canvasContainer')
-        .classes
-        ..remove('col-md-8')
-        ..remove('col-lg-9')
-        ..add('col-lg-12');
+      // Html.querySelector('#canvasContainer')
+      //   .classes
+      //   ..remove('col-md-8')
+      //   ..remove('col-lg-9')
+      //   ..add('col-lg-12');
     }));
   return l;
 }
