@@ -80,6 +80,7 @@ body {
     padding-bottom: 5px;
     padding-right: 27px;
     padding-left: 13px;
+    height: 50px;
 }
 
 .slider-text {
@@ -137,6 +138,18 @@ body {
 }
 
 .canvas-smooth-part.slider-cont > .slider {
+}
+
+/* CANVAS SMOOTH SLIDER *********************** */
+.gameboy-mode-part.slider-cont {
+    width: calc(100% - 110px);
+}
+
+.gameboy-mode-part.slider-text {
+    width: 110px;
+}
+
+.gameboy-mode-part.slider-cont > .slider {
 }
 
 /* ************************************************************************** */

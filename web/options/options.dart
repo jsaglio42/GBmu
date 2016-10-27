@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 17:43:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 13:30:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 18:28:11 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,6 +18,7 @@ import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
 import './emulation_speed_codec.dart' as ESCodec;
+import './gb-mode.dart';
 
 /*
  * Global Variable
@@ -127,6 +128,9 @@ class _SpeedSlider {
 
 }
 
+
+
+
 /*
  * Exposed Methods
  */
@@ -145,5 +149,6 @@ void init(Emulator.Emulator emu) {
   Ft.log('options.dart', 'init', [emu]);
   _emu = emu;
   _speed.toString();
+  init_gameBoyMode();
   return ;
 }
