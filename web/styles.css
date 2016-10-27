@@ -41,7 +41,7 @@ body {
 #debContainer, #optContainer, #cartsContainer {
 }
 
-#debBody, .optBody, #cartsBody {
+#debBody, #optBody, #cartsBody {
     background-color: rgba(0, 71, 171, 0.2);
     border: 1px solid black;
     border-radius: 6px;
