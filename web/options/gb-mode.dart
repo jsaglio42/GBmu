@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 18:37:26 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 19:32:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,6 +18,7 @@ import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
 // CONSTANTS **************************************************************** **
+const String __LOCAL_STORAGE_KEY_GAMEBOYMODE = 'option_gb_mode';
 const bool __DEFAULT_GAMEBOYMODE = true;
 
 // VARIABLE ***************************************************************** **
@@ -30,6 +31,7 @@ bool get _gameBoyMode => __gameBoyMode;
 void set _gameBoyMode(bool b) {
   if (b != __gameBoyMode) {
     __gameBoyMode = b;
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = b.toString();
     _textGameBoyMode.text = _gameBoyModeFormatter(b);
     // TODO: Interact with emulator on game boy mode change
   }
@@ -52,7 +54,7 @@ class __GameBoyModeSlider {
       'formatter': _gameBoyModeFormatterNum,
       'min': 0.0,
       'max': 1.0,
-      'value': (__DEFAULT_GAMEBOYMODE ? 1.0 : 0.0),
+      'value': (_gameBoyMode ? 1.0 : 0.0),
       'ticks': [0.0, 1.0],
       'ticks_positions': [0, 100],
     });
@@ -75,6 +77,16 @@ class __GameBoyModeSlider {
 
 // CONSTRUCTION ************************************************************* **
 void init_gameBoyMode() {
-  _gameBoyMode = __DEFAULT_GAMEBOYMODE;
+  final String prevValOpt =
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
+  bool val;
+
+  if (prevValOpt == 'true')
+    val = true;
+  else if (prevValOpt == 'false')
+    val = false;
+  else
+    val = __DEFAULT_GAMEBOYMODE;
+  _gameBoyMode = val;
   new __GameBoyModeSlider();
 }

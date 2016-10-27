@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/22 14:21:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 18:39:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 19:49:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -14,6 +14,7 @@ part of canvas;
 
 // CONSTANTS **************************************************************** **
 const bool __DEFAULT_SMOOTH = false;
+const String __LOCAL_STORAGE_KEY_SMOOTH = 'option_smooth';
 
 // VARIABLE ***************************************************************** **
 final Html.Element _textSmooth =
@@ -25,6 +26,7 @@ bool get _smooth => __smooth;
 void set _smooth(bool b) {
   if (b != __smooth) {
     __smooth = b;
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_SMOOTH] = b.toString();
     _textSmooth.text = _smoothFormatter(b);
     _screen.context2D.imageSmoothingEnabled = b;
   }
@@ -47,9 +49,8 @@ class __SmoothSlider {
       'formatter': _smoothFormatterNum,
       'min': 0.0,
       'max': 1.0,
-      'value': (__DEFAULT_SMOOTH ? 1.0 : 0.0),
+      'value': (_smooth ? 1.0 : 0.0),
       'ticks': [0.0, 1.0],
-      // 'ticks_labels': ['Off', 'On'],
       'ticks_positions': [0, 100],
     });
 
@@ -72,6 +73,16 @@ class __SmoothSlider {
 
 // CONSTRUCTION ************************************************************* **
 void _init_smooth() {
-  _smooth = __DEFAULT_SMOOTH;
+  final String prevValOpt =
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_SMOOTH];
+  bool val;
+
+  if (prevValOpt == 'true')
+    val = true;
+  else if (prevValOpt == 'false')
+    val = false;
+  else
+    val = __DEFAULT_SMOOTH;
+  _smooth = val;
   new __SmoothSlider();
 }
