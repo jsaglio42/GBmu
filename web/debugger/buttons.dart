@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 18:57:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 19:47:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 23:30:13 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,10 +82,10 @@ void init(Emulator.Emulator emu) {
   _data.restart.onClick.forEach(_requestRestart);
   _data.resume.onClick.forEach(_requestResume);
   _data.pause.onClick.forEach(_requestPause);
-  // for (var ab in AutoBreakExternalMode.values) {
-  //   _data.autobreak[ab.index]
-  //     .onClick((_) { _emu.send('EmulationAutoBreak', ab); });
-  // }
+  for (var ab in AutoBreakExternalMode.values) {
+    _data.autobreak[ab.index]
+      .onClick.forEach((_) { _emu.send('EmulationAutoBreak', ab); });
+  }
 
   /* Emulator Side */
   _emu.listener('EmulationResume').forEach(_onResumeEmu);
