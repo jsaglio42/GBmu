@@ -10,8 +10,6 @@ body {
 }
 
 [class*="col-"] {
-    /* border: 1px solid black; */
-    /* border-radius: 6px; */
     text-align: center;
 }
 
@@ -39,7 +37,6 @@ body {
 
 #container-main {
     padding: 0 1px;
-    /* text-align: center; */
 }
 
 #container-main > .closable {
@@ -47,8 +44,6 @@ body {
     margin-right: auto;
     background-color: rgba(0, 71, 171, 0.25);
     max-width: 1100px;
-    /* border-width: 0px 0px 1px 0px; */
-    /* border-radius: 5px; */
 }
 
 #row-option {
@@ -59,11 +54,6 @@ body {
     border: 1px solid black;
     border-width: 1px 0px 0px 0px;
 }
-
-/* #container-main > .closable:last-child { */
-/* border-bottom: none; */
-/* } */
-
 
 @media only screen and (min-width: 1100px) {
     #container-main > .closable {
@@ -77,18 +67,9 @@ body {
     margin-top: 1px;
 }
 
-/* #cartsBody.active { */
-/* background-color: rgba(0, 200, 0, 0.4); */
-/* } */
-
-/* #cartsBody.hover { */
-/* background-color: rgba(0, 200, 0, 0.75); */
-/* } */
-
 /* ************************************************************************** */
 /* OPTIONS PANEL ************************************************************ */
 /* ************************************************************************** */
-
 
 /* SLIDERS ****************************************************************** */
 /* MY CLASSES ********************************* */
@@ -132,8 +113,6 @@ body {
 }
 
 #mainSpeedSlider {
-    /* width: 100%;
-       background: #BABABA; */
 }
 
 /* CANVAS SCALE SLIDER ************************ */
@@ -165,7 +144,6 @@ body {
 /* ************************************************************************** */
 
 /* DEB - BODY *************************************************************** */
-
 #row-debugger > div {
 }
 
@@ -290,7 +268,6 @@ body {
 /* ************************************************************************** */
 /* CANVAS ******************************************************************* */
 /* ************************************************************************** */
-
 .canvas {
     width: 500px;
     height: 500px;
@@ -301,20 +278,9 @@ body {
 /* ************************************************************************** */
 /* COMPONENT SYSTEM ********************************************************* */
 /* ************************************************************************** */
-
 #row-cartsystem {
-    /* text-align: left; */
-    /* float: left; */
-    /* padding-left: 20px; */
-    /* padding-right: 20px; */
     padding-bottom: 20px;
     text-align: center;
-    /* width: 100%; */
-
-    /* display: inline-block; */
-    /* margin-left:0; */
-    /* margin-right:0; */
-    /* margin: auto; */
 }
 
 #row-cartsystem > .col {
@@ -324,9 +290,6 @@ body {
 
 #row-cartsystem .button-group {
     text-align: left;
-    /* align-content: left; */
-    /* display: inline-block; */
-    /* vertical-align: top; */
 }
 
 /* GAMEBOY CART SLOT ******************************************************** */
@@ -482,8 +445,6 @@ body {
 .cart-ram-bis > .text,
 .cart-ss-bis > .text {
     color: rgba(255, 255, 255, 0.7);
-    /* background-color: red; */
-    /* mix-blend-mode: multiply; */
     white-space: nowrap;
     text-align: center;
     overflow: hidden;
@@ -602,11 +563,9 @@ body {
 
 footer {
     border: 1px solid black;
-    /* border-radius: 3px; */
     height: 20px;
     text-align: center;
     background-color: #101010;
-    /* rgba(0, 31, 71, 0.20); */
 }
 
 footer a {
