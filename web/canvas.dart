@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/27 15:15:36 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 19:56:32 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -80,7 +80,7 @@ void _refreshScreen() {
 }
 
 void _turnOffScreen() {
-  List<int> black = new List<int>.filled(LCD_SIZE, 0x3);
+  List<int> black = new List<int>.filled(LCD_SIZE, 0x0);
   _updateScreen(black);
   return ;
 }
