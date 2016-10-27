@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 12:57:19 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 11:38:42 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,11 +18,11 @@ import "package:emulator/src/enums.dart";
 import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/mmu.dart" as Mmu;
+import "package:emulator/src/mixins/shared.dart" as Shared;
 
 abstract class Z80
   implements Hardware.Hardware
-  , Mmu.Mmu {
+  , Shared.Mmu {
 
   /* API **********************************************************************/
 

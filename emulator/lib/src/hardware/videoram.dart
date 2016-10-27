@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 17:39:49 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 16:27:16 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,43 +63,43 @@ class VideoRam extends Ser.RecursivelySerializable {
   }
 
   /***** Getters ***************************************************************/
-  int pull8_TileData(int offset, int bankID) {
-    assert(offset >= 0 && offset < 0x1800, 'pull8_TileData: offset not valid $offset');
+  int pull8_TileData(int addr, int bankID) {
+    assert(addr >= 0 && addr < 0x1800, 'pull8_TileData: addr not valid $addr');
     assert(bankID & ~0x1 == 0, 'pull8_TileData: bankID not valid $bankID');
-    final int tileNo = offset ~/ 16;
-    final int line = offset % 16;
+    final int tileNo = addr ~/ 16;
+    final int line = addr % 16;
     return _tileData[bankID * _TILE_PER_MAP + tileNo][line];
   }
 
-  int pull8_TileID(int offset) {
-    assert(offset & ~0x7FF == 0, 'pull8_TileID: offset not valid $offset');
-    return _mapTileID[offset];
+  int pull8_TileID(int addr) {
+    assert(addr & ~0x7FF == 0, 'pull8_TileID: addr not valid $addr');
+    return _mapTileID[addr];
   }
 
-  int pull8_TileInfo(int offset) {
-    assert(offset & ~0x7FF == 0, 'pull8_TileInfo: offset not valid $offset');
-    return _mapTileInfo[offset].value;
+  int pull8_TileInfo(int addr) {
+    assert(addr & ~0x7FF == 0, 'pull8_TileInfo: addr not valid $addr');
+    return _mapTileInfo[addr].value;
   }
 
   /***** Setters **************************************************************/
-  void push8_TileData(int offset, int bankID, int v) {
-    assert(offset >= 0 && offset < 0x1800, 'push8_TileData: offset not valid $offset');
+  void push8_TileData(int addr, int bankID, int v) {
+    assert(addr >= 0 && addr < 0x1800, 'push8_TileData: addr not valid $addr');
     assert(bankID & ~0x1 == 0, 'push8_TileData: bankID not valid $bankID');
-    final int tileNo = offset ~/ 16;
-    final int line = offset % 16;
+    final int tileNo = addr ~/ 16;
+    final int line = addr % 16;
     _tileData[bankID * _TILE_PER_MAP + tileNo][line] = v;
     return ;
   }
 
-  void push8_TileID(int offset, int v) {
-    assert(offset >= 0 && offset < 0x800, 'push8_TileID: offset not valid $offset');
-    _mapTileID[offset] = v;
+  void push8_TileID(int addr, int v) {
+    assert(addr >= 0 && addr < 0x800, 'push8_TileID: addr not valid $addr');
+    _mapTileID[addr] = v;
     return ;
   }
 
-  void push8_TileInfo(int offset, int v) {
-    assert(offset >= 0 && offset < 0x800, 'push8_TileInfo: offset not valid $offset');
-    _mapTileInfo[offset].value = v;
+  void push8_TileInfo(int addr, int v) {
+    assert(addr >= 0 && addr < 0x800, 'push8_TileInfo: addr not valid $addr');
+    _mapTileInfo[addr].value = v;
     return ;
   }
 

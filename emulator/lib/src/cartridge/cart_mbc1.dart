@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:34:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 18:12:26 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,45 +30,41 @@ class CartMBC1 extends Cartridge.ACartridge
   CartMBC1.internal(Data.Rom rom, Data.Ram ram)
     : super.internal(rom, ram);
 
-  @override int pull8_Rom(int memAddr) {
-    memAddr -= CARTRIDGE_ROM_FIRST;
-    assert(memAddr & ~0x7FFF == 0, 'pull8_Rom: invalid memAddr $memAddr');
-    if (memAddr <= 0x3FFF)
-      return this.rom.pull8(memAddr);
-    else if (memAddr <= 0x7FFF)
-      return this.rom.pull8(_getOffsetROM(memAddr));
+  @override int pull8_Rom(int addr) {
+    assert(addr & ~0x7FFF == 0, 'pull8_Rom: invalid addr $addr');
+    if (addr <= 0x3FFF)
+      return this.rom.pull8(addr);
     else
-      throw new Exception('CartMBC1: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+      return this.rom.pull8(_getOffsetROM(addr & 0x3FFF));
   }
 
-  @override void push8_Rom(int memAddr, int v) {
-    memAddr -= CARTRIDGE_ROM_FIRST;
-    assert(memAddr & ~0x7FFF == 0, 'push8_Rom: invalid memAddr $memAddr');
-    if (memAddr <= 0x1FFF)
+  @override void push8_Rom(int addr, int v) {
+    assert(addr & ~0x7FFF == 0, 'push8_Rom: invalid addr $addr');
+    if (addr <= 0x1FFF)
       _setAccessRAM(v);
-    else if (memAddr <= 0x3FFF)
+    else if (addr <= 0x3FFF)
       _setBankNoROM(v);
-    else if (memAddr <= 0x5FFF)
+    else if (addr <= 0x5FFF)
       _setBankNoRAM(v);
-    else if (memAddr <= 0x7FFF)
+    else if (addr <= 0x7FFF)
       _setMode(v);
-    else
-      throw new Exception('CartMBC1: cannot access address ${Ft.toAddressString(memAddr, 4)}');
+    // else
+    //   throw new Exception('push8_Rom: invalid ${Ft.toAddressString(addr, 4)}');
   }
 
-  @override int pull8_Ram(int memAddr) {
+  @override int pull8_Ram(int addr) {
+    assert(addr & ~0x1FFF == 0, '_getOffsetRAM: invalid addr $addr');
     if (!_enableRAM)
       throw new Exception('pull8_Ram: RAM not enabled');
-    memAddr -= CARTRIDGE_RAM_FIRST;
-    return this.ram.pull8(_getOffsetRAM(memAddr));
+    return this.ram.pull8(_getOffsetRAM(addr));
   }
 
-  @override void push8_Ram(int memAddr, int v) {
+  @override void push8_Ram(int addr, int v) {
+    assert(addr & ~0x1FFF == 0, '_getOffsetRAM: invalid addr $addr');
     if (!_enableRAM)
       // throw new Exception('push8_Ram: RAM not enabled');
       return ;
-    memAddr -= CARTRIDGE_RAM_FIRST;
-    this.ram.push8(_getOffsetRAM(memAddr), v);
+    this.ram.push8(_getOffsetRAM(addr), v);
     return ;
   }
 
@@ -92,17 +88,17 @@ class CartMBC1 extends Cartridge.ACartridge
     _bankno_RAM = v;
   }
 
-  int _getOffsetROM(int memAddr) {
+  int _getOffsetROM(int addr) {
     final int bankno = _bankno_ROM | (1 - _mode) * (_bankno_RAM << 5);
     if (bankno == 0x00 || bankno == 0x20 || bankno == 0x40 || bankno == 0x60)
-      return (((bankno + 1) * CROM_BANK_SIZE) + (memAddr % CROM_BANK_SIZE));
+      return ((bankno + 1) * CROM_BANK_SIZE + addr);
     else
-      return ((bankno * CROM_BANK_SIZE) + (memAddr % CROM_BANK_SIZE));
+      return (bankno * CROM_BANK_SIZE + addr);
   }
 
-  int _getOffsetRAM(int memAddr) {
+  int _getOffsetRAM(int addr) {
     final int bankno = _bankno_RAM * _mode;
-    return ((bankno * CRAM_BANK_SIZE) + (memAddr % CRAM_BANK_SIZE));
+    return (bankno * CRAM_BANK_SIZE + addr);
   }
 
   // FROM RecursivelySerializable ******************************************* **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/21 18:55:51 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/25 16:31:07 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,41 +22,23 @@ import "package:emulator/src/hardware/hardware.dart" as Hardware;
 
 final int MAP_OFFSET = 0x1800;
 
-abstract class TrapAccessor {
-  int vr_pull8(int memAddr);
-  void vr_push8(int memAddr, int v);
-}
-
 abstract class VideoRamManager
   implements Hardware.Hardware {
 
   /* API ***********************************************************************/
-  int vr_pull8(int memAddr) {
-    assert(memAddr >= VIDEO_RAM_FIRST && memAddr <= VIDEO_RAM_LAST, 'vr_pull8: invalid memAddr $memAddr');
-    memAddr -= VIDEO_RAM_FIRST;
-    if (memAddr < MAP_OFFSET)
-      return this.videoram.pull8_TileData(memAddr, this.memr.VBK);
+  int vr_pull8(int addr) {
+    assert(addr & ~0x1FFF == 0, 'vr_pull8: invalid addr $addr');
+    if (addr < MAP_OFFSET)
+      return this.videoram.pull8_TileData(addr, 0);
     else
-    {
-      if (this.memr.VBK == 0)
-        return this.videoram.pull8_TileID(memAddr - MAP_OFFSET);
-      else
-        return this.videoram.pull8_TileInfo(memAddr - MAP_OFFSET);
-    }
+      return this.videoram.pull8_TileID(addr & 0x7FF);
   }
 
-  void vr_push8(int memAddr, int v) {
-    assert(memAddr >= VIDEO_RAM_FIRST && memAddr <= VIDEO_RAM_LAST, 'vr_push8: invalid memAddr $memAddr');
-    memAddr -= VIDEO_RAM_FIRST;
-    if (memAddr < MAP_OFFSET)
-      this.videoram.push8_TileData(memAddr, this.memr.VBK, v);
+  void vr_push8(int addr, int v) {
+    assert(addr & ~0x1FFF == 0, 'vr_push8: invalid addr $addr');
+    if (addr < MAP_OFFSET)
+      this.videoram.push8_TileData(addr, 0, v);
     else
-    {
-      if (this.memr.VBK == 0)
-        this.videoram.push8_TileID(memAddr - MAP_OFFSET, v);
-      else
-        this.videoram.push8_TileInfo(memAddr - MAP_OFFSET, v);
+      this.videoram.push8_TileID(addr & 0x7FF, v);
     }
-  }
-
 }

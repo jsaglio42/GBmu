@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 17:07:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 11:37:38 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,6 @@ import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 
 /* MemRegs ********************************************************************/
 class MemRegs extends Ser.RecursivelySerializable {
-// class MemRegs {
 
   Uint8List _data;
 
@@ -303,27 +302,37 @@ class RegisterSTAT extends Ser.RecursivelySerializable {
 
   int counter = 0;
 
-  int _value = 0;
-  int get value => _value;
-  int set value(int v) {
-    final int lowbits = _value & 0x7;
-    _value = (v & ~0x7) | lowbits;
-  } /* Set value to avoid messing with modes/coincidence ???*/
+  int _interrupts = 0;
+  int _coincidence = 0;
+  int _mode = 0;
 
-  GraphicMode get mode => GraphicMode.values[_value & 0x3];
-  void set mode(GraphicMode gm) {
-    _value = (_value & ~0x3) | gm.index;
+  int get value => ((_interrupts << 3) | (_coincidence << 2) | _mode);
+  int set value(int v) {
+    _interrupts = (v >> 3) & 0xF;
+    _coincidence = (v >> 2) & 0x1;
+    _mode = v & 0x3;
   }
 
-  void set coincidence (bool coincidence) {
-    if (coincidence)
-      _value = (_value | (1 << 2));
-    else
-      _value = (_value & ~(1 << 2));
+  int get interrupts => _interrupts;
+  int get coincidence => _coincidence;
+  GraphicMode get mode => GraphicMode.values[_mode];
+
+  int set interrupts(int v) {
+    assert(v & ~0xFF == 0, 'Invalid interrupts $v');
+    _interrupts = (v >> 3) & 0xF;
+  }
+
+  void set coincidence (int v) {
+    assert(v & ~0x1 == 0, 'Invalid coincidence $v');
+    _coincidence = v;
+  }
+
+  void set mode(GraphicMode gm) {
+    _mode = gm.index;
   }
 
   bool isInterruptMonitored(GraphicInterrupt i) {
-    return (_value >> (i.index + 3)) & 0x1 == 1;
+    return ((_interrupts >> i.index) & 0x1 == 1);
   }
 
   // FROM RecursivelySerializable ******************************************* **
@@ -334,7 +343,9 @@ class RegisterSTAT extends Ser.RecursivelySerializable {
   Iterable<Ser.Field> get serFields {
     return <Ser.Field>[
       new Ser.Field('counter', () => counter, (v) => counter = v),
-      new Ser.Field('_value', () => _value, (v) => _value = v),
+      new Ser.Field('_interrupts', () => _interrupts, (v) => _interrupts = v),
+      new Ser.Field('_coincidence', () => _coincidence, (v) => _coincidence = v),
+      new Ser.Field('_mode', () => _mode, (v) => _mode = v),
     ];
   }
 

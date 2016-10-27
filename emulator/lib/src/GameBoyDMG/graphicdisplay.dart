@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/23 20:04:53 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 15:49:26 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -41,7 +41,7 @@ abstract class GraphicDisplay
     Ft.fillBuffer(this.lcd.bgColorIDs, null);
     Ft.fillBuffer(this.lcd.spriteColors, null);
 
-    final int y = this.lcd.lineNo;
+    final int y = this.memr.LY;
     for (int x = 0; x < LCD_WIDTH; ++x)
     {
       this.lcd.bgColorIDs[x] = _useWindowColorID(x, y)
@@ -51,6 +51,18 @@ abstract class GraphicDisplay
     _setSpriteColors(y);
     _updateScreenBuffer(y);
     return ;
+  }
+
+  bool _useWindowColorID(int x, int y) {
+    if (!this.memr.rLCDC.isWindowDisplayEnabled)
+      return false;
+    final int posY = y - this.memr.WY;
+    if (posY < 0 || posY >= LCD_HEIGHT)
+      return false;
+    final int posX =  x - (this.memr.WX - 7);
+    if (posX < 0 || posX >= LCD_WIDTH)
+      return false;
+    return true;
   }
 
   int _getBackgroundColorID(int x, int y) {
@@ -76,8 +88,6 @@ abstract class GraphicDisplay
     final TileInfo tinfo = this.videoram.getTileInfo(tileX, tileY, tileMapID);
     final Tile tile = this.videoram.getTile(tileID, 0, this.memr.rLCDC.tileDataSelectID);
     return tile.getColorID(relativeX, relativeY, false, false);
-    // final Tile tile = this.videoram.getTile(tileID, tinfo.bankID, this.memr.rLCDC.tileDataSelectID);
-    // return tile.getColorID(relativeX, relativeY, tinfo.flipX, tinfo.flipY);
   }
 
   void _setSpriteColors(int y) {
@@ -92,9 +102,8 @@ abstract class GraphicDisplay
       final int unsafeY = y - (s.posY - 16);
       if (unsafeY < 0 || unsafeY >= sizeY)
         continue ;
-      final int tileID = s.adjustedTileID(sizeY, unsafeY);
+      final int tileID = s.adjustedTileID(sizeY, unsafeY, s.info.flipY);
       final Tile tile = this.videoram.getTile(tileID, 0, 1);
-      // final Tile tile = this.videoram.getTile(tileID, s.info.bankID, 1);
 
       final int relativeY = unsafeY % 8;
       for (int relativeX = 0; relativeX < 8; ++relativeX)
@@ -111,7 +120,8 @@ abstract class GraphicDisplay
         if (colorID == 0)
           continue ;
         final int OBP = (s.info.OBP_DMG == 0) ? this.memr.OBP0 : this.memr.OBP1;
-        this.lcd.spriteColors[x] = _getColor(colorID, OBP);
+        final int mappedColorID = _mapColorID(colorID, OBP);
+        this.lcd.spriteColors[x] = this.palette.getColor(0, mappedColorID);
         this.lcd.zBuffer[x] = spriteno;
       }
     }
@@ -126,28 +136,19 @@ abstract class GraphicDisplay
       if (this.lcd.spriteColors[x] != null)
         this.lcd.setPixel(x, y, this.lcd.spriteColors[x]);
       else
-        this.lcd.setPixel(x, y, _getColor(this.lcd.bgColorIDs[x], BGP));
+      {
+        int mappedColorID = _mapColorID(this.lcd.bgColorIDs[x], BGP);
+        this.lcd.setPixel(x, y, this.palette.getColor(0, mappedColorID));
+      }
     }
     return ;
   }
 
-  int _getColor(int colorID, int palette) {
+  int _mapColorID(int colorID, int palette) {
     if (colorID == null)
       return 0x00;
     else
       return (palette >> (2 * colorID)) & 0x3;
-  }
-
-  bool _useWindowColorID(int x, int y) {
-    if (!this.memr.rLCDC.isWindowDisplayEnabled)
-      return false;
-    final int posY = y - this.memr.WY;
-    if (posY < 0 || posY >= LCD_HEIGHT)
-      return false;
-    final int posX =  x - (this.memr.WX - 7);
-    if (posX < 0 || posX >= LCD_WIDTH)
-      return false;
-    return true;
   }
 
 }

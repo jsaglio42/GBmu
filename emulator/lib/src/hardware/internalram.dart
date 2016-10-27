@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:36:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 16:56:37 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,28 +29,14 @@ class InternalRam extends Ser.RecursivelySerializable {
     return ;
   }
 
-  int pull8(int memAddr, int bankID) {
-    assert(memAddr >= INTERNAL_RAM_FIRST && memAddr <= INTERNAL_RAM_LAST
-      , 'pull8: invalid memAddr $memAddr');
-    memAddr -= INTERNAL_RAM_FIRST;
-    if (memAddr < IRAM_BANK_SIZE)
-      return _data[memAddr];
-    else
-      return _data[_getOffsetIRAM(memAddr, bankID)];
+  int pull8(int addr, int bankID) {
+    assert(addr & ~0xFFF == 0, 'pull8: invalid addr $addr');
+    return _data[(bankID * IRAM_BANK_SIZE) + addr];
   }
 
-  void push8(int memAddr, int bankID, int v) {
-    assert(memAddr >= INTERNAL_RAM_FIRST && memAddr <= INTERNAL_RAM_LAST
-      , 'pull8: invalid memAddr $memAddr');
-    memAddr -= INTERNAL_RAM_FIRST;
-    if (memAddr < IRAM_BANK_SIZE)
-      _data[memAddr] = v;
-    else
-      _data[_getOffsetIRAM(memAddr, bankID)] = v;
-  }
-
-  int _getOffsetIRAM(int memAddr, int bankID) {
-    return ((bankID * IRAM_BANK_SIZE) + (memAddr % IRAM_BANK_SIZE));
+  void push8(int addr, int bankID, int v) {
+    assert(addr & ~0xFFF == 0, 'pull8: invalid addr $addr');
+    _data[(bankID * IRAM_BANK_SIZE) + addr] = v;
   }
 
   // FROM RecursivelySerializable ******************************************* **

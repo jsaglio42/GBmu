@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 14:56:51 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/26 09:48:28 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,13 +15,13 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/src/enums.dart';
 import 'package:emulator/src/globals.dart';
 
-import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/mixins/mmu.dart" as Mmu;
 import "package:emulator/src/mixins/instructions.dart" as Instructions;
+import "package:emulator/src/hardware/hardware.dart" as Hardware;
+import "package:emulator/src/mixins/shared.dart" as Shared;
 
 abstract class InstructionsDecoder
   implements Hardware.Hardware
-  , Mmu.Mmu {
+  , Shared.Mmu {
 
   /* API **********************************************************************/
 

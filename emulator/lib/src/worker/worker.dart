@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 17:00:01 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 14:56:40 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,7 +15,7 @@ import 'dart:async' as Async;
 import 'package:ft/ft.dart' as Ft;
 import 'package:ft/wired_isolate.dart' as Wiso;
 
-import 'package:emulator/src/gameboy.dart' as Gameboy;
+import 'package:emulator/src/GameBoyDMG/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker/emulation.dart' as WEmu;
 import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
 import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;

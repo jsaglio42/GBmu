@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   worker_emulation_iddb.dart                         :+:      :+:    :+:   //
+//   emulation_iddb.dart                                :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 20:37:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 15:57:52 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,7 @@ import 'package:emulator/constants.dart';
 import 'package:emulator/src/events.dart';
 
 import 'package:emulator/src/worker/worker.dart' as Worker;
-import 'package:emulator/src/gameboy.dart' as Gameboy;
+import 'package:emulator/src/GameBoyDMG/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;

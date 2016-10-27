@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 18:25:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/26 23:10:39 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,16 +27,18 @@ class Sprite extends Ser.RecursivelySerializable {
   int tileID = 0;
   TileInfo info = new TileInfo();
 
-  int adjustedTileID(int spriteSize, int row) {
-    if (spriteSize == 16)
+  int adjustedTileID(int spriteSize, int row, bool flipY) {
+    if (spriteSize == 8)
+      return tileID;
+    else
     {
+      if (flipY)
+        row = 0xF - row;
       if(row < 8)
         return tileID & 0xFE;
       else
         return tileID | 0x01;
     }
-    else
-      return tileID;
   }
 
   // FROM RecursivelySerializable ******************************************* **

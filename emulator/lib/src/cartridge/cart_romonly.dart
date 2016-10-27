@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 18:39:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/25 17:17:38 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,21 +23,21 @@ class CartRomOnly extends Cartridge.ACartridge
   CartRomOnly.internal(Data.Rom rom, Data.Ram ram)
     : super.internal(rom, ram);
 
-  @override int pull8_Rom(int memAddr) {
-    memAddr -= CARTRIDGE_ROM_FIRST;
-    return this.rom.pull8(memAddr);
+  @override int pull8_Rom(int addr) {
+    assert(addr & ~0x7FFF == 0, 'pull8_Rom: invalid addr $addr');
+    return this.rom.pull8(addr);
   }
 
-  @override void push8_Rom(int memAddr, int v) {
+  @override void push8_Rom(int addr, int v) {
     // throw new Exception('ROM_ONLY: RAM Operation not supported');
     return ;
   }
 
-  @override int pull8_Ram(int memAddr) {
+  @override int pull8_Ram(int addr) {
     throw new Exception('ROM_ONLY: RAM Operation not supported');
   }
 
-  @override void push8_Ram(int memAddr, int v) {
+  @override void push8_Ram(int addr, int v) {
     throw new Exception('ROM_ONLY: RAM Operation not supported');
   }
 
