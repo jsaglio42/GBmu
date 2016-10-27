@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 17:43:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 18:28:11 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 18:38:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -90,16 +90,6 @@ class _SpeedSlider {
     assert(slider != null, "Could not build `Slider`");
 
     slider.callMethod('on', ['slideStop', _onSlide]);
-
-    // Html.querySelectorAll('#mainSpeedSlider .slider-tick-label')
-    //   .forEach((Html.DivElement elt) {
-    //         print('lol: $elt');
-    //         elt
-    //           ..style.width = ""
-    //           ..style.marginLeft = ""
-    //           ..style.border = "1px";
-    //       });
-
 
     _emu.send('EmulationSpeed', <String, dynamic>{
       'speed': 1.0,

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/22 13:12:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 16:21:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 18:39:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,6 +63,7 @@ class __Slider {
     assert(slider != null, "Could not build `Slider`");
 
     slider.callMethod('on', ['slide', _onSlide]);
+    slider.callMethod('on', ['slideStop', _onSlide]);
   }
 
   // PRIVATE **************************************************************** **

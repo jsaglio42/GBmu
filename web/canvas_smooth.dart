@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/22 14:21:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 16:24:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 18:39:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -47,7 +47,7 @@ class __SmoothSlider {
       'formatter': _smoothFormatterNum,
       'min': 0.0,
       'max': 1.0,
-      'value': 0.0,
+      'value': (__DEFAULT_SMOOTH ? 1.0 : 0.0),
       'ticks': [0.0, 1.0],
       // 'ticks_labels': ['Off', 'On'],
       'ticks_positions': [0, 100],
@@ -59,6 +59,7 @@ class __SmoothSlider {
     assert(slider != null, "Could not build `Slider`");
 
     slider.callMethod('on', ['slide', _onSlide]);
+    slider.callMethod('on', ['slideStop', _onSlide]);
   }
 
   // PRIVATE **************************************************************** **

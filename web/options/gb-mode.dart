@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 18:31:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 18:37:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,8 +30,6 @@ bool get _gameBoyMode => __gameBoyMode;
 void set _gameBoyMode(bool b) {
   if (b != __gameBoyMode) {
     __gameBoyMode = b;
-    print('hello');
-    print(_textGameBoyMode);
     _textGameBoyMode.text = _gameBoyModeFormatter(b);
     // TODO: Interact with emulator on game boy mode change
   }
@@ -54,7 +52,7 @@ class __GameBoyModeSlider {
       'formatter': _gameBoyModeFormatterNum,
       'min': 0.0,
       'max': 1.0,
-      'value': 0.0,
+      'value': (__DEFAULT_GAMEBOYMODE ? 1.0 : 0.0),
       'ticks': [0.0, 1.0],
       'ticks_positions': [0, 100],
     });
@@ -65,6 +63,7 @@ class __GameBoyModeSlider {
     assert(slider != null, "Could not build `Slider`");
 
     slider.callMethod('on', ['slide', _onSlide]);
+    slider.callMethod('on', ['slideStop', _onSlide]);
   }
 
   // PRIVATE **************************************************************** **
