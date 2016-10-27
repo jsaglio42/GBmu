@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/22 14:22:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 15:15:36 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -45,12 +45,16 @@ void init(Emulator.Emulator emu) {
 /* Private ********************************************************************/
 /* Screen Size */
 /* Screen content */
-  final List<List<int>> _colorDecoder = new List.unmodifiable([
-    [0xFF, 0xFF, 0xFF, 0xFF], // White
-    [0xAA, 0xAA, 0xAA, 0xFF], // Light Grey
-    [0x55, 0x55, 0x55, 0xFF], // Dark Grey
-    [0x00, 0x00, 0x00, 0xFF]  // Black
-  ]);
+enum RGB {
+  Red,
+  Green,
+  Blue,
+}
+
+int _decodeColor(int c, RGB component) {
+  final int color = (c >> (5 * component.index)) & 0x1F;
+  return color * 0xFF ~/ 0x20;
+}
 
 void _updateScreen(List<int> screen) {
   var data = _unscaledImageData.data;
@@ -58,11 +62,11 @@ void _updateScreen(List<int> screen) {
   assert(screen.length == LCD_SIZE, "_updateScreen: Invalid Screen");
   for (int i = 0; i < LCD_SIZE; ++i)
   {
-    List<int> color = _colorDecoder[screen[i]];
-    data[4 * i + 0] = color[0];
-    data[4 * i + 1] = color[1];
-    data[4 * i + 2] = color[2];
-    data[4 * i + 3] = color[3];
+    int color = screen[i];
+    data[4 * i + 0] = _decodeColor(color, RGB.Red);
+    data[4 * i + 1] = _decodeColor(color, RGB.Green);
+    data[4 * i + 2] = _decodeColor(color, RGB.Blue);
+    data[4 * i + 3] = 0xFF;
   }
   _unscaledScreen.context2D.putImageData(_unscaledImageData, 0, 0);
   _refreshScreen();

@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/24 18:33:53 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 14:33:42 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,6 +19,7 @@ import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
 import "package:emulator/src/hardware/data.dart" as Data;
 import "package:emulator/src/hardware/lcd.dart" as Lcd;
+import "package:emulator/src/hardware/palettememory.dart" as Palette;
 import "package:emulator/src/hardware/cpu_registers.dart" as Cpuregs;
 import "package:emulator/src/hardware/mem_registers.dart" as Memregs;
 
@@ -35,6 +36,7 @@ abstract class Hardware implements Ser.RecursivelySerializable {
   int clockTotal = 0;
 
   final Lcd.LCD lcd = new Lcd.LCD();
+  final Palette.PaletteMemory palette = new Palette.PaletteMemory();
 
   final Cpuregs.CpuRegs cpur = new Cpuregs.CpuRegs();
   final Memregs.MemRegs memr = new Memregs.MemRegs();
@@ -61,6 +63,7 @@ abstract class Hardware implements Ser.RecursivelySerializable {
     assert(_c == null, "Hardware: Cartridge already initialised");
     _c = c;
     this.lcd.reset();
+    this.palette.reset();
     this.cpur.reset();
     this.memr.reset();
     this.tailram.reset();
