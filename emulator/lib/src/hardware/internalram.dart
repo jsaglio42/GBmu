@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:36:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 23:50:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -60,7 +60,7 @@ class InternalRam extends Ser.RecursivelySerializable {
 
   Iterable<Ser.Field> get serFields {
     return <Ser.Field>[
-      new Ser.Field('_data', () => _data, (v) {
+      new Ser.Field('_data', () => new Uint8List.fromList(_data), (v) {
             _data = new Uint8List.fromList(v);
           }),
     ];

@@ -6,9 +6,8 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 12:05:15 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 23:46:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
-// ************************************************************************** //
 // ************************************************************************** //
 
 import "dart:typed_data";
@@ -66,10 +65,10 @@ class Tile extends Ser.RecursivelySerializable {
 
   Iterable<Ser.Field> get serFields {
     return <Ser.Field>[
-      new Ser.Field('_colorIDs', () => _colorIDs, (v) {
+      new Ser.Field('_colorIDs', () => new Uint8List.fromList(_colorIDs), (v) {
             _colorIDs = new Uint8List.fromList(v);
           }),
-      new Ser.Field('_values', () => _values, (v) {
+      new Ser.Field('_values', () => new Uint8List.fromList(_values), (v) {
             _values = new Uint8List.fromList(v);
           }),
     ];
