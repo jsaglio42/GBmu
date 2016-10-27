@@ -351,7 +351,7 @@ body {
 #detached-chip-bank {
     background-color: rgba(145, 207, 145, 0.85);
     padding: 7px;
-    width: 265px;
+    width: 200px;
     min-height: 143px; /* 287 / 2 */
 }
 
