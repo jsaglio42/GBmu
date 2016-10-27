@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 18:57:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 18:26:38 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 19:47:37 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,13 +27,12 @@ class _Data {
     : restart = v?.elementAt(0)
     , resume = v?.elementAt(1)
     , pause = v?.elementAt(2)
-    , autobreak = v?.sublist(3)
+    , autobreak = new List.generate(4, (i) => v?.sublist(3)[i])
   {
     assert(restart != null, 'debButton: missing restart button');
     assert(resume != null, 'debButton: missing resume button');
     assert(pause != null, 'debButton: missing pause button');
-    assert(autobreak != null, 'debButton: missing autobreak');
-    assert(autobreak.length == 4, 'debButton: invalid autobreak count');
+    assert(autobreak.every((e) => (e != null)), 'debButton: missing autobreak');
   }
 
   _Data() : this.eltList(Html.querySelector("#debColButtons")?.children);
@@ -73,8 +72,7 @@ Emulator.Emulator _emu;
 * Exposed Methods
 */
 
-void init(Emulator.Emulator emu)
-{
+void init(Emulator.Emulator emu) {
   Ft.log('button.dart', 'init', [emu]);
   Ft.log('deb_but', 'init');
   _emu = emu;
@@ -84,10 +82,10 @@ void init(Emulator.Emulator emu)
   _data.restart.onClick.forEach(_requestRestart);
   _data.resume.onClick.forEach(_requestResume);
   _data.pause.onClick.forEach(_requestPause);
-  for (var ab in AutoBreakExternalMode.values) {
-    _data.autobreak[ab.index]
-      .onClick((_) { _emu.send('EmulationAutoBreak', ab); });
-  }
+  // for (var ab in AutoBreakExternalMode.values) {
+  //   _data.autobreak[ab.index]
+  //     .onClick((_) { _emu.send('EmulationAutoBreak', ab); });
+  // }
 
   /* Emulator Side */
   _emu.listener('EmulationResume').forEach(_onResumeEmu);
