@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 16:57:55 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 16:44:58 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,8 +17,11 @@ final int MAX_INT_LOLDART = 9007199254740992;
 // Number should be close to (GB_CPU_FREQ_INT / EMULATION_PER_SEC_INT)
 const int MAXIMUM_CLOCK_PER_EXEC_INT = 100000;
 
-const int GB_FRAME_PER_CLOCK_INT = 70224; // clock
-final double GB_FRAME_PER_CLOCK_DOUBLE = GB_FRAME_PER_CLOCK_INT.toDouble();
+const int GB_CLOCK_PER_LINE_INT = 456; // clock
+final double GB_CLOCK_PER_LINE_DOUBLE = GB_CLOCK_PER_LINE_INT.toDouble();
+
+const int GB_CLOCK_PER_FRAME_INT = 70224; // clock
+final double GB_CLOCK_PER_FRAME_DOUBLE = GB_CLOCK_PER_FRAME_INT.toDouble();
 
 const int GB_CPU_FREQ_INT = 4194304; // clock / second
 const int EMULATION_PER_SEC_INT = 60; // emulation /second

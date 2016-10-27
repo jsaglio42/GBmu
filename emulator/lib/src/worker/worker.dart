@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 14:56:40 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 18:28:23 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,7 +36,7 @@ enum PauseExternalMode {
 }
 
 enum AutoBreakExternalMode {
-  Instruction, Frame, Second, None,
+  Instruction, Line, Frame, Second, None
 }
 
 /** ************************************************************************* **

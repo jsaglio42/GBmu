@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:08:55 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 17:46:13 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -42,6 +42,8 @@ final List<List> _activeAutoBreakCombos = [
   [V.Emulating.v, DebuggerExternalMode.Operating,
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Instruction],
   [V.Emulating.v, DebuggerExternalMode.Operating,
+    PauseExternalMode.Ineffective, AutoBreakExternalMode.Line],
+  [V.Emulating.v, DebuggerExternalMode.Operating,
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Frame],
   [V.Emulating.v, DebuggerExternalMode.Operating,
     PauseExternalMode.Ineffective, AutoBreakExternalMode.Second],
@@ -49,7 +51,8 @@ final List<List> _activeAutoBreakCombos = [
 
 final Map<AutoBreakExternalMode, int> _autoBreakClocks = {
   AutoBreakExternalMode.Instruction: 4,
-  AutoBreakExternalMode.Frame: GB_FRAME_PER_CLOCK_INT,
+  AutoBreakExternalMode.Line: GB_CLOCK_PER_LINE_INT,
+  AutoBreakExternalMode.Frame: GB_CLOCK_PER_FRAME_INT,
   AutoBreakExternalMode.Second: GB_CPU_FREQ_INT,
 };
 

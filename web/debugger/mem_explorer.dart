@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 11:58:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 17:30:04 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/27 17:42:23 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -136,8 +136,8 @@ final Html.ButtonElement _JumpNEXT = Html.querySelector('#memExpJumpNEXT');
 Emulator.Emulator _emu;
 
 /*
- * Exposed Methods
- */
+* Exposed Methods
+*/
 
 void init(Emulator.Emulator emu) {
   Ft.log('mem_explorer.dart', 'init');

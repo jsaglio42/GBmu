@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:03:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:10:47 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 16:44:57 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,7 +29,7 @@ final Html.HtmlElement _frames = Html.querySelector('#debClockFrames');
 
 void _onClockInfo(int clock) {
   final double tMs = clock.toDouble() / GB_CPU_FREQ_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE;
-  final double f = clock.toDouble() / GB_FRAME_PER_CLOCK_DOUBLE;
+  final double f = clock.toDouble() / GB_CLOCK_PER_FRAME_DOUBLE;
 
   // Ft.log('clock_info.dart', '_onClockInfo', [clock]);
   _clock.text = clock.toStringAsPrecision(9);

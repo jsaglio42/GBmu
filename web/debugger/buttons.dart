@@ -6,80 +6,91 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 18:57:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 11:09:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 18:26:38 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:html' as Html;
-// import 'dart:js' as Js;
-// import 'dart:typed_data';
+
 import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
-
 class _Data {
 
-  final Html.ButtonElement _resume;
-  final Html.ButtonElement _pause;
-  final Html.FormElement _form;
+  final Html.ButtonElement restart;
+  final Html.ButtonElement resume;
+  final Html.ButtonElement pause;
+  final List<Html.ButtonElement> autobreak;
 
   _Data.eltList(List<Html.Element> v)
-    : _resume = v?.elementAt(0)
-    , _pause = v?.elementAt(1)
-    , _form = v?.elementAt(3)
+    : restart = v?.elementAt(0)
+    , resume = v?.elementAt(1)
+    , pause = v?.elementAt(2)
+    , autobreak = v?.sublist(3)
   {
-    assert(_resume != null, 'debButton: missing resume button');
-    assert(_pause != null, 'debButton: missing pause button');
-    assert(_form != null, 'debButton: missing form button');
-    _form.onChange.forEach(_onRadioUpdate);
-    _pause.onClick.forEach(_onPauseClick);
-    _resume.onClick.forEach(_onResumeClick);
-    _emu.listener('EmulationPause').forEach(_onPauseEmu);
-    _emu.listener('EmulationResume').forEach(_onResumeEmu);
+    assert(restart != null, 'debButton: missing restart button');
+    assert(resume != null, 'debButton: missing resume button');
+    assert(pause != null, 'debButton: missing pause button');
+    assert(autobreak != null, 'debButton: missing autobreak');
+    assert(autobreak.length == 4, 'debButton: invalid autobreak count');
   }
+
   _Data() : this.eltList(Html.querySelector("#debColButtons")?.children);
 
-  void _onRadioUpdate(_)
-  {
-    int i;
-
-    _form.children
-      .forEach((l){
-            var input = l.children[0];
-            if (input.checked)
-              i = int.parse(input.value);
-          });
-    _emu.send('EmulationAutoBreak', AutoBreakExternalMode.values[i]);
-  }
-
-  void _onPauseClick(_)
-  {
-    _emu.send('EmulationPause', 42);
-  }
-  void _onResumeClick(_)
-  {
-    _emu.send('EmulationResume', 42);
-  }
-  void _onPauseEmu(_)
-  {
-    _pause.style.display = 'none';
-    _resume.style.display = '';
-  }
-  void _onResumeEmu(_)
-  {
-    _pause.style.display = '';
-    _resume.style.display = 'none';
-  }
 }
+
+/*
+** Callbacks
+*/
+
+void _requestRestart(_) {
+  // _data.resume.style.display = '';
+  // _data.pause.style.display = 'none';
+}
+
+void _requestResume(_) { _emu.send('EmulationResume', 42); }
+void _requestPause(_) { _emu.send('EmulationPause', 42); }
+
+void _onResumeEmu(_) {
+  _data.resume.style.display = 'none';
+  _data.pause.style.display = '';
+}
+
+void _onPauseEmu(_) {
+  _data.resume.style.display = '';
+  _data.pause.style.display = 'none';
+}
+
+/*
+** Global
+*/
 
 final _data = new _Data();
 Emulator.Emulator _emu;
+
+/*
+* Exposed Methods
+*/
 
 void init(Emulator.Emulator emu)
 {
   Ft.log('button.dart', 'init', [emu]);
   Ft.log('deb_but', 'init');
   _emu = emu;
-  _data.toString(); /* Tips to instanciate _data */
+  _data.toString();
+
+  /* Browser side */
+  _data.restart.onClick.forEach(_requestRestart);
+  _data.resume.onClick.forEach(_requestResume);
+  _data.pause.onClick.forEach(_requestPause);
+  for (var ab in AutoBreakExternalMode.values) {
+    _data.autobreak[ab.index]
+      .onClick((_) { _emu.send('EmulationAutoBreak', ab); });
+  }
+
+  /* Emulator Side */
+  _emu.listener('EmulationResume').forEach(_onResumeEmu);
+  _emu.listener('EmulationPause').forEach(_onPauseEmu);
+  return ;
 }
