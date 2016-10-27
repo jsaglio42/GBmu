@@ -3,5 +3,5 @@
 *.conf text eol=lf
 *.yaml text eol=lf
 
-**/tmux*.yaml diff=nodiff
-**/persp.el diff=nodiff
+tmux_gbmu.yaml diff=nodiff
+persp.el diff=nodiff
