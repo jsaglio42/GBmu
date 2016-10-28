@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 17:31:08 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 18:10:50 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,8 +39,8 @@ enum GameBoyType {
   Color
 }
 
-abstract class GameBoy
-  implements Ser.RecursivelySerializable
+abstract class GameBoy extends Object
+  with Ser.RecursivelySerializable
   , Hardware.Hardware
   , Instdecoder.InstructionsDecoder
   , Z80.Z80
@@ -54,6 +54,10 @@ abstract class GameBoy
   , Shared.InternalRam
   , Shared.TailRam {
 
+  GameBoy.internal(Cartridge.ACartridge c) {
+    this.initHardware(c);
+  }
+
   factory GameBoy(Cartridge.ACartridge c, GameBoyType type)
   {
     switch (type)
@@ -63,5 +67,7 @@ abstract class GameBoy
       default : return null;
     }
   }
+
+  int exec(int nbClock);
 
 }

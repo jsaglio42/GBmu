@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 17:32:27 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 18:12:38 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -49,10 +49,7 @@ class GameBoyDMG extends GB.GameBoy
 {
 
   /* Constructor */
-  GameBoyDMG(Cartridge.ACartridge c) {
-    this.initHardware(c);
-    return ;
-  }
+  GameBoyDMG(Cartridge.ACartridge c) : super.internal(c);
 
   /* API */
   int exec(int nbClock) {
