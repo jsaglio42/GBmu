@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/13 11:01:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 14:37:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 10:36:01 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,7 @@ import 'package:emulator/constants.dart';
 
 import 'package:emulator/src/worker/worker.dart' as Worker;
 
-import 'package:emulator/src/GameBoyDMG/gameboy.dart' as Gameboy;
+import 'package:emulator/src/mixins/gameboy.dart' as Gameboy;
 
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;

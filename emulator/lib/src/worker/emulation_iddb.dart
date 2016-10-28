@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 17:23:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 10:35:50 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,7 @@ import 'package:emulator/constants.dart';
 import 'package:emulator/src/events.dart';
 
 import 'package:emulator/src/worker/worker.dart' as Worker;
-import 'package:emulator/src/GameBoyDMG/gameboy.dart' as Gameboy;
+import 'package:emulator/src/mixins/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
@@ -56,7 +56,7 @@ abstract class EmulationIddb implements Worker.AWorker {
       c = new Cartridge.ACartridge(rom);
     // Ft.log('WorkerEmu', '_assembleGameBoy#got-cartridge', [c]);
 
-    final Gameboy.GameBoy gb = new Gameboy.GameBoy(c);
+    final Gameboy.GameBoy gb = new Gameboy.GameBoy(c, GameBoyType.DMG);
     // Ft.log('WorkerEmu', '_assembleGameBoy#got-gb', [gb]);
 
     return gb;
