@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 18:28:23 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 09:08:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,10 +35,6 @@ enum PauseExternalMode {
   Effective, Ineffective
 }
 
-enum AutoBreakExternalMode {
-  Instruction, Line, Frame, Second, None
-}
-
 /** ************************************************************************* **
  ** Abstract Worker ********************************************************* **
  ** ************************************************************************* **
@@ -53,7 +49,6 @@ abstract class AWorker {
   V.GameBoyState get gbMode => this.sc.getState(V.GameBoyState);
   DebuggerExternalMode get debMode => this.sc.getState(DebuggerExternalMode);
   PauseExternalMode get pauseMode => this.sc.getState(PauseExternalMode);
-  AutoBreakExternalMode get abMode => this.sc.getState(AutoBreakExternalMode);
 
   AWorker(this.ports);
 

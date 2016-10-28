@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 18:57:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 23:30:13 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 09:32:08 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,18 +21,19 @@ class _Data {
   final Html.ButtonElement restart;
   final Html.ButtonElement resume;
   final Html.ButtonElement pause;
-  final List<Html.ButtonElement> autobreak;
+  final List<Html.ButtonElement> limitedEmulation;
 
   _Data.eltList(List<Html.Element> v)
     : restart = v?.elementAt(0)
     , resume = v?.elementAt(1)
     , pause = v?.elementAt(2)
-    , autobreak = new List.generate(4, (i) => v?.sublist(3)[i])
+    , limitedEmulation = new List.generate(4, (i) => v?.sublist(3)[i])
   {
     assert(restart != null, 'debButton: missing restart button');
     assert(resume != null, 'debButton: missing resume button');
     assert(pause != null, 'debButton: missing pause button');
-    assert(autobreak.every((e) => (e != null)), 'debButton: missing autobreak');
+    assert(limitedEmulation.every((e) => (e != null)),
+        'debButton: missing limitedEmulation');
   }
 
   _Data() : this.eltList(Html.querySelector("#debColButtons")?.children);
@@ -82,9 +83,9 @@ void init(Emulator.Emulator emu) {
   _data.restart.onClick.forEach(_requestRestart);
   _data.resume.onClick.forEach(_requestResume);
   _data.pause.onClick.forEach(_requestPause);
-  for (var ab in AutoBreakExternalMode.values) {
-    _data.autobreak[ab.index]
-      .onClick.forEach((_) { _emu.send('EmulationAutoBreak', ab); });
+  for (var le in LimitedEmulation.values) {
+    _data.limitedEmulation[le.index]
+      .onClick.forEach((_) { _emu.send('LimitedEmulation', le); });
   }
 
   /* Emulator Side */
