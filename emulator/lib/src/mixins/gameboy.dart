@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 18:10:50 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 18:20:37 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,7 +18,7 @@ import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 
 import "package:emulator/src/GameBoyDMG/gameboydmg.dart" as GBDMG;
-// import "package:emulator/src/GameBoyColor/gameboycolor.dart" as GBC;
+import "package:emulator/src/GameBoyColor/gameboycolor.dart" as GBC;
 
 import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
 
@@ -63,7 +63,7 @@ abstract class GameBoy extends Object
     switch (type)
     {
       case (GameBoyType.DMG) : return new GBDMG.GameBoyDMG(c);
-      // case (GameBoyType.Color) : return new GameBoyColor(c);
+      case (GameBoyType.Color) : return new GBC.GameBoyColor(c);
       default : return null;
     }
   }
