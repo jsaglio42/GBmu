@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/22 14:22:20 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/28 10:02:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,6 +39,7 @@ void init(Emulator.Emulator emu) {
   _init_scale();
   _init_smooth();
   _emu.listener('FrameUpdate').forEach(_updateScreen);
+  _emu.listener('Events').forEach(_onEmulatorEvent);
   return ;
 }
 
@@ -79,4 +80,8 @@ void _turnOffScreen() {
   List<int> black = new List<int>.filled(LCD_SIZE, 0x3);
   _updateScreen(black);
   return ;
+}
+
+void _onEmulatorEvent(_) {
+  _turnOffScreen();
 }
