@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:32:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 17:37:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/28 16:29:41 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -81,6 +81,7 @@ class PlatformDomComponentStorage {
   final Html.Element labelEject = Html.querySelector('#label-ejectbut');
   final Html.Element labelExtractRam = Html.querySelector('#label-extractrambut');
   final Html.InputElement btnRestart = Html.querySelector('#magbut');
+  final Html.ButtonElement btnRestartDebugger = Html.querySelector('#restartDebugger');
   final Html.InputElement btnEject = Html.querySelector('#ejectbut');
   final Html.InputElement btnExtractRam = Html.querySelector('#extractrambut');
 
