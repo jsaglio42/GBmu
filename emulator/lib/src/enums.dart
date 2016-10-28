@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:11:42 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 09:07:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,8 +16,7 @@
 
 export 'package:emulator/src/worker/worker.dart'
   show DebuggerExternalMode
-  , PauseExternalMode
-  , AutoBreakExternalMode;
+  , PauseExternalMode;
 export 'package:emulator/src/hardware/cpu_registers.dart'
   show Reg16
   , Reg8
@@ -38,4 +37,8 @@ export 'package:emulator/src/mixins/graphicstatemachine.dart'
 
 enum DebuggerModeRequest {
   Toggle, Disable, Enable
+}
+
+enum LimitedEmulation {
+  Instruction, Line, Frame, Second
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/20 11:09:34 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 09:41:08 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -80,9 +80,7 @@ abstract class Observer implements Worker.AWorker {
     _sub = _periodic.listen(_onSpeedPoll);
     _sub.pause();
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [V.Emulating.v, DebuggerExternalMode.Dismissed],
-      [V.Emulating.v, DebuggerExternalMode.Operating,
-        PauseExternalMode.Ineffective],
+      [V.Emulating.v, PauseExternalMode.Ineffective],
     ]);
     return ;
   }

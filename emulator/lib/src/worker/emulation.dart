@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:08:55 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 09:42:50 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,24 +33,14 @@ import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
 
 final List<List> _loopingGBCombos = [
-  [V.Emulating.v, DebuggerExternalMode.Dismissed],
-  [V.Emulating.v, DebuggerExternalMode.Operating,
-    PauseExternalMode.Ineffective]
+  [V.Emulating.v, PauseExternalMode.Ineffective]
 ];
 
-final List<List> _activeAutoBreakCombos = [
-  [V.Emulating.v, DebuggerExternalMode.Operating,
-    PauseExternalMode.Ineffective, AutoBreakExternalMode.Instruction],
-  [V.Emulating.v, DebuggerExternalMode.Operating,
-    PauseExternalMode.Ineffective, AutoBreakExternalMode.Frame],
-  [V.Emulating.v, DebuggerExternalMode.Operating,
-    PauseExternalMode.Ineffective, AutoBreakExternalMode.Second],
-];
-
-final Map<AutoBreakExternalMode, int> _autoBreakClocks = {
-  AutoBreakExternalMode.Instruction: 4,
-  AutoBreakExternalMode.Frame: GB_FRAME_PER_CLOCK_INT,
-  AutoBreakExternalMode.Second: GB_CPU_FREQ_INT,
+final Map<LimitedEmulation, int> _limitedEmulationClocks = {
+  LimitedEmulation.Instruction: 4,
+  LimitedEmulation.Line: GB_CLOCK_PER_LINE_INT,
+  LimitedEmulation.Frame: GB_CLOCK_PER_FRAME_INT,
+  LimitedEmulation.Second: GB_CPU_FREQ_INT,
 };
 
 abstract class Emulation
@@ -68,17 +58,21 @@ abstract class Emulation
   DateTime _emulationStartTime;
   DateTime _rescheduleTime;
 
-  bool _autoBreak = false;
+  bool _limitedEmulation = false;
   int _autoBreakIn;
 
   // EXTERNAL INTERFACE ***************************************************** **
-  void _onAutoBreakReq(AutoBreakExternalMode abRaw)
+  void _onLimitedEmulationReq(LimitedEmulation leRaw)
   {
-    final AutoBreakExternalMode ab = AutoBreakExternalMode.values[abRaw.index];
+    final LimitedEmulation le = LimitedEmulation.values[leRaw.index];
 
-    Ft.log("WorkerEmu", '_onAutoBreakReq', [ab]);
-    assert(this.abMode != ab, '_onAutoBreakReq($ab) twice');
-    this.sc.setState(ab);
+    if (this.gbMode is V.Emulating) {
+      Ft.log("WorkerEmu", '_onLimitedEmulationReq', [le]);
+      _autoBreakIn = _limitedEmulationClocks[le];
+      _limitedEmulation = true;
+      if (this.pauseMode == PauseExternalMode.Effective)
+        _updatePauseMode(PauseExternalMode.Ineffective);
+    }
   }
 
   void _onPauseReq(_)
@@ -91,8 +85,10 @@ abstract class Emulation
   void _onResumeReq(_)
   {
     Ft.log("WorkerEmu", '_onResumeReq');
-    if (this.pauseMode != PauseExternalMode.Ineffective)
+    if (this.pauseMode != PauseExternalMode.Ineffective) {
+      _limitedEmulation = false;
       _updatePauseMode(PauseExternalMode.Ineffective);
+    }
   }
 
   void _onEmulationSpeedChangeReq(map)
@@ -115,6 +111,7 @@ abstract class Emulation
       this.es_startFailure(e.toString(), st.toString());
       return ;
     }
+    _limitedEmulation = false;
     _updateEmulationSpeed(_emulationSpeed);
     if (this.debMode == DebuggerExternalMode.Operating
         && this.pauseMode != PauseExternalMode.Effective)
@@ -126,7 +123,7 @@ abstract class Emulation
   void _onEjectReq(_)
   {
     Ft.log("WorkerEmu", '_onEjectReq');
-    assert(this.gbMode != V.Absent, "_onEjectReq with no gameboy");
+    assert(this.gbMode is! V.Absent, "_onEjectReq with no gameboy");
     this.es_eject(this.gbOpt.c.rom.fileName);
   }
 
@@ -221,10 +218,12 @@ abstract class Emulation
       _updatePauseMode(PauseExternalMode.Effective);
       this.gbOpt.clearHB();
     }
-    else if (_autoBreak) {
+    else if (_limitedEmulation) {
       _autoBreakIn -= clockSum;
-      if (_autoBreakIn <= 0)
+      if (_autoBreakIn <= 0) {
+        _limitedEmulation = false;
         _updatePauseMode(PauseExternalMode.Effective);
+      }
     }
     return ;
   }
@@ -241,9 +240,7 @@ abstract class Emulation
 
   int _clockLimitOfClockDebt(double clockDebt)
   {
-    if (this._autoBreak && clockDebt.isFinite)
-      return Math.min(clockDebt.floor(), _autoBreakIn);
-    else if (this._autoBreak && !clockDebt.isFinite)
+    if (_limitedEmulation)
       return _autoBreakIn;
     else if (clockDebt.isInfinite)
       return MAX_INT_LOLDART;
@@ -291,20 +288,6 @@ abstract class Emulation
     _sub = null;
   }
 
-  void _enableAutoBreak()
-  {
-    Ft.log("WorkerEmu", '_enableAutoBreak');
-    assert(this.abMode != AutoBreakExternalMode.None, "_enableAutoBreak");
-    _autoBreakIn = _autoBreakClocks[this.abMode];
-    _autoBreak = true;
-  }
-
-  void _disableAutoBreak()
-  {
-    Ft.log("WorkerEmu", '_disableAutoBreak');
-    _autoBreak = false;
-  }
-
   // CONSTRUCTION *********************************************************** **
   void init_emulation()
   {
@@ -313,16 +296,13 @@ abstract class Emulation
       ..declareType(V.GameBoyState, V.GameBoyState.values,
           V.Absent.v)
       ..declareType(PauseExternalMode, PauseExternalMode.values,
-          PauseExternalMode.Ineffective)
-      ..declareType(AutoBreakExternalMode, AutoBreakExternalMode.values,
-          AutoBreakExternalMode.None);
+          PauseExternalMode.Ineffective);
     this.sc
-      ..addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos)
-      ..addSideEffect(_enableAutoBreak, _disableAutoBreak, _activeAutoBreakCombos);
+      ..addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos);
     this.ports
       ..listener('EmulationStart').forEach(_onEmulationStartReq)
       ..listener('EmulationSpeed').forEach(_onEmulationSpeedChangeReq)
-      ..listener('EmulationAutoBreak').forEach(_onAutoBreakReq)
+      ..listener('LimitedEmulation').forEach(_onLimitedEmulationReq)
       ..listener('EmulationPause').forEach(_onPauseReq)
       ..listener('EmulationResume').forEach(_onResumeReq)
       ..listener('KeyDownEvent').forEach(_onKeyDown)

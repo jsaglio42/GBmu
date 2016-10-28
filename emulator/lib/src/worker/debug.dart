@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 15:08:56 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 09:40:56 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -139,6 +139,9 @@ abstract class Debug implements Worker.AWorker {
       _onDebug();
   }
 
+  void dbg_emu_restart_tmp_fix() { //TODO: fix?
+    _singleRefresh();
+  }
   void _singleRefresh()
   {
     Ft.log("WorkerDeb", '_singleRefresh');
@@ -156,8 +159,7 @@ abstract class Debug implements Worker.AWorker {
     this.sc.declareType(DebuggerExternalMode, DebuggerExternalMode.values,
         DebuggerExternalMode.Operating);
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [V.Emulating.v, DebuggerExternalMode.Operating,
-        PauseExternalMode.Ineffective],
+      [V.Emulating.v, PauseExternalMode.Ineffective],
     ]);
     this.sc.addSideEffect(_singleRefresh, (){}, [
       [DebuggerExternalMode.Operating],

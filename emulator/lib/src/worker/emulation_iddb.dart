@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 15:57:52 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 09:14:57 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,7 +63,7 @@ abstract class EmulationIddb implements Worker.AWorker {
   }
 
   Async.Future ei_extractRam(EventIdb ev) async {
-    assert(this.gbMode != V.Absent, "_onExtractRamReq with no gameboy");
+    assert(this.gbMode is! V.Absent, "_onExtractRamReq with no gameboy");
 
     final c = this.gbOpt.c.ram.rawData;
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
@@ -74,7 +74,7 @@ abstract class EmulationIddb implements Worker.AWorker {
   }
 
   Async.Future ei_extractSs(EventIdb ev) async {
-    assert(this.gbMode != V.Absent, "_onExtractSsReq with no gameboy");
+    assert(this.gbMode is! V.Absent, "_onExtractSsReq with no gameboy");
 
     final Data.Ss c = new Data.Ss.ofGameBoy(this.gbOpt);
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
@@ -83,7 +83,7 @@ abstract class EmulationIddb implements Worker.AWorker {
   }
 
   Async.Future ei_installSs(EventIdb ev) async {
-    assert(this.gbMode != V.Absent, "_onInstallSsReq with no gameboy");
+    assert(this.gbMode is! V.Absent, "_onInstallSsReq with no gameboy");
 
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
     final Data.Ss ss = new Data.Ss.unserialize(
