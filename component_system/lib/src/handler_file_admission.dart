@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/09 17:33:31 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 16:00:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 17:01:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,7 +35,7 @@ class HandlerFileAdmission {
   final PlatformComponentStorage _pcs;
   final PlatformDomComponentStorage _pdcs;
 
-  final Html.Element _target = Html.querySelector('#cartsBody');
+  final Html.Element _target = Html.querySelector('#row-cartsystem');
   int _docCount = 0;
   int _targetCount = 0;
 

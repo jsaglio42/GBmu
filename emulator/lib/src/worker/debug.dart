@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 09:40:56 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/28 17:23:54 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -72,18 +72,18 @@ abstract class Debug implements Worker.AWorker {
   // SECONDARY ROUTINES ***************************************************** **
   void _enable()
   {
-    assert(this.debMode == DebuggerExternalMode.Dismissed,
-        "worker_deb: _disable() while enabled");
-    this.sc.setState(DebuggerExternalMode.Operating);
-    this.ports.send('DebStatusUpdate', true);
+    if (this.debMode == DebuggerExternalMode.Dismissed) {
+      this.sc.setState(DebuggerExternalMode.Operating);
+      this.ports.send('DebStatusUpdate', true);
+    }
   }
 
   void _disable()
   {
-    assert(this.debMode == DebuggerExternalMode.Operating,
-        "worker_deb: _disable() while disabled");
-    this.sc.setState(DebuggerExternalMode.Dismissed);
-    this.ports.send('DebStatusUpdate', false);
+    if (this.debMode == DebuggerExternalMode.Operating) {
+      this.sc.setState(DebuggerExternalMode.Dismissed);
+      this.ports.send('DebStatusUpdate', false);
+    }
   }
 
   List<int>   _buildMemoryList(int addr, Gameboy.GameBoy gb)

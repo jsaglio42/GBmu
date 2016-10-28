@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/27 13:10:06 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/12 18:59:10 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 19:33:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -82,7 +82,7 @@ class TransformerLseUnserializer {
       newEntry = new LsEntry.json_exn(ev.key, ev.newValue);
     }
     catch (e, st) {
-      Ft.logwarn('TLSEUnserializer', '_handleNew#error', [e, st]);
+      // Ft.logwarn('TLSEUnserializer', '_handleNew#error', [e, st]);
       return ;
     }
     sink.add(newEntry);
@@ -97,7 +97,7 @@ class TransformerLseUnserializer {
       oldEntry = new LsEntry.json_exn(ev.key, ev.oldValue);
     }
     catch (e, st) {
-      Ft.logwarn('TLSEUnserializer', '_handleNew#error', [e, st]);
+      // Ft.logwarn('TLSEUnserializer', '_handleUpdate#error', [e, st]);
       return ;
     }
     sink.add(new Update<LsEntry>(oldValue: oldEntry, newValue: newEntry));

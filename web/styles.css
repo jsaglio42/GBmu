@@ -4,21 +4,22 @@
 /* ************************************************************************** */
 
 body {
-    padding: 5px;
     background: url('images/seamless_rough_plastic_texture_nes_by_blueamnesiac-d4mxqci.png') repeat;
     color: white;
-    padding-top: 50px;
+    padding-top: 51px;
 }
 
 [class*="col-"] {
-    /* border: 1px solid black; */
-    /* border-radius: 6px; */
     text-align: center;
 }
 
 .tooltip-inner {
     white-space:pre;
     max-width:none;
+}
+
+.tooltip {
+    pointer-events: none;
 }
 
 /* ************************************************************************** */
@@ -34,46 +35,41 @@ body {
 /* PANELS GLOBAL ************************************************************ */
 /* ************************************************************************** */
 
-#debContainer, #optContainer, #cartsContainer {
+#container-main {
+    padding: 0 1px;
 }
 
-#debBody, #optBody, #cartsBody {
-    background-color: rgba(0, 71, 171, 0.2);
+#container-main > .closable {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgba(0, 71, 171, 0.25);
+    max-width: 1100px;
+}
+
+#row-option {
     border: 1px solid black;
-    border-radius: 6px;
+    border-width: 0px 0px 1px 0px;
+}
+#row-cartsystem, #row-debugger {
+    border: 1px solid black;
+    border-width: 1px 0px 0px 0px;
 }
 
-#cartsContainer {
-
-    text-align: left;
+@media only screen and (min-width: 1100px) {
+    #container-main > .closable {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
 }
 
-#cartsBody {
-    /* float: left; */
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 20px;
-    display: inline-block;
-    /* margin-left:0; */
-    /* margin-right:0; */
-    /* margin: auto; */
-}
-
-#cartsBody.active {
-    background-color: rgba(0, 200, 0, 0.4);
-}
-
-#cartsBody.hover {
-    background-color: rgba(0, 200, 0, 0.75);
+#container-main > div {
+    margin: 0;
+    margin-top: 1px;
 }
 
 /* ************************************************************************** */
 /* OPTIONS PANEL ************************************************************ */
 /* ************************************************************************** */
-
-#optBody > div {
-    padding: 0 5px;
-}
 
 /* SLIDERS ****************************************************************** */
 /* MY CLASSES ********************************* */
@@ -84,10 +80,11 @@ body {
     padding-bottom: 5px;
     padding-right: 27px;
     padding-left: 13px;
+    height: 50px;
 }
 
 .slider-text {
-    padding-top: 15px;
+    padding-top: 5px;
     text-align: right;
     float:left;
 }
@@ -117,8 +114,6 @@ body {
 }
 
 #mainSpeedSlider {
-    /* width: 100%;
-       background: #BABABA; */
 }
 
 /* CANVAS SCALE SLIDER ************************ */
@@ -145,33 +140,44 @@ body {
 .canvas-smooth-part.slider-cont > .slider {
 }
 
+/* CANVAS SMOOTH SLIDER *********************** */
+.gameboy-mode-part.slider-cont {
+    width: calc(100% - 110px);
+}
+
+.gameboy-mode-part.slider-text {
+    width: 110px;
+}
+
+.gameboy-mode-part.slider-cont > .slider {
+}
+
 /* ************************************************************************** */
 /* DEB PANEL **************************************************************** */
 /* ************************************************************************** */
 
 /* DEB - BODY *************************************************************** */
-
-#debBody > div {
+#row-debugger > div {
 }
 
-#debBody > div:last-child {
+#row-debugger > div:last-child {
 }
 
-#debBody td {
+#row-debugger td {
     font-size: 12px;
     color: #005B79;
 }
 
-#debBody td .debTextHighlight {
+#row-debugger td .debTextHighlight {
     color: #FF1E00;
     background-color: red;
 }
 
-#debBody h4 {
+#row-debugger h4 {
     color: GhostWhite;
 }
 
-#debBody th
+#row-debugger th
 {
     background-color: rgba(81, 144, 165, 1.0); /* strong blue */
 }
@@ -277,7 +283,6 @@ body {
 /* ************************************************************************** */
 /* CANVAS ******************************************************************* */
 /* ************************************************************************** */
-
 .canvas {
     width: 500px;
     height: 500px;
@@ -288,13 +293,26 @@ body {
 /* ************************************************************************** */
 /* COMPONENT SYSTEM ********************************************************* */
 /* ************************************************************************** */
+#row-cartsystem {
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+#row-cartsystem > .col {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#row-cartsystem .button-group {
+    text-align: left;
+}
 
 /* GAMEBOY CART SLOT ******************************************************** */
 #gb-slot {
     background-color: rgba(155, 216, 235, 0.85);
     padding: 7px;
-    width: 265px; /* 251 + padding * 2 */
-    min-height: 143px; /* 287 / 2 */
+    width: calc(251px + 7px * 2); /* 251 + padding * 2 */
+    min-height: calc(287px / 2); /* 287 / 2 */
 }
 
 #gb-slot.gameboysocket-active {
@@ -335,7 +353,7 @@ body {
 #detached-chip-bank {
     background-color: rgba(145, 207, 145, 0.85);
     padding: 7px;
-    width: 265px;
+    width: 200px;
     min-height: 143px; /* 287 / 2 */
 }
 
@@ -354,6 +372,7 @@ body {
 
 /* CARTRIDGE **************************************************************** */
 .gameboy-cartridge {
+    margin: 0;
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
 }
@@ -441,8 +460,6 @@ body {
 .cart-ram-bis > .text,
 .cart-ss-bis > .text {
     color: rgba(255, 255, 255, 0.7);
-    /* background-color: red; */
-    /* mix-blend-mode: multiply; */
     white-space: nowrap;
     text-align: center;
     overflow: hidden;
@@ -561,8 +578,11 @@ body {
 
 footer {
     border: 1px solid black;
-    border-radius: 6px;
     height: 20px;
     text-align: center;
-    background-color: rgba(0, 71, 171, 0.2);
+    background-color: #101010;
+}
+
+footer a {
+    color: #9d9d9d;
 }

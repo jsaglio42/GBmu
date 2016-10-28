@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/08 13:50:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/18 11:55:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 17:01:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -39,7 +39,7 @@ class HandlerDomDragged {
 
   // CONSTRUCTION *********************************************************** **
   HandlerDomDragged(this._pde, this._pce, this._pdcs) {
-    final Html.Element cartSystem = Html.querySelector('#cartsBody');
+    final Html.Element cartSystem = Html.querySelector('#row-cartsystem');
 
     Ft.log('HandlerDomDragged', 'contructor');
 

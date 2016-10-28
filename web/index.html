@@ -7,16 +7,13 @@
     <meta name="author" content="">
     <link rel="icon" href="./favicon.ico">
     <title>GBmu</title>
-
-    <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.1.3/css/bootstrap-slider.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
   </head>
-
   <body>
-    <!-- NAVIGATION BAR -->
 
+    <!-- NAV -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -44,41 +41,61 @@
         </div>
       </div>
     </nav>
+    <!-- /NAV -->
 
-    <!-- MAIN CONTAINER -->
-    <div class="container-fluid">
-      <!-- MAIN SPACE -->
-      <div class="row">
+    <!-- CONTAINER MAIN -->
+    <div id="container-main" class="container-fluid">
 
-        <!-- OPTIONS CONTAINER -->
-        <div class="col-sm-12"  id="optContainer">
-          <!-- OPTIONS BODY -->
-          <div class="row" id="optBody">
-            <div class="col-sm-12">
-              <div id="mainSpeedText" class="slider-text">0.00x</div>
-              <div id="speed-slider-cont" class="slider-cont">
-                <div id="mainSpeedSlider"></div>
-              </div>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
-              <div class="slider-text canvas-scale-part">2.00x</div>
-              <div class="slider-cont canvas-scale-part">
-                <div class="slider"></div>
-              </div>
-            </div>
-            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
-              <div class="slider-text canvas-smooth-part">Off</div>
-              <div class="slider-cont canvas-smooth-part">
-                <div class="slider"></div>
-              </div>
-            </div>
-          </div> <!-- /OPTIONS BODY -->
-        </div> <!-- /OPTIONS CONTAINER -->
+      <!-- OPTION -->
+      <div class="row closable" id="row-option">
+        <div class="col-xs-12">
+          <div id="mainSpeedText" class="slider-text">0.00x</div>
+          <div id="speed-slider-cont" class="slider-cont">
+            <div id="mainSpeedSlider"></div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="slider-text canvas-scale-part">2.00x</div>
+          <div class="slider-cont canvas-scale-part">
+            <div class="slider"></div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="slider-text canvas-smooth-part">Off</div>
+          <div class="slider-cont canvas-smooth-part">
+            <div class="slider"></div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="slider-text gameboy-mode-part">Color Game Boy</div>
+          <div class="slider-cont gameboy-mode-part">
+            <div class="slider"></div>
+          </div>
+        </div>
+      </div>
+      <!-- /OPTION -->
 
-        <!-- cartsContainer-->
-        <div class="panel-group col-md-4 col-lg-3" id="cartsContainer">
-          <!-- cartsBody -->
-          <div id="cartsBody">
+      <!-- ALERT -->
+      <div class="row" id="row-alert">
+        <div class="col-sm-offset-2 col-sm-8" id="mainAlertBox"></div>
+      </div>
+      <!-- /ALERT -->
+
+      <!-- CANVAS -->
+      <div class="row" id="row-canvas">
+        <div class="col-sm-12 text-xs-center">
+          <div><canvas id="gameboyScreen"/></div>
+        </div>
+      </div>
+      <!-- /CANVAS -->
+
+      <!-- CART SYSTEM -->
+      <div class="closable" id="row-cartsystem">
+        <div class="col">
+          <div id="gb-slot" class="ui-widget-header toplevel-bank">
+            <div id="label-gbsocket-empty" style="display: none;">Drop a cartridge here !</div>
+          </div>
+          <div class="button-group">
             <label class="btn btn-info" id="label-magbut" style="visibility: hidden;">
               restart<input id="magbut" style="display: none;">
             </label>
@@ -88,52 +105,41 @@
             <label class="btn btn-info" id="label-extractrambut" style="visibility: hidden;">
               extract RAM<input id="extractrambut" style="display: none;">
             </label>
-            <div id="gb-slot" class="ui-widget-header toplevel-bank">
-              <div id="label-gbsocket-empty" style="display: none;">Drop a cartridge here !</div>
-            </div>
-            <!-- Cart Bank: -->
-            <div id="accordion" class="ui-widget-header toplevel-bank">
-              <div id="label-no-cart">No rom loaded, drop files here</br>(.gb, .gbc)</div>
-            </div>
-            <!-- Detached Chip Bank: -->
-            <div id="detached-chip-bank" class="ui-widget-header toplevel-bank">
-              <div id="label-no-chip">No save loaded, drop files here</br>(.save, .ss)</div>
-            </div>
-            <!-- Volcano: -->
-            <!-- Soon... -->
-          </div><!-- /cartsBody -->
-        </div><!-- /cartsContainer -->
-
-
-        <div class="col-md-8 col-lg-9" id="canvasContainer">
-          <div class="row">
-            <div class="col-sm-12 text-xs-center">
-              <div><canvas id="gameboyScreen"/></div>
-            </div>
-            <div class="col-sm-offset-2 col-sm-8" id="mainAlertBox"></div>
           </div>
         </div>
+        <div class="col">
+          <div id="accordion" class="ui-widget-header toplevel-bank">
+            <div id="label-no-cart">No rom loaded, drop files here</br>(.gb, .gbc)</div>
+          </div>
+        </div>
+        <div class="col">
+          <div id="detached-chip-bank" class="ui-widget-header toplevel-bank">
+            <div id="label-no-chip">No save loaded, drop files here</br>(.save, .ss)</div>
+          </div>
+        </div>
+      </div>
+      <!-- /CART SYSTEM -->
 
+      <!-- DEBUGGER -->
+      <div class="row closable" id="row-debugger">
 
-        <!-- DEBUGGER CONTAINER-->
-        <div class="col-sm-12"  id="debContainer">
-          <!-- DEBUGGER BODY -->
-          <div class="row" id="debBody">
-            <div class="col-sm-12" id="debColButtons"></div>
-            <div class="col-sm-12" id="debColClock"></div>
-            <div class="col-sm-8">
-              <div class="row">
-                <div class="col-sm-4" id="debColRegisters"></div>
-                <div class="col-sm-8" id="debColInstructionFlow"></div>
-              </div>
-              <div class="row" id="debColMemoryExplorer"></div>
-            </div>
-            <div class="col-sm-4" id="debColMemRegisters"></div>
-          </div><!-- /#debBody -->
-        </div><!-- /#debContainer -->
+        <div class="col-sm-12" id="debColButtons"></div>
+        <div class="col-sm-12" id="debColClock"></div>
 
-      </div><!-- /MAIN SPACE -->
-    </div><!-- /MAIN CONTAINER -->
+        <div class="col-sm-8">
+          <div class="row">
+            <div class="col-sm-4" id="debColRegisters"></div>
+            <div class="col-sm-8" id="debColInstructionFlow"></div>
+          </div>
+          <div class="row" id="debColMemoryExplorer"></div>
+        </div>
+        <div class="col-sm-4" id="debColMemRegisters"></div>
+      </div>
+      <!-- /DEBUGGER -->
+
+    </div>
+    <!-- /CONTAINER MAIN -->
+
     <!-- FOOTER -->
     <footer class="footer">
       <small class="pull-left col-sm-2">
@@ -145,9 +151,10 @@
       <small class="pull-right col-sm-1">
         <a href="https://github.com/jsaglio42/GBmu">github</a>
       </small>
-    </footer><!-- /FOOTER -->
+    </footer>
+    <!-- /FOOTER -->
 
-    <!-- Js Placed at the end of the document so the pages load faster -->
+    <!-- SCRIPT -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.1.3/bootstrap-slider.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
@@ -166,5 +173,7 @@
 
     <script defer src="main.dart.js" type="application/dart"></script>
     <script defer src="packages/browser/dart.js"></script>
+    <!-- /SCRIPT -->
+
   </body>
 </html>

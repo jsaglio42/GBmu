@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/22 13:12:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 16:21:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 19:51:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,6 +16,7 @@ part of canvas;
 const double __MIN_SCALE = 1.0;
 const double __MAX_SCALE = 10.0;
 const double __DEFAULT_SCALE = 2.0;
+const String __LOCAL_STORAGE_KEY_SCALE = 'option_scale';
 const List<double> steps = const <double>[
   1.0, 2.0, 4.0, 10.0
 ];
@@ -30,6 +31,7 @@ double get _screenScale => __screenScale;
 void set _screenScale(double s) {
   if (s != _screenScale) {
     __screenScale = s;
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_SCALE] = s.toString();
     _screen.width = (LCD_WIDTH * __screenScale) ~/ 1.0;
     _screen.height = (LCD_HEIGHT * __screenScale) ~/ 1.0;
     _text.text = '$s' + 'x';
@@ -49,7 +51,7 @@ class __Slider {
       'formatter': _formatter,
       'min': __MIN_SCALE,
       'max': __MAX_SCALE,
-      'value': __DEFAULT_SCALE,
+      'value': _screenScale,
       'step': 0.01,
       'ticks_snap_bounds': 0.05,
       'ticks': steps,
@@ -63,6 +65,7 @@ class __Slider {
     assert(slider != null, "Could not build `Slider`");
 
     slider.callMethod('on', ['slide', _onSlide]);
+    slider.callMethod('on', ['slideStop', _onSlide]);
   }
 
   // PRIVATE **************************************************************** **
@@ -80,6 +83,16 @@ class __Slider {
 
 // CONSTRUCTION ************************************************************* **
 void _init_scale() {
-  _screenScale = __DEFAULT_SCALE;
+  final String prevValOpt =
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_SCALE];
+  double val;
+
+  if (prevValOpt != null) {
+    val = double.parse(prevValOpt, (_) => __DEFAULT_SCALE);
+    val = val.clamp(__MIN_SCALE, __MAX_SCALE);
+  }
+  else
+    val = __DEFAULT_SCALE;
+  _screenScale = val;
   new __Slider();
 }

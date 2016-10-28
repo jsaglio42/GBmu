@@ -1,62 +1,67 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   canvas_smooth.dart                                 :+:      :+:    :+:   //
+//   gb-mode.dart                                       :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/10/22 14:21:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 19:49:30 by ngoguey          ###   ########.fr       //
+//   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
+//   Updated: 2016/10/27 19:32:02 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-part of canvas;
+import 'dart:js' as Js;
+import 'dart:math' as Math;
+import 'dart:html' as Html;
+import 'package:ft/ft.dart' as Ft;
+import 'package:emulator/constants.dart';
+import 'package:emulator/emulator.dart' as Emulator;
 
 // CONSTANTS **************************************************************** **
-const bool __DEFAULT_SMOOTH = false;
-const String __LOCAL_STORAGE_KEY_SMOOTH = 'option_smooth';
+const String __LOCAL_STORAGE_KEY_GAMEBOYMODE = 'option_gb_mode';
+const bool __DEFAULT_GAMEBOYMODE = true;
 
 // VARIABLE ***************************************************************** **
-final Html.Element _textSmooth =
-  Html.querySelector('.canvas-smooth-part.slider-text');
-bool __smooth;
+final Html.Element _textGameBoyMode =
+  Html.querySelector('.gameboy-mode-part.slider-text');
+bool __gameBoyMode;
 
-bool get _smooth => __smooth;
+bool get _gameBoyMode => __gameBoyMode;
 
-void set _smooth(bool b) {
-  if (b != __smooth) {
-    __smooth = b;
-    Html.window.localStorage[__LOCAL_STORAGE_KEY_SMOOTH] = b.toString();
-    _textSmooth.text = _smoothFormatter(b);
-    _screen.context2D.imageSmoothingEnabled = b;
+void set _gameBoyMode(bool b) {
+  if (b != __gameBoyMode) {
+    __gameBoyMode = b;
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = b.toString();
+    _textGameBoyMode.text = _gameBoyModeFormatter(b);
+    // TODO: Interact with emulator on game boy mode change
   }
 }
 
-String _smoothFormatter(bool b) =>
-  'Anti-aliasing ' + (b ? 'On' : 'Off');
+String _gameBoyModeFormatter(bool b) =>
+  b ? 'Color Game Boy' : 'Game Boy';
 
-String _smoothFormatterNum(num n) =>
-  _smoothFormatter(n > 0.5);
+String _gameBoyModeFormatterNum(num n) =>
+  _gameBoyModeFormatter(n > 0.5);
 
-class __SmoothSlider {
+class __GameBoyModeSlider {
 
   // CONSTUCTION ************************************************************ **
-  __SmoothSlider() {
+  __GameBoyModeSlider() {
     var constr = Js.context['Slider'];
     assert(constr != null, "Could not find `Slider` constructor");
 
     var param = new Js.JsObject.jsify({
-      'formatter': _smoothFormatterNum,
+      'formatter': _gameBoyModeFormatterNum,
       'min': 0.0,
       'max': 1.0,
-      'value': (_smooth ? 1.0 : 0.0),
+      'value': (_gameBoyMode ? 1.0 : 0.0),
       'ticks': [0.0, 1.0],
       'ticks_positions': [0, 100],
     });
 
     assert(param != null, "Could not build `Slider` parameter");
     var slider = new Js.JsObject(constr, [
-      '.canvas-smooth-part.slider-cont > .slider', param]);
+      '.gameboy-mode-part.slider-cont > .slider', param]);
     assert(slider != null, "Could not build `Slider`");
 
     slider.callMethod('on', ['slide', _onSlide]);
@@ -65,16 +70,15 @@ class __SmoothSlider {
 
   // PRIVATE **************************************************************** **
   void _onSlide(num n) {
-    _smooth = n > 0.5;
+    _gameBoyMode = n > 0.5;
   }
 
 }
 
-
 // CONSTRUCTION ************************************************************* **
-void _init_smooth() {
+void init_gameBoyMode() {
   final String prevValOpt =
-    Html.window.localStorage[__LOCAL_STORAGE_KEY_SMOOTH];
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
   bool val;
 
   if (prevValOpt == 'true')
@@ -82,7 +86,7 @@ void _init_smooth() {
   else if (prevValOpt == 'false')
     val = false;
   else
-    val = __DEFAULT_SMOOTH;
-  _smooth = val;
-  new __SmoothSlider();
+    val = __DEFAULT_GAMEBOYMODE;
+  _gameBoyMode = val;
+  new __GameBoyModeSlider();
 }

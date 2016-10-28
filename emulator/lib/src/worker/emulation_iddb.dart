@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 09:14:57 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/28 17:23:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -76,20 +76,27 @@ abstract class EmulationIddb implements Worker.AWorker {
   Async.Future ei_extractSs(EventIdb ev) async {
     assert(this.gbMode is! V.Absent, "_onExtractSsReq with no gameboy");
 
+    // Ft.log("WorkerEmu", 'ei_extractSs');
+
     final Data.Ss c = new Data.Ss.ofGameBoy(this.gbOpt);
+    // Ft.log("WorkerEmu", 'ei_extractSs#ss-constructed');
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
 
+    // Ft.log("WorkerEmu", 'ei_extractSs#database-retrieved');
     await _setDataOfField(idb, ev.store, ev.key, c.serialize()['data']);
+    // Ft.log("WorkerEmu", 'ei_extractSs#transaction-complete');
   }
 
   Async.Future ei_installSs(EventIdb ev) async {
     assert(this.gbMode is! V.Absent, "_onInstallSsReq with no gameboy");
 
+    // Ft.log("WorkerEmu", 'ei_installSs');
     final Idb.Database idb = await _futureDatabaseOfName(ev.idb);
     final Data.Ss ss = new Data.Ss.unserialize(
         await _fieldOfKeys(idb, ev.store, ev.key));
 
     this.gbOpt.recUnserialize(ss.rawData);
+    // Ft.log("WorkerEmu", 'ei_installSs#DONE');
   }
 
   // PRIVATE **************************************************************** **

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 16:27:16 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 17:25:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -111,7 +111,7 @@ class VideoRam extends Ser.RecursivelySerializable {
 
   Iterable<Ser.Field> get serFields {
     return <Ser.Field>[
-      new Ser.Field('_mapTileID', () => _mapTileID, (v) {
+      new Ser.Field('_mapTileID', () => new Uint8List.fromList(_mapTileID), (v) {
             _mapTileID = new Uint8List.fromList(v);
           }),
     ];

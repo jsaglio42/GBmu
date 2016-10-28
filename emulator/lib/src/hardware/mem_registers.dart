@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 11:37:38 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 17:25:47 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -148,7 +148,7 @@ class MemRegs extends Ser.RecursivelySerializable {
 
   Iterable<Ser.Field> get serFields {
     return <Ser.Field>[
-      new Ser.Field('_data', () => _data, (v) {
+      new Ser.Field('_data', () => new Uint8List.fromList(_data), (v) {
             _data = new Uint8List.fromList(v);
           }),
    ];

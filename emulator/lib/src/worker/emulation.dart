@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 09:42:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/28 17:23:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -197,10 +197,11 @@ abstract class Emulation
     final int clockLimit = _clockLimitOfClockDebt(clockDebt);
 
     try {
+      // Ft.log("WorkerEmu", '_emulate');
       clockSum = _emulate(timeLimit, clockLimit);
+      // Ft.log("WorkerEmu", '_emulate#DONE');
     }
     catch (e, st) {
-      // Ft.logwarn(Ft.typeStr(this), '_onEmulation#try', [e, st]);
       clockSum = 0;
       error = e;
       stacktrace = st;

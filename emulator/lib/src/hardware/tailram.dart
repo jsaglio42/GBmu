@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/25 18:20:22 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 17:26:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -62,9 +62,9 @@ class TailRam extends Ser.RecursivelySerializable {
 
   Iterable<Ser.Field> get serFields {
     return <Ser.Field>[
-      new Ser.Field('_data', () => _data, (v) {
-            _data = new Uint8List.fromList(v);
-          }),
+      new Ser.Field('_data', () => new Uint8List.fromList(_data), (v) {
+        _data = new Uint8List.fromList(v);
+      }),
     ];
   }
 

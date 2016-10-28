@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/27 13:52:07 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 17:25:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -66,16 +66,21 @@ class LCD extends Ser.RecursivelySerializable {
 
   Iterable<Ser.Field> get serFields {
     return <Ser.Field>[
-      new Ser.Field('screen', () => screen,
+      new Ser.Field('screen', () => new List<int>.from(screen),
           (v) => this.screen = new List<int>.from(v)),
-      new Ser.Field('screenBuffer', () => screenBuffer,
+
+      new Ser.Field('screenBuffer', () => new List<int>.from(screenBuffer),
           (v) => this.screenBuffer = new List<int>.from(v)),
-      new Ser.Field('bgColorIDs', () => bgColorIDs,
+
+      new Ser.Field('bgColorIDs', () => new List<int>.from(bgColorIDs),
           (v) => this.bgColorIDs = new List<int>.from(v)),
-      new Ser.Field('spriteColors', () => spriteColors,
+
+      new Ser.Field('spriteColors', () => new List<int>.from(spriteColors),
           (v) => this.spriteColors = new List<int>.from(v)),
-      new Ser.Field('zBuffer', () => zBuffer,
+
+      new Ser.Field('zBuffer', () => new List<int>.from(zBuffer),
           (v) => this.zBuffer = new List<int>.from(v)),
+
       new Ser.Field('shouldRefreshScreen', () => shouldRefreshScreen,
           (v) => shouldRefreshScreen),
       new Ser.Field('shouldDrawLine', () => shouldDrawLine,

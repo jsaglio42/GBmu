@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 17:43:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/22 13:30:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 19:45:50 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,18 +18,18 @@ import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
 import './emulation_speed_codec.dart' as ESCodec;
+import './gb-mode.dart';
 
 /*
  * Global Variable
  */
-
-final _speed = new _SpeedSlider();
+const String __LOCAL_STORAGE_KEY_EMUSPEED = 'option_emu_speed';
+const double __DEFAULT_EMUSPEED = 1.0;
 Emulator.Emulator _emu;
 
 /*
  * Internal Methods
  */
-
 class _SpeedSlider {
 
   Html.Element _slider = Html.querySelector('#mainSpeedSlider');
@@ -47,7 +47,7 @@ class _SpeedSlider {
         '${(speed * 100.0).toStringAsFixed(3)}%';
   }
 
-  _SpeedSlider() {
+  _SpeedSlider(double speed) {
     var constr = Js.context['Slider'];
     assert(constr != null, "Could not find `Slider` constructor");
     var param = new Js.JsObject.jsify({
@@ -57,7 +57,7 @@ class _SpeedSlider {
 
       'min': 0.0,
       'max': 1.0,
-      'value': 0.5,
+      'value': ESCodec.codec.encode(speed),
 
       'step': 1.0 / 1000.0,
       'ticks_snap_bounds': 1.0 / 1000.0 * 10.0,
@@ -90,19 +90,9 @@ class _SpeedSlider {
 
     slider.callMethod('on', ['slideStop', _onSlide]);
 
-    // Html.querySelectorAll('#mainSpeedSlider .slider-tick-label')
-    //   .forEach((Html.DivElement elt) {
-    //         print('lol: $elt');
-    //         elt
-    //           ..style.width = ""
-    //           ..style.marginLeft = ""
-    //           ..style.border = "1px";
-    //       });
-
-
     _emu.send('EmulationSpeed', <String, dynamic>{
-      'speed': 1.0,
-      'isInf': false,
+      'speed': speed,
+      'isInf': speed.isInfinite,
     });
     _emu.listener('EmulationSpeed').forEach(_onSpeedUpdate);
     return ;
@@ -118,6 +108,8 @@ class _SpeedSlider {
   _onSlide(num perc_num) {
     final double perc = perc_num.toDouble();
     final speed = ESCodec.codec.decode(perc);
+
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_EMUSPEED] = speed.toString();
     _emu.send('EmulationSpeed', <String, dynamic>{
       'speed': speed,
       'isInf': speed.isInfinite
@@ -126,6 +118,9 @@ class _SpeedSlider {
   }
 
 }
+
+
+
 
 /*
  * Exposed Methods
@@ -142,8 +137,27 @@ void onClose()
 }
 
 void init(Emulator.Emulator emu) {
+  final String prevValOpt =
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_EMUSPEED];
+  double val;
+
   Ft.log('options.dart', 'init', [emu]);
+
   _emu = emu;
-  _speed.toString();
+
+  if (prevValOpt != null) {
+    val = double.parse(prevValOpt, (_) => __DEFAULT_EMUSPEED);
+    if (val.isFinite) {
+      if (val < 10.0)
+        val = val.clamp(1.0, 10.0);
+      else
+        val = double.INFINITY;
+    }
+  }
+  else
+    val = __DEFAULT_EMUSPEED;
+  print(val);
+  new _SpeedSlider(val);
+  init_gameBoyMode();
   return ;
 }

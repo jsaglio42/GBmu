@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/24 19:30:23 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/27 20:01:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,20 +27,37 @@ typedef void _callback_t();
 
 class _Panel {
 
-  Html.LIElement _parent;
-  Html.AnchorElement _a;
-  bool _openned = true;
-  _callback_t _cbOpen;
-  _callback_t _cbClose;
-  Html.DivElement _panel;
+  final Html.AnchorElement _a;
+  final Html.LIElement _parent;
+  final String _name;
+  final Html.DivElement _panel;
+  final _callback_t _cbOpen;
+  final _callback_t _cbClose;
 
-  _Panel(a, panel, this._cbOpen, this._cbClose)
+  bool _openned;
+
+  _Panel(a, name, this._cbOpen, this._cbClose, bool defaultState)
     : _parent = a.parent
     , _a = a
-    , _panel = panel
+    , _name = name
+    , _panel = Html.querySelector(name)
   {
+    final String lsValueOpt =
+      Html.window.localStorage['nav_$_name'];
+    bool state;
+
+    if (lsValueOpt == 'true')
+      state = true;
+    else if (lsValueOpt == 'false')
+      state = false;
+    else
+      state = defaultState;
     _a.onClick.forEach(this.toggle);
-    _parent.classes.add('active');
+    if (state)
+      _open();
+    else
+      _close();
+    // _parent.classes.add('active');
   }
 
   void toggle(_)
@@ -57,6 +74,7 @@ class _Panel {
     _parent.classes.add('active');
     _panel.style.display = '';
     _openned = true;
+    Html.window.localStorage['nav_$_name'] = 'true';
     if (_cbOpen != null)
       _cbOpen();
   }
@@ -67,6 +85,7 @@ class _Panel {
     _parent.classes.remove('active');
     _panel.style.display = 'none';
     _openned = false;
+    Html.window.localStorage['nav_$_name'] = 'false';
     if (_cbClose != null)
       _cbClose();
   }
@@ -82,24 +101,9 @@ List<_Panel> _makePanels(Emulator.Emulator emu)
   final List aLst = Html.querySelectorAll('.navbar .nav > li > a');
   final List<_Panel> l = [];
 
-  l.add(new _Panel(aLst[3], Html.querySelector('#debBody'),
-          Deb.onOpen, Deb.onClose));
-  l.add(new _Panel(aLst[1], Html.querySelector('#optBody'),
-          Opt.onOpen, Opt.onClose));
-  l.add(new _Panel(aLst[0], Html.querySelector('#cartsContainer'),
-          (){
-      Html.querySelector('#canvasContainer')
-        .classes
-        ..add('col-md-8')
-        ..add('col-lg-9')
-        ..remove('col-lg-12');
-    }, (){
-      Html.querySelector('#canvasContainer')
-        .classes
-        ..remove('col-md-8')
-        ..remove('col-lg-9')
-        ..add('col-lg-12');
-    }));
+  l.add(new _Panel(aLst[3], '#row-debugger', Deb.onOpen, Deb.onClose, false));
+  l.add(new _Panel(aLst[1], '#row-option', Opt.onOpen, Opt.onClose, false));
+  l.add(new _Panel(aLst[0], '#row-cartsystem', null, null, true));
   return l;
 }
 
