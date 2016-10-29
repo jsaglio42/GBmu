@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 17:23:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 14:14:46 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,28 +25,22 @@ import 'package:emulator/src/events.dart';
 
 import 'package:emulator/src/worker/worker.dart' as Worker;
 import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
+import 'package:emulator/src/worker/emulation_pause.dart' as WEmuPause;
 import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;
 import 'package:emulator/src/GameBoyDMG/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
-
-final List<List> _loopingGBCombos = [
-  [V.Emulating.v, PauseExternalMode.Ineffective]
-];
-
-final Map<LimitedEmulation, int> _limitedEmulationClocks = {
-  LimitedEmulation.Instruction: 4,
-  LimitedEmulation.Line: GB_CLOCK_PER_LINE_INT,
-  LimitedEmulation.Frame: GB_CLOCK_PER_FRAME_INT,
-  LimitedEmulation.Second: GB_CPU_FREQ_INT,
-};
+import 'package:emulator/src/worker/debug.dart' as WDeb; //tmp fix
 
 abstract class Emulation
-  implements Worker.AWorker, WEmuState.EmulationState, WEmuIddb.EmulationIddb
+  implements Worker.AWorker, WEmuState.EmulationState, WEmuIddb.EmulationIddb,
+  WEmuPause.EmulationPause
+  , WDeb.Debug //tmp fix
 {
 
+  // ATTRIBUTES ************************************************************* **
   Async.Stream _fut;
   Async.StreamSubscription _sub;
 
@@ -58,39 +52,27 @@ abstract class Emulation
   DateTime _emulationStartTime;
   DateTime _rescheduleTime;
 
-  bool _limitedEmulation = false;
-  int _autoBreakIn;
-
-  // EXTERNAL INTERFACE ***************************************************** **
-  void _onLimitedEmulationReq(LimitedEmulation leRaw)
+  // CONSTRUCTION *********************************************************** **
+  void init_emulation()
   {
-    final LimitedEmulation le = LimitedEmulation.values[leRaw.index];
-
-    if (this.gbMode is V.Emulating) {
-      Ft.log("WorkerEmu", '_onLimitedEmulationReq', [le]);
-      _autoBreakIn = _limitedEmulationClocks[le];
-      _limitedEmulation = true;
-      if (this.pauseMode == PauseExternalMode.Effective)
-        _updatePauseMode(PauseExternalMode.Ineffective);
-    }
+    Ft.log("WorkerEmu", 'init_emulation');
+    this.sc.declareType(V.GameBoyState, V.GameBoyState.values,
+        V.Absent.v);
+    this.sc.addSideEffect(_makeLooping, _makeDormant,
+        [[V.Emulating.v, PauseExternalMode.Ineffective]]);
+    this.ports
+      ..listener('EmulationStart').forEach(_onEmulationStartReq)
+      ..listener('EmulationSpeed').forEach(_onEmulationSpeedChangeReq)
+      ..listener('KeyDownEvent').forEach(_onKeyDown)
+      ..listener('KeyUpEvent').forEach(_onKeyUp)
+      ..listener('EmulationEject').forEach(_onEjectReq)
+      ..listener('ExtractRam').forEach(_onExtractRamReq)
+      ..listener('ExtractSs').forEach(_onExtractSsReq)
+      ..listener('InstallSs').forEach(_onInstallSsReq);
+    ep_init();
   }
 
-  void _onPauseReq(_)
-  {
-    Ft.log("WorkerEmu", '_onPauseReq');
-    if (this.pauseMode != PauseExternalMode.Effective)
-      _updatePauseMode(PauseExternalMode.Effective);
-  }
-
-  void _onResumeReq(_)
-  {
-    Ft.log("WorkerEmu", '_onResumeReq');
-    if (this.pauseMode != PauseExternalMode.Ineffective) {
-      _limitedEmulation = false;
-      _updatePauseMode(PauseExternalMode.Ineffective);
-    }
-  }
-
+  // CALLBACKS (DOM) ******************************************************** **
   void _onEmulationSpeedChangeReq(map)
   {
     Ft.log("WorkerEmu", '_onEmulationSpeedChangeReq', [map]);
@@ -111,11 +93,11 @@ abstract class Emulation
       this.es_startFailure(e.toString(), st.toString());
       return ;
     }
-    _limitedEmulation = false;
     _updateEmulationSpeed(_emulationSpeed);
-    if (this.debMode == DebuggerExternalMode.Operating
-        && this.pauseMode != PauseExternalMode.Effective)
-      _updatePauseMode(PauseExternalMode.Effective);
+
+    eptmp_onEmulationStart();
+    dbgtmp_onEmulationStart();
+
     this.es_startSuccess(gb);
     return ;
   }
@@ -160,34 +142,7 @@ abstract class Emulation
     return ;
   }
 
-  // SECONDARY ROUTINES ***************************************************** **
-  void _updateEmulationSpeed(double speed)
-  {
-    // Ft.log("WorkerEmu", '_updateEmulationSpeed', [speed]);
-    assert(!(speed < 0.0), "_updateEmulationSpeed($speed)");
-    if (speed.isFinite) {
-      _emulationSpeed = speed;
-      _clockPerRoutineGoal =
-        GB_CPU_FREQ_DOUBLE / EMULATION_PER_SEC_DOUBLE * _emulationSpeed;
-    }
-    else {
-      _emulationSpeed = double.INFINITY;
-      _clockPerRoutineGoal = double.INFINITY;
-    }
-    _clockDeficit = 0.0;
-  }
-
-  void _updatePauseMode(PauseExternalMode m)
-  {
-    // Ft.log("WorkerEmu", '_updatePauseMode', [m]);
-    this.sc.setState(m);
-    if (m == PauseExternalMode.Effective)
-      this.ports.send('EmulationPause', 42);
-    else
-      this.ports.send('EmulationResume', 42);
-  }
-
-  // LOOPING ROUTINE ******************************************************** **
+  // CALLBACKS (WORKER) ***************************************************** **
   void _onEmulation(_)
   {
     int clockSum;
@@ -216,19 +171,36 @@ abstract class Emulation
     if (error != null)
       this.es_gbCrash(error.toString(), stacktrace.toString());
     else if (this.gbOpt.hardbreak) {
-      _updatePauseMode(PauseExternalMode.Effective);
+      ep_breakPoint();
       this.gbOpt.clearHB();
     }
-    else if (_limitedEmulation) {
-      _autoBreakIn -= clockSum;
-      if (_autoBreakIn <= 0) {
-        _limitedEmulation = false;
-        _updatePauseMode(PauseExternalMode.Effective);
-      }
-    }
+    else if (ep_limitedEmulation)
+      ep_decreaseAutoBreakIn(clockSum);
     return ;
   }
 
+  void _makeLooping()
+  {
+    Ft.log("WorkerEmu", '_makeLooping');
+    assert(_sub == null, "_makeLooping() with some timer");
+    _clockDeficit = 0.0;
+    _emulationStartTime = Ft.now().add(EMULATION_START_DELAY);
+    _rescheduleTime = _emulationStartTime;
+    _emulationCount = 0;
+    _fut = new Async.Future.delayed(EMULATION_START_DELAY).asStream();
+    _sub = _fut.listen(_onEmulation);
+  }
+
+  void _makeDormant()
+  {
+    Ft.log("WorkerEmu", '_makeDormant');
+    assert(_sub != null, "_makeDormant with no timer");
+    _sub.pause();
+    _fut = null;
+    _sub = null;
+  }
+
+  // ONEMULATION SUBROUTINES ************************************************ **
   Duration _makeRescheduleDelay() {
     final DateTime now = Ft.now();
     final Duration delta = _rescheduleTime.difference(now);
@@ -241,8 +213,8 @@ abstract class Emulation
 
   int _clockLimitOfClockDebt(double clockDebt)
   {
-    if (_limitedEmulation)
-      return _autoBreakIn;
+    if (ep_limitedEmulation)
+      return ep_autoBreakIn;
     else if (clockDebt.isInfinite)
       return MAX_INT_LOLDART;
     else
@@ -267,51 +239,21 @@ abstract class Emulation
     return clockSum;
   }
 
-  // SIDE EFFECTS CONTROLS ************************************************** **
-  void _makeLooping()
+  // OTHER SUBROUTINES ****************************************************** **
+  void _updateEmulationSpeed(double speed)
   {
-    Ft.log("WorkerEmu", '_makeLooping');
-    assert(_sub == null, "_makeLooping() with some timer");
+    // Ft.log("WorkerEmu", '_updateEmulationSpeed', [speed]);
+    assert(!(speed < 0.0), "_updateEmulationSpeed($speed)");
+    if (speed.isFinite) {
+      _emulationSpeed = speed;
+      _clockPerRoutineGoal =
+        GB_CPU_FREQ_DOUBLE / EMULATION_PER_SEC_DOUBLE * _emulationSpeed;
+    }
+    else {
+      _emulationSpeed = double.INFINITY;
+      _clockPerRoutineGoal = double.INFINITY;
+    }
     _clockDeficit = 0.0;
-    _emulationStartTime = Ft.now().add(EMULATION_START_DELAY);
-    _rescheduleTime = _emulationStartTime;
-    _emulationCount = 0;
-    _fut = new Async.Future.delayed(EMULATION_START_DELAY).asStream();
-    _sub = _fut.listen(_onEmulation);
-  }
-
-  void _makeDormant()
-  {
-    Ft.log("WorkerEmu", '_makeDormant');
-    assert(_sub != null, "_makeDormant with no timer");
-    _sub.pause();
-    _fut = null;
-    _sub = null;
-  }
-
-  // CONSTRUCTION *********************************************************** **
-  void init_emulation()
-  {
-    Ft.log("WorkerEmu", 'init_emulation');
-    this.sc
-      ..declareType(V.GameBoyState, V.GameBoyState.values,
-          V.Absent.v)
-      ..declareType(PauseExternalMode, PauseExternalMode.values,
-          PauseExternalMode.Ineffective);
-    this.sc
-      ..addSideEffect(_makeLooping, _makeDormant, _loopingGBCombos);
-    this.ports
-      ..listener('EmulationStart').forEach(_onEmulationStartReq)
-      ..listener('EmulationSpeed').forEach(_onEmulationSpeedChangeReq)
-      ..listener('LimitedEmulation').forEach(_onLimitedEmulationReq)
-      ..listener('EmulationPause').forEach(_onPauseReq)
-      ..listener('EmulationResume').forEach(_onResumeReq)
-      ..listener('KeyDownEvent').forEach(_onKeyDown)
-      ..listener('KeyUpEvent').forEach(_onKeyUp)
-      ..listener('EmulationEject').forEach(_onEjectReq)
-      ..listener('ExtractRam').forEach(_onExtractRamReq)
-      ..listener('ExtractSs').forEach(_onExtractSsReq)
-      ..listener('InstallSs').forEach(_onInstallSsReq);
   }
 
 }

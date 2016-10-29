@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/13 11:01:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 09:25:26 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 14:13:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,11 +30,9 @@ import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
-import 'package:emulator/src/worker/debug.dart' as WDeb; //tmp fix
+// import 'package:emulator/src/worker/debug.dart' as WDeb; //tmp fix
 
-abstract class EmulationState implements Worker.AWorker,
-  WDeb.Debug //tmp fix
-{
+abstract class EmulationState implements Worker.AWorker {
 
   void es_gbCrash(String msg, String st) {
     this.sc.setState(V.Crashed.v);
@@ -79,7 +77,6 @@ abstract class EmulationState implements Worker.AWorker,
     }
     else /* if (this.gbMode is V.Emulating) */ {
       ev = V.EmulatingRestart.v;
-      this.dbg_emu_restart_tmp_fix();
     }
     this.ports.send('Events', <String, dynamic>{
       'type': ev,

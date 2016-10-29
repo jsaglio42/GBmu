@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 17:23:54 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 14:13:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -122,6 +122,11 @@ abstract class Debug implements Worker.AWorker {
     return ;
   }
 
+  void dbgtmp_onEmulationStart() {
+    _singleRefresh();
+  }
+
+
   // SIDE EFFECTS CONTROLS ************************************************** **
   void _makeLooping()
   {
@@ -139,9 +144,6 @@ abstract class Debug implements Worker.AWorker {
       _onDebug();
   }
 
-  void dbg_emu_restart_tmp_fix() { //TODO: fix?
-    _singleRefresh();
-  }
   void _singleRefresh()
   {
     Ft.log("WorkerDeb", '_singleRefresh');
