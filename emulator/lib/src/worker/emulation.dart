@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:11:12 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:14:37 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,7 +32,6 @@ import 'package:emulator/src/worker/emulation_timings.dart' as WEmuTimings;
 import 'package:emulator/src/worker/emulation_timings_cpu.dart' as WEmuTimingsCpu;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
-import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
 
 abstract class Emulation

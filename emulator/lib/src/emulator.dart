@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:12:02 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:16:45 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,62 +28,54 @@ import 'package:emulator/variants.dart' as V;
  * ************************************************************************** **
  * Defines two Map<String, Type>.
  * `Type` must match EXACTLY the sent type.
- * Don't send any `double` here, a double rounded is always a type int.
+ * Don't send any `double` here, a double rounded is always of type int.
  * Receiver may use `a subtype` or `dynamic` parameter in
  *   it's callback function.
  */
 
-final _mainReceivers = <String, Type>{
+final Map<String, Type> _mainReceivers = <String, Type>{
+
+  // DOM
+  'EmulationSpeed' : <String, dynamic>{}.runtimeType,
+  'Events': <String, dynamic>{}.runtimeType,
+  'FrameUpdate': <int>[].runtimeType,
+
+  // DOM Debugger
+  'DebStatusUpdate' : bool,
+  'EmulationPause' : int,
+  'EmulationResume' : int,
+  'MemInfo' : <String, dynamic>{}.runtimeType,
+  'InstInfo' : <Instructions.Instruction>[].runtimeType,
   'RegInfo' : Cpuregs.CpuRegs,
   'MemRegInfo' : Uint8List,
   'ClockInfo' : int,
-  'EmulationSpeed' : <String, dynamic>{}.runtimeType,
-  'EmulationPause' : int,
-  'EmulationResume' : int,
-  'DebStatusUpdate' : bool,
-  'MemInfo' : <String, dynamic>{}.runtimeType,
-  'InstInfo' : <Instructions.Instruction>[].runtimeType,
-  'Events': <String, dynamic>{}.runtimeType,
-  'FrameUpdate': <int>[].runtimeType,
+
 };
 
-final _workerReceivers = <String, Type>{
-  'KeyDownEvent' : JoypadKey,
-  'KeyUpEvent' : JoypadKey,
-  'DebStatusRequest' : DebuggerModeRequest,
-  'GameBoyTypeUpdate' : GameBoyType,
+final Map<String, Type> _workerReceivers = <String, Type>{
+
+  // Emulation
   'EmulationStart' : RequestEmuStart,
   'EmulationEject' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,
-  'LimitedEmulation' : LimitedEmulation,
-  'EmulationPause' : int,
-  'EmulationResume' : int,
   'ExtractRam' : EventIdb,
   'ExtractSs' : EventIdb,
   'InstallSs' : EventIdb,
-  'DebMemAddrChange' : int,
-  'Debug' : <String, dynamic>{}.runtimeType,
   'FpsRequest': <String, double>{}.runtimeType,
+  'GameBoyTypeUpdate' : GameBoyType,
+
+  // GameBoy Joypad
+  'KeyDownEvent' : JoypadKey,
+  'KeyUpEvent' : JoypadKey,
+
+  // Debugger
+  'DebStatusRequest' : DebuggerModeRequest,
+  'LimitedEmulation' : LimitedEmulation,
+  'EmulationPause' : int,
+  'EmulationResume' : int,
+  'DebMemAddrChange' : int,
+
 };
-
-/*
- * ************************************************************************** **
- * Emulator class ...
- * ************************************************************************** **
- */
-class RequestEmuStart {
-
-  final String idb;
-  final String romStore;
-  final String ramStore;
-
-  final int romKey;
-  final int ramKeyOpt;
-
-  RequestEmuStart({
-    this.idb, this.romStore, this.ramStore, this.romKey, this.ramKeyOpt});
-
-}
 
 /*
  * ************************************************************************** **

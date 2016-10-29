@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 19:54:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 20:32:43 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,7 +25,6 @@ import 'package:emulator/src/worker/worker.dart' as Worker;
 
 // import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 // import 'package:emulator/src/hardware/data.dart' as Data;
-// import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
 
 abstract class EmulationTimingsCpu implements Worker.AWorker
