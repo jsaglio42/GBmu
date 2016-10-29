@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 18:46:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 19:15:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,6 +52,8 @@ abstract class EmulationTimingsCpu implements Worker.AWorker
       _clockPerCycleGoal = double.INFINITY;
     }
     etc_reset();
+    if (this.gbMode is! V.Absent)
+      this.gbOpt.resetFrameRenderTokens();
   }
 
   void etc_reset() {
