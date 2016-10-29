@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 13:37:07 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:03:00 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,6 +28,7 @@ import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
 import 'package:emulator/src/worker/emulation_pause.dart' as WEmuPause;
 import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;
 import 'package:emulator/src/mixins/gameboy.dart' as Gameboy;
+import 'package:emulator/src/worker/emulation_timings.dart' as WEmuTimings;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
@@ -35,7 +36,7 @@ import 'package:emulator/variants.dart' as V;
 
 abstract class Emulation
   implements Worker.AWorker, WEmuState.EmulationState, WEmuIddb.EmulationIddb,
-  WEmuPause.EmulationPause
+  WEmuPause.EmulationPause, WEmuTimings.EmulationTimings
 {
 
   // ATTRIBUTES ************************************************************* **
@@ -46,10 +47,6 @@ abstract class Emulation
   double _emulationSpeed = 1.0;
   double _clockDeficit;
   double _clockPerRoutineGoal;
-
-  int _emulationCount;
-  DateTime _emulationStartTime;
-  DateTime _rescheduleTime;
 
   // CONSTRUCTION *********************************************************** **
   void init_emulation()
@@ -70,6 +67,7 @@ abstract class Emulation
       ..listener('ExtractSs').forEach(_onExtractSsReq)
       ..listener('InstallSs').forEach(_onInstallSsReq);
     ep_init();
+    et_setCyclesPerSec(30.0);
   }
 
   // PUBLIC **************************************************************** **
@@ -152,13 +150,14 @@ abstract class Emulation
   {
     int clockSum;
     var error, stacktrace;
-    final DateTime timeLimit = _rescheduleTime.add(EMULATION_PERIOD_DURATION);
     final double clockDebt = _clockPerRoutineGoal + _clockDeficit;
     final int clockLimit = _clockLimitOfClockDebt(clockDebt);
 
+    et_advance();
+
     try {
       // Ft.log("WorkerEmu", '_emulate');
-      clockSum = _emulate(timeLimit, clockLimit);
+      clockSum = _emulate(clockLimit);
       // Ft.log("WorkerEmu", '_emulate#DONE');
     }
     catch (e, st) {
@@ -167,11 +166,7 @@ abstract class Emulation
       stacktrace = st;
     }
     _clockDeficit = clockDebt - clockSum.toDouble();
-    _emulationCount++;
-    _rescheduleTime = _emulationStartTime.add(
-        EMULATION_PERIOD_DURATION * _emulationCount);
-    _fut = new Async.Future.delayed(_makeRescheduleDelay())
-      .asStream();
+    _fut = new Async.Future.delayed(et_rescheduleDeltaTime()).asStream();
     _sub = _fut.listen(_onEmulation);
     if (error != null)
       this.es_gbCrash(error.toString(), stacktrace.toString());
@@ -189,10 +184,8 @@ abstract class Emulation
     Ft.log("WorkerEmu", '_makeLooping');
     assert(_sub == null, "_makeLooping() with some timer");
     _clockDeficit = 0.0;
-    _emulationStartTime = Ft.now().add(EMULATION_START_DELAY);
-    _rescheduleTime = _emulationStartTime;
-    _emulationCount = 0;
-    _fut = new Async.Future.delayed(EMULATION_START_DELAY).asStream();
+    et_reset();
+    _fut = new Async.Future.delayed(et_rescheduleDeltaTime()).asStream();
     _sub = _fut.listen(_onEmulation);
   }
 
@@ -206,16 +199,6 @@ abstract class Emulation
   }
 
   // ONEMULATION SUBROUTINES ************************************************ **
-  Duration _makeRescheduleDelay() {
-    final DateTime now = Ft.now();
-    final Duration delta = _rescheduleTime.difference(now);
-
-    if (delta < EMULATION_RESCHEDULE_MIN_DELAY)
-      return EMULATION_RESCHEDULE_MIN_DELAY;
-    else
-      return delta;
-  }
-
   int _clockLimitOfClockDebt(double clockDebt)
   {
     if (ep_limitedEmulation)
@@ -226,13 +209,13 @@ abstract class Emulation
       return clockDebt.floor();
   }
 
-  int _emulate(final DateTime timeLimit, final int clockLimit)
+  int _emulate(final int clockLimit)
   {
     int clockSum = 0;
     int clockExec;
 
     while (true) {
-      if (Ft.now().compareTo(timeLimit) >= 0)
+      if (Ft.now().compareTo(et_cycleTimeLimit) >= 0)
         break ;
       if (clockSum >= clockLimit)
         break ;
@@ -252,7 +235,7 @@ abstract class Emulation
     if (speed.isFinite) {
       _emulationSpeed = speed;
       _clockPerRoutineGoal =
-        GB_CPU_FREQ_DOUBLE / EMULATION_PER_SEC_DOUBLE * _emulationSpeed;
+        GB_CPU_FREQ_DOUBLE / et_cyclesPerSec_double * _emulationSpeed;
     }
     else {
       _emulationSpeed = double.INFINITY;

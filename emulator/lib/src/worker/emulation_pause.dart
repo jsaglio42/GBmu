@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 13:37:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 15:20:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 16:35:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -112,7 +112,7 @@ abstract class EmulationPause implements Worker.AWorker
       _updateMode(PauseExternalMode.Effective);
   }
 
-    // PUBLIC ***************************************************************** **
+  // PUBLIC ***************************************************************** **
   bool get ep_limitedEmulation => _limitedEmulation;
 
   int get ep_autoBreakIn => _autoBreakIn;
