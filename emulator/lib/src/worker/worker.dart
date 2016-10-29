@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:03:57 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:04:42 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,6 +22,7 @@ import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;
 import 'package:emulator/src/worker/emulation_pause.dart' as WEmuPause;
 // import 'package:emulator/src/worker/emulation_exec.dart' as WEmuExec;
 import 'package:emulator/src/worker/emulation_timings.dart' as WEmuTimings;
+import 'package:emulator/src/worker/emulation_timings_cpu.dart' as WEmuTimingsCpu;
 import 'package:emulator/src/worker/debug.dart' as WDeb;
 import 'package:emulator/src/worker/observer.dart' as WObs;
 import 'package:emulator/variants.dart' as V;
@@ -61,6 +62,11 @@ abstract class AWorker {
   Gameboy.GameBoy gbOpt = null;
   Async.Stream<V.EmulatorEvent> emulatorEvents; // ABSTRACT **************** **
 
+  // EMULATION TIMINGS ****************************************************** **
+  double get et_cyclesPerSec_double;
+  bool get ep_limitedEmulation;
+  int get ep_autoBreakIn;
+
 }
 
 /** ************************************************************************* **
@@ -74,6 +80,7 @@ class Worker extends AWorker
   , WEmuIddb.EmulationIddb
   , WEmuPause.EmulationPause
   , WEmuTimings.EmulationTimings
+  , WEmuTimingsCpu.EmulationTimingsCpu
   , WEmu.Emulation
   , WObs.Observer
   , WDeb.Debug
