@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 17:18:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/09/10 17:27:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 15:14:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 import './registers.dart' as Debregisters;
 import './mem_registers.dart' as Debmregisters;
 import './mem_explorer.dart' as Debmexplorer;
+import './instruction_flow.dart' as Debinstflow;
 import './clock_info.dart' as Debclocks;
 import './buttons.dart' as Debbuttons;
 
@@ -57,7 +58,9 @@ void init(Emulator.Emulator emu)
   Debregisters.init(emu);
   Debmregisters.init(emu);
   Debmexplorer.init(emu);
+  Debinstflow.init(emu);
   Debclocks.init(emu);
   Debbuttons.init(emu);
   Ft.log('deb.dart', 'init#end', [emu]);
+
 }

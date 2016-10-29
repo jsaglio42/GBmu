@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 15:36:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 15:13:13 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,14 +21,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 import 'package:emulator/variants.dart' as V;
 import 'package:component_system/cs.dart' as Cs;
 
-
 import './debugger/deb.dart' as Deb;
-import './debugger/registers.dart' as Debregisters;
-import './debugger/mem_registers.dart' as Debmregisters;
-import './debugger/mem_explorer.dart' as Debmexplorer;
-import './debugger/instruction_flow.dart' as Debinstflow;
-import './debugger/clock_info.dart' as Debclocks;
-import './debugger/buttons.dart' as Debbuttons;
 
 import './alerts.dart' as Mainalerts;
 import './keyboard.dart' as Keyboard;
@@ -45,13 +38,6 @@ run() async
 
   var emu = await emuFut;
   Ft.log('main.dart', 'run#emuCreated');
-
-  Debregisters.init(emu);
-  Debmregisters.init(emu);
-  Debmexplorer.init(emu);
-  Debinstflow.init(emu);
-  Debclocks.init(emu);
-  Debbuttons.init(emu);
   Mainalerts.init(emu);
 
   Canvas.init(emu);

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:03:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 16:44:57 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/29 14:59:54 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,10 +32,23 @@ void _onClockInfo(int clock) {
   final double f = clock.toDouble() / GB_CLOCK_PER_FRAME_DOUBLE;
 
   // Ft.log('clock_info.dart', '_onClockInfo', [clock]);
-  _clock.text = clock.toStringAsPrecision(9);
+  _clock.text = _clockToString(clock);
   _time.text = new Duration(microseconds: tMs.round()).toString();
   _frames.text = f.toStringAsPrecision(6);
   return ;
+}
+
+String _clockToString(int i) {
+  String s = "";
+
+  while (true) {
+    if (i >= 1000)
+      s = " " + (i % 1000).toString().padLeft(3, '0') + s;
+    else {
+      return i.toString() + s;
+    }
+    i = (i / 1000) ~/ 1;
+  }
 }
 
 /*

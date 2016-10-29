@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 18:57:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 16:28:27 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/29 15:15:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -68,7 +68,6 @@ Emulator.Emulator _emu;
 
 void init(Emulator.Emulator emu) {
   Ft.log('button.dart', 'init', [emu]);
-  Ft.log('deb_but', 'init');
   _emu = emu;
   _data.toString();
 
@@ -77,7 +76,9 @@ void init(Emulator.Emulator emu) {
   _data.pause.onClick.forEach(_requestPause);
   for (var le in LimitedEmulation.values) {
     _data.limitedEmulation[le.index]
-      .onClick.forEach((_) { _emu.send('LimitedEmulation', le); });
+      .onClick.forEach((_) {
+            _emu.send('LimitedEmulation', le);
+          });
   }
 
   /* Emulator Side */

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/29 09:22:48 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/13 12:13:49 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 15:16:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,7 +50,7 @@ class StatesController {
     _stateOfType[t] = startState;
     for (var s in states) {
       _typeOfState[s] = t;
-      print('declareType ${t} ${s} ${_typeOfState[s]} ${_typeOfState[s] == t}');
+      // print('declareType ${t} ${s} ${_typeOfState[s]} ${_typeOfState[s] == t}');
     }
   }
 
