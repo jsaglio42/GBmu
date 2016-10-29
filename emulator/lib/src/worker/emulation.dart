@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:03:00 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:04:04 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -67,7 +67,7 @@ abstract class Emulation
       ..listener('ExtractSs').forEach(_onExtractSsReq)
       ..listener('InstallSs').forEach(_onInstallSsReq);
     ep_init();
-    et_setCyclesPerSec(30.0);
+    et_setCyclesPerSec(60.0);
   }
 
   // PUBLIC **************************************************************** **
@@ -154,6 +154,8 @@ abstract class Emulation
     final int clockLimit = _clockLimitOfClockDebt(clockDebt);
 
     et_advance();
+    _fut = new Async.Future.delayed(et_rescheduleDeltaTime()).asStream();
+    _sub = _fut.listen(_onEmulation);
 
     try {
       // Ft.log("WorkerEmu", '_emulate');
@@ -165,11 +167,12 @@ abstract class Emulation
       error = e;
       stacktrace = st;
     }
+    this.ports.send('FrameUpdate', this.gbOpt.lcd.screen);
     _clockDeficit = clockDebt - clockSum.toDouble();
-    _fut = new Async.Future.delayed(et_rescheduleDeltaTime()).asStream();
-    _sub = _fut.listen(_onEmulation);
-    if (error != null)
+    if (error != null) {
       this.es_gbCrash(error.toString(), stacktrace.toString());
+      return ;
+    }
     else if (this.gbOpt.hardbreak) {
       ep_breakPoint();
       this.gbOpt.clearHB();

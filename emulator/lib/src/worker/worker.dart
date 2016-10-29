@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:03:24 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:03:57 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,6 @@ import 'package:emulator/src/worker/emulation_pause.dart' as WEmuPause;
 import 'package:emulator/src/worker/emulation_timings.dart' as WEmuTimings;
 import 'package:emulator/src/worker/debug.dart' as WDeb;
 import 'package:emulator/src/worker/observer.dart' as WObs;
-import 'package:emulator/src/worker/framescheduler.dart' as WFramescheduler;
 import 'package:emulator/variants.dart' as V;
 
 /** ************************************************************************* **
@@ -78,7 +77,6 @@ class Worker extends AWorker
   , WEmu.Emulation
   , WObs.Observer
   , WDeb.Debug
-  , WFramescheduler.FrameScheduler
 {
 
   Worker(ports)
@@ -87,7 +85,6 @@ class Worker extends AWorker
     this.init_emulation();
     this.init_observer();
     this.init_debug();
-    this.init_framescheduler();
     this.sc.fire();
   }
 
