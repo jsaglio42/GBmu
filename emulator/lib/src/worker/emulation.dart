@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 14:14:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 15:20:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,12 +32,10 @@ import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
-import 'package:emulator/src/worker/debug.dart' as WDeb; //tmp fix
 
 abstract class Emulation
   implements Worker.AWorker, WEmuState.EmulationState, WEmuIddb.EmulationIddb,
   WEmuPause.EmulationPause
-  , WDeb.Debug //tmp fix
 {
 
   // ATTRIBUTES ************************************************************* **
@@ -94,10 +92,6 @@ abstract class Emulation
       return ;
     }
     _updateEmulationSpeed(_emulationSpeed);
-
-    eptmp_onEmulationStart();
-    dbgtmp_onEmulationStart();
-
     this.es_startSuccess(gb);
     return ;
   }

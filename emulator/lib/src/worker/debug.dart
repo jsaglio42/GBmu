@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 14:25:59 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 15:23:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,14 +43,20 @@ abstract class Debug implements Worker.AWorker {
     this.sc.declareType(DebuggerExternalMode, DebuggerExternalMode.values,
         DebuggerExternalMode.Operating);
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [V.Emulating.v, PauseExternalMode.Ineffective],
+      [V.Emulating.v, DebuggerExternalMode.Operating,
+        PauseExternalMode.Ineffective],
     ]);
     this.sc.addSideEffect(_onDebOpen, (){}, [
       [DebuggerExternalMode.Operating],
     ]);
+    this.sc.addSideEffect(_onPauseEffective, (){}, [
+      [PauseExternalMode.Effective],
+    ]);
     this.ports
       ..listener('DebStatusRequest').forEach(_onDebModeChangeReq)
       ..listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
+    this.emulatorEvents
+      .forEach(_onEmulatorEvent);
   }
 
   // CALLBACKS (DOM) ******************************************************** **
@@ -93,6 +99,7 @@ abstract class Debug implements Worker.AWorker {
   // CALLBACKS (WORKER) ***************************************************** **
   void _onDebug([_])
   {
+    // Ft.log("WorkerDeb", '_onDebug');
     assert(this.gbMode is! V.Absent,
         "_onDebug with no gameboy");
 
@@ -125,25 +132,25 @@ abstract class Debug implements Worker.AWorker {
     Ft.log("WorkerDeb", '_makeDormant');
     assert(!_sub.isPaused, "worker_deb: _makeDormant while paused");
     _sub.pause();
-    _singleRefresh();
   }
 
   void _onDebOpen()
-  {
-    _singleRefresh();
-  }
-
-  void dbgtmp_onEmulationStart() {
-    _singleRefresh();
-  }
-
-  // SUBROUTINES ************************************************************ **
-  void _singleRefresh()
   {
     if (this.gbMode is! V.Absent)
       _onDebug();
   }
 
+  void _onPauseEffective() {
+    if (this.gbMode is! V.Absent)
+      _onDebug();
+  }
+
+  void _onEmulatorEvent(V.EmulatorEvent ev) {
+    if (ev is! V.Eject)
+      _onDebug();
+  }
+
+  // SUBROUTINES ************************************************************ **
   void _enable()
   {
     if (this.debMode == DebuggerExternalMode.Dismissed) {

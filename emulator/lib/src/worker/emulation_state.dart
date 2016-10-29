@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/13 11:01:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 14:13:48 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 14:37:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,9 +30,15 @@ import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
-// import 'package:emulator/src/worker/debug.dart' as WDeb; //tmp fix
 
 abstract class EmulationState implements Worker.AWorker {
+
+  // ATTRIBUTES ************************************************************* **
+  Async.StreamController<V.EmulatorEvent> _emulatorEvents =
+    new Async.StreamController<V.EmulatorEvent>.broadcast();
+
+  // PUBLIC ***************************************************************** **
+  Async.Stream<V.EmulatorEvent> get emulatorEvents => _emulatorEvents.stream;
 
   void es_gbCrash(String msg, String st) {
     this.sc.setState(V.Crashed.v);
@@ -41,6 +47,7 @@ abstract class EmulationState implements Worker.AWorker {
       'msg': msg,
       'st': st,
     });
+    _emulatorEvents.add(V.Crash.v);
   }
 
   void es_startFailure(String msg, String st) {
@@ -61,6 +68,7 @@ abstract class EmulationState implements Worker.AWorker {
       'msg': msg,
       'st': st,
     });
+    _emulatorEvents.add(ev);
   }
 
   void es_startSuccess(Gameboy.GameBoy gb) {
@@ -82,6 +90,7 @@ abstract class EmulationState implements Worker.AWorker {
       'type': ev,
       'name': gb.c.rom.fileName,
     });
+    _emulatorEvents.add(ev);
   }
 
   void es_eject(String name) {
@@ -100,6 +109,7 @@ abstract class EmulationState implements Worker.AWorker {
       'type': ev,
       'name': gb.c.rom.fileName,
     });
+    _emulatorEvents.add(ev);
   }
 
 }

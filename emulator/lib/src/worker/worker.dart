@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 13:54:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 14:36:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,15 +43,22 @@ enum PauseExternalMode {
  */
 abstract class AWorker {
 
+  // CONSTRUCTION *********************************************************** **
+  AWorker(this.ports);
+
+  // DOM EVENTS ************************************************************* **
   final Wiso.Ports ports;
+
+  // WORKERS EVENTS/STATES ************************************************** **
   final Ft.StatesController sc = new Ft.StatesController();
-  Gameboy.GameBoy gbOpt = null;
 
   V.GameBoyState get gbMode => this.sc.getState(V.GameBoyState);
   DebuggerExternalMode get debMode => this.sc.getState(DebuggerExternalMode);
   PauseExternalMode get pauseMode => this.sc.getState(PauseExternalMode);
 
-  AWorker(this.ports);
+  // EMULATION EVENTS/STATES ************************************************ **
+  Gameboy.GameBoy gbOpt = null;
+  Async.Stream<V.EmulatorEvent> emulatorEvents; // ABSTRACT **************** **
 
 }
 
