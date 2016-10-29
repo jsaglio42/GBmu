@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/17 15:53:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 19:33:53 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/29 15:38:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,6 +18,16 @@ import 'package:emulator/emulator.dart' as Emulator;
 /*
  * Global Variable
  */
+
+const List<String> _SPECIAL_FLAGS_LIST = const <String>['ime',  'halt', 'stop'];
+
+bool _speFlagValueOfName(Emulator.CpuRegs cpur, String name) {
+  switch (name) {
+    case ('ime'): return cpur.ime;
+    case ('halt'): return cpur.halt;
+    case ('stop'): return cpur.stop;
+  }
+}
 
 class _HtmlLabel {
   final Html.Element elt;
@@ -36,11 +46,13 @@ class _HtmlElement {
 class _DomData {
   final Map<Reg1, _HtmlLabel> flagLabels;
   final Map<Reg16, _HtmlElement> reg16Cells;
+  final Map<String, _HtmlLabel> speFlagLabels;
 
   _DomData(): this.table(_getTableElement());
   _DomData.table(Html.TableElement table)
     : flagLabels = _flagsElementsOfTable(table)
-    , reg16Cells = _reg16ElementsOfTable(table);
+    , reg16Cells = _reg16ElementsOfTable(table)
+    , speFlagLabels = _speFlagsElementsOfTable(table);
 
   static _getTableElement()
   {
@@ -68,12 +80,7 @@ class _DomData {
 
   static _flagsElementsOfTable(Html.TableElement table)
   {
-    final Html.TableRowElement row = table.rows?.elementAt(1);
-    assert(row != null, "Could not find labels row");
-    final Html.TableCellElement cell = row.cells[0];
-    assert(cell != null, "Could not find labels cell");
-    final List<Html.Element> labels = cell.children;
-    assert(labels != null, "Could not find labels");
+    final List<Html.Element> labels = table.querySelectorAll('.cpur-flag');
     final it = new Ft.DoubleIterable(
         Ft.iterEnumData(Reg1, Reg1.values),
         labels.reversed);
@@ -86,6 +93,20 @@ class _DomData {
 
     return new Map<Reg1, _HtmlLabel>.unmodifiable(m);
   }
+
+  static _speFlagsElementsOfTable(Html.TableElement table)
+  {
+    final it = new Ft.DoubleIterable(
+        _SPECIAL_FLAGS_LIST, table.querySelectorAll('.cpur-spe-flag'));
+    var m = {};
+
+    it.forEach((String name, Html.Element label){
+      label.text = name;
+      m[name] = new _HtmlLabel(label);
+    });
+    return m;
+  }
+
 }
 
 final _DomData _data = new _DomData();
@@ -101,16 +122,16 @@ void _onRegInfo(Emulator.CpuRegs cpur) {
     if (cell.value == cur) {
       if (cell.highlighted) {
         cell.elt.style.color = '#005B79';
-        _data.reg16Cells[reg].highlighted = false;
+        cell.highlighted = false;
       }
     }
     else {
       if (!cell.highlighted) {
         cell.elt.style.color = '#FF1E00';
-        _data.reg16Cells[reg].highlighted = true;
+        cell.highlighted = true;
       }
       cell.elt.text = Ft.toHexaString(cur, 4);
-      _data.reg16Cells[reg].value = cur;
+      cell.value = cur;
     }
     return ;
   };
@@ -118,7 +139,17 @@ void _onRegInfo(Emulator.CpuRegs cpur) {
     final bool cur = (cpur.pull1(reg) == 1);
 
     if (cell.value != cur) {
-      _data.flagLabels[reg].value = cur;
+      cell.value = cur;
+      cell.elt.classes.toggle('label-default');
+      cell.elt.classes.toggle('label-success');
+    }
+    return ;
+  };
+  toggleSpeFlagLabels(String name, _HtmlLabel cell){
+    final bool cur = (_speFlagValueOfName(cpur, name));
+
+    if (cell.value != cur) {
+      cell.value = cur;
       cell.elt.classes.toggle('label-default');
       cell.elt.classes.toggle('label-success');
     }
@@ -126,6 +157,7 @@ void _onRegInfo(Emulator.CpuRegs cpur) {
   };
   _data.reg16Cells.forEach(toggleReg16Element);
   _data.flagLabels.forEach(toggleFlagLabels);
+  _data.speFlagLabels.forEach(toggleSpeFlagLabels);
   return ;
 }
 
