@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 13:31:12 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:12:02 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,6 +63,7 @@ final _workerReceivers = <String, Type>{
   'InstallSs' : EventIdb,
   'DebMemAddrChange' : int,
   'Debug' : <String, dynamic>{}.runtimeType,
+  'FpsRequest': <String, double>{}.runtimeType,
 };
 
 /*

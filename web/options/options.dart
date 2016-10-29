@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 17:43:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:09:36 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:10:19 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -69,15 +69,17 @@ class _SpeedSlider {
         ESCodec.codec.encode(1.0 / GB_CPU_FREQ_DOUBLE),
         ESCodec.codec.encode(1.0),
         ESCodec.codec.encode(2.0),
+        ESCodec.codec.encode(4.0),
         ESCodec.codec.encode(10.0),
         1.0
       ],
-      'ticks_labels': ['', '1cps', '1x', '2x', '10x', 'infinity'],
+      'ticks_labels': ['', '1cps', '1x', '2x', '4x', '10x', 'infinity'],
       'ticks_positions': [
         (0.0 * 100.0),
         (ESCodec.codec.encode(1.0 / GB_CPU_FREQ_DOUBLE) * 100.0),
         (ESCodec.codec.encode(1.0) * 100.0),
         (ESCodec.codec.encode(2.0) * 100.0),
+        (ESCodec.codec.encode(4.0) * 100.0),
         (ESCodec.codec.encode(10.0) * 100.0),
         100
       ],
@@ -157,6 +159,6 @@ void init(Emulator.Emulator emu) {
   print(val);
   new _SpeedSlider(val);
   init_gameBoyType(emu);
-  init_gameBoyFps();
+  init_gameBoyFps(emu);
   return ;
 }

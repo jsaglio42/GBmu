@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:06:50 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:11:12 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -58,6 +58,7 @@ abstract class Emulation
     this.ports
       ..listener('EmulationStart').forEach(_onEmulationStartReq)
       ..listener('EmulationSpeed').forEach(_onEmulationSpeedChangeReq)
+      ..listener('FpsRequest').forEach(_onFpsChangeReq)
       ..listener('KeyDownEvent').forEach(_onKeyDown)
       ..listener('KeyUpEvent').forEach(_onKeyUp)
       ..listener('GameBoyTypeUpdate').forEach(_onGameBoyTypeUpdate)
@@ -97,6 +98,13 @@ abstract class Emulation
     etc_reset();
     es_startSuccess(gb);
     return ;
+  }
+
+  void _onFpsChangeReq(Map m) {
+    Ft.log("WorkerEmu", '_onFpsChangeReq', [m]);
+    assert(m['fps'] != null && m['fps'] is double);
+    et_setCyclesPerSec(m['fps']);
+    etc_resetRate();
   }
 
   void _onEjectReq(_)

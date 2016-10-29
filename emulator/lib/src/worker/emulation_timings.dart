@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 16:45:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 17:56:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 19:58:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -48,6 +48,7 @@ abstract class EmulationTimings implements Worker.AWorker
     _cyclePeriod_double = 1.0 / cps;
     _cyclePeriod_duration = new Duration(microseconds:
         (_cyclePeriod_double * MICROSECONDS_PER_SECOND_DOUBLE + 0.5) ~/ 1);
+    et_reset();
   }
 
   double get et_cyclesPerSec_double {

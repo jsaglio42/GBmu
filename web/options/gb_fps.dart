@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 19:25:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 19:38:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 20:00:55 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,6 +27,7 @@ const List<double> steps = const <double>[
 ];
 
 // VARIABLE ***************************************************************** **
+Emulator.Emulator _emu;
 final Html.Element _text =
   Html.querySelector('.gameboy-fps-part.slider-text');
 double __gbFps;
@@ -39,6 +40,7 @@ void set _gbFps(double s) {
     __gbFps = s;
     Html.window.localStorage[__LOCAL_STORAGE_KEY_FPS] = s.toString();
     _text.text = '$s fps';
+    _emu.send('FpsRequest', <String, double>{'fps': s});
   }
 }
 
@@ -70,7 +72,7 @@ class __Slider {
       '.gameboy-fps-part.slider-cont > .slider', param]);
     assert(slider != null, "Could not build `Slider`");
 
-    slider.callMethod('on', ['slide', _onSlide]);
+    // slider.callMethod('on', ['slide', _onSlide]);
     slider.callMethod('on', ['slideStop', _onSlide]);
   }
 
@@ -88,11 +90,12 @@ class __Slider {
 }
 
 // CONSTRUCTION ************************************************************* **
-void init_gameBoyFps() {
+void init_gameBoyFps(Emulator.Emulator emu) {
   final String prevValOpt =
     Html.window.localStorage[__LOCAL_STORAGE_KEY_FPS];
   double val;
 
+  _emu = emu;
   if (prevValOpt != null) {
     val = double.parse(prevValOpt, (_) => __DEFAULT_SCALE);
     val = val.clamp(__MIN_SCALE, __MAX_SCALE);

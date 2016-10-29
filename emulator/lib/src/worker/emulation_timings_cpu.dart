@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 19:15:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 19:54:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,8 +52,11 @@ abstract class EmulationTimingsCpu implements Worker.AWorker
       _clockPerCycleGoal = double.INFINITY;
     }
     etc_reset();
-    if (this.gbMode is! V.Absent)
-      this.gbOpt.resetFrameRenderTokens();
+  }
+
+  void etc_resetRate() {
+    assert(_rate != null);
+    etc_setRate(_rate);
   }
 
   void etc_reset() {
@@ -61,6 +64,9 @@ abstract class EmulationTimingsCpu implements Worker.AWorker
     _clockDeficit = 0.0;
     _clockDebt = null;
     _cycleClockLimit = null;
+    if (this.gbMode is! V.Absent) {
+      this.gbOpt.resetFrameRenderTokens();
+    }
   }
 
   void etc_advance() {
