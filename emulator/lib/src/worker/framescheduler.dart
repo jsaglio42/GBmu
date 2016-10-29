@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 09:40:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 14:20:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,10 +22,24 @@ import 'package:emulator/variants.dart' as V;
 
 abstract class FrameScheduler implements Worker.AWorker {
 
+  // ATTRIBUTES ************************************************************* **
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
 
-  // LOOPING ROUTINE ******************************************************** **
+  // CONSTRUCTION *********************************************************** **
+  void init_framescheduler()
+  {
+    Ft.log("WorkerFrame", 'init_FrameScheduler');
+    _periodic = new Async.Stream.periodic(FRAME_PERIOD_DURATION);
+    _sub = _periodic.listen(_onFrameUpdate);
+    _sub.pause();
+    this.sc.addSideEffect(_makeLooping, _makeDormant, [
+      [V.Emulating.v, PauseExternalMode.Ineffective],
+    ]);
+    return ;
+  }
+
+  // CALLBACKS (WORKER) ***************************************************** **
   void _onFrameUpdate([_]){
     assert(this.gbMode is V.Emulating,
         "_onFrameUpdate with no gameboy");
@@ -33,7 +47,6 @@ abstract class FrameScheduler implements Worker.AWorker {
     return ;
   }
 
-  // SIDE EFFECTS CONTROLS ************************************************** **
   void _makeLooping()
   {
     Ft.log("WorkerFrame", '_makeLooping');
@@ -49,25 +62,5 @@ abstract class FrameScheduler implements Worker.AWorker {
     if (this.gbMode is! V.Absent)
       this.ports.send('FrameUpdate', this.gbOpt.lcd.screen);
   }
-
-  // CONSTRUCTION *********************************************************** **
-
-  void init_framescheduler()
-  {
-    Ft.log("WorkerFrame", 'init_FrameScheduler');
-    _periodic = new Async.Stream.periodic(FRAME_PERIOD_DURATION);
-    _sub = _periodic.listen(_onFrameUpdate);
-    _sub.pause();
-    this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [V.Emulating.v, PauseExternalMode.Ineffective],
-    ]);
-    return ;
-  }
-
-  // EXTERNAL INTERFACE ***************************************************** **
-  // none
-
-  // SECONDARY ROUTINES ***************************************************** **
-  // none
 
 }

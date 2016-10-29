@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/27 12:16:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 09:41:08 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 14:25:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,15 +22,27 @@ import 'package:emulator/variants.dart' as V;
 
 abstract class Observer implements Worker.AWorker {
 
+  // ATTRIBUTES ************************************************************* **
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
 
   int _gbClockPoll;
   DateTime _pollTime;
 
-  // EXTERNAL INTERFACE ***************************************************** **
-  // SECONDARY ROUTINES ***************************************************** **
-  // LOOPING ROUTINE ******************************************************** **
+  // CONSTRUCTION *********************************************************** **
+  void init_observer()
+  {
+    Ft.log("WorkerObs", 'init_observer');
+    _periodic = new Async.Stream.periodic(SPEEDPOLL_PERIOD_DURATION);
+    _sub = _periodic.listen(_onSpeedPoll);
+    _sub.pause();
+    this.sc.addSideEffect(_makeLooping, _makeDormant, [
+      [V.Emulating.v, PauseExternalMode.Ineffective],
+    ]);
+    return ;
+  }
+
+  // CALLBACKS (WORKER) ***************************************************** **
   void _onSpeedPoll([_]){
     assert(this.gbMode is V.Emulating,
         "_onSpeedPoll with no gameboy");
@@ -52,7 +64,6 @@ abstract class Observer implements Worker.AWorker {
     return ;
   }
 
-  // SIDE EFFECTS CONTROLS ************************************************** **
   void _makeLooping()
   {
     Ft.log("WorkerObs", '_makeLooping');
@@ -70,19 +81,6 @@ abstract class Observer implements Worker.AWorker {
     this.ports.send('EmulationSpeed', <String, dynamic>{
       'speed': 0.0,
     });
-  }
-
-  // CONSTRUCTION *********************************************************** **
-  void init_observer()
-  {
-    Ft.log("WorkerObs", 'init_observer');
-    _periodic = new Async.Stream.periodic(SPEEDPOLL_PERIOD_DURATION);
-    _sub = _periodic.listen(_onSpeedPoll);
-    _sub.pause();
-    this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [V.Emulating.v, PauseExternalMode.Ineffective],
-    ]);
-    return ;
   }
 
 }

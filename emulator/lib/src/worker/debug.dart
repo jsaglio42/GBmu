@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 14:13:32 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 14:25:59 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,14 +25,35 @@ import 'package:emulator/variants.dart' as V;
 
 abstract class Debug implements Worker.AWorker {
 
+  // ATTRIBUTES ************************************************************* **
   Async.Stream _periodic;
   Async.StreamSubscription _sub;
 
-  static const int _debuggerMemoryLen = 256; // <- bad, should be initialised by dom
-  static const int _debuggerInstFlowLen = 7; // <- bad, should be initialised by dom
+  static const int _debuggerMemoryLen = 256; // should be initialised by dom
+  static const int _debuggerInstFlowLen = 7; // should be initialised by dom
   int _debuggerMemoryAddr = 0;
 
-  // EXTERNAL INTERFACE ***************************************************** **
+  // CONSTRUCTION *********************************************************** **
+  void init_debug([_])
+  {
+    Ft.log("WorkerDeb", 'init_debug');
+    _periodic = new Async.Stream.periodic(DEBUG_PERIOD_DURATION);
+    _sub = _periodic.listen(_onDebug);
+    _sub.pause();
+    this.sc.declareType(DebuggerExternalMode, DebuggerExternalMode.values,
+        DebuggerExternalMode.Operating);
+    this.sc.addSideEffect(_makeLooping, _makeDormant, [
+      [V.Emulating.v, PauseExternalMode.Ineffective],
+    ]);
+    this.sc.addSideEffect(_onDebOpen, (){}, [
+      [DebuggerExternalMode.Operating],
+    ]);
+    this.ports
+      ..listener('DebStatusRequest').forEach(_onDebModeChangeReq)
+      ..listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
+  }
+
+  // CALLBACKS (DOM) ******************************************************** **
   void _onMemoryAddrChangeReq(int addr)
   {
     Ft.log("WorkerDeb", '_onMemoryAddrChangeReq', [addr]);
@@ -69,7 +90,60 @@ abstract class Debug implements Worker.AWorker {
     }
   }
 
-  // SECONDARY ROUTINES ***************************************************** **
+  // CALLBACKS (WORKER) ***************************************************** **
+  void _onDebug([_])
+  {
+    assert(this.gbMode is! V.Absent,
+        "_onDebug with no gameboy");
+
+    final l = new Uint8List(MemReg.values.length);
+    final it = new Ft.DoubleIterable(MemReg.values, g_memRegInfos);
+    final Gameboy.GameBoy gb = this.gbOpt;
+    this.ports.send('RegInfo', gb.cpur);
+    it.forEach((r, i) {
+      l[r.index] = gb.memr.pull8(r);
+    });
+    this.ports.send('MemInfo',  <String, dynamic> {
+      'addr' : _debuggerMemoryAddr,
+      'data' : _buildMemoryList(_debuggerMemoryAddr, gb)
+    });
+    this.ports.send('InstInfo', _buildInstList(gb));
+    this.ports.send('MemRegInfo', l);
+    this.ports.send('ClockInfo', gb.clockTotal);
+    return ;
+  }
+
+  void _makeLooping()
+  {
+    Ft.log("WorkerDeb", '_makeLooping');
+    assert(_sub.isPaused, "worker_deb: _makeLooping while not paused");
+    _sub.resume();
+  }
+
+  void _makeDormant()
+  {
+    Ft.log("WorkerDeb", '_makeDormant');
+    assert(!_sub.isPaused, "worker_deb: _makeDormant while paused");
+    _sub.pause();
+    _singleRefresh();
+  }
+
+  void _onDebOpen()
+  {
+    _singleRefresh();
+  }
+
+  void dbgtmp_onEmulationStart() {
+    _singleRefresh();
+  }
+
+  // SUBROUTINES ************************************************************ **
+  void _singleRefresh()
+  {
+    if (this.gbMode is! V.Absent)
+      _onDebug();
+  }
+
   void _enable()
   {
     if (this.debMode == DebuggerExternalMode.Dismissed) {
@@ -97,78 +171,6 @@ abstract class Debug implements Worker.AWorker {
   List<Instructions.Instruction>   _buildInstList(Gameboy.GameBoy gb)
   {
     return gb.pullInstructionList(_debuggerInstFlowLen);
-  }
-
-  // LOOPING ROUTINE ******************************************************** **
-  void _onDebug([_])
-  {
-    assert(this.gbMode is! V.Absent,
-        "_onDebug with no gameboy");
-
-    final l = new Uint8List(MemReg.values.length);
-    final it = new Ft.DoubleIterable(MemReg.values, g_memRegInfos);
-    final Gameboy.GameBoy gb = this.gbOpt;
-    this.ports.send('RegInfo', gb.cpur);
-    it.forEach((r, i) {
-      l[r.index] = gb.memr.pull8(r);
-    });
-    this.ports.send('MemInfo',  <String, dynamic> {
-      'addr' : _debuggerMemoryAddr,
-      'data' : _buildMemoryList(_debuggerMemoryAddr, gb)
-    });
-    this.ports.send('InstInfo', _buildInstList(gb));
-    this.ports.send('MemRegInfo', l);
-    this.ports.send('ClockInfo', gb.clockTotal);
-    return ;
-  }
-
-  void dbgtmp_onEmulationStart() {
-    _singleRefresh();
-  }
-
-
-  // SIDE EFFECTS CONTROLS ************************************************** **
-  void _makeLooping()
-  {
-    Ft.log("WorkerDeb", '_makeLooping');
-    assert(_sub.isPaused, "worker_deb: _makeLooping while not paused");
-    _sub.resume();
-  }
-
-  void _makeDormant()
-  {
-    Ft.log("WorkerDeb", '_makeDormant');
-    assert(!_sub.isPaused, "worker_deb: _makeDormant while paused");
-    _sub.pause();
-    if (this.gbMode is! V.Absent)
-      _onDebug();
-  }
-
-  void _singleRefresh()
-  {
-    Ft.log("WorkerDeb", '_singleRefresh');
-    if (this.gbMode is! V.Absent)
-      _onDebug();
-  }
-
-  // CONSTRUCTION *********************************************************** **
-  void init_debug([_])
-  {
-    Ft.log("WorkerDeb", 'init_debug');
-    _periodic = new Async.Stream.periodic(DEBUG_PERIOD_DURATION);
-    _sub = _periodic.listen(_onDebug);
-    _sub.pause();
-    this.sc.declareType(DebuggerExternalMode, DebuggerExternalMode.values,
-        DebuggerExternalMode.Operating);
-    this.sc.addSideEffect(_makeLooping, _makeDormant, [
-      [V.Emulating.v, PauseExternalMode.Ineffective],
-    ]);
-    this.sc.addSideEffect(_singleRefresh, (){}, [
-      [DebuggerExternalMode.Operating],
-    ]);
-    this.ports
-      ..listener('DebStatusRequest').forEach(_onDebModeChangeReq)
-      ..listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
   }
 
 }
