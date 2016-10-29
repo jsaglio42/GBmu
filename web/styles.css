@@ -140,7 +140,7 @@ body {
 .canvas-smooth-part.slider-cont > .slider {
 }
 
-/* CANVAS SMOOTH SLIDER *********************** */
+/* GAMEBOY MODE SLIDER ************************ */
 .gameboy-mode-part.slider-cont {
     width: calc(100% - 110px);
 }
@@ -150,6 +150,18 @@ body {
 }
 
 .gameboy-mode-part.slider-cont > .slider {
+}
+
+/* GAMEBOY FPS SLIDER ************************* */
+.gameboy-fps-part.slider-cont {
+    width: calc(100% - 60px);
+}
+
+.gameboy-fps-part.slider-text {
+    width: 60px;
+}
+
+.gameboy-fps-part.slider-cont > .slider {
 }
 
 /* ************************************************************************** */

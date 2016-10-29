@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 19:16:35 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 19:22:50 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -46,7 +46,7 @@ abstract class GraphicDisplay
 
   /* TOKEN SYSTEM *********************************************************** */
   int _frameRenderTokens = 0;
-  bool _renderingFrame = false;
+  bool _renderingFrame = true;
 
   void incrementFrameRenderToken() {
     _frameRenderTokens++;
