@@ -14,13 +14,10 @@ pub serve
 # To DOs: Checks
 
 Gameboy emulator:
-- Fix DAA operations (and check cpu_inst rom)
 - Check cpu_timming
-- VideoRam to handle GBC
-- Internal to handle GBC
+- MBC1 fix ? (zelda not working)
+- MBC2
 - MBC3
-- MBC5
-- MBC5
 - BIOS mode (startup routine)
 - Display for GBC
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 17:23:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 13:36:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,13 +24,17 @@ import 'package:emulator/constants.dart';
 import 'package:emulator/src/events.dart';
 
 import 'package:emulator/src/worker/worker.dart' as Worker;
-import 'package:emulator/src/GameBoyDMG/gameboy.dart' as Gameboy;
+import 'package:emulator/src/mixins/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
 
-abstract class EmulationIddb implements Worker.AWorker {
+abstract class Trap {
+  GameBoyType get gameboyType;
+}
+
+abstract class EmulationIddb implements Worker.AWorker, Trap {
 
   // PUBLIC ***************************************************************** **
   Async.Future<Gameboy.GameBoy> ei_assembleGameBoy(RequestEmuStart req) async
@@ -56,10 +60,27 @@ abstract class EmulationIddb implements Worker.AWorker {
       c = new Cartridge.ACartridge(rom);
     // Ft.log('WorkerEmu', '_assembleGameBoy#got-cartridge', [c]);
 
-    final Gameboy.GameBoy gb = new Gameboy.GameBoy(c);
+    final GameBoyType gbt = _determineGameBoyType(rom);
+    print (rom.pullHeaderValue(RomHeaderField.CGB_Flag));
+    final Gameboy.GameBoy gb = new Gameboy.GameBoy(c, gbt);
     // Ft.log('WorkerEmu', '_assembleGameBoy#got-gb', [gb]);
 
     return gb;
+  }
+
+  GameBoyType _determineGameBoyType(Data.Rom rom)
+  {
+    if (this.gameboyType != GameBoyType.Auto)
+      return this.gameboyType;
+    else
+    {
+      final int flag = rom.pullHeaderValue(RomHeaderField.CGB_Flag);
+      switch (flag)
+      {
+        case (0x80) : case (0xC0) : return GameBoyType.Color;
+        default : return GameBoyType.DMG;
+      }
+    }
   }
 
   Async.Future ei_extractRam(EventIdb ev) async {

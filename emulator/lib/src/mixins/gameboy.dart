@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 19:49:11 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 13:35:33 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,10 +17,13 @@ import 'package:ft/ft.dart' as Ft;
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 
-import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
-import "package:emulator/src/hardware/hardware.dart" as Hardware;
-import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
+import "package:emulator/src/GameBoyDMG/gameboydmg.dart" as GBDMG;
+import "package:emulator/src/GameBoyColor/gameboycolor.dart" as GBC;
 
+import "package:emulator/src/cartridge/cartridge.dart" as Cartridge;
+
+import "package:emulator/src/hardware/recursively_serializable.dart" as Ser;
+import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/instructionsdecoder.dart" as Instdecoder;
 import "package:emulator/src/mixins/z80.dart" as Z80;
 import "package:emulator/src/mixins/interrupts.dart" as Interrupts;
@@ -30,16 +33,14 @@ import "package:emulator/src/mixins/mmu.dart" as Mmu;
 import "package:emulator/src/mixins/graphicstatemachine.dart" as GStateMachine;
 import "package:emulator/src/mixins/shared.dart" as Shared;
 
-import "package:emulator/src/GameBoyDMG/internalrammanager.dart" as Internalram;
-import "package:emulator/src/GameBoyDMG/videorammanager.dart" as Videoram;
-import "package:emulator/src/GameBoyDMG/tailrammanager.dart" as Tailram;
-import "package:emulator/src/GameBoyDMG/graphicdisplay.dart" as GDisplay;
 
+enum GameBoyType {
+  DMG,
+  Color,
+  Auto
+}
 
-
-/* Gameboy ********************************************************************/
-
-class GameBoy extends Object
+abstract class GameBoy extends Object
   with Ser.RecursivelySerializable
   , Hardware.Hardware
   , Instdecoder.InstructionsDecoder
@@ -48,45 +49,26 @@ class GameBoy extends Object
   , Joypad.Joypad
   , Timers.Timers
   , Mmu.Mmu
-  , Shared.TailRam
   , GStateMachine.GraphicStateMachine
-  , Internalram.InternalRamManager
-  , Videoram.VideoRamManager
-  , Tailram.TailRamManager
-  , GDisplay.GraphicDisplay
-{
+  , Shared.Interrupts
+  , Shared.VideoRam
+  , Shared.InternalRam
+  , Shared.TailRam {
 
-  /* Constructor */
-  GameBoy(Cartridge.ACartridge c) {
+  GameBoy.internal(Cartridge.ACartridge c) {
     this.initHardware(c);
-    return ;
   }
 
-  /* API */
-  int exec(int nbClock) {
-    int instructionDuration;
-    int executedClocks = 0;
-    while(executedClocks < nbClock)
+  factory GameBoy(Cartridge.ACartridge c, GameBoyType type)
+  {
+    switch (type)
     {
-      instructionDuration = this.executeInstruction();
-      this.updateTimers(instructionDuration);
-      _updateGraphics(instructionDuration);
-      executedClocks += instructionDuration;
-      this.handleInterrupts();
-
-      if (this.hardbreak)
-        break ;
-    }
-    return (executedClocks);
-  }
-
-  int _updateGraphics(int instructionDuration) {
-    if (this.memr.rLCDC.isLCDEnabled)
-    {
-      this.lcd.resetDrawingInfo();
-      this.updateGraphicMode(instructionDuration);
-      this.updateDisplay();
+      case (GameBoyType.DMG) : return new GBDMG.GameBoyDMG(c);
+      case (GameBoyType.Color) : return new GBC.GameBoyColor(c);
+      default : return null;
     }
   }
+
+  int exec(int nbClock);
 
 }

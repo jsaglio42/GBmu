@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 15:20:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 13:37:07 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,7 +27,7 @@ import 'package:emulator/src/worker/worker.dart' as Worker;
 import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
 import 'package:emulator/src/worker/emulation_pause.dart' as WEmuPause;
 import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;
-import 'package:emulator/src/GameBoyDMG/gameboy.dart' as Gameboy;
+import 'package:emulator/src/mixins/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
@@ -42,6 +42,7 @@ abstract class Emulation
   Async.Stream _fut;
   Async.StreamSubscription _sub;
 
+  GameBoyType _gameboyType = GameBoyType.Auto;
   double _emulationSpeed = 1.0;
   double _clockDeficit;
   double _clockPerRoutineGoal;
@@ -63,12 +64,16 @@ abstract class Emulation
       ..listener('EmulationSpeed').forEach(_onEmulationSpeedChangeReq)
       ..listener('KeyDownEvent').forEach(_onKeyDown)
       ..listener('KeyUpEvent').forEach(_onKeyUp)
+      ..listener('GameBoyTypeUpdate').forEach(_onGameBoyTypeUpdate)
       ..listener('EmulationEject').forEach(_onEjectReq)
       ..listener('ExtractRam').forEach(_onExtractRamReq)
       ..listener('ExtractSs').forEach(_onExtractSsReq)
       ..listener('InstallSs').forEach(_onInstallSsReq);
     ep_init();
   }
+
+  // PUBLIC **************************************************************** **
+  GameBoyType get gameboyType => _gameboyType;
 
   // CALLBACKS (DOM) ******************************************************** **
   void _onEmulationSpeedChangeReq(map)
@@ -134,6 +139,12 @@ abstract class Emulation
     else
       gbOpt.keyRelease(kc);
     return ;
+  }
+
+  void _onGameBoyTypeUpdate(GameBoyType gbt)
+  {
+    // Ft.log('WorkerEmu', '_onGameBoyTypeUpdate', gbt.toString());
+    _gameboyType = GameBoyType.values[gbt.index];
   }
 
   // CALLBACKS (WORKER) ***************************************************** **

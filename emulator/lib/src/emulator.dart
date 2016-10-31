@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 09:08:30 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 13:31:12 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -51,6 +51,7 @@ final _workerReceivers = <String, Type>{
   'KeyDownEvent' : JoypadKey,
   'KeyUpEvent' : JoypadKey,
   'DebStatusRequest' : DebuggerModeRequest,
+  'GameBoyTypeUpdate' : GameBoyType,
   'EmulationStart' : RequestEmuStart,
   'EmulationEject' : int,
   'EmulationSpeed' : <String, dynamic>{}.runtimeType,

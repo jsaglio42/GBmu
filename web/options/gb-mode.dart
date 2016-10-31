@@ -6,43 +6,98 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 19:32:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 13:37:32 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:js' as Js;
 import 'dart:math' as Math;
 import 'dart:html' as Html;
+
 import 'package:ft/ft.dart' as Ft;
+
+import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
-// CONSTANTS **************************************************************** **
+/* CONSTANTS ******************************************************************/
 const String __LOCAL_STORAGE_KEY_GAMEBOYMODE = 'option_gb_mode';
-const bool __DEFAULT_GAMEBOYMODE = true;
+const GameBoyType __DEFAULT_GAMEBOYMODE = GameBoyType.Auto;
 
-// VARIABLE ***************************************************************** **
-final Html.Element _textGameBoyMode =
-  Html.querySelector('.gameboy-mode-part.slider-text');
-bool __gameBoyMode;
+/* VARIABLES ******************************************************************/
+Emulator.Emulator _emu;
+GameBoyType __gameboyType;
 
-bool get _gameBoyMode => __gameBoyMode;
+/* PUBLIC API *****************************************************************/
+GameBoyType get gameboyType => __gameboyType;
 
-void set _gameBoyMode(bool b) {
-  if (b != __gameBoyMode) {
-    __gameBoyMode = b;
-    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = b.toString();
-    _textGameBoyMode.text = _gameBoyModeFormatter(b);
-    // TODO: Interact with emulator on game boy mode change
+void init_gameBoyType(Emulator.Emulator emu)
+{
+  _emu = emu;
+  _gameboyType =  _loadFromLocalStorage();
+  new __GameBoyModeSlider();
+}
+
+/* PRIVATE ********************************************************************/
+GameBoyType get _gameboyType => __gameboyType;
+
+void set _gameboyType(GameBoyType gbt)
+{
+  if (gbt != __gameboyType)
+  {
+    __gameboyType = gbt;
+    _emu.send('GameBoyTypeUpdate', gbt);
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = gbt.toString();
   }
 }
 
-String _gameBoyModeFormatter(bool b) =>
-  b ? 'Color Game Boy' : 'Game Boy';
+GameBoyType _loadFromLocalStorage()
+{
+  final String prevValOpt =
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
 
-String _gameBoyModeFormatterNum(num n) =>
-  _gameBoyModeFormatter(n > 0.5);
+  switch (prevValOpt)
+  {
+    case ('GameBoyType.DMG'): return GameBoyType.DMG;
+    case ('GameBoyType.Color'): return GameBoyType.Color;
+    default: return __DEFAULT_GAMEBOYMODE;
+  }
+}
 
+String _gameboyTypeFormatter(GameBoyType gbt)
+{
+  switch(gbt)
+  {
+    case (GameBoyType.DMG) : return 'Game Boy Classic';
+    case (GameBoyType.Color) : return 'Game Boy Color';
+    default : return 'Auto';
+  }
+}
+
+GameBoyType _gameboyTypeFromNum(num n)
+{
+    if (n < 0.33)
+      return GameBoyType.DMG;
+    else if (n < 0.66)
+      return GameBoyType.Color;
+    else
+      return GameBoyType.Auto;
+}
+
+num _numFromGameBoyType(GameBoyType gbt)
+{
+  switch(gbt)
+  {
+    case (GameBoyType.DMG) : return 0.0;
+    case (GameBoyType.Color) : return 0.5;
+    default : return 1.0;
+  }
+}
+
+String _gameboyTypeFormatterNum(num n) =>
+  _gameboyTypeFormatter(_gameboyTypeFromNum(n));
+
+/* SLIDER *********************************************************************/
 class __GameBoyModeSlider {
 
   // CONSTUCTION ************************************************************ **
@@ -51,12 +106,14 @@ class __GameBoyModeSlider {
     assert(constr != null, "Could not find `Slider` constructor");
 
     var param = new Js.JsObject.jsify({
-      'formatter': _gameBoyModeFormatterNum,
+      'formatter': _gameboyTypeFormatterNum,
       'min': 0.0,
       'max': 1.0,
-      'value': (_gameBoyMode ? 1.0 : 0.0),
-      'ticks': [0.0, 1.0],
-      'ticks_positions': [0, 100],
+      'step': 0.5,
+      'value': _numFromGameBoyType(_gameboyType),
+      'ticks_labels': ['Classic', 'Color', 'Auto'],
+      'ticks': [0.0, 0.5, 1.0],
+      'ticks_positions': [0, 50, 100],
     });
 
     assert(param != null, "Could not build `Slider` parameter");
@@ -69,24 +126,10 @@ class __GameBoyModeSlider {
   }
 
   // PRIVATE **************************************************************** **
-  void _onSlide(num n) {
-    _gameBoyMode = n > 0.5;
+  void _onSlide(num n)
+  {
+    _gameboyType = _gameboyTypeFromNum(n);
+    return ;
   }
 
-}
-
-// CONSTRUCTION ************************************************************* **
-void init_gameBoyMode() {
-  final String prevValOpt =
-    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
-  bool val;
-
-  if (prevValOpt == 'true')
-    val = true;
-  else if (prevValOpt == 'false')
-    val = false;
-  else
-    val = __DEFAULT_GAMEBOYMODE;
-  _gameBoyMode = val;
-  new __GameBoyModeSlider();
 }

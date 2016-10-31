@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/26 18:34:11 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/27 15:34:22 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/28 18:59:27 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,31 +29,7 @@ class PaletteMemory extends Ser.RecursivelySerializable {
 
   /* API **********************************************************************/
   void reset() {
-    /* Initialisation to white */
-    for (int i = 0; i < _data.length; ++i) {
-      _data[i] = 0x1F + (0x1F << 5) + (0x1F << 10);
-    }
-    /* Just for Debug */
-    /* Palette 0 - Grey */
-    _data[0x0] = 0x1F + (0x1F << 5) + (0x1F << 10);
-    _data[0x1] = 0x14 + (0x14 << 5) + (0x14 << 10);
-    _data[0x2] = 0x0A + (0x0A << 5) + (0x0A << 10);
-    _data[0x3] = 0x00 + (0x00 << 5) + (0x00 << 10);
-    /* Palette 1 - Red */
-    _data[0x4] = 0x1F;
-    _data[0x5] = 0x14;
-    _data[0x6] = 0x0A;
-    _data[0x7] = 0x00;
-    /* Palette 2 - Green */
-    _data[0x8] = (0x1F << 5);
-    _data[0x9] = (0x14 << 5);
-    _data[0xA] = (0x0A << 5);
-    _data[0xB] = (0x00 << 5);
-    /* Palette 3 - Blue */
-    _data[0xC] = (0x1F << 10);
-    _data[0xD] = (0x14 << 10);
-    _data[0xE] = (0x0A << 10);
-    _data[0xF] = (0x00 << 10);
+    _data.fillRange(0, _data.length, 0x1F + (0x1F << 5) + (0x1F << 10));
     return ;
 }
 
