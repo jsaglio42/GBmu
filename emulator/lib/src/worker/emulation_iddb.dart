@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 12:11:09 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 13:36:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,7 +30,11 @@ import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
 
-abstract class EmulationIddb implements Worker.AWorker {
+abstract class Trap {
+  GameBoyType get gameboyType;
+}
+
+abstract class EmulationIddb implements Worker.AWorker, Trap {
 
   // PUBLIC ***************************************************************** **
   Async.Future<Gameboy.GameBoy> ei_assembleGameBoy(RequestEmuStart req) async
@@ -66,10 +70,8 @@ abstract class EmulationIddb implements Worker.AWorker {
 
   GameBoyType _determineGameBoyType(Data.Rom rom)
   {
-    // final GameBoyType gbt = ; READ FROM SLIDER;
-    final GameBoyType gbt = null;
-    if (gbt != null)
-      return gbt;
+    if (this.gameboyType != GameBoyType.Auto)
+      return this.gameboyType;
     else
     {
       final int flag = rom.pullHeaderValue(RomHeaderField.CGB_Flag);

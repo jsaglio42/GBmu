@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/14 17:13:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 09:45:35 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 12:40:46 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -72,7 +72,10 @@ abstract class TailRamManager
       /* Graphics */
       case (addr_LCDC): this.setLCDCRegister(v); break ;
       case (addr_LYC): this.setLYCRegister(v); break ;
-      case (addr_LY): this.setLYRegister(0); break ;
+      case (addr_LY):
+        this.setLYRegister(0);
+        //OAM
+        break ;
       case (addr_STAT): this.setSTATRegister(v); break ;
       case (addr_DMA): this.setDMARegister(v); break ;
       /* Interrupts */

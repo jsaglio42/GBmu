@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 17:43:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 11:07:06 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 13:31:27 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -158,6 +158,6 @@ void init(Emulator.Emulator emu) {
     val = __DEFAULT_EMUSPEED;
   print(val);
   new _SpeedSlider(val);
-  init_gameBoyType();
+  init_gameBoyType(emu);
   return ;
 }

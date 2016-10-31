@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 12:04:35 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 13:37:32 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,40 +20,84 @@ import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
-// CONSTANTS **************************************************************** **
+/* CONSTANTS ******************************************************************/
 const String __LOCAL_STORAGE_KEY_GAMEBOYMODE = 'option_gb_mode';
-const GameBoyType __DEFAULT_GAMEBOYMODE = null;
+const GameBoyType __DEFAULT_GAMEBOYMODE = GameBoyType.Auto;
+
+/* VARIABLES ******************************************************************/
+Emulator.Emulator _emu;
+GameBoyType __gameboyType;
 
 /* PUBLIC API *****************************************************************/
 GameBoyType get gameboyType => __gameboyType;
 
-void init_gameBoyType() {
-  final String prevValOpt =
-    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
-
-  print(prevValOpt);
-  switch (prevValOpt)
-  {
-    case ('GameBoyType.DMG'): _gameboyType = GameBoyType.DMG; break;
-    case ('GameBoyType.Color'): _gameboyType = GameBoyType.Color; break;
-    default: _gameboyType = __DEFAULT_GAMEBOYMODE; break;
-  }
+void init_gameBoyType(Emulator.Emulator emu)
+{
+  _emu = emu;
+  _gameboyType =  _loadFromLocalStorage();
   new __GameBoyModeSlider();
 }
 
 /* PRIVATE ********************************************************************/
-GameBoyType __gameboyType;
-
 GameBoyType get _gameboyType => __gameboyType;
-void set _gameboyType(GameBoyType gbt) {
+
+void set _gameboyType(GameBoyType gbt)
+{
   if (gbt != __gameboyType)
   {
     __gameboyType = gbt;
+    _emu.send('GameBoyTypeUpdate', gbt);
     Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = gbt.toString();
   }
 }
 
-/* Slider *********************************************************************/
+GameBoyType _loadFromLocalStorage()
+{
+  final String prevValOpt =
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
+
+  switch (prevValOpt)
+  {
+    case ('GameBoyType.DMG'): return GameBoyType.DMG;
+    case ('GameBoyType.Color'): return GameBoyType.Color;
+    default: return __DEFAULT_GAMEBOYMODE;
+  }
+}
+
+String _gameboyTypeFormatter(GameBoyType gbt)
+{
+  switch(gbt)
+  {
+    case (GameBoyType.DMG) : return 'Game Boy Classic';
+    case (GameBoyType.Color) : return 'Game Boy Color';
+    default : return 'Auto';
+  }
+}
+
+GameBoyType _gameboyTypeFromNum(num n)
+{
+    if (n < 0.33)
+      return GameBoyType.DMG;
+    else if (n < 0.66)
+      return GameBoyType.Color;
+    else
+      return GameBoyType.Auto;
+}
+
+num _numFromGameBoyType(GameBoyType gbt)
+{
+  switch(gbt)
+  {
+    case (GameBoyType.DMG) : return 0.0;
+    case (GameBoyType.Color) : return 0.5;
+    default : return 1.0;
+  }
+}
+
+String _gameboyTypeFormatterNum(num n) =>
+  _gameboyTypeFormatter(_gameboyTypeFromNum(n));
+
+/* SLIDER *********************************************************************/
 class __GameBoyModeSlider {
 
   // CONSTUCTION ************************************************************ **
@@ -89,37 +133,3 @@ class __GameBoyModeSlider {
   }
 
 }
-
-/* Misc ***********************************************************************/
-String _gameboyTypeFormatter(GameBoyType gbt)
-{
-  switch(gbt)
-  {
-    case (GameBoyType.DMG) : return 'Game Boy Classic';
-    case (GameBoyType.Color) : return 'Game Boy Color';
-    default : return 'Auto';
-  }
-}
-
-GameBoyType _gameboyTypeFromNum(num n)
-{
-    if (n < 0.33)
-      return GameBoyType.DMG;
-    else if (n < 0.66)
-      return GameBoyType.Color;
-    else
-      return null;
-}
-
-num _numFromGameBoyType(GameBoyType gbt)
-{
-  switch(gbt)
-  {
-    case (GameBoyType.DMG) : return 0.0;
-    case (GameBoyType.Color) : return 0.5;
-    default : return 1.0;
-  }
-}
-
-String _gameboyTypeFormatterNum(num n) =>
-  _gameboyTypeFormatter(_gameboyTypeFromNum(n));

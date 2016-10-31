@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 18:20:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 13:35:33 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,7 +36,8 @@ import "package:emulator/src/mixins/shared.dart" as Shared;
 
 enum GameBoyType {
   DMG,
-  Color
+  Color,
+  Auto
 }
 
 abstract class GameBoy extends Object
