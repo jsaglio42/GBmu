@@ -6,42 +6,72 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 19:32:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 11:12:29 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:js' as Js;
 import 'dart:math' as Math;
 import 'dart:html' as Html;
+
 import 'package:ft/ft.dart' as Ft;
+
+import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 
 // CONSTANTS **************************************************************** **
 const String __LOCAL_STORAGE_KEY_GAMEBOYMODE = 'option_gb_mode';
-const bool __DEFAULT_GAMEBOYMODE = true;
+const GameBoyType __DEFAULT_GAMEBOYMODE = GameBoyType.Color;
 
 // VARIABLE ***************************************************************** **
 final Html.Element _textGameBoyMode =
   Html.querySelector('.gameboy-mode-part.slider-text');
-bool __gameBoyMode;
+GameBoyType __gameboyType;
 
-bool get _gameBoyMode => __gameBoyMode;
+GameBoyType get _gameboyType => __gameboyType;
 
-void set _gameBoyMode(bool b) {
-  if (b != __gameBoyMode) {
-    __gameBoyMode = b;
-    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = b.toString();
-    _textGameBoyMode.text = _gameBoyModeFormatter(b);
+void set _gameboyType(GameBoyType gbt) {
+  if (gbt != __gameboyType)
+  {
+    __gameboyType = gbt;
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = gbt.toString();
+    _textGameBoyMode.text = _gameboyTypeFormatter(gbt);
     // TODO: Interact with emulator on game boy mode change
   }
 }
 
-String _gameBoyModeFormatter(bool b) =>
-  b ? 'Color Game Boy' : 'Game Boy';
+String _gameboyTypeFormatter(GameBoyType gbt)
+{
+  switch(gbt)
+  {
+    case (GameBoyType.DMG) : return 'Game Boy';
+    case (GameBoyType.Color) : return 'Game Boy Color';
+    default : assert(false, 'Invalid Gameboy Type');
+  }
+}
 
-String _gameBoyModeFormatterNum(num n) =>
-  _gameBoyModeFormatter(n > 0.5);
+GameBoyType _gameboyTypeFromNum(num n)
+{
+    if (n < 0.5)
+      return GameBoyType.DMG;
+    else
+      return GameBoyType.Color;
+}
+
+num _numFromGameBoyType(GameBoyType gbt)
+{
+  switch(gbt)
+  {
+    case (GameBoyType.DMG) : return 0.0;
+    case (GameBoyType.Color) : return 1.0;
+    default : assert(false, 'Invalid Gameboy Type');
+  }
+}
+
+String _gameboyTypeFormatterNum(num n) =>
+  _gameboyTypeFormatter(_gameboyTypeFromNum(n));
+
 
 class __GameBoyModeSlider {
 
@@ -51,10 +81,11 @@ class __GameBoyModeSlider {
     assert(constr != null, "Could not find `Slider` constructor");
 
     var param = new Js.JsObject.jsify({
-      'formatter': _gameBoyModeFormatterNum,
+      'formatter': _gameboyTypeFormatterNum,
       'min': 0.0,
       'max': 1.0,
-      'value': (_gameBoyMode ? 1.0 : 0.0),
+      'value': _numFromGameBoyType(_gameboyType),
+      'ticks_labels': ['DMG', 'Color'],
       'ticks': [0.0, 1.0],
       'ticks_positions': [0, 100],
     });
@@ -69,24 +100,25 @@ class __GameBoyModeSlider {
   }
 
   // PRIVATE **************************************************************** **
-  void _onSlide(num n) {
-    _gameBoyMode = n > 0.5;
+  void _onSlide(num n)
+  {
+    _gameboyType = _gameboyTypeFromNum(n);
+    return ;
   }
 
 }
 
 // CONSTRUCTION ************************************************************* **
-void init_gameBoyMode() {
+void init_gameBoyType() {
   final String prevValOpt =
     Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
-  bool val;
 
-  if (prevValOpt == 'true')
-    val = true;
-  else if (prevValOpt == 'false')
-    val = false;
-  else
-    val = __DEFAULT_GAMEBOYMODE;
-  _gameBoyMode = val;
+  print(prevValOpt);
+  switch (prevValOpt)
+  {
+    case ('GameBoyType.DMG'): _gameboyType = GameBoyType.DMG; break;
+    case ('GameBoyType.Color'): _gameboyType = GameBoyType.Color; break;
+    default: _gameboyType = __DEFAULT_GAMEBOYMODE; break;
+  }
   new __GameBoyModeSlider();
 }
