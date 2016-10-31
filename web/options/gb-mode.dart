@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 11:34:55 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 12:04:35 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,7 +22,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 
 // CONSTANTS **************************************************************** **
 const String __LOCAL_STORAGE_KEY_GAMEBOYMODE = 'option_gb_mode';
-const GameBoyType __DEFAULT_GAMEBOYMODE = GameBoyType.Color;
+const GameBoyType __DEFAULT_GAMEBOYMODE = null;
 
 /* PUBLIC API *****************************************************************/
 GameBoyType get gameboyType => __gameboyType;
@@ -65,10 +65,11 @@ class __GameBoyModeSlider {
       'formatter': _gameboyTypeFormatterNum,
       'min': 0.0,
       'max': 1.0,
+      'step': 0.5,
       'value': _numFromGameBoyType(_gameboyType),
-      'ticks_labels': ['Classic', 'Color'],
-      'ticks': [0.0, 1.0],
-      'ticks_positions': [0, 100],
+      'ticks_labels': ['Classic', 'Color', 'Auto'],
+      'ticks': [0.0, 0.5, 1.0],
+      'ticks_positions': [0, 50, 100],
     });
 
     assert(param != null, "Could not build `Slider` parameter");
@@ -96,16 +97,18 @@ String _gameboyTypeFormatter(GameBoyType gbt)
   {
     case (GameBoyType.DMG) : return 'Game Boy Classic';
     case (GameBoyType.Color) : return 'Game Boy Color';
-    default : assert(false, 'Invalid Gameboy Type');
+    default : return 'Auto';
   }
 }
 
 GameBoyType _gameboyTypeFromNum(num n)
 {
-    if (n < 0.5)
+    if (n < 0.33)
       return GameBoyType.DMG;
-    else
+    else if (n < 0.66)
       return GameBoyType.Color;
+    else
+      return null;
 }
 
 num _numFromGameBoyType(GameBoyType gbt)
@@ -113,8 +116,8 @@ num _numFromGameBoyType(GameBoyType gbt)
   switch(gbt)
   {
     case (GameBoyType.DMG) : return 0.0;
-    case (GameBoyType.Color) : return 1.0;
-    default : assert(false, 'Invalid Gameboy Type');
+    case (GameBoyType.Color) : return 0.5;
+    default : return 1.0;
   }
 }
 

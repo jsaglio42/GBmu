@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 18:50:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 11:37:13 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -138,7 +138,7 @@ abstract class GraphicDisplay
       else
       {
         int mappedColorID = _mapColorID(this.lcd.bgColorIDs[x], BGP);
-        this.lcd.setPixel(x, y, this.palette.getColor(0, mappedColorID));
+        this.lcd.setPixel(x, y, this.palette.getColor(2, mappedColorID));
       }
     }
     return ;

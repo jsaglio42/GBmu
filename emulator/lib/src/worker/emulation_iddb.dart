@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 10:35:50 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 12:11:09 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -56,10 +56,29 @@ abstract class EmulationIddb implements Worker.AWorker {
       c = new Cartridge.ACartridge(rom);
     // Ft.log('WorkerEmu', '_assembleGameBoy#got-cartridge', [c]);
 
-    final Gameboy.GameBoy gb = new Gameboy.GameBoy(c, GameBoyType.DMG);
+    final GameBoyType gbt = _determineGameBoyType(rom);
+    print (rom.pullHeaderValue(RomHeaderField.CGB_Flag));
+    final Gameboy.GameBoy gb = new Gameboy.GameBoy(c, gbt);
     // Ft.log('WorkerEmu', '_assembleGameBoy#got-gb', [gb]);
 
     return gb;
+  }
+
+  GameBoyType _determineGameBoyType(Data.Rom rom)
+  {
+    // final GameBoyType gbt = ; READ FROM SLIDER;
+    final GameBoyType gbt = null;
+    if (gbt != null)
+      return gbt;
+    else
+    {
+      final int flag = rom.pullHeaderValue(RomHeaderField.CGB_Flag);
+      switch (flag)
+      {
+        case (0x80) : case (0xC0) : return GameBoyType.Color;
+        default : return GameBoyType.DMG;
+      }
+    }
   }
 
   Async.Future ei_extractRam(EventIdb ev) async {
