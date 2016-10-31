@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 11:12:29 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 11:28:20 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -36,7 +36,7 @@ void set _gameboyType(GameBoyType gbt) {
   {
     __gameboyType = gbt;
     Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = gbt.toString();
-    _textGameBoyMode.text = _gameboyTypeFormatter(gbt);
+    // _textGameBoyMode.text = _gameboyTypeFormatter(gbt);
     // TODO: Interact with emulator on game boy mode change
   }
 }
@@ -45,7 +45,7 @@ String _gameboyTypeFormatter(GameBoyType gbt)
 {
   switch(gbt)
   {
-    case (GameBoyType.DMG) : return 'Game Boy';
+    case (GameBoyType.DMG) : return 'Game Boy Classic';
     case (GameBoyType.Color) : return 'Game Boy Color';
     default : assert(false, 'Invalid Gameboy Type');
   }
@@ -85,7 +85,7 @@ class __GameBoyModeSlider {
       'min': 0.0,
       'max': 1.0,
       'value': _numFromGameBoyType(_gameboyType),
-      'ticks_labels': ['DMG', 'Color'],
+      'ticks_labels': ['Classic', 'Color'],
       'ticks': [0.0, 1.0],
       'ticks_positions': [0, 100],
     });
