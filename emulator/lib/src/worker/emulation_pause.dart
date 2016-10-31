@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 13:37:05 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 15:20:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/29 20:33:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,7 +28,6 @@ import 'package:emulator/src/worker/worker.dart' as Worker;
 
 // import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 // import 'package:emulator/src/hardware/data.dart' as Data;
-// import 'package:emulator/src/emulator.dart' show RequestEmuStart;
 import 'package:emulator/variants.dart' as V;
 
 final Map<LimitedEmulation, int> _limitedEmulationClocks = {
@@ -112,7 +111,7 @@ abstract class EmulationPause implements Worker.AWorker
       _updateMode(PauseExternalMode.Effective);
   }
 
-    // PUBLIC ***************************************************************** **
+  // PUBLIC ***************************************************************** **
   bool get ep_limitedEmulation => _limitedEmulation;
 
   int get ep_autoBreakIn => _autoBreakIn;

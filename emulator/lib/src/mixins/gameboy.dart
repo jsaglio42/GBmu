@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:31:28 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 13:35:33 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:57:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,6 +31,7 @@ import "package:emulator/src/mixins/joypad.dart" as Joypad;
 import "package:emulator/src/mixins/timers.dart" as Timers;
 import "package:emulator/src/mixins/mmu.dart" as Mmu;
 import "package:emulator/src/mixins/graphicstatemachine.dart" as GStateMachine;
+import "package:emulator/src/mixins/graphicstatemachine_token.dart" as GStateMachineT;
 import "package:emulator/src/mixins/shared.dart" as Shared;
 
 
@@ -50,6 +51,7 @@ abstract class GameBoy extends Object
   , Timers.Timers
   , Mmu.Mmu
   , GStateMachine.GraphicStateMachine
+  , GStateMachineT.GraphicStateMachineToken
   , Shared.Interrupts
   , Shared.VideoRam
   , Shared.InternalRam

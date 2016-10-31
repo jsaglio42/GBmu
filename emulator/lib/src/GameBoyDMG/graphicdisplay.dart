@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 15:49:26 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:55:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,10 +29,10 @@ abstract class GraphicDisplay
 
   /* API **********************************************************************/
   void updateDisplay() {
-      if (this.lcd.shouldDrawLine)
-        _drawLine();
-      if (this.lcd.shouldRefreshScreen)
-        this.lcd.refreshScreen();
+    if (this.lcd.shouldDrawLine)
+      _drawLine();
+    if (this.lcd.shouldRefreshScreen)
+      this.lcd.refreshScreen();
     return ;
   }
 
