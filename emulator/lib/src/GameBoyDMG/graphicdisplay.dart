@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 19:22:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 18:55:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,31 +29,11 @@ abstract class GraphicDisplay
 
   /* API **********************************************************************/
   void updateDisplay() {
-    if (this.lcd.shouldDrawLine && _renderingFrame)
+    if (this.lcd.shouldDrawLine)
       _drawLine();
-    if (this.lcd.shouldRefreshScreen) {
-      if (_renderingFrame)
-        this.lcd.refreshScreen();
-      if (_frameRenderTokens > 0) {
-        _renderingFrame = true;
-        _frameRenderTokens--;
-      }
-      else
-        _renderingFrame = false;
-    }
+    if (this.lcd.shouldRefreshScreen)
+      this.lcd.refreshScreen();
     return ;
-  }
-
-  /* TOKEN SYSTEM *********************************************************** */
-  int _frameRenderTokens = 0;
-  bool _renderingFrame = true;
-
-  void incrementFrameRenderToken() {
-    _frameRenderTokens++;
-  }
-
-  void resetFrameRenderTokens() {
-    _frameRenderTokens = 0;
   }
 
   /* Drawing functions ********************************************************/

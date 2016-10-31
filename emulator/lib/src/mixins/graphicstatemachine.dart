@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 19:51:14 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:58:25 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import "package:emulator/src/globals.dart";
 
 import "package:emulator/src/hardware/hardware.dart" as Hardware;
 import "package:emulator/src/mixins/shared.dart" as Shared;
+import "package:emulator/src/mixins/graphicstatemachine_token.dart" as GStateMachineT;
 
 enum GraphicMode {
   HBLANK,
@@ -38,7 +39,8 @@ enum GraphicInterrupt {
 abstract class GraphicStateMachine
   implements Hardware.Hardware
   , Shared.Interrupts
-  , Shared.TailRam {
+  , Shared.TailRam
+  , GStateMachineT.GraphicStateMachineToken {
 
   /* API **********************************************************************/
   void updateGraphicMode(int nbClock) {
@@ -67,7 +69,8 @@ abstract class GraphicStateMachine
   void _VRAM_routine() {
     if (this.memr.rSTAT.counter >= CLOCK_PER_VRAM_ACCESS)
     {
-      this.lcd.shouldDrawLine = true;
+      if (this.gsmt_shouldRender)
+        this.lcd.shouldDrawLine = true;
       this.memr.rSTAT.counter -= CLOCK_PER_VRAM_ACCESS;
       this.memr.rSTAT.mode = GraphicMode.HBLANK;
       if (this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.HBLANK))
@@ -107,7 +110,9 @@ abstract class GraphicStateMachine
         this.setLYRegister(incLY);
       else
       {
-        this.lcd.shouldRefreshScreen = true;
+        if (this.gsmt_shouldRender)
+          this.lcd.shouldRefreshScreen = true;
+        this.gsmt_VBLANKDone();
         this.setLYRegister(0);
         this.memr.rSTAT.mode = GraphicMode.OAM_ACCESS;
         if (this.memr.rSTAT.isInterruptMonitored(GraphicInterrupt.OAM_ACCESS))

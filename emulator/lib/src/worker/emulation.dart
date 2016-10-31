@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:14:37 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 18:56:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -214,7 +214,7 @@ abstract class Emulation
     int clockAcc = 0;
     int clockExec;
 
-    this.gbOpt.incrementFrameRenderToken();
+    this.gbOpt.gsmt_touchFrameRenderToken();
     while (true) {
       if (Ft.now().compareTo(et_cycleTimeLimit) >= 0)
         break ;

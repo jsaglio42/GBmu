@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 20:32:43 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/10/31 18:56:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,9 +63,6 @@ abstract class EmulationTimingsCpu implements Worker.AWorker
     _clockDeficit = 0.0;
     _clockDebt = null;
     _cycleClockLimit = null;
-    if (this.gbMode is! V.Absent) {
-      this.gbOpt.resetFrameRenderTokens();
-    }
   }
 
   void etc_advance() {
