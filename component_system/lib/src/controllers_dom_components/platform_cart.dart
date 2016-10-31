@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 18:25:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 16:14:45 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 16:48:26 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -77,7 +77,7 @@ class PlatformCart extends Object with _Actions implements _Super {
     _pdcs.btnRestart.onClick
       .forEach(_onRestartClick);
     _pdcs.btnRestartDebugger.onClick
-      .forEach(_onRestartClick);
+      .forEach((x) { try { _onRestartClick(x) ; } finally { return null; } });
   }
 
   // PUBLIC ***************************************************************** **
