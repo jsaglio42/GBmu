@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 11:28:20 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/10/31 11:34:55 by jsaglio          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,55 +24,36 @@ import 'package:emulator/emulator.dart' as Emulator;
 const String __LOCAL_STORAGE_KEY_GAMEBOYMODE = 'option_gb_mode';
 const GameBoyType __DEFAULT_GAMEBOYMODE = GameBoyType.Color;
 
-// VARIABLE ***************************************************************** **
-final Html.Element _textGameBoyMode =
-  Html.querySelector('.gameboy-mode-part.slider-text');
+/* PUBLIC API *****************************************************************/
+GameBoyType get gameboyType => __gameboyType;
+
+void init_gameBoyType() {
+  final String prevValOpt =
+    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
+
+  print(prevValOpt);
+  switch (prevValOpt)
+  {
+    case ('GameBoyType.DMG'): _gameboyType = GameBoyType.DMG; break;
+    case ('GameBoyType.Color'): _gameboyType = GameBoyType.Color; break;
+    default: _gameboyType = __DEFAULT_GAMEBOYMODE; break;
+  }
+  new __GameBoyModeSlider();
+}
+
+/* PRIVATE ********************************************************************/
 GameBoyType __gameboyType;
 
 GameBoyType get _gameboyType => __gameboyType;
-
 void set _gameboyType(GameBoyType gbt) {
   if (gbt != __gameboyType)
   {
     __gameboyType = gbt;
     Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE] = gbt.toString();
-    // _textGameBoyMode.text = _gameboyTypeFormatter(gbt);
-    // TODO: Interact with emulator on game boy mode change
   }
 }
 
-String _gameboyTypeFormatter(GameBoyType gbt)
-{
-  switch(gbt)
-  {
-    case (GameBoyType.DMG) : return 'Game Boy Classic';
-    case (GameBoyType.Color) : return 'Game Boy Color';
-    default : assert(false, 'Invalid Gameboy Type');
-  }
-}
-
-GameBoyType _gameboyTypeFromNum(num n)
-{
-    if (n < 0.5)
-      return GameBoyType.DMG;
-    else
-      return GameBoyType.Color;
-}
-
-num _numFromGameBoyType(GameBoyType gbt)
-{
-  switch(gbt)
-  {
-    case (GameBoyType.DMG) : return 0.0;
-    case (GameBoyType.Color) : return 1.0;
-    default : assert(false, 'Invalid Gameboy Type');
-  }
-}
-
-String _gameboyTypeFormatterNum(num n) =>
-  _gameboyTypeFormatter(_gameboyTypeFromNum(n));
-
-
+/* Slider *********************************************************************/
 class __GameBoyModeSlider {
 
   // CONSTUCTION ************************************************************ **
@@ -108,17 +89,34 @@ class __GameBoyModeSlider {
 
 }
 
-// CONSTRUCTION ************************************************************* **
-void init_gameBoyType() {
-  final String prevValOpt =
-    Html.window.localStorage[__LOCAL_STORAGE_KEY_GAMEBOYMODE];
-
-  print(prevValOpt);
-  switch (prevValOpt)
+/* Misc ***********************************************************************/
+String _gameboyTypeFormatter(GameBoyType gbt)
+{
+  switch(gbt)
   {
-    case ('GameBoyType.DMG'): _gameboyType = GameBoyType.DMG; break;
-    case ('GameBoyType.Color'): _gameboyType = GameBoyType.Color; break;
-    default: _gameboyType = __DEFAULT_GAMEBOYMODE; break;
+    case (GameBoyType.DMG) : return 'Game Boy Classic';
+    case (GameBoyType.Color) : return 'Game Boy Color';
+    default : assert(false, 'Invalid Gameboy Type');
   }
-  new __GameBoyModeSlider();
 }
+
+GameBoyType _gameboyTypeFromNum(num n)
+{
+    if (n < 0.5)
+      return GameBoyType.DMG;
+    else
+      return GameBoyType.Color;
+}
+
+num _numFromGameBoyType(GameBoyType gbt)
+{
+  switch(gbt)
+  {
+    case (GameBoyType.DMG) : return 0.0;
+    case (GameBoyType.Color) : return 1.0;
+    default : assert(false, 'Invalid Gameboy Type');
+  }
+}
+
+String _gameboyTypeFormatterNum(num n) =>
+  _gameboyTypeFormatter(_gameboyTypeFromNum(n));
