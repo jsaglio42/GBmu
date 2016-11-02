@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 14:05:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:46:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 23:46:28 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -51,7 +51,7 @@ void init(Emulator.Emulator emu) {
   final PlatformLocalStorage pls = new PlatformLocalStorage(se, sm);
 
   new HandlerKeyboard(pm, pa);
-  new HandlerStyle(se, sm);
+  new HandlerStyle(emu, se, sm);
 
   new BuilderDom(emu, se, sm, pls);
 

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 22:02:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 23:16:01 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 23:40:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,10 +63,15 @@ abstract class EmulationJoypad implements Worker.AWorker {
           _actions[ev.key] = true;
         break;
       case (JoypadActionType.SpamToggle):
-        if (_spamming.contains(ev.key))
+        if (_spamming.contains(ev.key)) {
           _spamming.remove(ev.key);
+          this.ports.send(
+              'JoypadSpamState', new EventSpamUpdate(ev.key, false));
+        }
         else {
           _spamming.add(ev.key);
+          this.ports.send(
+              'JoypadSpamState', new EventSpamUpdate(ev.key, true));
           if (!_actions.containsKey(ev.key))
             _actions[ev.key] = true;
         }

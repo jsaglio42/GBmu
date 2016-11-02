@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/18 11:11:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 22:49:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 23:39:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -38,9 +38,9 @@ class RequestEmuStart {
 
 class RequestJoypad {
 
-  JoypadKey key;
-  JoypadActionType type;
-  bool press;
+  final JoypadKey key;
+  final JoypadActionType type;
+  final bool press;
 
   RequestJoypad(this.key, this.type, this.press);
 
@@ -48,5 +48,14 @@ class RequestJoypad {
     : key = JoypadKey.values[src.key.index]
     , type = JoypadActionType.values[src.type.index]
     , press = src.press;
+
+}
+
+class EventSpamUpdate {
+
+  final JoypadKey key;
+  final bool activation;
+
+  EventSpamUpdate(this.key, this.activation);
 
 }
