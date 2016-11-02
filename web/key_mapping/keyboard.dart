@@ -6,7 +6,7 @@
 //   By: jsaglio <jsaglio@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:37:10 by jsaglio           #+#    #+#             //
-//   Updated: 2016/10/25 15:37:46 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 15:01:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -49,6 +49,16 @@ void _updateRevMap() {
 void _onKeyDown(Html.KeyboardEvent ev){
   final int eventKeyCode = ev.keyCode;
   final key = _keySettings[eventKeyCode];
+
+  // print(ev.charCode);
+  // print(ev.detail);
+  print(ev.code);
+  // print(ev.key);
+  print(ev.keyCode);
+  // print(ev.keyLocation);
+  // print(ev.location);
+  // print(ev.repeat);
+  // print(ev.altKey);
 
   if (Html.document.activeElement is! Html.InputElement && key != null) {
     if (key is JoypadKey && _keyState[key] == false) {

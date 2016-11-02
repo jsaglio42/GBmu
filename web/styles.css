@@ -170,6 +170,33 @@ body {
 }
 
 /* ************************************************************************** */
+/* KEY MAPPING ************************************************************** */
+/* ************************************************************************** */
+
+#row-key-mapping table {
+    table-layout: fixed;
+}
+
+#row-key-mapping thead th:first-child {
+    width: 65px;
+}
+
+#row-key-mapping h4 {
+    color: GhostWhite;
+    /* background-color: red; */
+}
+#row-key-mapping th {
+    background-color: rgba(81, 144, 165, 1.0); /* strong blue */
+}
+#row-key-mapping tr:nth-child(2n+1) > td {
+    background-color: rgba(181, 190, 234, 1.0); /* light purple */
+}
+
+#row-key-mapping tr:nth-child(2n) > td {
+    background-color: rgba(176, 237, 197, 1.0); /* light green */
+}
+
+/* ************************************************************************** */
 /* DEB PANEL **************************************************************** */
 /* ************************************************************************** */
 

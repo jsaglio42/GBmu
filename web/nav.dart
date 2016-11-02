@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 14:22:45 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 15:34:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,7 +20,7 @@ import 'package:emulator/variants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 import './debugger/deb.dart' as Deb;
 import './options/options.dart' as Opt;
-import './key_mapping.dart' as KeyMap;
+import './key_mapping/key_mapping.dart' as KeyMap;
 
 // import 'package:component_system/cs.dart' as Cs;
 
