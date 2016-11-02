@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 16:00:11 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 19:43:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 20:48:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,11 +30,13 @@ class KeyMap {
       this.pressActionOpt, this.releaseActionOpt) {
     b.onClick.forEach(_onClick);
     b.onDoubleClick.forEach(_onDoubleClick);
+    b.text = "\u00A0";
   }
 
   // PUBLIC ***************************************************************** **
   // Inner key ****************************************** **
   void assign(Key kOpt) {
+    print(kOpt);
     if (kOpt == null)
       b.text = "\u00A0";
     else

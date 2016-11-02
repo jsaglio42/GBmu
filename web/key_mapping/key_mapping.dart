@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 14:05:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 19:28:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 20:46:37 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -31,8 +31,10 @@ part './store_events.dart';
 part './store_mappings.dart';
 part './platform_mapper.dart';
 part './platform_activator.dart';
+part './platform_local_storage.dart';
 part './handler_keyboard.dart';
 part './builder_dom.dart';
+part './handler_style.dart';
 
 // CONSTANTS **************************************************************** **
 
@@ -43,16 +45,17 @@ void init(Emulator.Emulator emu) {
   Ft.log('key_mapping.dart', 'init', [emu]);
 
   final StoreEvents se = new StoreEvents();
-  final StoreMappings sm = new StoreMappings();
+  final StoreMappings sm = new StoreMappings(se);
   final PlatformMapper pm = new PlatformMapper(se, sm);
   final PlatformActivator pa = new PlatformActivator(sm);
+  final PlatformLocalStorage pls = new PlatformLocalStorage(se, sm);
 
   new HandlerKeyboard(pm, pa);
+  new HandlerStyle(se, sm);
 
-  new BuilderDom(emu, se, sm);
+  new BuilderDom(emu, se, sm, pls);
 
 }
-
 
 // CALLBACKS **************************************************************** **
 void onOpen() {

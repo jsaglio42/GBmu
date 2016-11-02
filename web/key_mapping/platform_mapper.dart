@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 17:22:15 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:09:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 20:43:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -33,10 +33,10 @@ class PlatformMapper {
       tmp = _sm.getClaimerOpt(k);
       if (tmp != null) {
         _sm.updateClaim(tmp, null);
-        tmp.assign(null);
+        // tmp.assign(null);
       }
       _sm.updateClaim(_pushedOpt, k);
-      _pushedOpt.assign(k);
+      // _pushedOpt.assign(k);
       _unpush();
       return true;
     }
@@ -65,7 +65,7 @@ class PlatformMapper {
     if (_pushedOpt != null)
       _unpush();
     _sm.updateClaim(m, null);
-    m.assign(null);
+    // m.assign(null);
  }
 
   // PRIVATE **************************************************************** **

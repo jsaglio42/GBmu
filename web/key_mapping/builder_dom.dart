@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 18:04:45 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:10:49 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 20:43:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,30 +18,31 @@ class BuilderDom {
   final Emulator.Emulator _emu;
   final StoreEvents _se;
   final StoreMappings _sm;
+  final PlatformLocalStorage _pls;
   final Html.TableSectionElement _joypadTbody =
     Html.querySelector('#joypad-table tbody');
 
   // CONSTRUCTION *********************************************************** **
-  BuilderDom(this._emu, this._se, this._sm) {
+  BuilderDom(this._emu, this._se, this._sm, this._pls) {
 
     joypadInfo.forEach((JoypadKey jk, JoypadKeyInfo i) {
-      makeJoypadRow(jk, i);
+      _makeJoypadRow(jk, i);
     });
   }
 
   // PRIVATE **************************************************************** **
-  void makeJoypadRow(JoypadKey jk, JoypadKeyInfo info) {
+  void _makeJoypadRow(JoypadKey jk, JoypadKeyInfo info) {
     final Html.TableRowElement row = _createJoypadRow(info);
     KeyMap m;
 
-    makeJoypadCell(jk, info, "pressrelease", row, info.defaultMapping[0]);
-    makeJoypadCell(jk, info, "tap", row, info.defaultMapping[1]);
-    makeJoypadCell(jk, info, "spamtoggle", row, info.defaultMapping[2]);
+    _makeJoypadCell(jk, info, "pressrelease", row, info.defaultMapping[0]);
+    _makeJoypadCell(jk, info, "tap", row, info.defaultMapping[1]);
+    _makeJoypadCell(jk, info, "spamtoggle", row, info.defaultMapping[2]);
 
     _joypadTbody.nodes.add(row);
   }
 
-  void makeJoypadCell(
+  void _makeJoypadCell(
       JoypadKey jk, JoypadKeyInfo info,
       String subType, Html.TableRowElement row, Key fallback) {
     final Html.TableCellElement cell = new Html.TableCellElement();
@@ -49,10 +50,9 @@ class BuilderDom {
     final KeyMap m = new KeyMap(_se, info.name + "." + subType, but, fallback,
         () => _emu.send('KeyDownEvent', jk),
         () => _emu.send('KeyUpEvent', jk));
+    final Key k = _pls.getKeyOpt(m, fallback);
 
-    _sm.updateClaim(m, fallback); //TODO: remove
-
-    but.text = fallback.toString();
+    _sm.updateClaim(m, k);
     but.classes.add('btn-block');
     but.classes.add('btn');
     but.classes.add('btn-info');
@@ -65,12 +65,7 @@ class BuilderDom {
     final Html.TableCellElement leftmost = new Html.TableCellElement();
 
     leftmost.text = i.name;
-    t.nodes = [
-      leftmost,
-      // new Html.TableCellElement(),
-      // new Html.TableCellElement(),
-      // new Html.TableCellElement(),
-      ];
+    t.nodes = [leftmost];
     return t;
   }
 
