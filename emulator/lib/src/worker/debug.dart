@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 10:35:35 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/11/02 14:16:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -41,7 +41,7 @@ abstract class Debug implements Worker.AWorker {
     _sub = _periodic.listen(_onDebug);
     _sub.pause();
     this.sc.declareType(DebuggerExternalMode, DebuggerExternalMode.values,
-        DebuggerExternalMode.Operating);
+        DebuggerExternalMode.Dismissed);
     this.sc.addSideEffect(_makeLooping, _makeDormant, [
       [V.Emulating.v, DebuggerExternalMode.Operating,
         PauseExternalMode.Ineffective],
