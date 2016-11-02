@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 16:32:23 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 20:01:27 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 14:22:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import 'package:emulator/variants.dart';
 import 'package:emulator/emulator.dart' as Emulator;
 import './debugger/deb.dart' as Deb;
 import './options/options.dart' as Opt;
+import './key_mapping.dart' as KeyMap;
 
 // import 'package:component_system/cs.dart' as Cs;
 
@@ -102,6 +103,7 @@ List<_Panel> _makePanels(Emulator.Emulator emu)
   final List<_Panel> l = [];
 
   l.add(new _Panel(aLst[3], '#row-debugger', Deb.onOpen, Deb.onClose, false));
+  l.add(new _Panel(aLst[2], '#row-key-mapping', KeyMap.onOpen, KeyMap.onClose, false));
   l.add(new _Panel(aLst[1], '#row-option', Opt.onOpen, Opt.onClose, false));
   l.add(new _Panel(aLst[0], '#row-cartsystem', null, null, true));
   return l;
