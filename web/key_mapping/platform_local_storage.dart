@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 20:26:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:40:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 20:59:27 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,7 +25,6 @@ class PlatformLocalStorage {
 
   // CALLBACKS ************************************************************** **
   void _onKeyMapUpdate(KeyMap m) {
-    print('_onKeyMapUpdate');
     final Key k = _sm.getClaimedOpt(m);
 
     if (k == null)

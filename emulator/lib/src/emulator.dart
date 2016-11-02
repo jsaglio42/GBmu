@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:19 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:16:45 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/11/02 22:21:14 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -65,8 +65,7 @@ final Map<String, Type> _workerReceivers = <String, Type>{
   'GameBoyTypeUpdate' : GameBoyType,
 
   // GameBoy Joypad
-  'KeyDownEvent' : JoypadKey,
-  'KeyUpEvent' : JoypadKey,
+  'RequestJoypad': RequestJoypad,
 
   // Debugger
   'DebStatusRequest' : DebuggerModeRequest,

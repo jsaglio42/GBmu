@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:56:39 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 22:44:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -27,9 +27,11 @@ import 'package:emulator/src/worker/worker.dart' as Worker;
 import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
 import 'package:emulator/src/worker/emulation_pause.dart' as WEmuPause;
 import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;
-import 'package:emulator/src/mixins/gameboy.dart' as Gameboy;
 import 'package:emulator/src/worker/emulation_timings.dart' as WEmuTimings;
 import 'package:emulator/src/worker/emulation_timings_cpu.dart' as WEmuTimingsCpu;
+import 'package:emulator/src/worker/emulation_joypad.dart' as WEmuJoypad;
+
+import 'package:emulator/src/mixins/gameboy.dart' as Gameboy;
 import 'package:emulator/src/cartridge/cartridge.dart' as Cartridge;
 import 'package:emulator/src/hardware/data.dart' as Data;
 import 'package:emulator/variants.dart' as V;
@@ -37,7 +39,7 @@ import 'package:emulator/variants.dart' as V;
 abstract class Emulation
   implements Worker.AWorker, WEmuState.EmulationState, WEmuIddb.EmulationIddb,
   WEmuPause.EmulationPause, WEmuTimings.EmulationTimings,
-  WEmuTimingsCpu.EmulationTimingsCpu
+  WEmuTimingsCpu.EmulationTimingsCpu, WEmuJoypad.EmulationJoypad
 {
 
   // ATTRIBUTES ************************************************************* **
@@ -58,14 +60,13 @@ abstract class Emulation
       ..listener('EmulationStart').forEach(_onEmulationStartReq)
       ..listener('EmulationSpeed').forEach(_onEmulationSpeedChangeReq)
       ..listener('FpsRequest').forEach(_onFpsChangeReq)
-      ..listener('KeyDownEvent').forEach(_onKeyDown)
-      ..listener('KeyUpEvent').forEach(_onKeyUp)
       ..listener('GameBoyTypeUpdate').forEach(_onGameBoyTypeUpdate)
       ..listener('EmulationEject').forEach(_onEjectReq)
       ..listener('ExtractRam').forEach(_onExtractRamReq)
       ..listener('ExtractSs').forEach(_onExtractSsReq)
       ..listener('InstallSs').forEach(_onInstallSsReq);
     ep_init();
+    ej_init();
     et_setCyclesPerSec(60.0);
     etc_setRate(1.0);
   }
@@ -126,24 +127,6 @@ abstract class Emulation
   void _onInstallSsReq(EventIdb ev) {
     Ft.log("WorkerEmu", '_onInstallSsReq', [ev.key]);
     this.ei_installSs(ev);
-  }
-
-  void _onKeyDown(JoypadKey kc){
-    kc = JoypadKey.values[kc.index];
-    if (this.gbOpt == null)
-      return ;
-    else
-      gbOpt.keyPress(kc);
-    return ;
-  }
-
-  void _onKeyUp(JoypadKey kc){
-    kc = JoypadKey.values[kc.index];
-    if (this.gbOpt == null)
-      return ;
-    else
-      gbOpt.keyRelease(kc);
-    return ;
   }
 
   void _onGameBoyTypeUpdate(GameBoyType gbt)
@@ -222,13 +205,12 @@ abstract class Emulation
         break ;
       clockExec = Math.min(
           MAXIMUM_CLOCK_PER_EXEC_INT, etc_cycleClockLimit - clockAcc);
+      ej_update();
       clockAcc += this.gbOpt.exec(clockExec);
       if (this.gbOpt.hardbreak)
         break ;
     }
     return clockAcc;
   }
-
-  // OTHER SUBROUTINES ****************************************************** **
 
 }

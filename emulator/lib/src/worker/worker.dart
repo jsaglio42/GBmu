@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:04:42 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/11/02 22:38:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,9 +20,9 @@ import 'package:emulator/src/worker/emulation.dart' as WEmu;
 import 'package:emulator/src/worker/emulation_state.dart' as WEmuState;
 import 'package:emulator/src/worker/emulation_iddb.dart' as WEmuIddb;
 import 'package:emulator/src/worker/emulation_pause.dart' as WEmuPause;
-// import 'package:emulator/src/worker/emulation_exec.dart' as WEmuExec;
 import 'package:emulator/src/worker/emulation_timings.dart' as WEmuTimings;
 import 'package:emulator/src/worker/emulation_timings_cpu.dart' as WEmuTimingsCpu;
+import 'package:emulator/src/worker/emulation_joypad.dart' as WEmuJoypad;
 import 'package:emulator/src/worker/debug.dart' as WDeb;
 import 'package:emulator/src/worker/observer.dart' as WObs;
 import 'package:emulator/variants.dart' as V;
@@ -79,6 +79,7 @@ class Worker extends AWorker
   with WEmuState.EmulationState
   , WEmuIddb.EmulationIddb
   , WEmuPause.EmulationPause
+  , WEmuJoypad.EmulationJoypad
   , WEmuTimings.EmulationTimings
   , WEmuTimingsCpu.EmulationTimingsCpu
   , WEmu.Emulation

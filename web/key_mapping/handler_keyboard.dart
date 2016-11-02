@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 17:59:46 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:09:17 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 22:42:52 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,9 +29,10 @@ class HandlerKeyboard {
   void _onKeyDown(Html.KeyboardEvent ev){
     final Key k = new Key.ofKeyboardEvent(ev);
 
-    // print(ev.altKey);
     // print(k);
-    if (!_is_modifier(ev)
+    // print(ev.repeat);
+    if (!ev.repeat
+        && !_is_modifier(ev)
         && Html.document.activeElement is! Html.InputElement) {
       if (_pm.useKeyPress(k) || _pa.useKeyPress(k))
         ev.preventDefault();

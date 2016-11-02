@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 18:04:45 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:43:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 22:59:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,24 +35,38 @@ class BuilderDom {
     final Html.TableRowElement row = _createJoypadRow(info);
     KeyMap m;
 
-    _makeJoypadCell(jk, info, "pressrelease", row, info.defaultMapping[0]);
-    _makeJoypadCell(jk, info, "tap", row, info.defaultMapping[1]);
-    _makeJoypadCell(jk, info, "spamtoggle", row, info.defaultMapping[2]);
+    callback(JoypadActionType type, bool press) {
+      return () {
+        _emu.send('RequestJoypad', new Emulator.RequestJoypad(jk, type, press));
+      };
+    };
 
+    _makeJoypadCell(
+        jk, info, JoypadActionType.PressRelease, row, info.defaultMapping[0],
+        callback(JoypadActionType.PressRelease, true),
+        callback(JoypadActionType.PressRelease, false));
+    _makeJoypadCell(
+        jk, info, JoypadActionType.Tap, row, info.defaultMapping[1],
+        callback(JoypadActionType.Tap, true),
+        null);
+    _makeJoypadCell(
+        jk, info, JoypadActionType.SpamToggle, row, info.defaultMapping[2],
+        callback(JoypadActionType.SpamToggle, true),
+        null);
     _joypadTbody.nodes.add(row);
   }
 
   void _makeJoypadCell(
-      JoypadKey jk, JoypadKeyInfo info,
-      String subType, Html.TableRowElement row, Key fallback) {
+      JoypadKey jk, JoypadKeyInfo info, JoypadActionType type,
+      Html.TableRowElement row, Key fallback,
+      onPress, onRelease) {
     final Html.TableCellElement cell = new Html.TableCellElement();
     final Html.ButtonElement but = new Html.ButtonElement();
-    final KeyMap m = new KeyMap(_se, info.name + "." + subType, but, fallback,
-        () => _emu.send('KeyDownEvent', jk),
-        () => _emu.send('KeyUpEvent', jk));
-    final Key k = _pls.getKeyOpt(m, fallback);
+    final String name = info.name + "." + type.toString();
+    final KeyMap m = new KeyMap(_se, name, but, fallback, onPress, onRelease);
+    final Key kOpt = _pls.getKeyOpt(m, fallback);
 
-    _sm.updateClaim(m, k);
+    _sm.updateClaim(m, kOpt);
     but.classes.add('btn-block');
     but.classes.add('btn');
     but.classes.add('btn-info');
