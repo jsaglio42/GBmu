@@ -2,22 +2,13 @@
   <h4 align="left">Memory explorer</h4>
   <input type="text" placeholder="Memory Address: 0000 ... FFFF" class="form-control" id="memory-addr-input">
 
-  <div class="row">
-    <div class="col-sm-2">
-      <button type="button" class="btn btn-success debJumpMem" id="memExpJumpPREV">Prev</button>
-    </div>
-    <div class="col-sm-8">
-      <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGDATA0">Tile Data #1</button>
-      <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGDATA1">Tile Data #0</button>
-      <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGMAP0">Tile Map #0</button>
-      <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpGBMAP1">Tile Map #1</button>
-      <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpOAM">OAM</button>
-    </div>
-    <div class="col-sm-2">
-      <button type="button" class="btn btn-success debJumpMem" id="memExpJumpNEXT">Next</button>
-    </div>
-  </div>
-
+  <button type="button" class="btn btn-success debJumpMem" id="memExpJumpPREV">Prev</button>
+  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGDATA0">Tile Data #1</button>
+  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGDATA1">Tile Data #0</button>
+  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGMAP0">Tile Map #0</button>
+  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpGBMAP1">Tile Map #1</button>
+  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpOAM">OAM</button>
+  <button type="button" class="btn btn-success debJumpMem" id="memExpJumpNEXT">Next</button>
   <table id="debugger_memory_explorer" class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>

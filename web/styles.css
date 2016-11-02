@@ -229,13 +229,9 @@ body {
 }
 
 .debStatusButton {
-    margin-right: 5px;
+    margin: 2px 2px;
     width: 85px;
-    padding: 6px 6px;
-}
-
-.debJumpMem {
-    margin: 5px;
+    padding: 5px 6px;
 }
 
 #debColButtons > p {
@@ -257,6 +253,11 @@ body {
     margin-bottom: 0px;
 }
 
+#debColRegisters > table > tbody > tr:first-child > td:first-child {
+    /* margin-bottom: 0px; */
+    padding: 5px 0px;
+}
+
 /* DEB - BODY - INSTRUCTION FLOW ******************************************** */
 #debColInstructionFlow caption {
     padding-top: 0px;
@@ -268,6 +269,20 @@ body {
 }
 
 /* DEB - BODY - MEMORY EXPLORER ********************************************* */
+.debJumpMem {
+    margin: 2px;
+    padding: 2px 6px;
+    font-size: 14px;
+}
+
+#memExpJumpPREV {
+    margin-left: 0px;
+}
+
+#memExpJumpNEXT {
+    margin-right: 0px;
+}
+
 #debColMemoryExplorer caption {
     padding-top: 0px;
 }
