@@ -195,6 +195,22 @@ body {
 #row-key-mapping tr:nth-child(2n) > td {
     background-color: rgba(176, 237, 197, 1.0); /* light green */
 }
+#row-key-mapping td {
+    color: #005B79;
+    /* padding: 0; */
+}
+#row-key-mapping td:first-child {
+    font-size: 12px;
+    color: #005B79;
+    padding-top: 8px;
+    font-weight: bold;
+}
+
+#row-key-mapping .btn-block {
+    font-size: 11px;
+    padding: 2px 5px;
+    overflow: hidden;
+}
 
 /* ************************************************************************** */
 /* DEB PANEL **************************************************************** */

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:25 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 15:34:52 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 18:00:23 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,7 +24,6 @@ import 'package:component_system/cs.dart' as Cs;
 import './debugger/deb.dart' as Deb;
 
 import './alerts.dart' as Mainalerts;
-import './key_mapping/keyboard.dart' as Keyboard; // TODO: remove
 import './canvas.dart' as Canvas;
 import './options/options.dart' as Opt;
 import './nav.dart' as Nav;
@@ -49,7 +48,6 @@ run() async
   final Cs.Cs cs = await Cs.init(emu);
   await Nav.init(emu);
 
-  Keyboard.init(emu, cs);
 
   Ft.log('main.dart', 'run#initJqTooltips');
   var req = Js.context.callMethod(r'$', ['[data-toggle="tooltip"]']);

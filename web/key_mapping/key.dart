@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 15:29:03 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 15:33:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/02 20:08:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,7 +28,11 @@ class Key {
 
   Key.ofKeyboardEvent(Html.KeyboardEvent ev)
     : code = ev.code
-    , keyCode = ev.keyCode;
+    , keyCode = ev.keyCode
+    , altKey = ev.altKey
+    , ctrlKey = ev.ctrlKey
+    , metaKey = ev.metaKey
+    , shiftKey = ev.shiftKey;
 
   Key.ofJson(String s) : this.ofMap(JSON.decode(s));
 
@@ -100,5 +104,19 @@ class Key {
       s += "s-";
     return s + code;
   }
+
+  int get hashCode =>
+    (altKey ? 1 : 0)
+    | (ctrlKey ? 2 : 0)
+    | (metaKey ? 4 : 0)
+    | (shiftKey ? 8 : 0)
+    | (keyCode << 4);
+
+  operator ==(Key that) =>
+    keyCode == that.keyCode
+    && altKey == that.altKey
+    && ctrlKey == that.ctrlKey
+    && metaKey == that.metaKey
+    && shiftKey == that.shiftKey;
 
 }
