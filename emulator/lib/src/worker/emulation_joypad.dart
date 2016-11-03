@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 22:02:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/03 10:34:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 20:17:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -52,29 +52,25 @@ abstract class EmulationJoypad implements Worker.AWorker {
     switch (ev.type) {
       case (JoypadActionType.PressRelease):
         if (this.gbMode is V.Emulating) {
-          if (ev.press)
+          if (_spamming.contains(ev.key))
+            _updateJoypadSpamState(ev.key, false);
+          else if (ev.press)
             this.gbOpt.keyPress(ev.key);
           else
             this.gbOpt.keyRelease(ev.key);
         }
         break;
       case (JoypadActionType.Tap):
+        if (_spamming.contains(ev.key))
+          _updateJoypadSpamState(ev.key, false);
         if (!_actions.containsKey(ev.key))
           _actions[ev.key] = _tap_cycle_count;
         break;
       case (JoypadActionType.SpamToggle):
-        if (_spamming.contains(ev.key)) {
-          _spamming.remove(ev.key);
-          this.ports.send(
-              'JoypadSpamState', new EventSpamUpdate(ev.key, false));
-        }
-        else {
-          _spamming.add(ev.key);
-          this.ports.send(
-              'JoypadSpamState', new EventSpamUpdate(ev.key, true));
-          if (!_actions.containsKey(ev.key))
-            _actions[ev.key] = 1;
-        }
+        if (_spamming.contains(ev.key))
+          _updateJoypadSpamState(ev.key, false);
+        else
+          _updateJoypadSpamState(ev.key, true);
         break;
     }
   }
@@ -105,5 +101,16 @@ abstract class EmulationJoypad implements Worker.AWorker {
     _actions = nextActions;
   }
   // SUBROUTINES ************************************************************ **
+  void _updateJoypadSpamState(JoypadKey k, bool status) {
+    if (status) {
+      _spamming.add(k);
+      if (!_actions.containsKey(k))
+        _actions[k] = 1;
+    }
+    else
+      _spamming.remove(k);
+    this.ports.send('JoypadSpamState', new EventSpamUpdate(k, status));
+  }
+
 
 }
