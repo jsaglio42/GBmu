@@ -177,10 +177,6 @@ body {
     table-layout: fixed;
 }
 
-#row-key-mapping thead th:first-child {
-    width: 65px;
-}
-
 #row-key-mapping h4 {
     color: GhostWhite;
     /* background-color: red; */
@@ -210,6 +206,15 @@ body {
     font-size: 11px;
     padding: 2px 5px;
     overflow: hidden;
+}
+
+
+#joypad-table thead th:first-child {
+    width: 65px;
+}
+
+#ss-table thead th:first-child {
+    width: 56%;
 }
 
 /* ************************************************************************** */

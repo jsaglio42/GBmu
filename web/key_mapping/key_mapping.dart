@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 14:05:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 23:46:28 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 11:08:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -26,7 +26,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 
 part './key.dart';
 part './key_map.dart';
-part './joypad_key.dart';
+part './config.dart';
 part './store_events.dart';
 part './store_mappings.dart';
 part './platform_mapper.dart';
@@ -41,7 +41,7 @@ part './handler_style.dart';
 // VARIABLES **************************************************************** **
 
 // CONSTRUCTION ************************************************************* **
-void init(Emulator.Emulator emu) {
+void init(Emulator.Emulator emu, Cs.Cs cs) {
   Ft.log('key_mapping.dart', 'init', [emu]);
 
   final StoreEvents se = new StoreEvents();
@@ -53,7 +53,7 @@ void init(Emulator.Emulator emu) {
   new HandlerKeyboard(pm, pa);
   new HandlerStyle(emu, se, sm);
 
-  new BuilderDom(emu, se, sm, pls);
+  new BuilderDom(emu, cs, se, sm, pls);
 
 }
 

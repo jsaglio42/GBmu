@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 18:04:45 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 22:59:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 11:11:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,21 +16,50 @@ class BuilderDom {
 
   // ATTRIBUTES ************************************************************* **
   final Emulator.Emulator _emu;
+  final Cs.Cs _cs;
   final StoreEvents _se;
   final StoreMappings _sm;
   final PlatformLocalStorage _pls;
   final Html.TableSectionElement _joypadTbody =
     Html.querySelector('#joypad-table tbody');
+  final Html.TableSectionElement _ssTbody =
+    Html.querySelector('#ss-table tbody');
 
   // CONSTRUCTION *********************************************************** **
-  BuilderDom(this._emu, this._se, this._sm, this._pls) {
+  BuilderDom(this._emu, this._cs, this._se, this._sm, this._pls) {
 
     joypadInfo.forEach((JoypadKey jk, JoypadKeyInfo i) {
       _makeJoypadRow(jk, i);
     });
+    ssKeyInfo.forEach((CsKeyInfo i) {
+      _makeCsRow(_ssTbody, i.name, i.action, i.defaultMapping);
+    });
   }
 
   // PRIVATE **************************************************************** **
+  void _makeCsRow(
+      Html.TableSectionElement tbody,
+      String name, Cs.KeyboardAction act, Key fallback) {
+    final Html.ButtonElement but = new Html.ButtonElement();
+    final onPress = () => _cs.key(act);
+    final KeyMap m = new KeyMap(_se, name, but, fallback, onPress, null);
+    final Key kOpt = _pls.getKeyOpt(m, fallback);
+
+    _sm.updateClaim(m, kOpt);
+    but.classes.add('btn-block');
+    but.classes.add('btn');
+    but.classes.add('btn-info');
+
+    tbody.nodes.add(
+        new Html.TableRowElement()
+        ..nodes = [
+          new Html.TableCellElement()
+          ..text = name,
+          new Html.TableCellElement()
+          ..nodes = [but],
+        ]);
+  }
+
   void _makeJoypadRow(JoypadKey jk, JoypadKeyInfo info) {
     final Html.TableRowElement row = _createJoypadRow(info);
     KeyMap m;
