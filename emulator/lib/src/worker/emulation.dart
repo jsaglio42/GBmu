@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:47:55 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 22:44:29 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 10:33:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -66,9 +66,9 @@ abstract class Emulation
       ..listener('ExtractSs').forEach(_onExtractSsReq)
       ..listener('InstallSs').forEach(_onInstallSsReq);
     ep_init();
-    ej_init();
     et_setCyclesPerSec(60.0);
     etc_setRate(1.0);
+    ej_init();
   }
 
   // PUBLIC **************************************************************** **
@@ -105,6 +105,7 @@ abstract class Emulation
     assert(m['fps'] != null && m['fps'] is double);
     et_setCyclesPerSec(m['fps']);
     etc_resetRate();
+    ej_onFpsUpdate();
   }
 
   void _onEjectReq(_)
@@ -178,6 +179,7 @@ abstract class Emulation
     assert(_sub == null, "_makeLooping() with some timer");
     et_reset();
     etc_reset();
+    ej_onFpsUpdate();
     _fut = new Async.Future.delayed(et_rescheduleDeltaTime()).asStream();
     _sub = _fut.listen(_onEmulation);
   }

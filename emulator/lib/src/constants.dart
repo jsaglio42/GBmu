@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 15:16:09 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 18:08:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 10:37:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,34 +24,26 @@ const int GB_CLOCK_PER_FRAME_INT = 70224; // clock
 const double GB_CLOCK_PER_FRAME_DOUBLE = GB_CLOCK_PER_FRAME_INT / 1.0;
 
 const int GB_CPU_FREQ_INT = 4194304; // clock / second
-// const int EMULATION_PER_SEC_INT = 60; // emulation /second
 const int DEBUG_PER_SEC_INT = 3; // debug / second
-// const int FRAME_PER_SEC_INT = 60; // frame / second
 const int SPEEDPOLL_PER_SEC_INT = 1; // call / sec
 
 const double GB_CPU_FREQ_DOUBLE = GB_CPU_FREQ_INT / 1.0;
-// const double EMULATION_PER_SEC_DOUBLE = EMULATION_PER_SEC_INT / 1.0;
 const double DEBUG_PER_SEC_DOUBLE = DEBUG_PER_SEC_INT / 1.0;
-// const double FRAME_PER_SEC_DOUBLE = FRAME_PER_SEC_INT / 1.0;
 const double SPEEDPOLL_PER_SEC_DOUBLE = SPEEDPOLL_PER_SEC_INT / 1.0;
 
-// const double EMULATION_PERIOD_DOUBLE = 1.0 / EMULATION_PER_SEC_DOUBLE;
 const double DEBUG_PERIOD_DOUBLE = 1.0 / DEBUG_PER_SEC_DOUBLE;
-// const double FRAME_PERIOD_DOUBLE = 1.0 / FRAME_PER_SEC_DOUBLE;
 const double SPEEDPOLL_PERIOD_DOUBLE = 1.0 / SPEEDPOLL_PER_SEC_DOUBLE;
 
 // With 60 EMU_PER_SEC, 0.002% Error on reschedule due to rounding
-// const Duration EMULATION_PERIOD_DURATION = const Duration(microseconds:
-    // (EMULATION_PERIOD_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE + 0.5) ~/ 1);
 const Duration DEBUG_PERIOD_DURATION = const Duration(microseconds:
     (DEBUG_PERIOD_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE + 0.5) ~/ 1);
-// const Duration FRAME_PERIOD_DURATION = const Duration(microseconds:
-    // (FRAME_PERIOD_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE + 0.5) ~/ 1);
 const Duration SPEEDPOLL_PERIOD_DURATION = const Duration(microseconds:
     (SPEEDPOLL_PERIOD_DOUBLE * MICROSECONDS_PER_SECOND_DOUBLE + 0.5) ~/ 1);
 
 const Duration EMULATION_START_DELAY = const Duration(milliseconds: 100);
 const Duration EMULATION_RESCHEDULE_MIN_DELAY = const Duration(milliseconds: 3);
+
+const double TAP_MINIMUM_SEC_DOUBLE = 0.2;
 
 /* Memory Mapping */
 const int TAIL_RAM_LAST = 0xFFFF;

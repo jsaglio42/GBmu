@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 22:02:24 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 23:40:38 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 10:34:41 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -34,15 +34,15 @@ import 'package:emulator/variants.dart' as V;
 abstract class EmulationJoypad implements Worker.AWorker {
 
   // ATTRIBUTES ************************************************************* **
-  Map<JoypadKey, bool> _actions = <JoypadKey, bool>{};
-  // Set<JoypadKey> _toTap = new Set<JoypadKey>();
-  // Set<JoypadKey> _toUntap = new Set<JoypadKey>();
+  Map<JoypadKey, int> _actions = <JoypadKey, int>{};
   Set<JoypadKey> _spamming = new Set<JoypadKey>();
+  int _tap_cycle_count;
 
   // CONSTRUCTION *********************************************************** **
   void ej_init() {
     this.ports
       ..listener('RequestJoypad').forEach(_onRequestJoypad);
+    ej_onFpsUpdate();
   }
 
   // CALLBACKS (DOM) ******************************************************** **
@@ -60,7 +60,7 @@ abstract class EmulationJoypad implements Worker.AWorker {
         break;
       case (JoypadActionType.Tap):
         if (!_actions.containsKey(ev.key))
-          _actions[ev.key] = true;
+          _actions[ev.key] = _tap_cycle_count;
         break;
       case (JoypadActionType.SpamToggle):
         if (_spamming.contains(ev.key)) {
@@ -73,25 +73,33 @@ abstract class EmulationJoypad implements Worker.AWorker {
           this.ports.send(
               'JoypadSpamState', new EventSpamUpdate(ev.key, true));
           if (!_actions.containsKey(ev.key))
-            _actions[ev.key] = true;
+            _actions[ev.key] = 1;
         }
         break;
     }
   }
 
   // PUBLIC ***************************************************************** **
-  void ej_update() {
-    final Map<JoypadKey, bool> nextActions = <JoypadKey, bool>{};
+  void ej_onFpsUpdate() {
+    final double count_double =
+      TAP_MINIMUM_SEC_DOUBLE * et_cyclesPerSec_double;
 
-    _actions.forEach((JoypadKey key, bool press) {
-      if (press) {
+    _tap_cycle_count = (count_double + 0.5) ~/ 1;
+    _tap_cycle_count = Math.max(_tap_cycle_count, 1);
+  }
+
+  void ej_update() {
+    final Map<JoypadKey, int> nextActions = <JoypadKey, int>{};
+
+    _actions.forEach((JoypadKey key, int countdown) {
+      if (countdown > 0) {
         this.gbOpt.keyPress(key);
-        nextActions[key] = false;
+        nextActions[key] = countdown - 1;
       }
       else {
         this.gbOpt.keyRelease(key);
         if (_spamming.contains(key))
-          nextActions[key] = true;
+          nextActions[key] = 1;
       }
     });
     _actions = nextActions;
