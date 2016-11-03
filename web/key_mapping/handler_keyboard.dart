@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 17:59:46 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 22:42:52 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 11:46:15 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -56,9 +56,10 @@ class HandlerKeyboard {
   bool _is_modifier(Html.KeyboardEvent ev) {
     final int k = ev.which;
 
-    if (k == 20 /* Caps lock */
+    if (false
+        // || k == 20 /* Caps lock */
         || k == 16 /* Shift */
-        || k == 9 /* Tab */
+        // || k == 9 /* Tab */
         // || k == 27 /* Escape Key */
         || k == 17 /* Control Key */
         || k == 91 /* Windows Command Key */

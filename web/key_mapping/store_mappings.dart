@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 16:57:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:23:02 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 11:38:48 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -30,7 +30,8 @@ class StoreMappings {
   Key getClaimedOpt(KeyMap m) => _keyOfClaimer[m];
 
   void updateClaim(KeyMap m, Key kOpt) {
-    assert(kOpt == null || _claimerOfKey[kOpt] == null);
+    assert(kOpt == null
+        || _claimerOfKey[kOpt] == null);
 
     Key prevClaim = _keyOfClaimer[m];
 

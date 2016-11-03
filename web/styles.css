@@ -173,16 +173,31 @@ body {
 /* KEY MAPPING ************************************************************** */
 /* ************************************************************************** */
 
+#mapping-button-container > button {
+    width: 31%;
+    height: 26px;
+    padding: 0;
+    margin-top: 5px;
+}
+
 #row-key-mapping table {
     table-layout: fixed;
 }
 
+#row-key-mapping caption {
+    padding: 0;
+}
+
 #row-key-mapping h4 {
     color: GhostWhite;
+    margin-top: 0;
+    margin-bottom: 6px;
     /* background-color: red; */
 }
 #row-key-mapping th {
     background-color: rgba(81, 144, 165, 1.0); /* strong blue */
+    white-space: nowrap;
+    overflow: hidden;
 }
 #row-key-mapping tr:nth-child(2n+1) > td {
     background-color: rgba(181, 190, 234, 1.0); /* light purple */
