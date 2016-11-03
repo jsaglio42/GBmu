@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 15:29:03 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:08:22 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 13:17:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,14 +50,6 @@ class Key {
       if (m['metaKey'] == null) throw new Exception('Key.ofMap() missing metaKey field');
       if (m['shiftKey'] == null) throw new Exception('Key.ofMap() missing shiftKey field');
   }
-  // factory Key.ofLocalStorage(String lsKey, Key fallback) {
-  //   try {
-  //     return new Key.ofJson(Html.window.localStorage[lsKey]);
-  //   }
-  //   catch () {
-  //     return fallback;
-  //   }
-  // }
 
   // PUBLIC ***************************************************************** **
   bool eventPresses(Html.KeyboardEvent ev) {

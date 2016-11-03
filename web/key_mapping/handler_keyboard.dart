@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/02 17:59:46 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/03 11:46:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 13:17:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -29,10 +29,13 @@ class HandlerKeyboard {
   void _onKeyDown(Html.KeyboardEvent ev){
     final Key k = new Key.ofKeyboardEvent(ev);
 
-    // print(k);
-    // print(ev.repeat);
-    if (!ev.repeat
-        && !_is_modifier(ev)
+    // print('$k '
+    //     '${ev.repeat} '
+    //     '${_is_modifier(ev)} '
+    //     '${Html.document.activeElement.runtimeType}');
+    if (_is_modifier(ev))
+        ev.preventDefault();
+    else if (!ev.repeat
         && Html.document.activeElement is! Html.InputElement) {
       if (_pm.useKeyPress(k) || _pa.useKeyPress(k))
         ev.preventDefault();
@@ -43,7 +46,9 @@ class HandlerKeyboard {
   void _onKeyUp(Html.KeyboardEvent ev){
     final Key k = new Key.ofKeyboardEvent(ev);
 
-    if (!_is_modifier(ev)
+    if (_is_modifier(ev))
+        ev.preventDefault();
+    else if (!ev.repeat
         && Html.document.activeElement is! Html.InputElement) {
       if (_pm.useKeyRelease(k) || _pa.useKeyRelease(k))
         ev.preventDefault();
@@ -77,55 +82,3 @@ class HandlerKeyboard {
       return false;
   }
 }
-  // Private ****************************************************************** **
-  /* Store the status of button: (false = released, true = pressed) */
-  // Map<int, dynamic> _keySettings = <int, dynamic>{
-  //   75 : JoypadKey.A,
-  //   76 : JoypadKey.B,
-  //   16 : JoypadKey.Select,
-  //   13 : JoypadKey.Start,
-  //   70 : JoypadKey.Right,
-  //   83 : JoypadKey.Left,
-  //   69 : JoypadKey.Up,
-  //   68 : JoypadKey.Down,
-  // }
-  //   ..addAll(Cs.g_keyMapping);
-
-  // Map<dynamic, int> _reverseKeySettings;
-
-  // Map<JoypadKey, bool> _keyState = new Map<dynamic, bool>.fromIterable(
-  //     _keySettings.values.where((v) => v is JoypadKey),
-  //     key:(v) => v, value: (_) => false);
-
-  // ************************************************************************** **
-
-  // void _updateRevMap() {
-  //   _reverseKeySettings = new Map<dynamic, int>.fromIterables(
-  //       _keySettings.values, _keySettings.keys);
-  // }
-
-  // void _updateKey(JoypadKey k, int code) { //Unused yet
-  //   final key = _keySettings[eventKeyCode];
-
-  //   if (key != null) {
-  //     // TODO: issue error
-  //   }
-  //   else {
-  //     if (!_keySettings.removeValue(k))
-  //       assert(false, "from: _updateKey");
-  //     _keySettings[code] = k;
-  //     _keyState[k] = false;
-  //     _updateRevMap();
-  //   }
-  // }
-
-  // ************************************************************************** **
-
-  // void init(Emulator.Emulator emu, Cs.Cs cs) {
-  //   _emu = emu;
-  //   _cs = cs;
-  //   _updateRevMap();
-  //   Html.window.onKeyDown.forEach(_onKeyDown);
-  //   Html.window.onKeyUp.forEach(_onKeyUp);
-  //   return ;
-  // }
