@@ -78,20 +78,46 @@ body {
 
 /* SLIDERS ****************************************************************** */
 /* MY CLASSES ********************************* */
+#row-option > div {
+    /* padding: */
+    /* padding-right: 30px; */
+}
+
+#row-option > div {
+    height: 50px;
+    padding: 0px;
+    /* padding-left: 5px; */
+    padding-right: 30px;
+}
+
+@media only screen and (min-width: 768px) {
+
+    #row-option > .ft-left {
+        /* height: 50px; */
+        /* padding: 0px; */
+        /* padding-left: 5px; */
+        padding-right: 15px;
+        /* background-color: green; */
+    }
+
+}
+
 .slider-cont {
     float: right;
     margin: 0px auto;
     padding-top: 5px;
     padding-bottom: 5px;
-    padding-right: 27px;
+    /* padding-right: 27px; */
     padding-left: 13px;
     height: 50px;
+    width: calc(100% - 90px);
 }
 
 .slider-text {
     padding-top: 5px;
     text-align: right;
     float:left;
+    width: 90px;
 }
 
 .slider-cont > .slider {
@@ -111,11 +137,9 @@ body {
 
 /* SPEED SLIDER ******************************* */
 #speed-slider-cont {
-    width: calc(100% - 60px);
 }
 
 #mainSpeedText {
-    width: 60px;
 }
 
 #mainSpeedSlider {
@@ -123,11 +147,9 @@ body {
 
 /* CANVAS SCALE SLIDER ************************ */
 .canvas-scale-part.slider-cont {
-    width: calc(100% - 60px);
 }
 
 .canvas-scale-part.slider-text {
-    width: 60px;
 }
 
 .canvas-scale-part.slider-cont > .slider {
@@ -135,11 +157,9 @@ body {
 
 /* CANVAS SMOOTH SLIDER *********************** */
 .canvas-smooth-part.slider-cont {
-    width: calc(100% - 100px);
 }
 
 .canvas-smooth-part.slider-text {
-    width: 100px;
 }
 
 .canvas-smooth-part.slider-cont > .slider {
@@ -147,11 +167,9 @@ body {
 
 /* GAMEBOY MODE SLIDER ************************ */
 .gameboy-mode-part.slider-cont {
-    width: calc(100% - 110px);
 }
 
 .gameboy-mode-part.slider-text {
-    width: 110px;
 }
 
 .gameboy-mode-part.slider-cont > .slider {
@@ -159,11 +177,9 @@ body {
 
 /* GAMEBOY FPS SLIDER ************************* */
 .gameboy-fps-part.slider-cont {
-    width: calc(100% - 60px);
 }
 
 .gameboy-fps-part.slider-text {
-    width: 60px;
 }
 
 .gameboy-fps-part.slider-cont > .slider {

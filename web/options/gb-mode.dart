@@ -6,12 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/27 18:24:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 13:37:32 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/11/03 22:16:39 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 import 'dart:js' as Js;
 import 'dart:math' as Math;
+import 'dart:async' as Async;
 import 'dart:html' as Html;
 
 import 'package:ft/ft.dart' as Ft;
@@ -27,6 +28,7 @@ const GameBoyType __DEFAULT_GAMEBOYMODE = GameBoyType.Auto;
 /* VARIABLES ******************************************************************/
 Emulator.Emulator _emu;
 GameBoyType __gameboyType;
+var _jqElt;
 
 /* PUBLIC API *****************************************************************/
 GameBoyType get gameboyType => __gameboyType;
@@ -36,6 +38,10 @@ void init_gameBoyType(Emulator.Emulator emu)
   _emu = emu;
   _gameboyType =  _loadFromLocalStorage();
   new __GameBoyModeSlider();
+}
+
+void onOpen_gameBoyType() {
+  _jqElt.callMethod('relayout', []);
 }
 
 /* PRIVATE ********************************************************************/
@@ -120,6 +126,8 @@ class __GameBoyModeSlider {
     var slider = new Js.JsObject(constr, [
       '.gameboy-mode-part.slider-cont > .slider', param]);
     assert(slider != null, "Could not build `Slider`");
+
+    _jqElt = slider;
 
     slider.callMethod('on', ['slide', _onSlide]);
     slider.callMethod('on', ['slideStop', _onSlide]);

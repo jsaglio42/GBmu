@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/10 17:43:59 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 20:09:01 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 22:40:10 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,7 @@ import 'package:emulator/emulator.dart' as Emulator;
 import './emulation_speed_codec.dart' as ESCodec;
 import './gb-mode.dart';
 import './gb_fps.dart';
+import '../canvas.dart' as C;
 
 /*
  * Global Variable
@@ -27,6 +28,33 @@ import './gb_fps.dart';
 const String __LOCAL_STORAGE_KEY_EMUSPEED = 'option_emu_speed';
 const double __DEFAULT_EMUSPEED = 1.0;
 Emulator.Emulator _emu;
+var _jqElt;
+
+class _Step {
+
+  final String name;
+  final double speed;
+  final double location;
+
+  const _Step(this.name, double s, [double loc])
+    : speed = s
+    , location = loc == null ? s : loc;
+
+}
+
+const List<_Step> _steps = const <_Step>[
+  const _Step('', 0.0),
+  const _Step('1cps', 1.0 / GB_CPU_FREQ_DOUBLE, 5.0 / GB_CPU_FREQ_DOUBLE),
+  const _Step('1lps', GB_CLOCK_PER_LINE_DOUBLE / GB_CPU_FREQ_DOUBLE),
+  const _Step('1fps', GB_CLOCK_PER_FRAME_DOUBLE / GB_CPU_FREQ_DOUBLE),
+  const _Step('10%', 0.10),
+  const _Step('1x', 1.0),
+  const _Step('2x', 2.0),
+  const _Step('4x', 4.0),
+  const _Step('8x', 8.0),
+  const _Step('16x', 16.0),
+  const _Step('infinity', double.INFINITY),
+];
 
 /*
  * Internal Methods
@@ -43,8 +71,10 @@ class _SpeedSlider {
 
     if (speed.isInfinite)
       return 'inf';
+    else if (speed > 2.0)
+      return '${(speed).toStringAsFixed(2)}x';
     else
-      return '${clockPerSec.toStringAsFixed(2)} c/s\n'
+      return '${clockPerSec.toStringAsFixed(2)} clock per sec '
         '${(speed * 100.0).toStringAsFixed(3)}%';
   }
 
@@ -64,25 +94,10 @@ class _SpeedSlider {
       'ticks_snap_bounds': 1.0 / 1000.0 * 10.0,
       'precision': 16, //17 digits gives a no-loss conversion to string
 
-      'ticks': [
-        0.0,
-        ESCodec.codec.encode(1.0 / GB_CPU_FREQ_DOUBLE),
-        ESCodec.codec.encode(1.0),
-        ESCodec.codec.encode(2.0),
-        ESCodec.codec.encode(4.0),
-        ESCodec.codec.encode(10.0),
-        1.0
-      ],
-      'ticks_labels': ['', '1cps', '1x', '2x', '4x', '10x', 'infinity'],
-      'ticks_positions': [
-        (0.0 * 100.0),
-        (ESCodec.codec.encode(1.0 / GB_CPU_FREQ_DOUBLE) * 100.0),
-        (ESCodec.codec.encode(1.0) * 100.0),
-        (ESCodec.codec.encode(2.0) * 100.0),
-        (ESCodec.codec.encode(4.0) * 100.0),
-        (ESCodec.codec.encode(10.0) * 100.0),
-        100
-      ],
+      'ticks': _steps.map((_Step s) => ESCodec.codec.encode(s.speed)),
+      'ticks_labels': _steps.map((_Step s) => s.name),
+      'ticks_positions': _steps.map((_Step s) =>
+          100.0 * ESCodec.codec.encode(s.location)),
     });
     _slider = Html.querySelector('#mainSpeedSlider');
 
@@ -90,6 +105,8 @@ class _SpeedSlider {
     assert(param != null, "Could not build `Slider` parameter");
     var slider = new Js.JsObject(constr, ['#mainSpeedSlider', param]);
     assert(slider != null, "Could not build `Slider`");
+
+    _jqElt = slider;
 
     slider.callMethod('on', ['slideStop', _onSlide]);
 
@@ -104,7 +121,7 @@ class _SpeedSlider {
   _onSpeedUpdate(map) {
     final double speed = map['speed'];
 
-    _text.text = '${speed.toStringAsFixed(2)}x';
+    _text.text = 'Speed ${speed.toStringAsFixed(2)}x';
     return ;
   }
 
@@ -128,7 +145,11 @@ class _SpeedSlider {
 
 void onOpen()
 {
-
+  onOpen_gameBoyType();
+  onOpen_speed();
+  C.onOpen_scale();
+  C.onOpen_smooth();
+  onOpen_gameBoyFps();
 }
 
 void onClose()
@@ -160,4 +181,8 @@ void init(Emulator.Emulator emu) {
   init_gameBoyType(emu);
   init_gameBoyFps(emu);
   return ;
+}
+
+void onOpen_speed() {
+  _jqElt.callMethod('relayout', []);
 }

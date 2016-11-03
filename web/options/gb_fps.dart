@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/29 19:25:50 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 20:00:55 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 22:25:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -28,8 +28,9 @@ const List<double> steps = const <double>[
 
 // VARIABLE ***************************************************************** **
 Emulator.Emulator _emu;
-final Html.Element _text =
-  Html.querySelector('.gameboy-fps-part.slider-text');
+var _jqElt;
+// final Html.Element _text =
+  // Html.querySelector('.gameboy-fps-part.slider-text');
 double __gbFps;
 
 double get _gbFps => __gbFps;
@@ -39,7 +40,7 @@ void set _gbFps(double s) {
     s = (s * 10.0).roundToDouble() / 10.0;
     __gbFps = s;
     Html.window.localStorage[__LOCAL_STORAGE_KEY_FPS] = s.toString();
-    _text.text = '$s fps';
+    // _text.text = '$s fps';
     _emu.send('FpsRequest', <String, double>{'fps': s});
   }
 }
@@ -72,8 +73,12 @@ class __Slider {
       '.gameboy-fps-part.slider-cont > .slider', param]);
     assert(slider != null, "Could not build `Slider`");
 
+    _jqElt = slider;
+
     // slider.callMethod('on', ['slide', _onSlide]);
     slider.callMethod('on', ['slideStop', _onSlide]);
+
+
   }
 
   // PRIVATE **************************************************************** **
@@ -104,4 +109,8 @@ void init_gameBoyFps(Emulator.Emulator emu) {
     val = __DEFAULT_SCALE;
   _gbFps = val;
   new __Slider();
+}
+
+void onOpen_gameBoyFps() {
+  _jqElt.callMethod('relayout', []);
 }

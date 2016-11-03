@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/22 13:12:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/27 19:51:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 22:23:44 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,9 +22,10 @@ const List<double> steps = const <double>[
 ];
 
 // VARIABLE ***************************************************************** **
-final Html.Element _text =
-  Html.querySelector('.canvas-scale-part.slider-text');
+// final Html.Element _text =
+  // Html.querySelector('.canvas-scale-part.slider-text');
 double __screenScale;
+var _jqElt0;
 
 double get _screenScale => __screenScale;
 
@@ -34,7 +35,7 @@ void set _screenScale(double s) {
     Html.window.localStorage[__LOCAL_STORAGE_KEY_SCALE] = s.toString();
     _screen.width = (LCD_WIDTH * __screenScale) ~/ 1.0;
     _screen.height = (LCD_HEIGHT * __screenScale) ~/ 1.0;
-    _text.text = '$s' + 'x';
+    // _text.text = '$s' + 'x';
     _refreshScreen();
     _screen.context2D.imageSmoothingEnabled = _smooth;
   }
@@ -64,6 +65,8 @@ class __Slider {
       '.canvas-scale-part.slider-cont > .slider', param]);
     assert(slider != null, "Could not build `Slider`");
 
+    _jqElt0 = slider;
+
     slider.callMethod('on', ['slide', _onSlide]);
     slider.callMethod('on', ['slideStop', _onSlide]);
   }
@@ -77,7 +80,7 @@ class __Slider {
     (d - __MIN_SCALE) / (__MAX_SCALE - __MIN_SCALE) * 100.0;
 
   String _formatter(num scale) =>
-    'Screen scale ' + scale.toString() + 'x';
+    scale.toString() + 'x';
 
 }
 
@@ -95,4 +98,8 @@ void _init_scale() {
     val = __DEFAULT_SCALE;
   _screenScale = val;
   new __Slider();
+}
+
+void onOpen_scale() {
+  _jqElt0.callMethod('relayout', []);
 }
