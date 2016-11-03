@@ -48,10 +48,10 @@ body {
     margin-left: auto;
     margin-right: auto;
     background-color: rgba(0, 71, 171, 0.25);
-    max-width: 1100px;
+    max-width: 1200px;
 }
 
-#row-option {
+#row-option, #row-key-mapping {
     border: 1px solid black;
     border-width: 0px 0px 1px 0px;
 }
@@ -60,7 +60,7 @@ body {
     border-width: 1px 0px 0px 0px;
 }
 
-@media only screen and (min-width: 1100px) {
+@media only screen and (min-width: 1220px) {
     #container-main > .closable {
         border: 2px solid black;
         border-radius: 5px;
@@ -167,6 +167,69 @@ body {
 }
 
 .gameboy-fps-part.slider-cont > .slider {
+}
+
+/* ************************************************************************** */
+/* KEY MAPPING ************************************************************** */
+/* ************************************************************************** */
+
+#mapping-button-container > button {
+    width: 31%;
+    height: 26px;
+    padding: 0;
+    margin-top: 5px;
+}
+
+#row-key-mapping table {
+    table-layout: fixed;
+}
+
+#row-key-mapping caption {
+    padding: 0;
+}
+
+#row-key-mapping h4 {
+    color: GhostWhite;
+    margin-top: 0;
+    margin-bottom: 6px;
+    /* background-color: red; */
+}
+#row-key-mapping th {
+    background-color: rgba(81, 144, 165, 1.0); /* strong blue */
+    white-space: nowrap;
+    overflow: hidden;
+}
+#row-key-mapping tr:nth-child(2n+1) > td {
+    background-color: rgba(181, 190, 234, 1.0); /* light purple */
+}
+
+#row-key-mapping tr:nth-child(2n) > td {
+    background-color: rgba(176, 237, 197, 1.0); /* light green */
+}
+#row-key-mapping td {
+    color: #005B79;
+    /* padding: 0; */
+}
+#row-key-mapping td:first-child {
+    font-size: 12px;
+    color: #005B79;
+    padding-top: 8px;
+    font-weight: bold;
+}
+
+#row-key-mapping .btn-block {
+    font-size: 11px;
+    padding: 2px 5px;
+    overflow: hidden;
+}
+
+
+#joypad-table thead th:first-child {
+    width: 65px;
+}
+
+#ss-table thead th:first-child {
+    width: 56%;
 }
 
 /* ************************************************************************** */
@@ -315,6 +378,14 @@ body {
 /* ************************************************************************** */
 /* CANVAS ******************************************************************* */
 /* ************************************************************************** */
+#spamming-label-container {
+    height: 24px;
+}
+#spamming-label-container > span {
+    height: 24px;
+    padding: 5px 12px;
+    font-size: 14px;
+}
 .canvas {
     width: 500px;
     height: 500px;

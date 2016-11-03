@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/25 11:10:14 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/28 17:28:57 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/11/02 22:29:38 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,4 +43,8 @@ enum DebuggerModeRequest {
 
 enum LimitedEmulation {
   Instruction, Line, Frame, Second
+}
+
+enum JoypadActionType {
+  PressRelease, Tap, SpamToggle,
 }

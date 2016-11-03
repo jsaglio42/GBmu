@@ -83,7 +83,43 @@
 
       <!-- KEY_MAPPING -->
       <div class="row closable" style="display: none;" id="row-key-mapping">
-        key mapping!
+        <div class="col-sm-12" id="mapping-button-container">
+          <button type="button" class="ft-cancel btn btn-warning" style="visibility: hidden;">Cancel</button>
+          <button type="button" class="ft-default btn btn-primary" style="visibility: hidden;">Default</button>
+          <button type="button" class="ft-remove btn btn-danger" style="visibility: hidden;">Remove</button>
+        </div>
+        <div class="col-sm-6">
+          <table class="table table-bordered table-striped table-condensed" id="joypad-table">
+            <caption>
+              <h4>Joypad</h4>
+            </caption>
+            <thead>
+              <tr>
+                <th style='text-align: center'>Joypad</th>
+                <th style='text-align: center'>Press-Release</th>
+                <th style='text-align: center'>Tap</th>
+                <th style='text-align: center'>Spam toggle</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm-6">
+          <table class="table table-bordered table-striped table-condensed" id="ss-table">
+            <caption>
+              <h4>Save states</h4>
+            </caption>
+            <thead>
+              <tr>
+                <th style='text-align: center'>Action</th>
+                <th style='text-align: center'>Shortcut</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
       </div>
       <!-- /KEY_MAPPING -->
 
@@ -96,7 +132,17 @@
       <!-- CANVAS -->
       <div class="row" id="row-canvas">
         <div class="col-sm-12 text-xs-center">
-          <div><canvas id="gameboyScreen"/></div>
+          <div id="spamming-label-container">
+            <span class="label label-success" style="display: none;">right</span>
+            <span class="label label-success" style="display: none;">left</span>
+            <span class="label label-success" style="display: none;">up</span>
+            <span class="label label-success" style="display: none;">down</span>
+            <span class="label label-success" style="display: none;">A</span>
+            <span class="label label-success" style="display: none;">B</span>
+            <span class="label label-success" style="display: none;">select</span>
+            <span class="label label-success" style="display: none;">start</span>
+          </div>
+          <canvas id="gameboyScreen"/>
         </div>
       </div>
       <!-- /CANVAS -->
