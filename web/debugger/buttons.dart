@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/28 18:57:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/29 15:15:10 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/03 20:34:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -22,19 +22,17 @@ class _Data {
   final Html.ButtonElement pause;
   final List<Html.ButtonElement> limitedEmulation;
 
-  _Data.eltList(List<Html.Element> v)
-    /* Element 0 is restart, handled elsewhere */
-    : resume = v?.elementAt(1)
-    , pause = v?.elementAt(2)
-    , limitedEmulation = new List.generate(4, (i) => v?.sublist(3)[i])
+  _Data()
+    : resume = Html.querySelector("#debColButtons .ft-resume")
+    , pause = Html.querySelector("#debColButtons .ft-pause")
+    , limitedEmulation = new List.from(
+        Html.querySelectorAll("#debColButtons .ft-limited-emu"))
   {
     assert(resume != null, 'debButton: missing resume button');
     assert(pause != null, 'debButton: missing pause button');
     assert(limitedEmulation.every((e) => (e != null)),
         'debButton: missing limitedEmulation');
   }
-
-  _Data() : this.eltList(Html.querySelector("#debColButtons")?.children);
 
 }
 

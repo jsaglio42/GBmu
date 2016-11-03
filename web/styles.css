@@ -277,13 +277,31 @@ body {
 }
 
 /* DEB - BODY - TIMINGS ***************************************************** */
-#debColClock .label {
-    display: inline-block;
+.debColClockSpan span {
+    margin-top: 3px;
+    float: right;
     min-width: 95px;
+    display: inline-block;
+    height: 16px;
 }
 
 .debColClockSpan {
     white-space: nowrap;
+    /* background-color: red; */
+    display: inline-block;
+}
+
+@media only screen and (max-width: 450px) {
+    .debColClockSpan {
+        margin: 0 auto;
+        display: block;
+        /* background-color: green; */
+        width: 210px !important;
+        text-align: left;
+    }
+    .debColClockSpan span {
+        float: right;
+    }
 }
 
 /* DEB - BODY - BUTTONS ***************************************************** */
@@ -291,19 +309,27 @@ body {
     margin-top: 5px;
 }
 
+#debColButtons {
+    /* padding: 0 !important; */
+    /* margin: 0 !important; */
+    /* position:relative; */
+    /* text-align: left; */
+    /* vertical-align: middle; */
+}
+
 .debStatusButton {
     margin: 2px 2px;
     width: 85px;
     padding: 5px 6px;
+    /* padding: 0 !important; */
+    /* margin: 0 !important; */
+
 }
 
-#debColButtons > p {
-    display: inline-block;
-    margin-right: 5px;
-}
-
-#debColButtons > form {
-    display: inline-block;
+@media only screen and (min-width: 610px) {
+    #debColButtons > div {
+        display: inline-block;
+    }
 }
 
 /* DEB - BODY - REGISTER **************************************************** */
