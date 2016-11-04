@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/10 17:25:30 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 22:38:38 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/04 12:36:00 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -60,7 +60,8 @@ abstract class AWorker {
 
   // EMULATION EVENTS/STATES ************************************************ **
   Gameboy.GameBoy gbOpt = null;
-  Async.Stream<V.EmulatorEvent> emulatorEvents; // ABSTRACT **************** **
+  Async.Stream<V.EmulatorEvent> emulatorEvents; // ABSTRACT ***************** **
+  Async.Stream saveStateInstallEvents; // ABSTRACT ************************** **
 
   // EMULATION TIMINGS ****************************************************** **
   double get et_cyclesPerSec_double;

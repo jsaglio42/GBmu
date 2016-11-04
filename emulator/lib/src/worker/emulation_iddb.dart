@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/19 18:19:04 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 18:15:28 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/11/04 12:38:05 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -35,7 +35,12 @@ abstract class Trap {
 
 abstract class EmulationIddb implements Worker.AWorker, Trap {
 
+  // ATTRIBUTES ************************************************************* **
+  Async.StreamController _ssEvents = new Async.StreamController.broadcast();
+
   // PUBLIC ***************************************************************** **
+  Async.Stream get saveStateInstallEvents => _ssEvents.stream;
+
   Async.Future<Gameboy.GameBoy> ei_assembleGameBoy(RequestEmuStart req) async
   {
     Cartridge.ACartridge c;
@@ -116,6 +121,7 @@ abstract class EmulationIddb implements Worker.AWorker, Trap {
         await _fieldOfKeys(idb, ev.store, ev.key));
 
     this.gbOpt.recUnserialize(ss.rawData);
+    _ssEvents.add(42);
     // Ft.log("WorkerEmu", 'ei_installSs#DONE');
   }
 

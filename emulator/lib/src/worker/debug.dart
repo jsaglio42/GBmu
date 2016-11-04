@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/08/26 11:51:18 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/02 14:16:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/04 12:40:18 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -57,6 +57,8 @@ abstract class Debug implements Worker.AWorker {
       ..listener('DebMemAddrChange').forEach(_onMemoryAddrChangeReq);
     this.emulatorEvents
       .forEach(_onEmulatorEvent);
+    this.saveStateInstallEvents
+      .forEach((_) => _onDebug());
   }
 
   // CALLBACKS (DOM) ******************************************************** **
