@@ -296,7 +296,7 @@ body {
 .debColClockSpan span {
     margin-top: 3px;
     float: right;
-    min-width: 95px;
+    min-width: 100px;
     display: inline-block;
     height: 16px;
 }
@@ -312,7 +312,7 @@ body {
         margin: 0 auto;
         display: block;
         /* background-color: green; */
-        width: 210px !important;
+        width: 215px !important;
         text-align: left;
     }
     .debColClockSpan span {
@@ -354,6 +354,13 @@ body {
     padding-bottom: 0px;
 }
 
+#debColRegisters span.label {
+    /* color: red; */
+    padding: 3px 5px;
+    margin: 0px;
+    font-size: 9px;
+}
+
 #debColRegisters table {
     margin-bottom: 0px;
 }
@@ -361,6 +368,22 @@ body {
 #debColRegisters > table > tbody > tr:first-child > td:first-child {
     /* margin-bottom: 0px; */
     padding: 5px 0px;
+}
+
+#debColRegisters > table > tbody > tr:first-child > td:first-child > div {
+    /* background-color: green; */
+    display: inline-block;
+}
+@media only screen and (max-width: 992px) {
+
+    #debColRegisters > table > tbody > tr:first-child > td:first-child > div {
+        display: block;
+        /* background-color: red; */
+    }
+
+    #debColRegisters > table > tbody > tr:first-child > td:first-child > div:first-child {
+        margin-bottom: 3px;
+    }
 }
 
 /* DEB - BODY - INSTRUCTION FLOW ******************************************** */
@@ -375,13 +398,18 @@ body {
 
 /* DEB - BODY - MEMORY EXPLORER ********************************************* */
 .debJumpMem {
-    margin: 2px;
-    padding: 2px 6px;
+    margin: 2px 0px;
+    padding: 0px;
     font-size: 14px;
+    width: calc((100% - 24px) / 12 * 2);
+    /* color: red; */
 }
 
+#memExpJumpPREV, #memExpJumpNEXT {
+    width: calc((100% - 24px) / 12);
+}
 #memExpJumpPREV {
-    margin-left: 0px;
+   margin-left: 0px;
 }
 
 #memExpJumpNEXT {
@@ -410,6 +438,10 @@ body {
 }
 
 /* DEB - BODY - MEMORY REGISTERS ******************************************** */
+#debColMemRegisters h4 {
+    text-align: left;
+    /* background-color: red; */
+}
 .debMemRegTd {
     white-space: nowrap;
 }

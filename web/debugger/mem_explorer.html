@@ -1,118 +1,116 @@
-<!-- <div class="col-sm-12"> -->
-  <h4 align="left">Memory explorer</h4>
-  <input type="text" placeholder="Memory Address: 0000 ... FFFF" class="form-control" id="memory-addr-input">
-
-  <button type="button" class="btn btn-success debJumpMem" id="memExpJumpPREV">Prev</button>
-  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGDATA0">Tile Data #1</button>
-  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGDATA1">Tile Data #0</button>
-  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpBGMAP0">Tile Map #0</button>
-  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpGBMAP1">Tile Map #1</button>
-  <button type="button" class="btn btn-warning debJumpMem" id="memExpJumpOAM">OAM</button>
-  <button type="button" class="btn btn-success debJumpMem" id="memExpJumpNEXT">Next</button>
-  <table id="debugger_memory_explorer" class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th style='text-align: center'>Addr</th>
-        <th style='text-align: center'>x0</th>
-        <th style='text-align: center'>x1</th>
-        <th style='text-align: center'>x2</th>
-        <th style='text-align: center'>x3</th>
-        <th style='text-align: center'>x4</th>
-        <th style='text-align: center'>x5</th>
-        <th style='text-align: center'>x6</th>
-        <th style='text-align: center'>x7</th>
-        <th style='text-align: center'>x8</th>
-        <th style='text-align: center'>x9</th>
-        <th style='text-align: center'>xA</th>
-        <th style='text-align: center'>xB</th>
-        <th style='text-align: center'>xC</th>
-        <th style='text-align: center'>xD</th>
-        <th style='text-align: center'>xE</th>
-        <th style='text-align: center'>xF</th>
-      </tr>
-    </thead>
-    <tbody id="debTbodyMemExplorer">
-      <tr>
-        <td>0000</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0010</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0020</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0030</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0040</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0050</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0060</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0070</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0080</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>0090</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>00A0</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>00B0</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>00C0</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>00D0</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>00E0</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-      <tr>
-        <td>00F0</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-        <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- </div> -->
+<table id="debugger_memory_explorer" class="table table-bordered table-striped table-condensed">
+  <caption>
+    <h4 align="left">Memory explorer</h4>
+    <input type="text" placeholder="Memory Address: 0000 ... FFFF" class="form-control" id="memory-addr-input">
+    <button type="button" class="btn btn-info debJumpMem" id="memExpJumpPREV">Prev</button>
+    <button type="button" class="btn btn-primary debJumpMem" id="memExpJumpBGDATA0">Tile Data1</button>
+    <button type="button" class="btn btn-primary debJumpMem" id="memExpJumpBGDATA1">Tile Data0</button>
+    <button type="button" class="btn btn-primary debJumpMem" id="memExpJumpBGMAP0">Tile Map0</button>
+    <button type="button" class="btn btn-primary debJumpMem" id="memExpJumpGBMAP1">Tile Map1</button>
+    <button type="button" class="btn btn-primary debJumpMem" id="memExpJumpOAM">OAM</button>
+    <button type="button" class="btn btn-info debJumpMem" id="memExpJumpNEXT">Next</button>
+  </caption>
+  <thead>
+    <tr>
+      <th style='text-align: center'>Addr</th>
+      <th style='text-align: center'>x0</th>
+      <th style='text-align: center'>x1</th>
+      <th style='text-align: center'>x2</th>
+      <th style='text-align: center'>x3</th>
+      <th style='text-align: center'>x4</th>
+      <th style='text-align: center'>x5</th>
+      <th style='text-align: center'>x6</th>
+      <th style='text-align: center'>x7</th>
+      <th style='text-align: center'>x8</th>
+      <th style='text-align: center'>x9</th>
+      <th style='text-align: center'>xA</th>
+      <th style='text-align: center'>xB</th>
+      <th style='text-align: center'>xC</th>
+      <th style='text-align: center'>xD</th>
+      <th style='text-align: center'>xE</th>
+      <th style='text-align: center'>xF</th>
+    </tr>
+  </thead>
+  <tbody id="debTbodyMemExplorer">
+    <tr>
+      <td>0000</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0010</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0020</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0030</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0040</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0050</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0060</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0070</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0080</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>0090</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>00A0</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>00B0</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>00C0</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>00D0</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>00E0</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+    <tr>
+      <td>00F0</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+      <td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td><td>FF</td>
+    </tr>
+  </tbody>
+</table>
