@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:16 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 14:32:36 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 20:10:09 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -61,8 +61,17 @@ class LsRom extends LsEntry {
 
   LsRom.ofRom(int uid, int idbid, Emulator.Rom rom)
     : super._unsafe(uid, Rom.v, Alive.v, <String, dynamic>{
-      'idbid': idbid,
+      'Size': (rom.pullHeaderValue(RomHeaderField.ROM_Size)
+          / 1024).toString() + 'KB',
+      'DMG compatibilty': 'todo',
+      'CGB compatibilty': 'todo',
+      'Type': rom.pullHeaderValue(RomHeaderField.Cartridge_Type)
+      .toString().substring(14),
+
+
       'fileName': rom.fileName,
+      'idbid': idbid,
+
       'ramSize': rom.pullHeaderValue(RomHeaderField.RAM_Size),
       'globalChecksum': rom.pullHeaderValue(RomHeaderField.Global_Checksum),
     });

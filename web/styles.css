@@ -636,17 +636,23 @@ body {
     display: block;
     position: relative;
     min-width: 200px;
-    padding: 4px 0;
-    padding-left: 9px;
+    padding: 1px 0;
+    padding-left: 5px;
     font-size: 13px;
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
     font-weight: lighter;
-    color: black;
+    color: #555555;
+    border-width: 0 0 !important;
 }
 
 .ft-dropdown > .ft-clickable {
+    color: black;
+    padding: 4px 0;
+    padding-left: 9px;
     cursor: pointer;
     font-weight: bold;
+    border-width: 1px 0px 0px 0px !important;
+    /* border: 2px; */
 }
 
 .ft-dropdown > .ft-clickable:hover {
@@ -659,6 +665,7 @@ body {
     color: #555555;
     padding: 7px 5px;
     text-align: center;
+    border-width: 0px 0px 2px 0px !important;
 }
 
 /* CHIP SOCKET ************************************************************** */
