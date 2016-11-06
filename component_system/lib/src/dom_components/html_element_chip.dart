@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/26 14:15:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 14:17:12 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 14:22:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -108,6 +108,7 @@ abstract class HtmlElementChip implements DomComponent {
     _linesDetached = _linesOfTypes(this.data.type, _Loc.Det);
 
     _panel = new Html.UListElement()
+      ..nodes.addAll(_createInfoLines())
       ..nodes.addAll(_linesGameBoy)
       ..nodes.addAll(_linesAttached)
       ..nodes.addAll(_linesDetached)
@@ -159,6 +160,16 @@ abstract class HtmlElementChip implements DomComponent {
 
   // PRIVATE **************************************************************** **
   // CONSTRUCTION *************************************** **
+  List<Html.Element> _createInfoLines() {
+    final List<Html.Element> liList = [];
+
+    liList.add(new Html.LIElement()
+        ..classes.add('list-group-item')
+        ..classes.add('ft-title')
+        ..text = this.data.fileName);
+    return liList;
+  }
+
   List<Html.Element> _linesOfTypes(Chip c, _Loc l) {
     final List<Html.Element> liList = [];
 
@@ -175,7 +186,8 @@ abstract class HtmlElementChip implements DomComponent {
       ..text = name
       ..style.display = 'none'
       ..onClick.forEach((_) => f(this))
-      ..classes.add('list-group-item');
+      ..classes.add('list-group-item')
+      ..classes.add('ft-clickable');
   }
 
   dynamic _requestFunctionOfType(_PanelEntry e) {
