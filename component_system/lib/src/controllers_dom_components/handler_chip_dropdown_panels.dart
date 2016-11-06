@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/26 17:11:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 17:49:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 13:30:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -77,7 +77,7 @@ class HandlerChipDropdownPanels {
 
   // PRIVATE **************************************************************** **
 
-  Html.DivElement _openedPanelOpt;
+  Html.Element _openedPanelOpt;
   void _openChipPanel(DomChip ch) {
     final DomCart caOpt = _pdcs.cartOfChipOpt(ch);
 

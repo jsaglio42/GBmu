@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/26 14:15:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 18:47:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 13:28:30 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -83,9 +83,9 @@ abstract class HtmlElementChip implements DomComponent {
   Html.Element _elt;
   Html.DivElement _txt;
   Html.ButtonElement _ddBtn;
-  Html.DivElement _panelGameBoy;
-  Html.DivElement _panelAttached;
-  Html.DivElement _panelDetached;
+  Html.Element _panelGameBoy;
+  Html.Element _panelAttached;
+  Html.Element _panelDetached;
 
   // CONSTRUCTION *********************************************************** **
   void hech_init() {
@@ -108,9 +108,9 @@ abstract class HtmlElementChip implements DomComponent {
       ..nodes = [_txt, _ddBtn,
         _panelGameBoy, _panelAttached, _panelDetached];
     if (this.data.type is Ram)
-      _elt.classes.addAll(["cart-ram-bis", "ui-widget-content"]);
+      _elt.classes.addAll(["cart-ram-bis", "ui-widget-content", 'ft-chip']);
     else
-      _elt.classes.addAll(["cart-ss-bis", "ui-widget-content"]);
+      _elt.classes.addAll(["cart-ss-bis", "ui-widget-content", 'ft-chip']);
     _ddBtn.onMouseOver.forEach((_) => _elt.classes.add('over'));
     _ddBtn.onMouseOut.forEach((_) => _elt.classes.remove('over'));
   }
@@ -128,9 +128,9 @@ abstract class HtmlElementChip implements DomComponent {
   Js.JsObject get jsDdBtn => new Js.JsObject.fromBrowserObject(_ddBtn);
   Js.JsObject get jqDdBtn => Js.context.callMethod(r'$', [this.jsDdBtn]);
 
-  Html.DivElement get panelGameBoy => _panelGameBoy;
-  Html.DivElement get panelAttached => _panelAttached;
-  Html.DivElement get panelDetached => _panelDetached;
+  Html.Element get panelGameBoy => _panelGameBoy;
+  Html.Element get panelAttached => _panelAttached;
+  Html.Element get panelDetached => _panelDetached;
 
   // PRIVATE **************************************************************** **
   Html.Element _panelOfTypes(Chip c, _Loc l) {
@@ -141,16 +141,16 @@ abstract class HtmlElementChip implements DomComponent {
         liList.add(_lineOfData(eData.name, _requestFunctionOfType(e)));
       }
     });
-    return new Html.DivElement()
+    return new Html.UListElement()
       ..nodes = liList
       ..style.display = 'none'
       ..classes.add('list-group');
   }
 
   Html.Element _lineOfData(String name, var f) {
-    return new Html.AnchorElement()
+    return new Html.LIElement()
       ..text = name
-      ..href = '#'
+      // ..href = '#'
       ..onClick.forEach((_) => f(this))
       ..classes.add('list-group-item');
   }
