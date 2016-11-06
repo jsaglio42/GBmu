@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/26 14:15:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 15:07:42 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 17:20:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -24,6 +24,7 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
+// CHIP CONFIGURATION ******************************************************* **
 /*
  *                              SSgb   SSatt  SSdet  RAMgb  RAMatt RAMdet
  * Refresh savestate            X      O      O      O      O      O
@@ -32,7 +33,6 @@ import 'package:component_system/src/include_cdc.dart';
  * Detach from cartridge        X      X      O      X      X      O
  * Delete                       X      X      X      X      X      X
  * Duplicate                    X      X      X      X      X      X
- *
  */
 
 enum _Loc {
@@ -50,7 +50,7 @@ class _PanelEntryData {
   const _PanelEntryData(this.name, this.combos);
 }
 
-const Map<_PanelEntry, _PanelEntryData> _panelData = const {
+const Map<_PanelEntry, _PanelEntryData> _chipPanelData = const {
   _PanelEntry.InstallSs: const _PanelEntryData('Install savestate', const {
     Ss.v:  const {_Loc.Gb: true , _Loc.Att: false, _Loc.Det: false},
     Ram.v: const {_Loc.Gb: false, _Loc.Att: false, _Loc.Det: false},
@@ -77,54 +77,32 @@ const Map<_PanelEntry, _PanelEntryData> _panelData = const {
   }),
 };
 
-abstract class HtmlElementChip implements DomComponent {
+abstract class HtmlElementChip implements DomComponent, HtmlDropDown {
 
   // ATTRIBUTES ************************************************************* **
   Html.Element _elt;
   Html.DivElement _txt;
-  Html.ButtonElement _ddBtn;
-  Html.Element _panel;
-  List<Html.Element> _linesGameBoy;
-  List<Html.Element> _linesAttached;
-  List<Html.Element> _linesDetached;
-
-  List<Html.Element> _linesShown;
 
   // CONSTRUCTION *********************************************************** **
   void hech_init() {
-
     // Ft.log('HtmlElementChip', 'hec_init');
     _txt = new Html.DivElement()
       ..classes.addAll(["text"])
       ..text = this.data.fileName;
 
-    _ddBtn = new Html.ButtonElement()
-      ..type = 'button'
-      ..classes.add('ft-dropdown-button')
-      ..onClick.forEach((_) => this.pde.chipDropDownClick(this));
-
-    _linesGameBoy = _linesOfTypes(this.data.type, _Loc.Gb);
-    _linesAttached = _linesOfTypes(this.data.type, _Loc.Att);
-    _linesDetached = _linesOfTypes(this.data.type, _Loc.Det);
-
-    _panel = new Html.UListElement()
-      ..nodes.addAll(_createInfoLines())
-      ..nodes.addAll(_linesGameBoy)
-      ..nodes.addAll(_linesAttached)
-      ..nodes.addAll(_linesDetached)
-      ..style.display = 'none'
-      ..classes.add('ft-dropdown')
-      ..classes.add('list-group');
-
     _elt = new Html.DivElement()
-      ..nodes = [_txt, _ddBtn, _panel]
+      ..nodes = [_txt, this.ddBtn, this.ddPanel]
       ..classes.addAll(["ui-widget-content", 'ft-chip']);
     if (this.data.type is Ram)
       _elt.classes.add("cart-ram-bis");
     else
       _elt.classes.add("cart-ss-bis");
-    _ddBtn.onMouseOver.forEach((_) => _elt.classes.add('over'));
-    _ddBtn.onMouseOut.forEach((_) => _elt.classes.remove('over'));
+
+    hdd_addLine(this.data.fileName, true);
+    _addDataLines();
+    _makeLinesOfTypes(this.data.type, _Loc.Gb);
+    _makeLinesOfTypes(this.data.type, _Loc.Att);
+    _makeLinesOfTypes(this.data.type, _Loc.Det);
   }
 
   // PUBLIC ***************************************************************** **
@@ -136,39 +114,24 @@ abstract class HtmlElementChip implements DomComponent {
   Js.JsObject get jsBtnText => new Js.JsObject.fromBrowserObject(_txt);
   Js.JsObject get jqBtnText => Js.context.callMethod(r'$', [this.jsBtnText]);
 
-  Html.ButtonElement get ddBtn => _ddBtn;
-  Js.JsObject get jsDdBtn => new Js.JsObject.fromBrowserObject(_ddBtn);
-  Js.JsObject get jqDdBtn => Js.context.callMethod(r'$', [this.jsDdBtn]);
-
   void showGameBoyPanel() {
-    _showPanel(_linesGameBoy);
+    hdd_show(_Loc.Gb);
   }
 
   void showAttachedPanel() {
-    _showPanel(_linesAttached);
+    hdd_show(_Loc.Att);
   }
 
   void showDetachedPanel() {
-    _showPanel(_linesDetached);
+    hdd_show(_Loc.Det);
   }
 
   void hidePanel() {
-    assert(_linesShown != null);
-    _linesShown.forEach((Html.Element l) => l.style.display = 'none');
-    _linesShown = null;
-    _panel.style.display = 'none';
+    hdd_hide();
   }
 
   // PRIVATE **************************************************************** **
-  // CONSTRUCTION *************************************** **
-  List<Html.Element> _createInfoLines() {
-    final List<Html.Element> liList = [];
-
-    liList.add(new Html.LIElement()
-        ..classes.add('list-group-item')
-        ..classes.add('ft-title')
-        ..text = this.data.fileName);
-    // li.List.addAll(
+  void _addDataLines() {
     this.data.data.forEach((String k, dynamic v) {
       switch (k) {
         case ('fileName'):
@@ -177,32 +140,16 @@ abstract class HtmlElementChip implements DomComponent {
         case ('idbid'):
           break;
         default:
-          liList.add(new Html.LIElement()
-              ..classes.add('list-group-item')
-              ..text = '$k: $v');
+          hdd_addLine('$k: $v', false);
       }
     });
-    return liList;
   }
 
-  List<Html.Element> _linesOfTypes(Chip c, _Loc l) {
-    final List<Html.Element> liList = [];
-
-    _panelData.forEach((e, eData){
-      if (eData.combos[c][l]) {
-        liList.add(_lineOfData(eData.name, _requestFunctionOfType(e)));
-      }
+  void _makeLinesOfTypes(Chip c, _Loc l) {
+    _chipPanelData.forEach((_PanelEntry e, eData){
+      if (eData.combos[c][l])
+        hdd_addStateLine(l, eData.name, _requestFunctionOfType(e));
     });
-    return liList;
-  }
-
-  Html.Element _lineOfData(String name, var f) {
-    return new Html.LIElement()
-      ..text = name
-      ..style.display = 'none'
-      ..onClick.forEach((_) => f(this))
-      ..classes.add('list-group-item')
-      ..classes.add('ft-clickable');
   }
 
   dynamic _requestFunctionOfType(_PanelEntry e) {
@@ -214,16 +161,6 @@ abstract class HtmlElementChip implements DomComponent {
       case (_PanelEntry.Duplicate): return this.pde.requestDuplicate;
       case (_PanelEntry.Delete): return this.pde.requestDelete;
     }
-  }
-
-  // RUNTIME ******************************************** **
-  void _showPanel(List<Html.Element> lines) {
-    if (_linesShown != null)
-      _linesShown.forEach((Html.Element l) => l.style.display = 'none');
-    else
-      _panel.style.display = '';
-    _linesShown = lines;
-    _linesShown.forEach((Html.Element l) => l.style.display = '');
   }
 
 }

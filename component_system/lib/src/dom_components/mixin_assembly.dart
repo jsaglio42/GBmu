@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 20:28:14 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 16:58:50 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,7 +43,8 @@ class DomCart extends DomComponent
 }
 
 class DomChip extends DomComponent
-  with HtmlElementChip
+  with HtmlDropDown,
+  HtmlElementChip
   , HtmlDraggable {
 
   DomChip(PlatformDomEvents pde, LsChip data)
@@ -55,6 +56,7 @@ class DomChip extends DomComponent
       hCenter = 92;
     else
       hCenter = 44;
+    this.hdd_init();
     this.hech_init();
     this.hdr_init(hCenter, 26, 20, 100);
   }
