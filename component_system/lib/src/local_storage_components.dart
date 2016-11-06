@@ -6,13 +6,14 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:16 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/19 17:57:25 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 14:32:36 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 library local_storage_components;
 
 import 'dart:convert';
+import 'dart:collection';
 
 import 'package:emulator/enums.dart';
 import 'package:emulator/constants.dart';

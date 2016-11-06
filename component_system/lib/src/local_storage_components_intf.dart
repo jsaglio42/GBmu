@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 14:36:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 19:12:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 14:35:16 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -76,6 +76,9 @@ abstract class LsEntry {
   Life get life => _life;
   int get idbid => _data['idbid'];
   String get fileName => _data['fileName'];
+
+  UnmodifiableMapView<String, dynamic> get data =>
+    new UnmodifiableMapView(_data);
 
   void kill() {
     assert(_life is Alive, "$runtimeType.kill()");

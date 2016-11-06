@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/26 14:15:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 14:22:24 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 14:37:40 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -167,6 +167,20 @@ abstract class HtmlElementChip implements DomComponent {
         ..classes.add('list-group-item')
         ..classes.add('ft-title')
         ..text = this.data.fileName);
+    // li.List.addAll(
+    this.data.data.forEach((String k, dynamic v) {
+      switch (k) {
+        case ('fileName'):
+        case ('romUid'):
+        case ('slot'):
+        case ('idbid'):
+          break;
+        default:
+          liList.add(new Html.LIElement()
+              ..classes.add('list-group-item')
+              ..text = '$k: $v');
+      }
+    });
     return liList;
   }
 
