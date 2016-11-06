@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/26 14:15:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 14:37:40 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 15:07:42 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -113,6 +113,7 @@ abstract class HtmlElementChip implements DomComponent {
       ..nodes.addAll(_linesAttached)
       ..nodes.addAll(_linesDetached)
       ..style.display = 'none'
+      ..classes.add('ft-dropdown')
       ..classes.add('list-group');
 
     _elt = new Html.DivElement()
