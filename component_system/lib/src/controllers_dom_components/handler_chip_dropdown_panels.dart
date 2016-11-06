@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/26 17:11:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 13:30:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 14:09:29 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -32,6 +32,7 @@ class HandlerChipDropdownPanels {
   final PlatformComponentEvents _pce;
   final PlatformDomComponentStorage _pdcs;
 
+  DomChip _openedChip;
 
   // CONSTRUCTION *********************************************************** **
   HandlerChipDropdownPanels(this._pde, this._pce, this._pdcs) {
@@ -46,28 +47,20 @@ class HandlerChipDropdownPanels {
 
   // CALLBACKS ************************************************************** **
 
-  DomChip _openedPanelChipOpt;
   void _onChipDropDownClick(DomChip c) {
-    if (_openedPanelChipOpt == null) {
+    if (_openedChip == null)
       _openChipPanel(c);
-      _openedPanelChipOpt = c;
-    }
-    else if (_openedPanelChipOpt == c) {
-      _closeChipPanel(c);
-      _openedPanelChipOpt = null;
-    }
+    else if (_openedChip == c)
+      _closeChipPanel();
     else {
-      _closeChipPanel(_openedPanelChipOpt);
+      _closeChipPanel();
       _openChipPanel(c);
-      _openedPanelChipOpt = c;
     }
   }
 
   void _onComponentEvent(_) {
-    if (_openedPanelChipOpt != null) {
-      _closeChipPanel(_openedPanelChipOpt);
-      _openedPanelChipOpt = null;
-    }
+    if (_openedChip != null)
+      _closeChipPanel();
   }
 
   void _onDomClick(Html.MouseEvent ev) {
@@ -77,25 +70,21 @@ class HandlerChipDropdownPanels {
 
   // PRIVATE **************************************************************** **
 
-  Html.Element _openedPanelOpt;
   void _openChipPanel(DomChip ch) {
     final DomCart caOpt = _pdcs.cartOfChipOpt(ch);
 
-    if (caOpt == null) {
-      _openedPanelOpt = ch.panelDetached;
-    }
-    else {
-      if (caOpt == _pdcs.gbCart.v)
-        _openedPanelOpt = ch.panelGameBoy;
-      else
-        _openedPanelOpt = ch.panelAttached;
-    }
-    _openedPanelOpt.style.display = '';
+    _openedChip = ch;
+    if (caOpt == null)
+      ch.showDetachedPanel();
+    else if (caOpt == _pdcs.gbCart.v)
+      ch.showGameBoyPanel();
+    else
+      ch.showAttachedPanel();
   }
 
-  void _closeChipPanel(DomChip) {
-    _openedPanelOpt.style.display = 'none';
-    _openedPanelOpt = null;
+  void _closeChipPanel() {
+    _openedChip.hidePanel();
+    _openedChip = null;
   }
 
 }
