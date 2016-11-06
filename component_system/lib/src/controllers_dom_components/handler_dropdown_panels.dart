@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   handler_chip_dropdown_panels.dart                  :+:      :+:    :+:   //
+//   handler_dropdown_panels.dart                       :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/10/26 17:11:13 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 14:09:29 by ngoguey          ###   ########.fr       //
+//   Created: 2016/11/06 17:27:41 by ngoguey           #+#    #+#             //
+//   Updated: 2016/11/06 18:56:21 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,42 +25,49 @@ import 'package:component_system/src/include_cs.dart';
 import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
-class HandlerChipDropdownPanels {
+class HandlerDropdownPanels {
 
   // ATTRIBUTES ************************************************************* **
   final PlatformDomEvents _pde;
   final PlatformComponentEvents _pce;
   final PlatformDomComponentStorage _pdcs;
 
-  DomChip _openedChip;
+  DomComponent _opened;
 
   // CONSTRUCTION *********************************************************** **
-  HandlerChipDropdownPanels(this._pde, this._pce, this._pdcs) {
-    Ft.log('HandlerChipDropdownPanels', 'contructor');
+  HandlerDropdownPanels(this._pde, this._pce, this._pdcs) {
+    Ft.log('HandlerDropdownPanels', 'contructor');
 
-    _pde.onChipDropDownClick.forEach(_onChipDropDownClick);
+    _pde.onDropDownClick.forEach(_onDropDownClick);
     _pce.onCartEvent.forEach(_onComponentEvent);
     _pce.onChipEvent.forEach(_onComponentEvent);
     _pce.onDraggedChange.forEach(_onComponentEvent);
     Html.window.onClick.forEach(_onDomClick);
+    Html.window.onKeyDown.forEach(_onComponentEvent);
   }
 
   // CALLBACKS ************************************************************** **
-
-  void _onChipDropDownClick(DomChip c) {
-    if (_openedChip == null)
-      _openChipPanel(c);
-    else if (_openedChip == c)
-      _closeChipPanel();
+  void _onDropDownClick(DomComponent c) {
+    if (_opened == null) {
+      if (c is DomChip)
+        _openChipPanel(c as DomChip);
+      else
+        _openCartPanel(c as DomCart);
+    }
+    else if (_opened == c)
+      _closePanel();
     else {
-      _closeChipPanel();
-      _openChipPanel(c);
+      _closePanel();
+      if (c is DomChip)
+        _openChipPanel(c as DomChip);
+      else
+        _openCartPanel(c as DomCart);
     }
   }
 
   void _onComponentEvent(_) {
-    if (_openedChip != null)
-      _closeChipPanel();
+    if (_opened != null)
+      _closePanel();
   }
 
   void _onDomClick(Html.MouseEvent ev) {
@@ -69,11 +76,10 @@ class HandlerChipDropdownPanels {
  }
 
   // PRIVATE **************************************************************** **
-
   void _openChipPanel(DomChip ch) {
     final DomCart caOpt = _pdcs.cartOfChipOpt(ch);
 
-    _openedChip = ch;
+    _opened = ch;
     if (caOpt == null)
       ch.showDetachedPanel();
     else if (caOpt == _pdcs.gbCart.v)
@@ -82,9 +88,19 @@ class HandlerChipDropdownPanels {
       ch.showAttachedPanel();
   }
 
-  void _closeChipPanel() {
-    _openedChip.hidePanel();
-    _openedChip = null;
+  void _openCartPanel(DomCart c) {
+    _opened = c;
+    if (c == _pdcs.gbCart.v)
+      c.showGameBoyPanel();
+    else if (c == _pdcs.openedCart.v)
+      c.showOpenedPanel();
+    else
+      c.showClosedPanel();
+  }
+
+  void _closePanel() {
+    (_opened as HtmlDropDown).hdd_hide();
+    _opened = null;
   }
 
 }

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/17 16:38:35 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 16:58:50 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 17:34:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -25,7 +25,8 @@ import 'package:component_system/src/include_dc.dart';
 import 'package:component_system/src/include_cdc.dart';
 
 class DomCart extends DomComponent
-  with HtmlElementCart
+  with HtmlDropDown
+  , HtmlElementCart
   , HtmlCartClosable
   , HtmlDraggable
   , ChipSocketContainer {
@@ -34,6 +35,7 @@ class DomCart extends DomComponent
       PlatformDomEvents pde, LsRom data, String cartHtml, Html.NodeValidator v)
     : super(pde, data) {
     // Ft.log('DomCart', 'constructor', [pde, data, v]);
+    this.hdd_init();
     this.hec_init(cartHtml, v);
     this.hcc_init();
     this.hdr_init(125, 143, 75, 99);
@@ -43,8 +45,8 @@ class DomCart extends DomComponent
 }
 
 class DomChip extends DomComponent
-  with HtmlDropDown,
-  HtmlElementChip
+  with HtmlDropDown
+  , HtmlElementChip
   , HtmlDraggable {
 
   DomChip(PlatformDomEvents pde, LsChip data)

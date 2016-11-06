@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/26 14:15:54 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 17:20:21 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 18:48:32 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -50,7 +50,7 @@ class _PanelEntryData {
   const _PanelEntryData(this.name, this.combos);
 }
 
-const Map<_PanelEntry, _PanelEntryData> _chipPanelData = const {
+const Map<_PanelEntry, _PanelEntryData> _panelData = const {
   _PanelEntry.InstallSs: const _PanelEntryData('Install savestate', const {
     Ss.v:  const {_Loc.Gb: true , _Loc.Att: false, _Loc.Det: false},
     Ram.v: const {_Loc.Gb: false, _Loc.Att: false, _Loc.Det: false},
@@ -93,6 +93,8 @@ abstract class HtmlElementChip implements DomComponent, HtmlDropDown {
     _elt = new Html.DivElement()
       ..nodes = [_txt, this.ddBtn, this.ddPanel]
       ..classes.addAll(["ui-widget-content", 'ft-chip']);
+    this.ddBtn.onMouseOver.forEach((_) => _elt.classes.add('over'));
+    this.ddBtn.onMouseOut.forEach((_) => _elt.classes.remove('over'));
     if (this.data.type is Ram)
       _elt.classes.add("cart-ram-bis");
     else
@@ -126,10 +128,6 @@ abstract class HtmlElementChip implements DomComponent, HtmlDropDown {
     hdd_show(_Loc.Det);
   }
 
-  void hidePanel() {
-    hdd_hide();
-  }
-
   // PRIVATE **************************************************************** **
   void _addDataLines() {
     this.data.data.forEach((String k, dynamic v) {
@@ -146,7 +144,7 @@ abstract class HtmlElementChip implements DomComponent, HtmlDropDown {
   }
 
   void _makeLinesOfTypes(Chip c, _Loc l) {
-    _chipPanelData.forEach((_PanelEntry e, eData){
+    _panelData.forEach((_PanelEntry e, _PanelEntryData eData){
       if (eData.combos[c][l])
         hdd_addStateLine(l, eData.name, _requestFunctionOfType(e));
     });

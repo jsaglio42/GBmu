@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 17:46:22 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 19:19:37 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 19:05:49 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -94,10 +94,10 @@ class PlatformDomEvents {
   Async.Stream<List<Html.File>> get onCartSystemFilesDrop => _cartSystemFilesDrop.stream;
 
 
-  final Async.StreamController<DomChip> _chipDropDownClick =
-    new Async.StreamController<DomChip>.broadcast();
-  void chipDropDownClick(DomChip that) => _chipDropDownClick.add(that);
-  Async.Stream<DomChip> get onChipDropDownClick => _chipDropDownClick.stream;
+  final Async.StreamController<DomComponent> _dropDownClick =
+    new Async.StreamController<DomComponent>.broadcast();
+  void dropDownClick(DomComponent that) => _dropDownClick.add(that);
+  Async.Stream<DomComponent> get onDropDownClick => _dropDownClick.stream;
 
   final Async.StreamController<DomChip> _requestInstallSaveState =
     new Async.StreamController<DomChip>.broadcast();
@@ -124,9 +124,19 @@ class PlatformDomEvents {
   void requestDuplicate(DomChip that) => _requestDuplicate.add(that);
   Async.Stream<DomChip> get onRequestDuplicate => _requestDuplicate.stream;
 
-  final Async.StreamController<DomChip> _requestDelete =
-    new Async.StreamController<DomChip>.broadcast();
-  void requestDelete(DomChip that) => _requestDelete.add(that);
-  Async.Stream<DomChip> get onRequestDelete => _requestDelete.stream;
+  final Async.StreamController<DomComponent> _requestDelete =
+    new Async.StreamController<DomComponent>.broadcast();
+  void requestDelete(DomComponent that) => _requestDelete.add(that);
+  Async.Stream<DomComponent> get onRequestDelete => _requestDelete.stream;
+
+  final Async.StreamController<DomCart> _requestInsert =
+    new Async.StreamController<DomCart>.broadcast();
+  void requestInsert(DomCart that) => _requestInsert.add(that);
+  Async.Stream<DomCart> get onRequestInsert => _requestInsert.stream;
+
+  final Async.StreamController<DomCart> _requestEject =
+    new Async.StreamController<DomCart>.broadcast();
+  void requestEject(DomCart that) => _requestEject.add(that);
+  Async.Stream<DomCart> get onRequestEject => _requestEject.stream;
 
 }

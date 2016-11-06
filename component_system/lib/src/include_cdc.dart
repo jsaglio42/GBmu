@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/29 10:56:42 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 17:31:41 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 17:27:58 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -18,7 +18,7 @@ export './controllers_dom_components/handler_dom_component_nodes.dart';
 export './controllers_dom_components/handler_dom_dragged.dart';
 export './controllers_dom_components/handler_dropzone_catalyst.dart';
 export './controllers_dom_components/handler_draggable_catalyst.dart';
-export './controllers_dom_components/handler_chip_dropdown_panels.dart';
+export './controllers_dom_components/handler_dropdown_panels.dart';
 
 export './controllers_dom_components/platform_cart.dart';
 export './controllers_dom_components/platform_chip.dart';

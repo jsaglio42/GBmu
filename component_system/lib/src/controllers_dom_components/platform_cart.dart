@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/04 18:25:33 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/31 16:48:26 by jsaglio          ###   ########.fr       //
+//   Updated: 2016/11/06 19:11:19 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -78,6 +78,12 @@ class PlatformCart extends Object with _Actions implements _Super {
       .forEach(_onRestartClick);
     _pdcs.btnRestartDebugger.onClick
       .forEach((x) { try { _onRestartClick(x) ; } finally { return null; } });
+    _pde.onRequestDelete
+      .where((DomComponent c) => c is DomCart)
+      .map((c) => c as DomCart)
+      .forEach(_onRequestDelete);
+    _pde.onRequestInsert.forEach(_onRequestInsert);
+    _pde.onRequestEject.forEach(_onRequestEject);
   }
 
   // PUBLIC ***************************************************************** **
@@ -167,6 +173,18 @@ class PlatformCart extends Object with _Actions implements _Super {
   void _onRestartClick(_) {
     assert(_pdcs.gbCart.isSome, '_onRestartClick() with none in gb');
     _extractStart();
+  }
+
+  void _onRequestDelete(DomCart c) {
+    _pcs.delete(c.data);
+  }
+
+  void _onRequestInsert(DomCart c) {
+    _pec.requestStart(c);
+  }
+
+  void _onRequestEject(DomCart c) {
+    _pec.requestEject();
   }
 
   // PRIVATE **************************************************************** **

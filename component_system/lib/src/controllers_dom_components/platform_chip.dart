@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/10/05 17:16:21 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 20:34:15 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 18:45:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -56,7 +56,10 @@ class PlatformChip extends Object with _Actions implements _Super
     _pde.onRequestSaveToFile.forEach(_onRequestSaveToFile);
     _pde.onRequestDetach.forEach(_onRequestDetach);
     _pde.onRequestDuplicate.forEach(_onRequestDuplicate);
-    _pde.onRequestDelete.forEach(_onRequestDelete);
+    _pde.onRequestDelete
+      .where((DomComponent c) => c is DomChip)
+      .map((c) => c as DomChip)
+      .forEach(_onRequestDelete);
   }
 
   // PUBLIC ***************************************************************** **
@@ -118,6 +121,7 @@ class PlatformChip extends Object with _Actions implements _Super
   }
 
   // CALLBACKS ************************************************************** **
+
   // The almighty function that has the view on:
   //   The chip-socket, the cart, and the dragged chip.
   void _onDropReceived(ChipBank that) {

@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/11/06 16:30:34 by ngoguey           #+#    #+#             //
-//   Updated: 2016/11/06 17:18:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 18:48:35 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,9 +43,7 @@ abstract class HtmlDropDown implements DomComponent {
 
   // CONSTRUCTION *********************************************************** **
   void hdd_init() {
-    _ddBtn.onClick.forEach((_) => this.pde.chipDropDownClick(this));
-    _ddBtn.onMouseOver.forEach((_) => this.elt.classes.add('over'));
-    _ddBtn.onMouseOut.forEach((_) => this.elt.classes.remove('over'));
+    _ddBtn.onClick.forEach((_) => this.pde.dropDownClick(this));
   }
 
   void hdd_addLine(String name, bool title) {
@@ -61,6 +59,7 @@ abstract class HtmlDropDown implements DomComponent {
       l = _makeClickableLine(name, onClickOpt);
     else
       l = _makeLine(name, false);
+    l.style.display = 'none';
     _stateLines[state].add(l);
     _ddPanel.nodes.add(l);
   }
@@ -105,7 +104,6 @@ abstract class HtmlDropDown implements DomComponent {
   Html.LIElement _makeClickableLine(String name, onClick) {
     final Html.LIElement l = new Html.LIElement()
       ..classes.add('list-group-item')
-      ..style.display = 'none'
       ..text = name;
 
     l.classes.add('ft-clickable');

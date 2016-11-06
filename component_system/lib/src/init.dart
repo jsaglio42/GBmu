@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2016/09/28 11:21:29 by ngoguey           #+#    #+#             //
-//   Updated: 2016/10/26 17:31:59 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/11/06 17:28:17 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -57,7 +57,7 @@ Async.Future<Cs> init(Emulator.Emulator emu) async {
   new HandlerDomComponentNodes(pde, pce, pdcs);
   new HandlerDropZoneCatalyst(pde, pce, pdcs);
   new HandlerDraggableCatalyst(pde, pce, pdcs);
-  new HandlerChipDropdownPanels(pde, pce, pdcs);
+  new HandlerDropdownPanels(pde, pce, pdcs);
 
   final PlatformEmulatorContacts pec = new PlatformEmulatorContacts(pde, pce, pdcs, emu);
 

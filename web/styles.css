@@ -480,17 +480,25 @@ body {
 
 .gameboy-cartridge .bg-head-btn {
     height: 71px;
-    background: url(images/sprites.png) 0 0;
+    background: url(images/sprites.png) -1004px 0;
     background-color: rgba(0, 0, 0, 0.0);
     border-width: 0px;
     border-radius: 0px;
     padding-top: 24px;
 }
 
+.gameboy-cartridge.over .bg-head-btn {
+    background: url(images/sprites.png) 0 0;
+}
+
 .gameboy-cartridge .bg-head-btn.collapsed {
     height: 53px;
-    background: url(images/sprites.png) 0 -18px;
+    background: url(images/sprites.png) -1004px -18px;
     padding-top: 6px;
+}
+
+.gameboy-cartridge.over .bg-head-btn.collapsed {
+    background: url(images/sprites.png) 0 -18px;
 }
 
 .gameboy-cartridge .bg-head-btn > .text {
@@ -563,19 +571,17 @@ body {
 }
 
 
-.ft-chip > button {
-    display: block;
-    position: absolute;
+
+
+.ft-chip > .ft-dropdown-button {
     width: 11px;
-    background-color: rgba(0, 0, 0, 0.0);
     height: 18px;
     top: 13px;
-    border: 0px;
 }
-.cart-ss-bis > button {
+.cart-ss-bis > .ft-dropdown-button {
     left: 71px;
 }
-.cart-ram-bis > button {
+.cart-ram-bis > .ft-dropdown-button {
     left: 166px;
 }
 
@@ -590,11 +596,40 @@ body {
     left: calc(71px + 11px);
 }
 
+.gameboy-cartridge > .ft-dropdown-button {
+    width: 12px;
+    height: 21px;
+    top: 34px;
+    left: 231px;
+}
+
+.gameboy-cartridge.ui-draggable-disabled > .ft-dropdown-button {
+    top: calc(34px - 18px);
+}
+
+
+.gameboy-cartridge > .ft-dropdown {
+    top: calc(34px + 8px);
+    left: calc(231px + 11px);
+}
+
+.gameboy-cartridge.ui-draggable-disabled > .ft-dropdown {
+    top: calc(34px + 8px - 18px);
+}
+
 /* DROPDOWN ***************************************************************** */
 .ft-dropdown {
+    cursor: default;
     z-index: 100;
     position: absolute;
     text-align: left;
+}
+
+.ft-dropdown-button {
+    display: block;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.0);
+    border: 0px;
 }
 
 .ft-dropdown > .list-group-item {
@@ -610,6 +645,7 @@ body {
 }
 
 .ft-dropdown > .ft-clickable {
+    cursor: pointer;
     font-weight: bold;
 }
 
