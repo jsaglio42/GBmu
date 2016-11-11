@@ -3,7 +3,7 @@
 - [X] Create a Game Boy emulator using any language
 - [X] Implement the CPU, LCD, joypad
 - [X] Have a minimalistic GUI (load / play / pause)
-- [X] Run cartridges of type `MBC{1,2,3,5}`
+- [ ] Run cartridges of type `MBC{1,2,3,5}`
 - [X] Handle cartridges saves
 - [ ] Handle both the Game Boy (DMG) and the Color Game Boy (CGB)
 - [X] A debugger observing the CPU and able to operate frame by frame
@@ -26,7 +26,7 @@
 
 ### Install
 ```sh
-# get dart
+# get dart first
 pub get
 pub serve
 open 'http://localhost:8080/'
